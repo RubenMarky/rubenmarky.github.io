@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistemas Operativos — E.P.E.T N°7 EPJA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Variables ── */
+    :root {
+      --az:    #1F4E79;
+      --az2:   #2E75B6;
+      --azl:   #D9E2F3;
+      --azll:  #EEF3FA;
+      --vd:    #375623;
+      --vdl:   #E2EFDA;
+      --rj:    #C00000;
+      --rjl:   #FCE4D6;
+      --am:    #7F6000;
+      --aml:   #FFF2CC;
+      --gr:    #444;
+      --grl:   #F5F5F5;
+      --blanco:#FFFFFF;
+      --radio: 10px;
+      --sombra: 0 2px 14px rgba(31,78,121,.10);
+    }
+
+    /* ── Reset y base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.75;
+      color: #222;
+      background: #F7F9FC;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--az);
+      color: var(--blanco);
+      padding: 2.5rem 1.5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--az2), #5BA3E0, var(--az2));
+    }
+    .header-badge {
+      display: inline-block;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 20px;
+      font-size: .78rem;
+      font-weight: 500;
+      letter-spacing: .06em;
+      padding: .25rem 1rem;
+      margin-bottom: 1rem;
+      color: #C8DBF3;
+      text-transform: uppercase;
+    }
+    header h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.9rem, 5vw, 3rem);
+      line-height: 1.15;
+      letter-spacing: -.01em;
+      margin-bottom: .5rem;
+    }
+    header h1 span { color: #8BBFE8; }
+    header .sub {
+      font-size: .92rem;
+      color: #B0C8E0;
+      margin-top: .4rem;
+    }
+
+    /* ── Nav ── */
+    nav {
+      background: var(--blanco);
+      border-bottom: 2px solid var(--azl);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0,0,0,.07);
+    }
+    .nav-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .15rem;
+      padding: .5rem 1rem;
+    }
+    nav a {
+      color: var(--az);
+      text-decoration: none;
+      font-size: .8rem;
+      font-weight: 500;
+      padding: .3rem .7rem;
+      border-radius: 6px;
+      transition: background .18s, color .18s;
+      white-space: nowrap;
+    }
+    nav a:hover { background: var(--azl); color: var(--az); }
+
+    /* ── Layout principal ── */
+    main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2.5rem 1.25rem 4rem;
+    }
+
+    /* ── Secciones ── */
+    section { margin-bottom: 3.5rem; }
+
+    /* Título de sección */
+    .section-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.55rem;
+      color: var(--az);
+      border-left: 5px solid var(--az2);
+      padding-left: .85rem;
+      margin-bottom: 1.4rem;
+      line-height: 1.25;
+    }
+    .section-num {
+      display: inline-block;
+      background: var(--az2);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .75rem;
+      font-weight: 600;
+      padding: .15rem .55rem;
+      border-radius: 4px;
+      margin-right: .5rem;
+      vertical-align: middle;
+      letter-spacing: .04em;
+    }
+
+    /* Subtítulo */
+    h3.sub {
+      font-size: 1.05rem;
+      color: var(--az);
+      font-weight: 600;
+      margin: 1.6rem 0 .6rem;
+      padding-bottom: .25rem;
+      border-bottom: 1.5px solid var(--azl);
+    }
+
+    p { margin-bottom: .9rem; }
+
+    /* Listas */
+    ul, ol { padding-left: 1.4rem; margin-bottom: 1rem; }
+    li { margin-bottom: .35rem; }
+
+    /* ── Cajas destacadas ── */
+    .caja {
+      border-radius: var(--radio);
+      padding: .85rem 1.1rem;
+      margin: 1.1rem 0;
+      font-size: .93rem;
+      line-height: 1.6;
+    }
+    .caja strong { display: block; margin-bottom: .2rem; }
+    .caja.info   { background: var(--azl);  border-left: 4px solid var(--az2); }
+    .caja.tip    { background: var(--aml);  border-left: 4px solid var(--am);  }
+    .caja.aviso  { background: var(--rjl);  border-left: 4px solid var(--rj);  }
+    .caja.ok     { background: var(--vdl);  border-left: 4px solid var(--vd);  }
+
+    /* ── Tablas ── */
+    .tabla-wrap { overflow-x: auto; margin: 1rem 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .9rem;
+      background: var(--blanco);
+      border-radius: var(--radio);
+      overflow: hidden;
+      box-shadow: var(--sombra);
+    }
+    th {
+      background: var(--az);
+      color: #fff;
+      font-weight: 600;
+      padding: .6rem .9rem;
+      text-align: left;
+      font-size: .82rem;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    td {
+      padding: .55rem .9rem;
+      border-bottom: 1px solid #E8EFF8;
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:nth-child(even) td { background: var(--azll); }
+
+    /* ── Tarjetas de SO (ventajas/inconvenientes) ── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    .card {
+      background: var(--blanco);
+      border-radius: var(--radio);
+      box-shadow: var(--sombra);
+      overflow: hidden;
+    }
+    .card-header {
+      padding: .7rem 1rem;
+      font-weight: 700;
+      font-size: .9rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .card-header.win  { background: #0067B8; }
+    .card-header.linux{ background: #E95420; }
+    .card-header.mac  { background: #555; }
+    .card-body { padding: .9rem 1rem; }
+    .card-body ul { padding-left: 1.2rem; }
+    .card-body li { font-size: .88rem; margin-bottom: .3rem; }
+
+    /* ── TP bloques ── */
+    .tp-block {
+      background: var(--blanco);
+      border-radius: var(--radio);
+      box-shadow: var(--sombra);
+      border-top: 5px solid var(--az2);
+      padding: 1.4rem 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .tp-block h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.3rem;
+      color: var(--az);
+      margin-bottom: .2rem;
+    }
+    .tp-block .tp-sub {
+      font-size: .85rem;
+      color: #888;
+      margin-bottom: 1rem;
+      font-style: italic;
+    }
+    .tp-objetivos {
+      background: var(--azll);
+      border-radius: 7px;
+      padding: .8rem 1rem;
+      margin-bottom: 1rem;
+    }
+    .tp-objetivos h4 {
+      font-size: .82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--az2);
+      margin-bottom: .4rem;
+    }
+    .tp-objetivos li { font-size: .88rem; }
+    .tp-badge {
+      display: inline-block;
+      background: var(--az2);
+      color: #fff;
+      font-size: .72rem;
+      font-weight: 600;
+      padding: .2rem .65rem;
+      border-radius: 20px;
+      margin-bottom: .75rem;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    /* ── Comparativa final ── */
+    .comp-table th:first-child { width: 30%; }
+
+    /* ── Glosario ── */
+    .glosario dl { margin: .5rem 0; }
+    .glosario dt {
+      font-weight: 700;
+      color: var(--az);
+      margin-top: .9rem;
+      font-size: .95rem;
+    }
+    .glosario dd {
+      margin-left: 1.1rem;
+      font-size: .9rem;
+      color: #444;
+    }
+
+    /* ── Planificación (timeline) ── */
+    .timeline { margin: 1rem 0; }
+    .trim {
+      border-left: 3px solid var(--az2);
+      padding-left: 1.1rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    .trim::before {
+      content: '';
+      width: 11px; height: 11px;
+      background: var(--az2);
+      border-radius: 50%;
+      position: absolute;
+      left: -7px; top: 4px;
+    }
+    .trim h4 {
+      font-size: .82rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--az2);
+      font-weight: 700;
+      margin-bottom: .4rem;
+    }
+    .trim ul li { font-size: .9rem; }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--az);
+      color: #B0C8E0;
+      text-align: center;
+      padding: 1.8rem 1rem;
+      font-size: .82rem;
+      line-height: 1.8;
+    }
+    footer strong { color: #fff; }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.6rem; }
+      .section-title { font-size: 1.25rem; }
+      .cards-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ═══════════ HEADER ═══════════ -->
+<header>
+  <div class="header-badge">E.P.E.T N°7 (EPJA) · Jardín América, Misiones · Prof. Markwart Rubén · 2026</div>
+  <h1>Sistemas <span>Operativos</span></h1>
+  <p class="sub">2° Año A &nbsp;·&nbsp; Operador de Informática para Administración y Gestión &nbsp;·&nbsp; Ciclo Lectivo 2026</p>
+</header>
+
+<!-- ═══════════ NAV ═══════════ -->
+<nav>
+  <div class="nav-inner">
+    <a href="#intro">¿Qué es un SO?</a>
+    <a href="#tipos">Tipos</a>
+    <a href="#componentes">Componentes</a>
+    <a href="#ejemplos">Ejemplos de SO</a>
+    <a href="#tp1">TP 1</a>
+    <a href="#archivos">Archivos</a>
+    <a href="#tp2">TP 2</a>
+    <a href="#comandos">CMD / PowerShell</a>
+    <a href="#tp3">TP 3</a>
+    <a href="#redes">Redes</a>
+    <a href="#tp4">TP 4</a>
+    <a href="#comparativa">Comparativa</a>
+    <a href="#planificacion">Planificación</a>
+    <a href="#glosario">Glosario</a>
+  </div>
+</nav>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<main>
+
+<!-- ── 1. QUÉ ES UN SO ── -->
+<section id="intro">
+  <h2 class="section-title"><span class="section-num">1</span>¿Qué es un Sistema Operativo?</h2>
+
+  <p>Un <strong>sistema operativo (SO)</strong> es el software principal de una computadora. Se instala antes que cualquier otro programa y se encarga de hacer funcionar todo lo demás: el procesador, la memoria, el disco, el teclado, la pantalla y cualquier dispositivo conectado.</p>
+
+  <div class="caja tip">
+    <strong>📌 Analogía</strong>
+    Pensá en el SO como el director de una orquesta. No toca ningún instrumento, pero coordina a todos los músicos para que entren en el momento correcto. Del mismo modo, el SO no hace el trabajo de las aplicaciones, pero les da los recursos que necesitan.
+  </div>
+
+  <p>El sistema operativo actúa como <strong>intermediario</strong> entre el usuario, las aplicaciones y el hardware. Los nombres de muchos SO incluyen el sufijo <em>OS</em> (Operating System): MS-DOS, iOS, macOS.</p>
+
+  <h3 class="sub">¿Qué hace el sistema operativo?</h3>
+  <ul>
+    <li><strong>Administra el procesador (CPU):</strong> decide qué programa usa el CPU en cada momento.</li>
+    <li><strong>Administra la memoria RAM:</strong> asigna y libera espacio para cada programa.</li>
+    <li><strong>Gestiona el almacenamiento:</strong> organiza archivos y carpetas en el disco.</li>
+    <li><strong>Controla la entrada y salida:</strong> comunica el teclado, el mouse, la impresora y otros dispositivos con las aplicaciones.</li>
+    <li><strong>Mantiene la seguridad:</strong> protege el equipo mediante cuentas de usuario y permisos.</li>
+  </ul>
+</section>
+
+<!-- ── 2. TIPOS ── -->
+<section id="tipos">
+  <h2 class="section-title"><span class="section-num">2</span>Tipos de Sistemas Operativos</h2>
+
+  <p>Los sistemas operativos varían según el hardware y el uso al que están destinados:</p>
+
+  <div class="tabla-wrap">
+    <table>
+      <thead><tr><th>Tipo</th><th>Descripción</th><th>Ejemplo</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Monoprocesador</strong></td><td>Un solo CPU ejecuta las instrucciones.</td><td>PC de escritorio básica.</td></tr>
+        <tr><td><strong>Multiprocesador</strong></td><td>Dos o más CPUs comparten memoria y buses.</td><td>Servidores, workstations de alto rendimiento.</td></tr>
+        <tr><td><strong>Distribuido</strong></td><td>Procesadores en distintas máquinas conectadas por red.</td><td>Centros de datos, computación en la nube.</td></tr>
+        <tr><td><strong>Móvil / Portátil</strong></td><td>Optimizado para dispositivos pequeños y batería.</td><td>Android, iOS en smartphones y tablets.</td></tr>
+        <tr><td><strong>Tiempo real / Empotrado</strong></td><td>Tareas específicas sin supervisión humana constante.</td><td>Autos, electrodomésticos, dispositivos médicos.</td></tr>
+        <tr><td><strong>Multimedia</strong></td><td>Maneja audio y video con tiempos y velocidades precisas.</td><td>Reproductores, Smart TVs, estudios digitales.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── 3. COMPONENTES ── -->
+<section id="componentes">
+  <h2 class="section-title"><span class="section-num">3</span>Componentes del Sistema Operativo</h2>
+
+  <p>El SO está formado por dos grandes grupos de programas:</p>
+
+  <h3 class="sub">Programas de control (el núcleo o kernel)</h3>
+  <p>Coordinan el funcionamiento de todos los recursos del equipo. Se dividen en:</p>
+  <ul>
+    <li><strong>Gestión del procesador:</strong> controla el tiempo que cada proceso usa el CPU.</li>
+    <li><strong>Gestión de memoria:</strong> asigna y controla el espacio en RAM y almacenamiento.</li>
+    <li><strong>Gestión de entrada/salida:</strong> gestiona las operaciones con dispositivos externos (impresoras, lectores, etc.).</li>
+    <li><strong>Gestión de datos:</strong> controla transferencia, apertura y acceso a archivos.</li>
+    <li><strong>Gestión del sistema (supervisor):</strong> coordina y supervisa la seguridad general.</li>
+  </ul>
+
+  <h3 class="sub">Programas de proceso</h3>
+  <p>Ayudan a los programadores a escribir aplicaciones. Incluyen:</p>
+  <ul>
+    <li><strong>Traductores:</strong> compiladores, intérpretes y ensambladores. Convierten el código escrito por humanos a instrucciones que entiende la máquina.</li>
+    <li><strong>Programas de servicio (utilidades):</strong> herramientas de mantenimiento y manipulación del sistema.</li>
+  </ul>
+
+  <h3 class="sub">Evolución de los sistemas operativos</h3>
+  <div class="tabla-wrap">
+    <table>
+      <thead><tr><th>Nivel / Época</th><th>Características principales</th></tr></thead>
+      <tbody>
+        <tr><td><strong>1° — Años 50</strong></td><td>Primeros SO básicos. Programación en tarjetas perforadas. Lenguaje FORTRAN.</td></tr>
+        <tr><td><strong>2° — Años 60</strong></td><td>Mejora del uso del procesador. Aparecen buffering y spooling. Procesos on-line y off-line.</td></tr>
+        <tr><td><strong>3° — Años 70</strong></td><td>Multiprogramación: varios programas en un mismo procesador. Nace UNIX.</td></tr>
+        <tr><td><strong>4° — Años 80</strong></td><td>Multiproceso. Mejoras de seguridad. Aparece Windows. PCs hogareñas masivas.</td></tr>
+        <tr><td><strong>5° — Años 90 en adelante</strong></td><td>Interfaces gráficas, internet, SO móviles, computación en la nube.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── 4. EJEMPLOS DE SO ── -->
+<section id="ejemplos">
+  <h2 class="section-title"><span class="section-num">4</span>Sistemas Operativos más conocidos</h2>
+
+  <div class="tabla-wrap">
+    <table>
+      <thead><tr><th>Sistema Operativo</th><th>Empresa / Origen</th><th>Descripción breve</th></tr></thead>
+      <tbody>
+        <tr><td><strong>MS-DOS</strong></td><td>Microsoft (1981)</td><td>Primer SO masivo de Microsoft. Controlado por comandos de texto. Antecedente directo de Windows.</td></tr>
+        <tr><td><strong>Windows</strong></td><td>Microsoft (1985–hoy)</td><td>El más usado en PCs. Evolución: 1.0, 3.1, 95, XP, 7, 10, 11. Interfaz gráfica, amplio soporte de hardware.</td></tr>
+        <tr><td><strong>macOS</strong></td><td>Apple (2001–hoy)</td><td>Para computadoras Mac. Basado en UNIX. Reconocido por estabilidad y diseño.</td></tr>
+        <tr><td><strong>UNIX</strong></td><td>Bell Labs (1970s)</td><td>Multiprograma y multiusuario. Base de macOS, Linux y Solaris. Escrito en lenguaje C.</td></tr>
+        <tr><td><strong>Linux</strong></td><td>Linus Torvalds (1991)</td><td>Gratuito y de código abierto. Usado en servidores, PCs y dispositivos embebidos. Base de Android.</td></tr>
+        <tr><td><strong>Android</strong></td><td>Google / Open Handset Alliance (2007)</td><td>El SO móvil más extendido del mundo. Núcleo Linux. Para smartphones y tablets.</td></tr>
+        <tr><td><strong>iOS</strong></td><td>Apple (2007)</td><td>Sistema de Apple para iPhone e iPad. Basado en macOS/X.</td></tr>
+        <tr><td><strong>HarmonyOS</strong></td><td>Huawei (2019)</td><td>Sistema desarrollado por la empresa china Huawei como alternativa a Android.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="caja ok">
+    <strong>💡 Dato para recordar</strong>
+    Un mismo hardware puede correr distintos sistemas operativos. Por ejemplo, una notebook Dell puede funcionar con Windows o con Linux. Lo que cambia es el software base, no la máquina.
+  </div>
+</section>
+
+<!-- ═══════════ TP 1 ═══════════ -->
+<section id="tp1">
+  <div class="tp-block">
+    <span class="tp-badge">Trabajo Práctico N° 1 · 1er Trimestre</span>
+    <h2>Reconocimiento del equipo y administración del sistema</h2>
+    <p class="tp-sub">Hardware, sistema operativo, procesos y rendimiento usando las herramientas propias de Windows.</p>
+
+    <div class="tp-objetivos">
+      <h4>Objetivos</h4>
+      <ul>
+        <li>Reconocer las características de hardware y SO del equipo.</li>
+        <li>Identificar la edición y arquitectura de Windows instalado.</li>
+        <li>Comprender el concepto de proceso y la gestión que hace el SO.</li>
+        <li>Usar Configuración, Administrador de tareas y Explorador de archivos.</li>
+      </ul>
+    </div>
+
+    <h3 class="sub">Parte 1 — Sistema operativo y CPU</h3>
+    <div class="caja info"><strong>📌 Cómo acceder:</strong> Clic derecho en Inicio → Sistema. O bien: Configuración (Win + I) → Sistema → Información.</div>
+    <p>Completar la siguiente información del equipo:</p>
+    <ul>
+      <li>Edición de Windows instalada (Home, Pro, Education…)</li>
+      <li>Versión y compilación del sistema operativo</li>
+      <li>Tipo de sistema: 32 o 64 bits</li>
+      <li>Nombre del equipo</li>
+      <li>Modelo y marca del procesador (CPU), velocidad en GHz</li>
+      <li>Cantidad de núcleos físicos y procesadores lógicos</li>
+      <li>Memoria RAM instalada y utilizable (en GB)</li>
+    </ul>
+
+    <h3 class="sub">Parte 2 — Almacenamiento</h3>
+    <div class="caja info"><strong>📌 Cómo acceder:</strong> Explorador de archivos (Win + E) → Este equipo → clic derecho en disco C: → Propiedades.</div>
+    <ul>
+      <li>Tipo de unidad (HDD o SSD)</li>
+      <li>Capacidad total, espacio ocupado y disponible (en GB)</li>
+      <li>Sistema de archivos (NTFS, FAT32…)</li>
+      <li>Tamaño de carpetas: C:\Windows, Archivos de programa, Usuarios</li>
+    </ul>
+
+    <h3 class="sub">Parte 3 — Procesos y rendimiento</h3>
+    <div class="caja info"><strong>📌 Cómo abrir:</strong> Ctrl + Shift + Esc → pestaña Rendimiento y pestaña Procesos.</div>
+    <ul>
+      <li>% de uso actual de CPU, RAM y disco</li>
+      <li>Cantidad total de procesos en ejecución</li>
+      <li>Los 3 procesos que más CPU consumen (nombre y %)</li>
+    </ul>
+
+    <h3 class="sub">Parte 4 — Reflexión</h3>
+    <ul>
+      <li>¿Qué diferencia encontrás entre un disco HDD y un SSD? ¿Cuál tiene el equipo?</li>
+      <li>¿Cuál de los procesos en ejecución consume más recursos? ¿Por qué creés que es así?</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ── 5. ARCHIVOS Y CARPETAS ── -->
+<section id="archivos">
+  <h2 class="section-title"><span class="section-num">5</span>Gestión de archivos y carpetas</h2>
+
+  <p>Un <strong>archivo</strong> es un conjunto de información guardada con un nombre y una extensión. La extensión (las letras después del punto) indica el tipo de archivo y con qué programa se abre.</p>
+  <p>Una <strong>carpeta</strong> (o directorio) es un contenedor que organiza archivos y otras carpetas. La <strong>ruta</strong> indica la ubicación exacta: <code>C:\Usuarios\Ana\Documentos\tarea.docx</code></p>
+
+  <h3 class="sub">Extensiones más comunes</h3>
+  <div class="tabla-wrap">
+    <table>
+      <thead><tr><th>Tipo de archivo</th><th>Extensiones</th><th>Programa habitual</th></tr></thead>
+      <tbody>
+        <tr><td>Documento de texto</td><td>.docx · .doc · .txt · .pdf · .rtf</td><td>Word, Bloc de notas, Adobe Reader</td></tr>
+        <tr><td>Planilla de cálculo</td><td>.xlsx · .xls · .ods · .csv</td><td>Excel, LibreOffice Calc</td></tr>
+        <tr><td>Presentación</td><td>.pptx · .ppt · .odp</td><td>PowerPoint, LibreOffice Impress</td></tr>
+        <tr><td>Imagen</td><td>.jpg · .jpeg · .png · .gif · .bmp · .webp</td><td>Fotos, Paint, navegadores</td></tr>
+        <tr><td>Audio</td><td>.mp3 · .wav · .ogg · .m4a</td><td>Reproductor de Windows, VLC</td></tr>
+        <tr><td>Video</td><td>.mp4 · .avi · .mkv · .mov · .wmv</td><td>VLC, Películas y TV</td></tr>
+        <tr><td>Comprimido</td><td>.zip · .rar · .7z</td><td>WinRAR, 7-Zip, Windows</td></tr>
+        <tr><td>Ejecutable</td><td>.exe · .msi</td><td>Windows lo ejecuta directamente</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub">Operaciones básicas en el Explorador de archivos</h3>
+  <div class="tabla-wrap">
+    <table>
+      <thead><tr><th>Operación</th><th>Cómo hacerlo</th><th>Atajo</th></tr></thead>
+      <tbody>
+        <tr><td>Crear carpeta</td><td>Clic derecho → Nuevo → Carpeta</td><td>Ctrl + Shift + N</td></tr>
+        <tr><td>Copiar</td><td>Clic derecho → Copiar</td><td>Ctrl + C</td></tr>
+        <tr><td>Mover (cortar)</td><td>Clic derecho → Cortar</td><td>Ctrl + X</td></tr>
+        <tr><td>Pegar</td><td>Clic derecho → Pegar</td><td>Ctrl + V</td></tr>
+        <tr><td>Renombrar</td><td>Clic derecho → Cambiar nombre</td><td>F2</td></tr>
+        <tr><td>Eliminar</td><td>Clic derecho → Eliminar (va a la Papelera)</td><td>Suprimir</td></tr>
+        <tr><td>Eliminar definitivo</td><td>No pasa por la Papelera</td><td>Shift + Suprimir</td></tr>
+        <tr><td>Deshacer</td><td>Revierte la última acción</td><td>Ctrl + Z</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="caja aviso"><strong>⚠️ Importante:</strong> Al copiar (Ctrl+C) el archivo queda en ambos lugares. Al cortar (Ctrl+X) desaparece del original y aparece en el nuevo. ¡No son lo mismo!</div>
+</section>
+
+<!-- ═══════════ TP 2 ═══════════ -->
+<section id="tp2">
+  <div class="tp-block">
+    <span class="tp-badge">Trabajo Práctico N° 2 · 2do Trimestre</span>
+    <h2>Organización de la información en Windows</h2>
+    <p class="tp-sub">Gestión práctica de archivos y carpetas usando el Explorador de archivos.</p>
+
+    <div class="tp-objetivos">
+      <h4>Objetivos</h4>
+      <ul>
+        <li>Reconocer tipos de archivo por su extensión.</li>
+        <li>Crear, copiar, mover, renombrar y eliminar archivos y carpetas.</li>
+        <li>Organizar información con una estructura lógica de carpetas.</li>
+      </ul>
+    </div>
+
+    <h3 class="sub">Actividad 1 — Reconocer extensiones</h3>
+    <p>Completar a qué tipo de archivo corresponde cada extensión y con qué programa habitual se abre: <code>.pdf</code> · <code>.xlsx</code> · <code>.mp4</code> · <code>.zip</code> · <code>.exe</code> · <code>.pptx</code> · <code>.mp3</code></p>
+
+    <h3 class="sub">Actividad 2 — Práctica: crear estructura de carpetas</h3>
+    <p>En el Escritorio, crear la siguiente estructura de carpetas y archivos:</p>
+    <pre style="background:#F0F4FA;border-radius:7px;padding:.9rem 1rem;font-size:.85rem;overflow-x:auto;margin:.6rem 0;">
+📁 MIS_TRABAJOS
+    ├── 📁 Escuela
+    │       ├── 📁 Lengua
+    │       ├── 📁 Matemática
+    │       └── 📁 Informática
+    └── 📁 Personal
+            ├── 📁 Fotos
+            └── 📁 Música
+    </pre>
+    <p>Luego: crear un archivo <code>.txt</code> dentro de Lengua, copiar un archivo de una carpeta a otra, renombrar la copia y recuperar un archivo eliminado desde la Papelera de reciclaje. Pegar una captura de pantalla como evidencia.</p>
+
+    <h3 class="sub">Reflexión</h3>
+    <ul>
+      <li>¿Qué diferencia hay entre copiar y mover un archivo? Explicalo con tus palabras.</li>
+      <li>¿Cómo organizarías los archivos de tu trabajo o negocio? Proponé una estructura.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ── 6. CMD Y POWERSHELL ── -->
+<section id="comandos">
+  <h2 class="section-title"><span class="section-num">6</span>Línea de comandos: CMD y PowerShell</h2>
+
+  <p>La <strong>línea de comandos</strong> (o terminal) es una forma de controlar la computadora escribiendo instrucciones de texto en lugar de usar el mouse. Permite realizar tareas más rápido, automatizar acciones repetitivas y acceder a funciones no disponibles en la interfaz gráfica.</p>
+
+  <h3 class="sub">CMD vs PowerShell</h3>
+  <div class="tabla-wrap">
+    <table>
+      <thead><tr><th>Característica</th><th>CMD</th><th>PowerShell</th></tr></thead>
+      <tbody>
+        <tr><td>Antigüedad</td><td>Desde el DOS (1987)</td><td>Desde 2006</td></tr>
+        <tr><td>Pantalla</td><td>Fondo negro</td><td>Fondo azul oscuro</td></tr>
+        <tr><td>Tipo de comandos</td><td>Cortos, heredados de DOS</td><td>Cmdlets (Verbo-Sustantivo)</td></tr>
+        <tr><td>Automatización</td><td>Archivos .bat</td><td>Scripts .ps1 (más potentes)</td></tr>
+        <tr><td>Prompt</td><td><code>C:\&gt;</code></td><td><code>PS C:\&gt;</code></td></tr>
+        <tr><td>Ideal para</td><td>Tareas básicas</td><td>Administración y automatización</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub">Comandos esenciales</h3>
+  <div class="tabla-wrap">
+    <table>
+      <thead><tr><th>CMD</th><th>PowerShell equivalente</th><th>Función</th></tr></thead>
+      <tbody>
+        <tr><td><code>dir</code></td><td><code>Get-ChildItem</code></td><td>Lista archivos y carpetas</td></tr>
+        <tr><td><code>cd carpeta</code></td><td><code>Set-Location</code></td><td>Entra a una carpeta</td></tr>
+        <tr><td><code>cd ..</code></td><td><code>cd ..</code></td><td>Sube un nivel</td></tr>
+        <tr><td><code>mkdir nombre</code></td><td><code>New-Item -ItemType Directory</code></td><td>Crea una carpeta</td></tr>
+        <tr><td><code>del archivo</code></td><td><code>Remove-Item</code></td><td>Elimina un archivo (sin Papelera)</td></tr>
+        <tr><td><code>copy orig dest</code></td><td><code>Copy-Item</code></td><td>Copia un archivo</td></tr>
+        <tr><td><code>type archivo.txt</code></td><td><code>Get-Content</code></td><td>Muestra el contenido de un archivo</td></tr>
+        <tr><td><code>ipconfig</code></td><td><code>ipconfig</code></td><td>Muestra la configuración de red</td></tr>
+        <tr><td><code>ping sitio.com</code></td><td><code>Test-Connection sitio.com</code></td><td>Verifica conexión con un servidor</td></tr>
+        <tr><td><code>cls</code></td><td><code>Clear-Host</code></td><td>Limpia la pantalla</td></tr>
+        <tr><td><code>exit</code></td><td><code>exit</code></td><td>Cierra la terminal</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="caja aviso"><strong>⚠️ Cuidado con <code>del</code> y <code>rmdir</code>:</strong> A diferencia del Explorador de archivos, estos comandos eliminan definitivamente. Los archivos NO van a la Papelera de reciclaje.</div>
+</section>
+
+<!-- ═══════════ TP 3 ═══════════ -->
+<section id="tp3">
+  <div class="tp-block">
+    <span class="tp-badge">Trabajo Práctico N° 3 · 2do Trimestre</span>
+    <h2>La terminal de Windows</h2>
+    <p class="tp-sub">Uso práctico del CMD y PowerShell para navegar, crear archivos y obtener información del sistema.</p>
+
+    <div class="tp-objetivos">
+      <h4>Objetivos</h4>
+      <ul>
+        <li>Abrir y usar el CMD y Windows PowerShell.</li>
+        <li>Navegar por el sistema de archivos con comandos.</li>
+        <li>Ejecutar comandos de información del sistema y red.</li>
+      </ul>
+    </div>
+
+    <h3 class="sub">Práctica A — Comandos básicos en CMD</h3>
+    <p>Abrir CMD (Win + R → escribir <code>cmd</code> → Enter) y ejecutar los siguientes comandos anotando los resultados: <code>ver</code> · <code>hostname</code> · <code>whoami</code> · <code>cd \</code> · <code>dir</code> · <code>ipconfig</code> · <code>ping google.com</code></p>
+
+    <h3 class="sub">Práctica B — Crear estructura desde la terminal</h3>
+    <p>Posicionarse en el Escritorio y ejecutar en orden:</p>
+    <pre style="background:#F0F4FA;border-radius:7px;padding:.9rem 1rem;font-size:.85rem;overflow-x:auto;margin:.6rem 0;">
+mkdir TP_TERMINAL
+cd TP_TERMINAL
+mkdir cmd
+mkdir powershell
+cd cmd
+echo Hola desde CMD > saludo.txt
+type saludo.txt
+copy saludo.txt respaldo.txt
+dir
+cd ..
+tree
+    </pre>
+    <p>Dibujar o pegar el árbol que muestra <code>tree</code>.</p>
+
+    <h3 class="sub">Práctica C — PowerShell</h3>
+    <p>Abrir PowerShell, ir a la carpeta <code>powershell</code> creada antes y ejecutar: <code>Get-Date</code> · <code>Get-Location</code> · <code>New-Item nota.txt -ItemType File</code> · <code>Get-ChildItem</code> · <code>Get-Process | Select-Object -First 5</code> · <code>Test-Connection google.com -Count 2</code></p>
+
+    <h3 class="sub">Reflexión</h3>
+    <ul>
+      <li>¿En qué situación de una oficina o negocio usarías la terminal en lugar del Explorador de archivos?</li>
+      <li>¿Te resultó más cómodo CMD o PowerShell? ¿Por qué?</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ── 7. REDES ── -->
+<section id="redes">
+  <h2 class="section-title"><span class="section-num">7</span>Redes y conectividad</h2>
+
+  <p>Una <strong>red informática</strong> es un conjunto de dispositivos conectados entre sí para compartir información y recursos. El ejemplo más grande es <strong>Internet</strong>, una red mundial formada por millones de redes más pequeñas.</p>
+
+  <div class="caja tip"><strong>💡 Internet ≠ Web:</strong> Internet es la red física y de protocolos. La Web (World Wide Web) es solo uno de los servicios que viajan por internet — las páginas que vemos en un navegador. Correo, videollamadas y juegos online también usan internet pero no son la Web.</div>
+
+  <h3 class="sub">Tipos de redes</h3>
+  <div class="tabla-wrap">
+    <table>
+      <thead><tr><th>Sigla</th><th>Nombre</th><th>Ejemplo cotidiano</th></tr></thead>
+      <tbody>
+        <tr><td><strong>PAN</strong></td><td>Red personal</td><td>Celular conectado a auriculares Bluetooth.</td></tr>
+        <tr><td><strong>LAN</strong></td><td>Red de área local</td><td>Las PCs del aula conectadas al mismo router.</td></tr>
+        <tr><td><strong>MAN</strong></td><td>Red metropolitana</td><td>Varias sedes de una universidad en la misma ciudad.</td></tr>
+        <tr><td><strong>WAN</strong></td><td>Red de área amplia</td><td>Internet. Conecta países y continentes.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub">Dispositivos de red</h3>
+  <div class="tabla-wrap">
+    <table>
+      <thead><tr><th>Dispositivo</th><th>Función</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Módem</strong></td><td>Conecta el hogar con el proveedor de internet (ISP). Convierte la señal de la calle.</td></tr>
+        <tr><td><strong>Router</strong></td><td>Distribuye internet entre los dispositivos de la red, por cable o Wi-Fi.</td></tr>
+        <tr><td><strong>Switch</strong></td><td>Conecta varios equipos por cable en una red local (aulas, oficinas).</td></tr>
+        <tr><td><strong>Access point</strong></td><td>Crea o amplía una red Wi-Fi en zonas grandes.</td></tr>
+        <tr><td><strong>Repetidor</strong></td><td>Toma la señal Wi-Fi del router y la extiende para llegar más lejos.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub">Dirección IP y DNS</h3>
+  <p>Cada dispositivo en una red tiene una <strong>dirección IP</strong> que lo identifica, como un número de documento. Hay dos tipos:</p>
+  <ul>
+    <li><strong>IP privada:</strong> válida solo dentro de tu red local (ej.: 192.168.1.5). Solo la ven los dispositivos de tu casa u oficina.</li>
+    <li><strong>IP pública:</strong> única en el mundo. La asigna tu proveedor de internet y es la que ven los sitios web.</li>
+  </ul>
+  <p>El <strong>DNS</strong> (Domain Name System) traduce los nombres que escribís (<em>google.com</em>) a la dirección IP real del servidor. Sin DNS habría que memorizar números para entrar a cada sitio.</p>
+
+  <h3 class="sub">Protocolos más usados</h3>
+  <div class="tabla-wrap">
+    <table>
+      <thead><tr><th>Protocolo</th><th>Para qué se usa</th></tr></thead>
+      <tbody>
+        <tr><td><strong>HTTP / HTTPS</strong></td><td>Para visitar páginas web. La S de HTTPS significa "seguro": la información viaja cifrada.</td></tr>
+        <tr><td><strong>FTP</strong></td><td>Para transferir archivos entre computadoras.</td></tr>
+        <tr><td><strong>SMTP / IMAP / POP3</strong></td><td>Para enviar y recibir correos electrónicos.</td></tr>
+        <tr><td><strong>TCP / IP</strong></td><td>Conjunto de protocolos base sobre los que funciona toda Internet.</td></tr>
+        <tr><td><strong>DNS</strong></td><td>Para traducir nombres de dominio en direcciones IP.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════ TP 4 ═══════════ -->
+<section id="tp4">
+  <div class="tp-block">
+    <span class="tp-badge">Trabajo Práctico N° 4 · 3er Trimestre</span>
+    <h2>Cómo se conectan las computadoras</h2>
+    <p class="tp-sub">Explorar la red del equipo usando Configuración de Windows y la línea de comandos.</p>
+
+    <div class="tp-objetivos">
+      <h4>Objetivos</h4>
+      <ul>
+        <li>Identificar tipos de redes y dispositivos.</li>
+        <li>Leer la configuración de red del equipo con <code>ipconfig</code>.</li>
+        <li>Verificar conectividad con <code>ping</code>.</li>
+        <li>Medir la velocidad de la conexión.</li>
+      </ul>
+    </div>
+
+    <h3 class="sub">Actividad 1 — Tipos de redes</h3>
+    <p>Indicar qué tipo de red (PAN, LAN, MAN o WAN) corresponde a cada situación:</p>
+    <ul>
+      <li>Tu celular conectado a auriculares Bluetooth.</li>
+      <li>Las PCs del aula conectadas al mismo router.</li>
+      <li>Internet a nivel mundial.</li>
+      <li>Tu casa: PC, celulares y tele en el mismo Wi-Fi.</li>
+    </ul>
+
+    <h3 class="sub">Actividad 2 — Configuración de red desde CMD</h3>
+    <div class="caja info"><strong>📌 Cómo abrir:</strong> Win + R → escribir <code>cmd</code> → Enter.</div>
+    <p>Ejecutar <code>ipconfig</code> y <code>ipconfig /all</code> y anotar: dirección IPv4, máscara de subred, puerta de enlace, dirección MAC, servidores DNS.</p>
+
+    <h3 class="sub">Actividad 3 — Verificar conectividad</h3>
+    <p>Ejecutar <code>ping google.com</code> y <code>ping 8.8.8.8</code>. Anotar si hay respuesta y el tiempo promedio en ms. ¿Qué conclusión sacás si uno funciona y el otro no?</p>
+
+    <h3 class="sub">Actividad 4 — Test de velocidad</h3>
+    <p>Entrar a <strong>speedtest.net</strong> o <strong>fast.com</strong> y anotar: velocidad de descarga (Mbps), velocidad de subida (Mbps) y latencia (ms).</p>
+
+    <h3 class="sub">Reflexión</h3>
+    <ul>
+      <li>¿Qué diferencia hay entre IP pública e IP privada? ¿Cuál es la de tu equipo?</li>
+      <li>Si ninguna página carga pero <code>ping 8.8.8.8</code> funciona, ¿qué parte del sistema podría fallar?</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ── 8. COMPARATIVA SO ── -->
+<section id="comparativa">
+  <h2 class="section-title"><span class="section-num">8</span>Comparativa de Sistemas Operativos</h2>
+
+  <p>Los tres sistemas operativos de escritorio más usados son Windows, Linux y macOS. Cada uno tiene ventajas e inconvenientes según el contexto de uso.</p>
+
+  <h3 class="sub">Ventajas de cada SO</h3>
+  <div class="cards-grid">
+    <div class="card">
+      <div class="card-header win">🪟 Windows</div>
+      <div class="card-body">
+        <ul>
+          <li>El más utilizado del mundo: gran cantidad de aplicaciones disponibles.</li>
+          <li>Amplia compatibilidad con hardware del mercado.</li>
+          <li>Interfaz gráfica intuitiva y fácil de usar.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header linux">🐧 Linux</div>
+      <div class="card-body">
+        <ul>
+          <li>Estabilidad: se cuelga mucho menos que Windows.</li>
+          <li>Gratuito, sin costo de licencia.</li>
+          <li>Gran cantidad de software libre disponible.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header mac">🍎 macOS</div>
+      <div class="card-body">
+        <ul>
+          <li>Seguridad y estabilidad reconocidas.</li>
+          <li>Interfaz simple y diseño elegante.</li>
+          <li>Ideal para diseño gráfico y edición multimedia.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="sub">Inconvenientes de cada SO</h3>
+  <div class="cards-grid">
+    <div class="card">
+      <div class="card-header win">🪟 Windows</div>
+      <div class="card-body">
+        <ul>
+          <li>Mayor riesgo de virus y malware.</li>
+          <li>Problemas de estabilidad (cuelgues, pantalla azul).</li>
+          <li>Errores de compatibilidad entre versiones.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header linux">🐧 Linux</div>
+      <div class="card-body">
+        <ul>
+          <li>Exige mayores conocimientos informáticos.</li>
+          <li>Menos software comercial disponible.</li>
+          <li>Soporte más limitado para hardware nuevo.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header mac">🍎 macOS</div>
+      <div class="card-body">
+        <ul>
+          <li>Mayor costo: el hardware Apple es caro.</li>
+          <li>Menos opciones de software que Windows.</li>
+          <li>Mayor dificultad para obtener soporte técnico local.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="sub">Cuadro comparativo general</h3>
+  <div class="tabla-wrap">
+    <table class="comp-table">
+      <thead><tr><th>Criterio</th><th>Windows</th><th>Linux</th><th>macOS</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Costo</strong></td><td>De pago</td><td>Gratuito</td><td>Alto (hardware)</td></tr>
+        <tr><td><strong>Facilidad de uso</strong></td><td>Alta</td><td>Media</td><td>Alta</td></tr>
+        <tr><td><strong>Seguridad</strong></td><td>Media</td><td>Alta</td><td>Alta</td></tr>
+        <tr><td><strong>Software disponible</strong></td><td>Muy amplio</td><td>Amplio (libre)</td><td>Limitado</td></tr>
+        <tr><td><strong>Uso típico</strong></td><td>Hogar, oficina</td><td>Servidores, técnicos</td><td>Diseño, creativos</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub">Actividad de cierre — Reflexión integradora</h3>
+  <ol>
+    <li>Si tuvieras que recomendar un SO para una oficina pequeña con presupuesto limitado, ¿cuál elegirías y por qué?</li>
+    <li>¿En qué situación de tu vida cotidiana o laboral aplicarías lo aprendido sobre gestión de archivos o redes?</li>
+    <li>Mencioná una herramienta del sistema que no conocías antes de este año y explicá para qué la usarías.</li>
+  </ol>
+</section>
+
+<!-- ── 9. PLANIFICACIÓN ── -->
+<section id="planificacion">
+  <h2 class="section-title"><span class="section-num">9</span>Planificación anual 2026</h2>
+
+  <div class="timeline">
+    <div class="trim">
+      <h4>1er Trimestre — Introducción al SO</h4>
+      <ul>
+        <li>Concepto de Sistema Operativo y sus funciones principales.</li>
+        <li>La interfaz de usuario: del comando al modo gráfico.</li>
+        <li>Componentes del hardware: CPU, RAM, almacenamiento (HDD/SSD).</li>
+        <li>Cómo interactúan hardware y SO.</li>
+        <li><strong>Instrumento de evaluación:</strong> TP N°1 — Reconocimiento del equipo.</li>
+      </ul>
+    </div>
+    <div class="trim">
+      <h4>2do Trimestre — Gestión y comandos</h4>
+      <ul>
+        <li>Archivos y carpetas: extensiones, rutas, operaciones básicas.</li>
+        <li>Explorador de archivos: organización y buenas prácticas.</li>
+        <li>Procesos y rendimiento: Administrador de tareas.</li>
+        <li>Línea de comandos: CMD y PowerShell.</li>
+        <li>Comandos de navegación, archivos y red.</li>
+        <li><strong>Instrumentos:</strong> TP N°2 (Archivos) y TP N°3 (Terminal).</li>
+      </ul>
+    </div>
+    <div class="trim">
+      <h4>3er Trimestre — Redes y comparativa</h4>
+      <ul>
+        <li>Redes informáticas: tipos, dispositivos, IP y DNS.</li>
+        <li>Conectividad: Wi-Fi, Ethernet, datos móviles.</li>
+        <li>Diagnóstico básico de conexión con herramientas de Windows.</li>
+        <li>Comparativa de SO: Windows, Linux, macOS.</li>
+        <li>Ventajas, desventajas y elección según el contexto.</li>
+        <li><strong>Instrumento:</strong> TP N°4 (Redes) + Reflexión integradora.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="caja ok">
+    <strong>📋 Criterios de promoción</strong>
+    Para aprobar el espacio, es obligatoria la entrega y defensa de los 4 Trabajos Prácticos Integradores (TP N°1 al N°4). La evaluación es de proceso, centrada en la resolución de situaciones reales, la autonomía en el uso de herramientas y la capacidad de argumentación técnica.
+  </div>
+</section>
+
+<!-- ── 10. GLOSARIO ── -->
+<section id="glosario">
+  <h2 class="section-title"><span class="section-num">10</span>Glosario de términos clave</h2>
+
+  <div class="glosario">
+    <dl>
+      <dt>Sistema operativo (SO)</dt>
+      <dd>Software principal que administra el hardware y permite que las aplicaciones funcionen. Intermediario entre el usuario, los programas y el equipo físico.</dd>
+
+      <dt>Kernel (núcleo)</dt>
+      <dd>Parte central del SO que concentra las funciones más básicas: gestión del procesador, memoria, entrada/salida y seguridad.</dd>
+
+      <dt>Proceso</dt>
+      <dd>Programa en ejecución. El SO le asigna tiempo de CPU, memoria y otros recursos.</dd>
+
+      <dt>RAM (Random Access Memory)</dt>
+      <dd>Memoria de acceso aleatorio. Almacena los datos y programas en uso. Es volátil: se borra al apagar el equipo.</dd>
+
+      <dt>HDD / SSD</dt>
+      <dd>Tipos de unidades de almacenamiento permanente. HDD usa discos magnéticos; SSD usa memoria flash y es más rápida y silenciosa.</dd>
+
+      <dt>Archivo</dt>
+      <dd>Conjunto de información guardada con un nombre y una extensión que indica su tipo.</dd>
+
+      <dt>Extensión</dt>
+      <dd>Las letras después del último punto en el nombre de un archivo (ej.: .docx, .mp4). Indican el tipo y el programa que lo abre.</dd>
+
+      <dt>Ruta (path)</dt>
+      <dd>Dirección que indica la ubicación exacta de un archivo dentro del sistema (ej.: C:\Usuarios\Ana\tarea.docx).</dd>
+
+      <dt>CMD (Símbolo del sistema)</dt>
+      <dd>Terminal clásica de Windows heredada de MS-DOS. Se controla escribiendo comandos de texto.</dd>
+
+      <dt>PowerShell</dt>
+      <dd>Terminal moderna de Windows. Usa cmdlets con la estructura Verbo-Sustantivo (ej.: Get-Process). Más potente que CMD para automatización.</dd>
+
+      <dt>Dirección IP</dt>
+      <dd>Número único que identifica a un dispositivo en una red. Las IP privadas son locales; las públicas se ven desde internet.</dd>
+
+      <dt>DNS (Domain Name System)</dt>
+      <dd>Sistema que traduce nombres de dominio (google.com) a direcciones IP. Es el "directorio telefónico" de internet.</dd>
+
+      <dt>Router</dt>
+      <dd>Dispositivo que distribuye internet entre los equipos de una red local, por cable (Ethernet) o de forma inalámbrica (Wi-Fi).</dd>
+
+      <dt>LAN / WAN</dt>
+      <dd>Red de área local (un edificio o vivienda) y red de área amplia (varios países o el mundo entero).</dd>
+
+      <dt>Protocolo</dt>
+      <dd>Conjunto de reglas que los dispositivos siguen para comunicarse. Ej.: HTTP para páginas web, SMTP para correo.</dd>
+    </dl>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer>
+  <strong>E.P.E.T N°7 (EPJA)</strong> — Jardín América, Misiones<br>
+  Sistemas Operativos &nbsp;·&nbsp; 2° Año A &nbsp;·&nbsp; Prof. Markwart Rubén &nbsp;·&nbsp; Ciclo Lectivo 2026
+</footer>
+
+</body>
+</html>

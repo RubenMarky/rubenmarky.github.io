@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Educativo - Prof. Rubén Markwart</title>
+  
+  <!-- SEO -->
+  <meta name="description" content="Portal educativo del Prof. Markwart Rubén. Accede al material de Programación Lógica y Sistemas Operativos para la E.P.E.T N°7 EPJA.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-1: #3b82f6;
+      --accent-2: #8b5cf6;
+      --accent-3: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-image: 
+        radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.15), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.15), transparent 25%);
+      background-attachment: fixed;
+    }
+
+    header {
+      width: 100%;
+      padding: 4rem 2rem 2rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .badge {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      padding: 0.5rem 1.2rem;
+      border-radius: 999px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    p.subtitle {
+      font-size: 1.125rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    main {
+      width: 100%;
+      max-width: 1000px;
+      padding: 2rem;
+      flex: 1;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 2rem;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .card:nth-child(2)::before {
+      background: linear-gradient(90deg, var(--accent-3), var(--accent-1));
+    }
+
+    .card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .card:nth-child(1) .card-icon {
+      color: var(--accent-2);
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+    }
+
+    .card:nth-child(2) .card-icon {
+      color: var(--accent-3);
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+    }
+
+    .card-content h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: #fff;
+    }
+
+    .card-content p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .card-footer {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .card-footer span.arrow {
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover .card-footer span.arrow {
+      transform: translateX(5px);
+      color: #fff;
+    }
+
+    footer {
+      padding: 3rem 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      width: 100%;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 3rem 1.5rem 1.5rem;
+      }
+      main {
+        padding: 1.5rem;
+      }
+      .card {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="badge">E.P.E.T N°7 EPJA</div>
+    <h1 id="title">Portal Educativo</h1>
+    <p class="subtitle">Material de estudio, trabajos prácticos y recursos para las materias a cargo del Prof. Markwart Rubén.</p>
+  </header>
+
+  <main>
+    <div class="grid" id="subjects-grid">
+      <!-- Tarjeta 1: Programación Lógica -->
+      <a href="https://rubenmarky.github.io/programacion-logica/" class="card" target="_blank" rel="noopener noreferrer" id="card-prog-log">
+        <div class="card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+        </div>
+        <div class="card-content">
+          <h2>Programación Lógica</h2>
+          <p>Algoritmos, diagramas de flujo, estructuras de control, tareas y glosario técnico para 2° Año.</p>
+        </div>
+        <div class="card-footer">
+          <span>Ver material</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+
+      <!-- Tarjeta 2: Sistemas Operativos -->
+      <a href="./sistemas-operativos.html" class="card" id="card-so">
+        <div class="card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+        </div>
+        <div class="card-content">
+          <h2>Sistemas Operativos</h2>
+          <p>Conceptos básicos, gestión de archivos, uso de CMD/PowerShell, redes de computadoras y conectividad.</p>
+        </div>
+        <div class="card-footer">
+          <span>Ver material</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2026 Prof. Markwart Rubén · Jardín América, Misiones</p>
+  </footer>
+
+</body>
+</html>
