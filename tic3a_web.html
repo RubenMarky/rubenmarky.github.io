@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TIC 3°A — C.E.P N°38</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f1a;
+    --surface: #13162a;
+    --surface2: #1a1e35;
+    --border: rgba(255,255,255,0.07);
+    --text: #e8eaf6;
+    --muted: #7b82a8;
+    --u1: #ff6b6b; --u1b: #ff8e53;
+    --u2: #a855f7; --u2b: #ec4899;
+    --u3: #06b6d4; --u3b: #3b82f6;
+    --u4: #10b981; --u4b: #84cc16;
+    --u5: #f59e0b; --u5b: #ef4444;
+    --accent: #7c3aed;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 20% 30%, rgba(124,58,237,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 80% 70%, rgba(6,182,212,0.14) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 50% 10%, rgba(236,72,153,0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: rgba(124,58,237,0.2);
+    border: 1px solid rgba(124,58,237,0.4);
+    color: #c4b5fd;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.8rem, 8vw, 6rem);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    animation: fadeUp 0.7s 0.1s ease both;
+    margin-bottom: 0.3rem;
+  }
+
+  .hero h1 .tic { 
+    background: linear-gradient(135deg, #a78bfa, #ec4899, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    color: var(--muted);
+    max-width: 540px;
+    animation: fadeUp 0.7s 0.2s ease both;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-info {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeUp 0.7s 0.3s ease both;
+    margin-bottom: 3rem;
+  }
+
+  .hero-info span {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .hero-info span strong { color: var(--text); }
+
+  .scroll-hint {
+    animation: bounce 2s infinite, fadeUp 0.7s 0.5s ease both;
+    color: var(--muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .scroll-hint::after {
+    content: '↓';
+    font-size: 1.2rem;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13,15,26,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+  }
+
+  .nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 56px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .nav-inner::-webkit-scrollbar { display: none; }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 0.95rem;
+    background: linear-gradient(135deg, #a78bfa, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    white-space: nowrap;
+    margin-right: 1rem;
+    text-decoration: none;
+  }
+
+  .nav-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0.35rem 0.8rem;
+    border-radius: 6px;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+
+  .nav-btn:hover { background: var(--surface2); color: var(--text); }
+  .nav-btn.active { background: var(--surface2); color: var(--text); }
+
+  /* ── MAIN ── */
+  main { max-width: 1100px; margin: 0 auto; padding: 0 2rem 6rem; }
+
+  /* ── UNIT CARDS ── */
+  .units-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.2rem;
+    padding: 3rem 0 2rem;
+  }
+
+  .unit-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.8rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .unit-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--card-gradient);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .unit-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255,255,255,0.15);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+
+  .unit-card:hover::before { opacity: 1; }
+
+  .unit-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+
+  .unit-icon {
+    font-size: 2rem;
+    margin-bottom: 0.8rem;
+    display: block;
+  }
+
+  .unit-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    line-height: 1.3;
+  }
+
+  .unit-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 1.2rem;
+  }
+
+  .unit-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .tag {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 100px;
+    background: rgba(255,255,255,0.06);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  /* ── UNIT CONTENT ── */
+  .unit-content { display: none; }
+  .unit-content.active { display: block; }
+
+  .unit-header {
+    padding: 3rem 0 2rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+  }
+
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    transition: all 0.2s;
+  }
+
+  .back-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+  .unit-header-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.8rem;
+    border-radius: 100px;
+    margin-bottom: 1rem;
+  }
+
+  .unit-header h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+
+  .unit-header p {
+    color: var(--muted);
+    max-width: 680px;
+    font-size: 1.05rem;
+  }
+
+  /* ── BLOQUES ── */
+  .bloque {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+  }
+
+  .bloque-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.4rem 1.8rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    gap: 1rem;
+  }
+
+  .bloque-header:hover { background: var(--surface2); }
+
+  .bloque-header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .bloque-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    min-width: 60px;
+  }
+
+  .bloque-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .bloque-arrow {
+    color: var(--muted);
+    font-size: 1rem;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+
+  .bloque.open .bloque-arrow { transform: rotate(180deg); }
+
+  .bloque-body {
+    display: none;
+    padding: 0 1.8rem 1.8rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .bloque.open .bloque-body { display: block; }
+
+  /* ── CONTENT ELEMENTS ── */
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 1.8rem 0 0.8rem;
+    color: var(--text);
+  }
+
+  .section-title:first-child { margin-top: 1.2rem; }
+
+  p { margin-bottom: 0.8rem; color: #c5c9e0; font-size: 0.95rem; }
+
+  .table-wrap { overflow-x: auto; margin: 1rem 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+
+  th {
+    background: var(--surface2);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.7rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--border);
+    color: #c5c9e0;
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .callout {
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    display: flex;
+    gap: 0.8rem;
+    align-items: flex-start;
+  }
+
+  .callout-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.05rem; }
+
+  .callout.important {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.25);
+    color: #fca5a5;
+  }
+
+  .callout.tip {
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.25);
+    color: #6ee7b7;
+  }
+
+  .callout.info {
+    background: rgba(6,182,212,0.1);
+    border: 1px solid rgba(6,182,212,0.25);
+    color: #67e8f9;
+  }
+
+  .callout.example {
+    background: rgba(124,58,237,0.1);
+    border: 1px solid rgba(124,58,237,0.25);
+    color: #c4b5fd;
+  }
+
+  ul, ol {
+    padding-left: 1.4rem;
+    margin-bottom: 0.8rem;
+  }
+
+  li { color: #c5c9e0; font-size: 0.92rem; margin-bottom: 0.3rem; }
+
+  .protocol-steps {
+    counter-reset: step;
+    list-style: none;
+    padding: 0;
+  }
+
+  .protocol-steps li {
+    counter-increment: step;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .protocol-steps li:last-child { border-bottom: none; }
+
+  .protocol-steps li::before {
+    content: counter(step);
+    background: var(--step-color, var(--accent));
+    color: white;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 0.05rem;
+  }
+
+  .strength-meter {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.5rem 0;
+    font-size: 0.88rem;
+  }
+
+  .strength-bar {
+    height: 6px;
+    border-radius: 3px;
+    flex: 1;
+    max-width: 120px;
+  }
+
+  .pw-example {
+    font-family: 'Courier New', monospace;
+    background: var(--surface2);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: var(--text);
+  }
+
+  /* ── GLOSARIO ── */
+  .glosario-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .glosario-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+  }
+
+  .glosario-term {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+    color: var(--text);
+  }
+
+  .glosario-def { font-size: 0.83rem; color: var(--muted); line-height: 1.5; }
+
+  /* ── ACTIVIDADES ── */
+  .actividades-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .actividades-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .actividad-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .actividad-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .actividad-num {
+    background: var(--act-color, var(--accent));
+    color: white;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+  }
+
+  .actividad-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  .actividad-bloque {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .actividad-body { font-size: 0.88rem; color: #c5c9e0; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .units-grid { grid-template-columns: 1fr; }
+    .hero-info { gap: 0.8rem; }
+    .bloque-header { padding: 1.1rem 1.2rem; }
+    .bloque-body { padding: 0 1.2rem 1.2rem; }
+    main { padding: 0 1rem 4rem; }
+  }
+
+  /* ── SECTION OVERVIEW ── */
+  #overview { display: block; }
+  #overview.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="hero" id="top">
+  <div class="grid-bg"></div>
+  <div class="hero-badge">📡 Material de estudio · Ciclo lectivo 2026</div>
+  <h1><span class="tic">TIC</span><br>3° Año CBS</h1>
+  <p class="hero-sub">Tecnologías de la Información y la Comunicación — C.E.P N°38, Jardín América</p>
+  <div class="hero-info">
+    <span>🏫 <strong>C.E.P N°38</strong></span>
+    <span>👨‍🏫 Prof. <strong>Rubén Markwart</strong></span>
+    <span>📅 <strong>2026</strong></span>
+    <span>📚 <strong>5 Unidades</strong></span>
+  </div>
+  <div class="scroll-hint">Explorá el contenido</div>
+</div>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#top" onclick="showOverview()">TIC 3°A</a>
+    <button class="nav-btn" onclick="showUnit(1)">U1 · Ciudadanía Digital</button>
+    <button class="nav-btn" onclick="showUnit(2)">U2 · Inteligencia Artificial</button>
+    <button class="nav-btn" onclick="showUnit(3)">U3 · Ciberseguridad</button>
+    <button class="nav-btn" onclick="showUnit(4)">U4 · Producción Digital</button>
+    <button class="nav-btn" onclick="showUnit(5)">U5 · TIC y Futuro</button>
+  </div>
+</nav>
+
+<main>
+
+  <!-- OVERVIEW -->
+  <div id="overview">
+    <div class="units-grid">
+
+      <div class="unit-card" style="--card-gradient: linear-gradient(90deg, var(--u1), var(--u1b))" onclick="showUnit(1)">
+        <div class="unit-num" style="color: var(--u1)">Unidad 1</div>
+        <span class="unit-icon">🌐</span>
+        <div class="unit-title">Ciudadanía Digital y Convivencia en Red</div>
+        <div class="unit-desc">Identidad digital, derechos en Internet, ciberbullying, privacidad y contraseñas seguras.</div>
+        <div class="unit-tags">
+          <span class="tag">Huella digital</span>
+          <span class="tag">Ciberbullying</span>
+          <span class="tag">2FA</span>
+          <span class="tag">Privacidad</span>
+        </div>
+      </div>
+
+      <div class="unit-card" style="--card-gradient: linear-gradient(90deg, var(--u2), var(--u2b))" onclick="showUnit(2)">
+        <div class="unit-num" style="color: var(--u2)">Unidad 2</div>
+        <span class="unit-icon">🤖</span>
+        <div class="unit-title">Inteligencia Artificial: Qué es y cómo nos afecta</div>
+        <div class="unit-desc">Cómo aprende una máquina, IA en la vida cotidiana, chatbots, sesgos y el futuro del trabajo.</div>
+        <div class="unit-tags">
+          <span class="tag">Machine Learning</span>
+          <span class="tag">Deepfake</span>
+          <span class="tag">LLM</span>
+          <span class="tag">Sesgo algorítmico</span>
+        </div>
+      </div>
+
+      <div class="unit-card" style="--card-gradient: linear-gradient(90deg, var(--u3), var(--u3b))" onclick="showUnit(3)">
+        <div class="unit-num" style="color: var(--u3)">Unidad 3</div>
+        <span class="unit-icon">🔐</span>
+        <div class="unit-title">Ciberseguridad Básica</div>
+        <div class="unit-desc">Amenazas digitales, protección del dispositivo, navegación segura y compras online.</div>
+        <div class="unit-tags">
+          <span class="tag">Malware</span>
+          <span class="tag">Phishing</span>
+          <span class="tag">HTTPS</span>
+          <span class="tag">Backup</span>
+        </div>
+      </div>
+
+      <div class="unit-card" style="--card-gradient: linear-gradient(90deg, var(--u4), var(--u4b))" onclick="showUnit(4)">
+        <div class="unit-num" style="color: var(--u4)">Unidad 4</div>
+        <span class="unit-icon">🎨</span>
+        <div class="unit-title">Producción Digital con Propósito</div>
+        <div class="unit-desc">Herramientas digitales, principios de diseño visual, licencias Creative Commons y proyecto integrador.</div>
+        <div class="unit-tags">
+          <span class="tag">Canva</span>
+          <span class="tag">Google Docs</span>
+          <span class="tag">Creative Commons</span>
+          <span class="tag">Diseño</span>
+        </div>
+      </div>
+
+      <div class="unit-card" style="--card-gradient: linear-gradient(90deg, var(--u5), var(--u5b))" onclick="showUnit(5)">
+        <div class="unit-num" style="color: var(--u5)">Unidad 5</div>
+        <span class="unit-icon">🚀</span>
+        <div class="unit-title">TIC, Sociedad y Futuro</div>
+        <div class="unit-desc">Tendencias emergentes, IoT, IA, brecha digital, sostenibilidad y síntesis del CBS.</div>
+        <div class="unit-tags">
+          <span class="tag">IoT</span>
+          <span class="tag">Realidad Virtual</span>
+          <span class="tag">Brecha digital</span>
+          <span class="tag">Computación cuántica</span>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /overview -->
+
+
+  <!-- ════════════════════════════════════════
+       UNIDAD 1
+  ════════════════════════════════════════ -->
+  <div class="unit-content" id="unit-1">
+    <div class="unit-header">
+      <button class="back-btn" onclick="showOverview()">← Volver al inicio</button>
+      <div class="unit-header-badge" style="background:rgba(255,107,107,0.15);color:var(--u1);border:1px solid rgba(255,107,107,0.3)">Unidad 1 · Ciudadanía Digital</div>
+      <h2>Ciudadanía Digital y Convivencia en Red</h2>
+      <p>Reflexionamos sobre nuestra identidad en Internet, nuestros derechos como usuarios digitales, los riesgos del entorno online y las herramientas concretas para protegernos.</p>
+    </div>
+
+    <!-- BLOQUE 1 -->
+    <div class="bloque">
+      <div class="bloque-header" onclick="toggleBloque(this)">
+        <div class="bloque-header-left">
+          <span class="bloque-num">Bloque 1</span>
+          <span class="bloque-title">Identidad y Huella Digital</span>
+        </div>
+        <span class="bloque-arrow">▼</span>
+      </div>
+      <div class="bloque-body">
+        <div class="section-title">¿Qué es la identidad digital?</div>
+        <p>Cuando interactuamos en Internet — al publicar una foto, escribir un comentario, registrarnos en una app o buscar algo en Google — construimos una presencia en el mundo digital. A ese conjunto de información que existe sobre nosotros en Internet lo llamamos <strong>identidad digital</strong>.</p>
+        <div class="table-wrap"><table>
+          <tr><th>Dimensión</th><th>Definición</th><th>Ejemplos</th></tr>
+          <tr><td><strong>Identidad activa</strong></td><td>Lo que nosotros publicamos deliberadamente</td><td>Fotos en Instagram, comentarios en YouTube, perfil de Facebook</td></tr>
+          <tr><td><strong>Identidad pasiva</strong></td><td>Lo que otros publican sobre nosotros o se registra sin que lo sepamos</td><td>Fotos en las que te etiquetan, datos de navegación, ubicación del celular</td></tr>
+        </table></div>
+
+        <div class="section-title">¿Qué es la huella digital?</div>
+        <p>La <strong>huella digital</strong> es el rastro de información que dejamos cada vez que usamos un dispositivo conectado a Internet. Es permanente y muy difícil de borrar.</p>
+        <div class="table-wrap"><table>
+          <tr><th>Tipo</th><th>Cómo se genera</th><th>Ejemplo cotidiano</th></tr>
+          <tr><td><strong>Huella activa</strong></td><td>La creamos nosotros al publicar o registrarnos</td><td>Publicar una foto, crear una cuenta, escribir un post</td></tr>
+          <tr><td><strong>Huella pasiva</strong></td><td>Se genera automáticamente por nuestro comportamiento online</td><td>Historial de búsquedas en Google, ubicación del celular, cookies</td></tr>
+        </table></div>
+        <div class="callout example"><span class="callout-icon">💡</span><div>Laura busca "zapatillas Nike talle 38" en Google. Al día siguiente, abre Instagram y ve publicidades de zapatillas. Eso no es casualidad: su búsqueda generó una <strong>huella pasiva</strong> que los algoritmos usaron para mostrarle ese contenido.</div></div>
+
+        <div class="section-title">El derecho al olvido</div>
+        <div class="callout info"><span class="callout-icon">ℹ️</span><div>El <strong>derecho al olvido</strong> es el derecho a solicitar que cierta información personal sea eliminada de los resultados de búsqueda cuando ya no es relevante, es incorrecta o afecta tu privacidad. En Argentina, la <strong>Ley 25.326</strong> de Protección de Datos Personales lo contempla.</div></div>
+        <div class="callout tip"><span class="callout-icon">✅</span><div><strong>Consejo:</strong> Antes de publicar algo en redes sociales, preguntate: ¿estaría bien que cualquier persona — un futuro empleador, un familiar, un desconocido — vea esto dentro de 10 años? Si la respuesta es "no", reconsiderá publicarlo.</div></div>
+      </div>
+    </div>
+
+    <!-- BLOQUE 2 -->
+    <div class="bloque">
+      <div class="bloque-header" onclick="toggleBloque(this)">
+        <div class="bloque-header-left">
+          <span class="bloque-num">Bloque 2</span>
+          <span class="bloque-title">Derechos y Deberes en el Entorno Digital</span>
+        </div>
+        <span class="bloque-arrow">▼</span>
+      </div>
+      <div class="bloque-body">
+        <div class="section-title">Nuestros derechos digitales</div>
+        <div class="table-wrap"><table>
+          <tr><th>Derecho digital</th><th>Qué significa en la práctica</th></tr>
+          <tr><td><strong>Derecho a la privacidad</strong></td><td>Nadie puede acceder a nuestra información personal sin nuestro consentimiento.</td></tr>
+          <tr><td><strong>Derecho al olvido</strong></td><td>Podemos pedir que se eliminen datos personales que ya no son relevantes o que nos perjudican.</td></tr>
+          <tr><td><strong>Derecho a la información veraz</strong></td><td>Tenemos derecho a recibir información correcta y no ser engañados por contenido falso.</td></tr>
+          <tr><td><strong>Derecho a la no discriminación</strong></td><td>No podemos ser discriminados por nuestros datos personales (religión, etnia, orientación, etc.).</td></tr>
+          <tr><td><strong>Derecho a la seguridad digital</strong></td><td>Tenemos derecho a usar herramientas que protejan nuestra información personal.</td></tr>
+        </table></div>
+
+        <div class="section-title">Nuestros deberes digitales (netiqueta)</div>
+        <ul>
+          <li><strong>Respeto:</strong> No insultar, humillar ni hostigar a otras personas en redes sociales.</li>
+          <li><strong>Responsabilidad:</strong> Pensar antes de publicar o compartir información que involucra a otras personas.</li>
+          <li><strong>Veracidad:</strong> No difundir noticias falsas ni información sin verificar.</li>
+          <li><strong>Citación:</strong> Citar la fuente cuando usamos contenido ajeno (textos, imágenes, música).</li>
+          <li><strong>Consentimiento:</strong> No publicar fotos o información de otras personas sin su permiso.</li>
+        </ul>
+        <div class="callout important"><span class="callout-icon">⚠️</span><div><strong>Regla de oro digital:</strong> No hagas en Internet lo que no harías en persona. El anonimato no te protege: los mensajes digitales dejan rastro y pueden tener consecuencias legales.</div></div>
+
+        <div class="section-title">Marco legal en Argentina</div>
+        <div class="table-wrap"><table>
+          <tr><th>Ley / Norma</th><th>Qué protege</th></tr>
+          <tr><td><strong>Ley 25.326</strong></td><td>Protección de Datos Personales — regula la recolección, uso y almacenamiento de datos por empresas.</td></tr>
+          <tr><td><strong>Ley 26.388</strong></td><td>Delitos Informáticos — penaliza el acceso no autorizado a sistemas y el robo de datos.</td></tr>
+          <tr><td><strong>Ley 26.904</strong></td><td>Grooming — tipifica como delito el contacto digital de adultos con menores con fines sexuales.</td></tr>
+          <tr><td><strong>Art. 19 CN</strong></td><td>Derecho a la intimidad — nadie puede ser molestado en su vida privada sin una ley que lo autorice.</td></tr>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- BLOQUE 3 -->
+    <div class="bloque">
+      <div class="bloque-header" onclick="toggleBloque(this)">
+        <div class="bloque-header-left">
+          <span class="bloque-num">Bloque 3</span>
+          <span class="bloque-title">Ciberbullying — Reconocer y Actuar</span>
+        </div>
+        <span class="bloque-arrow">▼</span>
+      </div>
+      <div class="bloque-body">
+        <div class="section-title">¿Qué es el ciberbullying?</div>
+        <p>El <strong>ciberbullying</strong> es el acoso o intimidación que ocurre a través de medios digitales (celular, redes sociales, mensajería, videojuegos online). Se caracteriza por ser:</p>
+        <div class="table-wrap"><table>
+          <tr><th>Característica</th><th>Descripción</th></tr>
+          <tr><td><strong>Sistemático</strong></td><td>No es un hecho aislado: ocurre de forma repetida y sostenida en el tiempo.</td></tr>
+          <tr><td><strong>Intencional</strong></td><td>Hay una intención deliberada de dañar, humillar o acosar a la víctima.</td></tr>
+          <tr><td><strong>Con desequilibrio de poder</strong></td><td>El agresor tiene (o cree tener) algún tipo de ventaja sobre la víctima.</td></tr>
+          <tr><td><strong>Amplificado</strong></td><td>El entorno digital permite que el daño llegue a muchas más personas que un conflicto presencial.</td></tr>
+          <tr><td><strong>Permanente</strong></td><td>El contenido digital es muy difícil de borrar y puede seguir circulando mucho tiempo después.</td></tr>
+        </table></div>
+
+        <div class="section-title">Tipos de ciberbullying</div>
+        <div class="table-wrap"><table>
+          <tr><th>Tipo</th><th>Descripción</th></tr>
+          <tr><td><strong>Hostigamiento</strong></td><td>Envío repetido de mensajes ofensivos, insultos o amenazas.</td></tr>
+          <tr><td><strong>Exclusión</strong></td><td>Dejar deliberadamente fuera a alguien de grupos de chat o actividades digitales.</td></tr>
+          <tr><td><strong>Suplantación de identidad</strong></td><td>Crear un perfil falso con los datos de otra persona para actuar en su nombre.</td></tr>
+          <tr><td><strong>Difusión de imágenes</strong></td><td>Publicar fotos o videos comprometedores de alguien sin su consentimiento.</td></tr>
+          <tr><td><strong>Doxing</strong></td><td>Publicar información privada de alguien (domicilio, teléfono) para exponerlo o amenazarlo.</td></tr>
+        </table></div>
+
+        <div class="section-title">Los cuatro roles</div>
+        <div class="table-wrap"><table>
+          <tr><th>Rol</th><th>Descripción</th><th>Qué puede hacer</th></tr>
+          <tr><td><strong>Agresor</strong></td><td>Quien lleva a cabo el acoso de forma directa.</td><td>Detener la conducta. Es responsable legalmente.</td></tr>
+          <tr><td><strong>Víctima</strong></td><td>Quien recibe el acoso. Muchas veces no lo cuenta por vergüenza o miedo.</td><td>Guardar pruebas, bloquear, contar a un adulto de confianza.</td></tr>
+          <tr><td><strong>Espectador activo</strong></td><td>Quien ve el acoso y lo alienta con "me gusta", comentarios o reenvíos.</td><td>Dejar de amplificar el contenido. También tiene responsabilidad.</td></tr>
+          <tr><td><strong>Espectador pasivo</strong></td><td>Quien ve el acoso, pero no hace nada.</td><td>Puede ayudar sin exponerse: avisar a un adulto o a la víctima en privado.</td></tr>
+        </table></div>
+
+        <div class="section-title">Protocolo de actuación: si sos víctima</div>
+        <ol class="protocol-steps" style="--step-color: var(--u1)">
+          <li>No respondas ni contraataques: responder puede empeorar la situación.</li>
+          <li>Guardá las pruebas: captura de pantalla con fecha y hora de cada mensaje.</li>
+          <li>Bloqueá al agresor en la plataforma donde ocurre el acoso.</li>
+          <li>Contáselo a un adulto de confianza: familiar, docente o directivo.</li>
+          <li>Si hay amenazas o contenido sexual, hacé la denuncia en la comisaría o en la línea <strong>137</strong>.</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- BLOQUE 4 -->
+    <div class="bloque">
+      <div class="bloque-header" onclick="toggleBloque(this)">
+        <div class="bloque-header-left">
+          <span class="bloque-num">Bloque 4</span>
+          <span class="bloque-title">Privacidad de Datos y Términos de Uso</span>
+        </div>
+        <span class="bloque-arrow">▼</span>
+      </div>
+      <div class="bloque-body">
+        <div class="section-title">¿Qué son los datos personales?</div>
+        <div class="table-wrap"><table>
+          <tr><th>Nivel</th><th>Tipo de dato</th><th>Ejemplos</th></tr>
+          <tr><td><strong>Datos básicos</strong></td><td>Identifican a la persona directamente</td><td>Nombre, apellido, DNI, foto de cara, fecha de nacimiento</td></tr>
+          <tr><td><strong>Datos de contacto</strong></td><td>Permiten comunicarse con la persona</td><td>Número de teléfono, email, domicilio</td></tr>
+          <tr><td><strong>Datos sensibles</strong></td><td>Pueden generar discriminación si se difunden</td><td>Religión, etnia, condición médica, orientación sexual</td></tr>
+          <tr><td><strong>Datos de comportamiento</strong></td><td>Revelan hábitos e intereses</td><td>Historial de búsquedas, ubicación GPS, apps usadas</td></tr>
+        </table></div>
+
+        <div class="section-title">Permisos de apps: señales de alerta</div>
+        <div class="table-wrap"><table>
+          <tr><th>Permiso</th><th>Razonable para…</th><th>⚠️ Alarma si…</th></tr>
+          <tr><td><strong>Cámara</strong></td><td>Redes sociales, videollamadas</td><td>Una linterna o una calculadora lo pide</td></tr>
+          <tr><td><strong>Micrófono</strong></td><td>WhatsApp, asistentes de voz</td><td>Una app de clima lo pide</td></tr>
+          <tr><td><strong>Ubicación</strong></td><td>Google Maps, delivery</td><td>Un juego sin mapa lo pide</td></tr>
+          <tr><td><strong>Contactos</strong></td><td>WhatsApp, Gmail</td><td>Un juego o app de noticias lo pide</td></tr>
+          <tr><td><strong>Almacenamiento</strong></td><td>Galería, música</td><td>Una app de reloj lo pide</td></tr>
+        </table></div>
+        <div class="callout tip"><span class="callout-icon">✅</span><div><strong>Principio del mínimo privilegio:</strong> Solo otorgá a una app el acceso que realmente necesita para funcionar. Si una app de linterna pide acceso a tus contactos y tu ubicación, algo no está bien.</div></div>
+        <div class="callout important"><span class="callout-icon">⚠️</span><div>Si un servicio digital es "gratis", el producto sos vos. Las grandes plataformas como Google, Facebook, Instagram y TikTok no cobran a los usuarios porque su negocio es vender la información sobre el comportamiento de los usuarios a empresas de publicidad.</div></div>
+      </div>
+    </div>
+
+    <!-- BLOQUE 5 -->
+    <div class="bloque">
+      <div class="bloque-header" onclick="toggleBloque(this)">
+        <div class="bloque-header-left">
+          <span class="bloque-num">Bloque 5</span>
+          <span class="bloque-title">Contraseñas Seguras y Doble Autenticación</span>
+        </div>
+        <span class="bloque-arrow">▼</span>
+      </div>
+      <div class="bloque-body">
+        <div class="section-title">Criterios para una contraseña segura</div>
+        <ul>
+          <li><strong>Longitud:</strong> al menos 12 caracteres.</li>
+          <li><strong>Variedad:</strong> combinar mayúsculas, minúsculas, números y símbolos (!, @, #, $, %).</li>
+          <li><strong>Sin datos personales:</strong> no usar nombre, apellido, fecha de nacimiento ni nombre de mascota.</li>
+          <li><strong>Sin palabras del diccionario:</strong> "computadora" o "password" son débiles.</li>
+          <li><strong>Única:</strong> no usar la misma contraseña en distintos servicios.</li>
+        </ul>
+
+        <div class="section-title">Ejemplos de contraseñas</div>
+        <div style="display:flex;flex-direction:column;gap:0.5rem;margin:0.8rem 0">
+          <div class="strength-meter"><span class="pw-example">martin2008</span><div class="strength-bar" style="background:#ef4444;width:20%"></div><span style="color:#ef4444;font-size:0.8rem">MUY DÉBIL</span></div>
+          <div class="strength-meter"><span class="pw-example">Computadora1</span><div class="strength-bar" style="background:#f97316;width:35%"></div><span style="color:#f97316;font-size:0.8rem">DÉBIL</span></div>
+          <div class="strength-meter"><span class="pw-example">M@rt1n#2k8!</span><div class="strength-bar" style="background:#eab308;width:55%"></div><span style="color:#eab308;font-size:0.8rem">MEDIA</span></div>
+          <div class="strength-meter"><span class="pw-example">Tz!9mK#pLw2@</span><div class="strength-bar" style="background:#22c55e;width:85%"></div><span style="color:#22c55e;font-size:0.8rem">FUERTE</span></div>
+          <div class="strength-meter"><span class="pw-example">Cafe-Nube-Ruta-78!</span><div class="strength-bar" style="background:#10b981;width:100%"></div><span style="color:#10b981;font-size:0.8rem">MUY FUERTE</span></div>
+        </div>
+
+        <div class="section-title">La doble autenticación (2FA)</div>
+        <p>La 2FA agrega una capa extra de seguridad con el principio de <strong>"algo que sabés + algo que tenés"</strong>:</p>
+        <div class="table-wrap"><table>
+          <tr><th>Factor</th><th>Qué es</th><th>Ejemplo</th></tr>
+          <tr><td><strong>Factor 1: algo que sabés</strong></td><td>La contraseña que memorizás</td><td>Tu contraseña de Gmail</td></tr>
+          <tr><td><strong>Factor 2: algo que tenés</strong></td><td>Un código temporal generado en tiempo real</td><td>SMS al celular, código de Google Authenticator</td></tr>
+        </table></div>
+        <div class="callout tip"><span class="callout-icon">✅</span><div>Activar el 2FA en tus cuentas más importantes (email, redes sociales, banco) es la medida de seguridad más efectiva después de una buena contraseña. Incluso si alguien roba tu contraseña, no podrá entrar sin el segundo factor.</div></div>
+
+        <div class="section-title">Gestores de contraseñas recomendados</div>
+        <div class="table-wrap"><table>
+          <tr><th>Gestor</th><th>Disponibilidad</th><th>Característica</th></tr>
+          <tr><td><strong>Bitwarden</strong></td><td>Gratis, web, Android, iOS</td><td>Código abierto, altamente seguro, versión gratuita muy completa.</td></tr>
+          <tr><td><strong>Google Password Manager</strong></td><td>Gratis, integrado en Chrome y Android</td><td>Muy fácil de usar, sincroniza entre dispositivos con cuenta de Google.</td></tr>
+          <tr><td><strong>KeePass</strong></td><td>Gratis, sin nube</td><td>Almacena las contraseñas localmente en tu dispositivo. Máxima privacidad.</td></tr>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ACTIVIDADES U1 -->
+    <div class="actividades-section">
+      <div class="actividades-title">🗒️ Actividades integradoras</div>
+      <div class="actividad-card" style="--act-color: var(--u1)">
+        <div class="actividad-header">
+          <span class="actividad-num">Actividad 1</span>
+          <span class="actividad-title">Mi huella digital</span>
+          <span class="actividad-bloque">Bloque 1</span>
+        </div>
+        <div class="actividad-body">Buscá tu nombre y apellido en Google y respondé en el cuaderno: a) ¿Qué encontraste? b) ¿Hay información que no quisieras que apareciera? c) ¿Qué diferencia hay entre tu identidad real y tu identidad digital? d) Escribí con tus palabras qué es la huella digital.</div>
+      </div>
+      <div class="actividad-card" style="--act-color: var(--u1)">
+        <div class="actividad-header">
+          <span class="actividad-num">Actividad 2</span>
+          <span class="actividad-title">Carta de derechos digitales del aula</span>
+          <span class="actividad-bloque">Bloque 2 · Grupal</span>
+        </div>
+        <div class="actividad-body">En grupos de 4, redacten una lista de 5 derechos y 5 deberes digitales concretos y aplicables a su vida cotidiana. Cada derecho empieza con "Tenemos derecho a…" y cada deber con "Tenemos el deber de…"</div>
+      </div>
+      <div class="actividad-card" style="--act-color: var(--u1)">
+        <div class="actividad-header">
+          <span class="actividad-num">Actividad 3</span>
+          <span class="actividad-title">Análisis de casos: ciberbullying</span>
+          <span class="actividad-bloque">Bloque 3</span>
+        </div>
+        <div class="actividad-body"><strong>Caso A:</strong> Un grupo crea un chat sin invitar a Lucía deliberadamente y comenta cosas ofensivas sobre ella. <strong>Caso B:</strong> Lucas publica una foto sin permiso de su compañero en una situación ridícula que se viraliza. Para cada caso: 1) ¿Es ciberbullying? 2) ¿Qué tipo? 3) ¿Qué roles hay? 4) Describí el protocolo de actuación.</div>
+      </div>
+      <div class="actividad-card" style="--act-color: var(--u1)">
+        <div class="actividad-header">
+          <span class="actividad-num">Actividad 5</span>
+          <span class="actividad-title">Evaluación de contraseñas</span>
+          <span class="actividad-bloque">Bloque 5</span>
+        </div>
+        <div class="actividad-body">Creá 3 contraseñas distintas aplicando los criterios del Bloque 5. Para cada una: ¿Tiene al menos 12 caracteres? ¿Combina mayúsculas, minúsculas, números y símbolos? ¿Incluye datos personales? ¿La usás en otro servicio? Además, explicá con tus palabras qué es el 2FA y dá un ejemplo de cómo funciona.</div>
+      </div>
+    </div>
+  </div><!-- /unit-1 -->
+
+
+  <!-- ════════════════════════════════════════
+       UNIDAD 2
+  ════════════════════════════════════════ -->
+  <div class="unit-content" id="unit-2">
+    <div class="unit-header">
+      <button class="back-btn" onclick="showOverview()">← Volver al inicio</button>
+      <div class="unit-header-badge" style="background:rgba(168,85,247,0.15);color:var(--u2);border:1px solid rgba(168,85,247,0.3)">Unidad 2 · Inteligencia Artificial</div>
+      <h2>Inteligencia Artificial: Qué es y cómo nos afecta</h2>
+      <p>Entendemos qué es la IA, cómo aprende, dónde se esconde, cómo usarla de forma crítica y sus implicancias sociales y laborales.</p>
+    </div>
+
+    <div class="bloque">
+      <div class="bloque-header" onclick="toggleBloque(this)">
+        <div class="bloque-header-left"><span class="bloque-num">Bloque 1</span><span class="bloque-title">Qué es la IA y cómo aprende una máquina</span></div>
+        <span class="bloque-arrow">▼</span>
+      </div>
+      <div class="bloque-body">
+        <div class="section-title">Definición accesible</div>
+        <p>La <strong>Inteligencia Artificial</strong> es un campo de la informática que desarrolla sistemas capaces de realizar tareas que, si las hiciera un humano, requerirían inteligencia: reconocer imágenes, entender el lenguaje, tomar decisiones o resolver problemas complejos.</p>
+        <div class="callout example"><span class="callout-icon">💡</span><div><strong>Analogía:</strong> Imagina que querés enseñarle a un niño a reconocer perros. Le mostrás cientos de fotos de distintos perros y le decís "esto es un perro". Con el tiempo, el niño aprende. Una IA aprende exactamente igual — con miles o millones de imágenes etiquetadas. La diferencia es la escala: puede procesar millones de ejemplos en minutos.</div></div>
+
+        <div class="section-title">IA débil vs. IA general</div>
+        <div class="table-wrap"><table>
+          <tr><th>Tipo</th><th>Definición</th><th>Estado actual</th><th>Ejemplos</th></tr>
+          <tr><td><strong>IA débil (estrecha)</strong></td><td>Diseñada para una sola tarea específica.</td><td>EXISTE HOY. Es toda la IA que usamos.</td><td>ChatGPT, GPS, algoritmo de YouTube</td></tr>
+          <tr><td><strong>IA general (AGI)</strong></td><td>Capaz de realizar cualquier tarea cognitiva humana con la misma flexibilidad.</td><td>NO EXISTE. Es hipotética.</td><td>Solo aparece en ciencia ficción</td></tr>
+        </table></div>
+        <div class="callout important"><span class="callout-icon">⚠️</span><div>Todo lo que hoy llamamos "IA" — ChatGPT, Gemini, Siri, el algoritmo de TikTok — es <strong>IA débil</strong>: muy buena en una tarea específica, pero completamente incapaz fuera de su dominio. ChatGPT no puede manejar un auto. Un auto autónomo no puede escribir una novela.</div></div>
+
+        <div class="section-title">Cómo aprende una máquina (Machine Learning)</div>
+        <div class="table-wrap"><table>
+          <tr><th>Etapa</th><th>Qué ocurre</th><th>Ejemplo práctico</th></tr>
+          <tr><td><strong>1. Datos de entrenamiento</strong></td><td>Se le proporcionan miles o millones de ejemplos etiquetados.</td><td>Para un detector de spam: miles de emails marcados como "spam" o "no spam".</td></tr>
+          <tr><td><strong>2. Búsqueda de patrones</strong></td><td>El algoritmo analiza los datos buscando características comunes.</td><td>Descubre que los emails de spam suelen tener palabras como "gratis", "ganaste", "urgente".</td></tr>
+          <tr><td><strong>3. Predicción</strong></td><td>El sistema aplica lo aprendido a datos nuevos.</td><td>Cuando llega un email nuevo, evalúa si tiene esos patrones y decide si es spam o no.</td></tr>
+        </table></div>
+      </div>
+    </div>
+
+    <div class="bloque">
+      <div class="bloque-header" onclick="toggleBloque(this)">
+        <div class="bloque-header-left"><span class="bloque-num">Bloque 2</span><span class="bloque-title">IA en la Vida Cotidiana</span></div>
+        <span class="bloque-arrow">▼</span>
+      </div>
+      <div class="bloque-body">
+        <div class="section-title">IA en tus apps cotidianas</div>
+        <div class="table-wrap"><table>
+          <tr><th>App / Servicio</th><th>Dónde actúa la IA</th><th>Cómo lo hace</th></tr>
+          <tr><td><strong>YouTube / TikTok / Spotify</strong></td><td>Recomendaciones de contenido</td><td>Analiza tu historial, cuánto tiempo ves cada video, qué pausas, y predice qué querrás ver después.</td></tr>
+          <tr><td><strong>Google Maps / Waze</strong></td><td>Predicción de tráfico</td><td>Procesa datos de millones de celulares en tiempo real para calcular el tiempo de viaje.</td></tr>
+          <tr><td><strong>Instagram / Snapchat</strong></td><td>Filtros de realidad aumentada</td><td>Detecta los puntos de tu cara (ojos, nariz, boca) y superpone elementos digitales en tiempo real.</td></tr>
+          <tr><td><strong>Gmail / Outlook</strong></td><td>Filtro de spam y respuestas sugeridas</td><td>Aprende de millones de emails para detectar patrones de spam y predecir tu respuesta más probable.</td></tr>
+          <tr><td><strong>Reconocimiento facial</strong></td><td>Desbloqueo del celular</td><td>Mapea más de 30.000 puntos de tu cara para crear un modelo único que la identifica.</td></tr>
+        </table></div>
+      </div>
+    </div>
+
+    <div class="bloque">
+      <div class="bloque-header" onclick="toggleBloque(this)">
+        <div class="bloque-header-left"><span class="bloque-num">Bloque 3</span><span class="bloque-title">Chatbots — Uso Crítico y Responsable</span></div>
+        <span class="bloque-arrow">▼</span>
+      </div>
+      <div class="bloque-body">
+        <div class="callout important"><span class="callout-icon">⚠️</span><div>Un chatbot como ChatGPT <strong>NO piensa, NO entiende y NO tiene conciencia</strong>. Lo que hace es predecir, con altísima precisión estadística, cuál es la siguiente palabra más probable dada una secuencia de palabras previas. Es una <strong>máquina de predicción de texto</strong> extremadamente sofisticada.</div></div>
+
+        <div class="section-title">Las alucinaciones: cuando la IA inventa con confianza</div>
+        <p>Una de las características más peligrosas de los LLMs es su tendencia a las <strong>alucinaciones</strong>: generar información falsa con total confianza, como si fuera un hecho verificado. Esto no es un "bug" que se puede corregir: es una consecuencia directa de cómo funcionan estos modelos. Predicen la respuesta más probable, no la más verdadera.</p>
+        <div class="table-wrap"><table>
+          <tr><th>El chatbot hace BIEN ✅</th><th>El chatbot hace MAL ❌</th></tr>
+          <tr><td>Resumir textos largos</td><td>Verificar hechos o datos específicos</td></tr>
+          <tr><td>Generar ideas y borradores</td><td>Citar fuentes con precisión</td></tr>
+          <tr><td>Explicar conceptos conocidos</td><td>Realizar cálculos matemáticos complejos</td></tr>
+          <tr><td>Mejorar la redacción de un texto</td><td>Garantizar que el código generado funciona</td></tr>
+          <tr><td>Traducir entre idiomas</td><td>Mantenerse actualizado (tiene fecha de corte)</td></tr>
+        </table></div>
+
+        <div class="section-title">Técnicas básicas de prompting</div>
+        <div class="table-wrap"><table>
+          <tr><th>Técnica</th><th>Descripción</th><th>Ejemplo</th></tr>
+          <tr><td><strong>Ser específico</strong></td><td>Cuanto más detalle, mejor la respuesta.</td><td>❌ "Háblame de la IA" ✅ "Explicá en 3 párrafos qué es el aprendizaje automático para un estudiante de 16 años"</td></tr>
+          <tr><td><strong>Dar contexto</strong></td><td>Explicá quién sos o para qué necesitás la respuesta.</td><td>"Soy docente de secundaria y necesito un ejemplo de IA aplicada a la salud para alumnos de 15 años"</td></tr>
+          <tr><td><strong>Pedir formato</strong></td><td>Indicá cómo querés la respuesta: lista, tabla, pasos, etc.</td><td>"Dame la respuesta en forma de tabla con dos columnas: ventajas y desventajas"</td></tr>
+          <tr><td><strong>Iterar</strong></td><td>Si la respuesta no es buena, reformulá el prompt.</td><td>"La respuesta fue demasiado técnica. Reescribila con palabras más simples y un ejemplo cotidiano"</td></tr>
+        </table></div>
+      </div>
+    </div>
+
+    <div class="bloque">
+      <div class="bloque-header" onclick="toggleBloque(this)">
+        <div class="bloque-header-left"><span class="bloque-num">Bloque 4</span><span class="bloque-title">Sesgos en la IA y Desinformación Digital</span></div>
+        <span class="bloque-arrow">▼</span>
+      </div>
+      <div class="bloque-body">
+        <div class="section-title">¿Qué es un sesgo en la IA?</div>
+        <p>Un <strong>sesgo en IA</strong> ocurre cuando el modelo reproduce o amplifica prejuicios presentes en los datos con los que fue entrenado. Como los datos son generados por humanos, reflejan los sesgos de la sociedad.</p>
+        <div class="callout example"><span class="callout-icon">📊</span><div><strong>Estudio del MIT (2018):</strong> Análisis de sistemas de reconocimiento facial — Hombres de piel clara: 1% de error · Mujeres de piel clara: 7% de error · Hombres de piel oscura: 12% de error · <strong>Mujeres de piel oscura: 35% de error.</strong> ¿Por qué? Los datos de entrenamiento tenían muchas más fotos de hombres de piel clara.</div></div>
+
+        <div class="section-title">Tipos de sesgos más comunes</div>
+        <div class="table-wrap"><table>
+          <tr><th>Tipo</th><th>Descripción</th><th>Ejemplo real</th></tr>
+          <tr><td><strong>Sesgo de representación</strong></td><td>El grupo afectado está poco representado en los datos de entrenamiento.</td><td>Reconocimiento facial con mayor error en mujeres de piel oscura.</td></tr>
+          <tr><td><strong>Sesgo de género</strong></td><td>El modelo asocia profesiones o roles con un género específico.</td><td>Modelos que asocian "enfermera" con mujer e "ingeniero" con hombre.</td></tr>
+          <tr><td><strong>Sesgo de confirmación</strong></td><td>El algoritmo refuerza las creencias existentes del usuario.</td><td>Redes sociales que muestran solo noticias que confirman tu opinión política.</td></tr>
+          <tr><td><strong>Sesgo histórico</strong></td><td>Los datos históricos reflejan discriminaciones pasadas.</td><td>Algoritmos de selección de personal que descartan CVs de candidatos de ciertos barrios.</td></tr>
+        </table></div>
+
+        <div class="section-title">Deepfakes y protocolo SIFT</div>
+        <p>Un <strong>Deepfake</strong> es un contenido (imagen, video o audio) generado o manipulado por IA para hacer parecer que alguien dijo o hizo algo que nunca ocurrió.</p>
+        <div class="callout tip"><span class="callout-icon">✅</span><div><strong>Protocolo SIFT:</strong> <strong>S</strong>top (detenete, no compartas impulsivamente) → <strong>I</strong>nvestigate (buscá la fuente original) → <strong>F</strong>ind better coverage (buscá cobertura de otros medios) → <strong>T</strong>race claims (rastreá de dónde viene la información). Si no podés verificarlo, no lo compartas.</div></div>
+      </div>
+    </div>
+
+    <div class="bloque">
+      <div class="bloque-header" onclick="toggleBloque(this)">
+        <div class="bloque-header-left"><span class="bloque-num">Bloque 5</span><span class="bloque-title">IA y el Futuro del Trabajo</span></div>
+        <span class="bloque-arrow">▼</span>
+      </div>
+      <div class="bloque-body">
+        <div class="section-title">Habilidades que la IA NO reemplaza</div>
+        <div class="table-wrap"><table>
+          <tr><th>Habilidad humana</th><th>Por qué la IA no puede reemplazarla</th></tr>
+          <tr><td><strong>Empatía genuina</strong></td><td>La IA puede simular comprensión emocional, pero no tiene experiencia vivida ni sentimientos reales.</td></tr>
+          <tr><td><strong>Criterio ético situacional</strong></td><td>Tomar decisiones morales en contextos complejos requiere valores, cultura y responsabilidad.</td></tr>
+          <tr><td><strong>Creatividad original</strong></td><td>La IA combina y reorganiza lo que ya existe. La creatividad humana puede romper con todos los patrones anteriores.</td></tr>
+          <tr><td><strong>Liderazgo y confianza</strong></td><td>Las personas siguen a otras personas. La confianza interpersonal no se delega a una máquina.</td></tr>
+          <tr><td><strong>Aprendizaje de pocos ejemplos</strong></td><td>Los humanos aprenden de 1 o 2 ejemplos; la IA necesita miles o millones.</td></tr>
+        </table></div>
+        <div class="callout info"><span class="callout-icon">ℹ️</span><div>El Foro Económico Mundial estima que el <strong>65% de los niños</strong> que hoy cursan la escuela primaria trabajará en empleos que todavía no existen. Las habilidades más valoradas en 2030: pensamiento crítico, creatividad, inteligencia emocional, resolución de problemas complejos y colaboración con sistemas de IA.</div></div>
+      </div>
+    </div>
+
+    <div class="actividades-section">
+      <div class="actividades-title">🗒️ Actividades integradoras</div>
+      <div class="actividad-card" style="--act-color: var(--u2)">
+        <div class="actividad-header"><span class="actividad-num">Actividad 1</span><span class="actividad-title">La analogía del aprendizaje</span><span class="actividad-bloque">Bloque 1</span></div>
+        <div class="actividad-body">a) Explicá con tus palabras cómo aprende una IA usando una analogía de tu propia experiencia. b) ¿Cuál es la diferencia entre IA débil e IA general? Da un ejemplo de cada una. c) ¿Por qué creés que la IA general no existe todavía? d) Mencioná 3 momentos de tu día donde interactuaste con una IA sin darte cuenta.</div>
+      </div>
+      <div class="actividad-card" style="--act-color: var(--u2)">
+        <div class="actividad-header"><span class="actividad-num">Actividad 4</span><span class="actividad-title">Análisis de sesgo</span><span class="actividad-bloque">Bloque 4</span></div>
+        <div class="actividad-body"><strong>Caso:</strong> Una empresa usa una IA para filtrar currículos. Se descubre que el sistema rechaza sistemáticamente candidatos que egresaron de ciertas universidades públicas del conurbano, aunque tengan las mismas calificaciones que candidatos aceptados de universidades privadas. 1) ¿Qué tipo de sesgo presenta? 2) ¿Cómo pudo generarse? 3) ¿Qué consecuencias reales puede tener? 4) ¿Qué debería hacer la empresa? 5) ¿Quién es responsable?</div>
+      </div>
+    </div>
+  </div><!-- /unit-2 -->
+
+
+  <!-- ════════════════════════════════════════
+       UNIDAD 3
+  ════════════════════════════════════════ -->
+  <div class="unit-content" id="unit-3">
+    <div class="unit-header">
+      <button class="back-btn" onclick="showOverview()">← Volver al inicio</button>
+      <div class="unit-header-badge" style="background:rgba(6,182,212,0.15);color:var(--u3);border:1px solid rgba(6,182,212,0.3)">Unidad 3 · Ciberseguridad</div>
+      <h2>Ciberseguridad Básica: Amenazas, Protección y Navegación Segura</h2>
+      <p>Las amenazas digitales existen, pero son evitables con criterio. Aprendemos a reconocerlas y a proteger nuestros dispositivos.</p>
+    </div>
+
+    <div class="bloque">
+      <div class="bloque-header" onclick="toggleBloque(this)">
+        <div class="bloque-header-left"><span class="bloque-num">Bloque 1</span><span class="bloque-title">Tipos de Amenazas Digitales</span></div>
+        <span class="bloque-arrow">▼</span>
+      </div>
+      <div class="bloque-body">
+        <div class="section-title">Malware: software malicioso</div>
+        <div class="table-wrap"><table>
+          <tr><th>Tipo</th><th>Qué hace</th><th>Cómo llega</th></tr>
+          <tr><td><strong>Virus</strong></td><td>Se replica y adjunta a otros archivos, dañándolos o borrándolos.</td><td>Archivos adjuntos en emails, descargas de sitios no confiables.</td></tr>
+          <tr><td><strong>Troyano</strong></td><td>Se disfraza de programa legítimo para engañar al usuario.</td><td>Descargas de software "crackeado", apps falsas, juegos pirateados.</td></tr>
+          <tr><td><strong>Spyware</strong></td><td>Espía la actividad del usuario y envía la información al atacante.</td><td>Instalado al descargar software gratuito no confiable.</td></tr>
+          <tr><td><strong>Adware</strong></td><td>Muestra publicidad no deseada de forma agresiva.</td><td>Instalado como complemento de programas gratuitos.</td></tr>
+          <tr><td><strong>Ransomware</strong></td><td>Cifra todos los archivos y pide un rescate para recuperarlos.</td><td>Email con archivo adjunto malicioso, vulnerabilidades sin parchear.</td></tr>
+        </table></div>
+        <div class="callout example"><span class="callout-icon">📰</span><div><strong>WannaCry (2017):</strong> Infectó más de 230.000 computadoras en 150 países en menos de 24 horas. El NHS (sistema de salud británico) tuvo que cancelar miles de operaciones. El vector de entrada fue una vulnerabilidad de Windows que Microsoft había <strong>parcheado dos meses antes</strong>. Todos los sistemas infectados tenían la actualización pendiente.</div></div>
+
+        <div class="section-title">Phishing: el engaño como arma</div>
+        <div class="table-wrap"><table>
+          <tr><th>Canal</th><th>Nombre</th><th>Señal de alerta</th></tr>
+          <tr><td>Email</td><td><strong>Phishing</strong></td><td>Urgencia exagerada ("tu cuenta será bloqueada en 24hs"). Errores ortográficos. URL que no coincide.</td></tr>
+          <tr><td>SMS</td><td><strong>Smishing</strong></td><td>Números raros o internacionales. Pedido de pago o datos por mensaje.</td></tr>
+          <tr><td>Llamada</td><td><strong>Vishing</strong></td><td>Ninguna empresa real te pedirá tu contraseña o PIN por teléfono.</td></tr>
+        </table></div>
+        <div class="callout important"><span class="callout-icon">⚠️</span><div>El virus ataca tu computadora. El phishing y la ingeniería social <strong>te atacan a vos</strong>. Ninguna protección técnica reemplaza el pensamiento crítico ante situaciones urgentes o demasiado buenas para ser verdad.</div></div>
+      </div>
+    </div>
+
+    <div class="bloque">
+      <div class="bloque-header" onclick="toggleBloque(this)">
+        <div class="bloque-header-left"><span class="bloque-num">Bloque 2</span><span class="bloque-title">Cómo Proteger tu Dispositivo</span></div>
+        <span class="bloque-arrow">▼</span>
+      </div>
+      <div class="bloque-body">
+        <div class="callout tip"><span class="callout-icon">✅</span><div><strong>Actualizaciones automáticas:</strong> Activá las actualizaciones automáticas en tu celular y computadora. Tanto Android como iOS permiten configurar que las actualizaciones se instalen automáticamente de noche, cuando el dispositivo está cargando y conectado a WiFi.</div></div>
+
+        <div class="section-title">La regla 3-2-1 de backups</div>
+        <div class="table-wrap"><table>
+          <tr><th>Número</th><th>Significado</th><th>Cómo aplicarlo</th></tr>
+          <tr><td><strong>3</strong></td><td>Tener 3 copias de cada archivo importante.</td><td>El original + 2 copias de respaldo.</td></tr>
+          <tr><td><strong>2</strong></td><td>Usar 2 tipos de soporte diferentes.</td><td>Por ejemplo: disco externo + nube (Google Drive, iCloud).</td></tr>
+          <tr><td><strong>1</strong></td><td>Al menos 1 copia debe estar fuera del lugar físico.</td><td>La copia en la nube cumple esta función: si hay un incendio o robo, sigue estando disponible.</td></tr>
+        </table></div>
+      </div>
+    </div>
+
+    <div class="bloque">
+      <div class="bloque-header" onclick="toggleBloque(this)">
+        <div class="bloque-header-left"><span class="bloque-num">Bloque 3</span><span class="bloque-title">Navegación Segura en Internet</span></div>
+        <span class="bloque-arrow">▼</span>
+      </div>
+      <div class="bloque-body">
+        <div class="section-title">HTTPS vs HTTP</div>
+        <div class="table-wrap"><table>
+          <tr><th>HTTP (sin cifrar)</th><th>HTTPS (con cifrado SSL/TLS)</th></tr>
+          <tr><td>La información viaja en texto plano: cualquiera en la misma red puede leerla.</td><td>La información viaja cifrada: aunque alguien la intercepte, solo ve datos ilegibles.</td></tr>
+          <tr><td>No hay autenticación del sitio.</td><td>El certificado SSL verifica que el sitio es auténtico.</td></tr>
+          <tr><td><strong>NUNCA</strong> ingreses datos personales o contraseñas en sitios HTTP.</td><td>Es el mínimo requerido para cualquier sitio que maneje datos o pagos.</td></tr>
+        </table></div>
+        <div class="callout important"><span class="callout-icon">⚠️</span><div>El HTTPS garantiza que la conexión está cifrada, pero <strong>NO garantiza que el sitio sea legítimo</strong>. Un sitio de phishing puede tener HTTPS. Verificá SIEMPRE la URL completa, no solo el candado.</div></div>
+
+        <div class="section-title">Anatomía de una URL</div>
+        <div class="callout example"><span class="callout-icon">🔗</span><div><strong>URL real del Banco Nación:</strong> https://www.bna.com.ar<br><strong>URL falsa posible:</strong> https://www.banco-nacion-pagos.com/login<br><br>Diferencia clave: el dominio real es "bna.com.ar". En la URL falsa, el dominio real es "banco-nacion-pagos.com", que no tiene ningún vínculo con el banco. Los atacantes agregan palabras para confundir, pero lo que importa es el <strong>dominio central</strong>.</div></div>
+
+        <div class="section-title">WiFi público: qué hacer y qué evitar</div>
+        <div class="table-wrap"><table>
+          <tr><th>✅ Podés hacer</th><th>❌ Debés EVITAR</th></tr>
+          <tr><td>Navegar sitios de noticias o información general.</td><td>Entrar a tu cuenta bancaria o hacer transferencias.</td></tr>
+          <tr><td>Buscar información sin iniciar sesión.</td><td>Ingresar contraseñas en cualquier sitio.</td></tr>
+          <tr><td>Ver videos sin autenticación.</td><td>Comprar online o ingresar datos de tarjeta.</td></tr>
+        </table></div>
+      </div>
+    </div>
+
+    <div class="bloque">
+      <div class="bloque-header" onclick="toggleBloque(this)">
+        <div class="bloque-header-left"><span class="bloque-num">Bloque 4</span><span class="bloque-title">Compras y Banca Online Segura</span></div>
+        <span class="bloque-arrow">▼</span>
+      </div>
+      <div class="bloque-body">
+        <div class="section-title">Datos que NUNCA se piden por mensaje, email ni llamada</div>
+        <div class="callout important"><span class="callout-icon">⚠️</span><div>Ningún banco, empresa o servicio legítimo te pedirá estos datos por mensaje, email o llamada telefónica: <strong>PIN de tarjeta</strong> · <strong>Contraseña completa de homebanking</strong> · <strong>Código de verificación 2FA recibido por SMS</strong> · <strong>CVV de la tarjeta</strong> · <strong>Token o clave dinámica</strong></div></div>
+
+        <div class="section-title">Protocolo ante una estafa digital</div>
+        <ol class="protocol-steps" style="--step-color: var(--u3)">
+          <li>NO completés el pago ni ingresés más datos si te das cuenta a tiempo. Cerrá el navegador.</li>
+          <li>Cambiá de inmediato la contraseña del servicio afectado y de cualquier otro donde uses la misma clave.</li>
+          <li>Si ingresaste datos de tarjeta, llamá al número del dorso y solicitá el bloqueo.</li>
+          <li>Guardá capturas de pantalla de la conversación, el email o el sitio falso.</li>
+          <li>Reportá la estafa en la plataforma donde ocurrió (Instagram, WhatsApp, Gmail tienen opciones de denuncia).</li>
+          <li>Denuncialo en la <strong>UFECI</strong>: ufeci.mpf.gob.ar</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="actividades-section">
+      <div class="actividades-title">🗒️ Actividades integradoras</div>
+      <div class="actividad-card" style="--act-color: var(--u3)">
+        <div class="actividad-header"><span class="actividad-num">Actividad 1</span><span class="actividad-title">Identificar amenazas</span><span class="actividad-bloque">Bloque 1</span></div>
+        <div class="actividad-body">Para cada situación indicá: a) Tipo de amenaza. b) Técnica psicológica usada. c) Qué debería hacer la persona. <br><br><strong>Situación 1:</strong> Recibís un email de "AFIP - Notificación urgente" diciendo que debés $45.000 y que si no pagás en 48hs bloquearán tus cuentas. <br><strong>Situación 2:</strong> Tu celular empieza a mostrar publicidades en pantalla completa aunque no estés usando ninguna app. <br><strong>Situación 3:</strong> Recibís un SMS de un número desconocido: "Tu paquete no pudo entregarse. Reprogramá la entrega pagando $150: [link]" <br><strong>Situación 4:</strong> Alguien que dice ser del soporte técnico de Microsoft te llama diciendo que tu computadora está enviando virus y te pide instalar un programa.</div>
+      </div>
+      <div class="actividad-card" style="--act-color: var(--u3)">
+        <div class="actividad-header"><span class="actividad-num">Actividad 3</span><span class="actividad-title">Análisis de URLs</span><span class="actividad-bloque">Bloque 3</span></div>
+        <div class="actividad-body">Para cada URL determiná: a) ¿Es segura (HTTPS)? b) ¿El dominio parece legítimo? c) ¿Ingresarías tus datos? Justificá.<br><br>• http://afip-pagos.org/login<br>• https://www.afip.gob.ar/contribuyentes<br>• https://banco-santanderargentina.com/homebanking<br>• https://santander.com.ar/personas<br>• http://mercadolibreverificación.net/cuenta</div>
+      </div>
+    </div>
+  </div><!-- /unit-3 -->
+
+
+  <!-- ════════════════════════════════════════
+       UNIDAD 4
+  ════════════════════════════════════════ -->
+  <div class="unit-content" id="unit-4">
+    <div class="unit-header">
+      <button class="back-btn" onclick="showOverview()">← Volver al inicio</button>
+      <div class="unit-header-badge" style="background:rgba(16,185,129,0.15);color:var(--u4);border:1px solid rgba(16,185,129,0.3)">Unidad 4 · Producción Digital</div>
+      <h2>Producción Digital con Propósito</h2>
+      <p>En lugar de recibir contenido digital, vamos a producirlo. El rol cambia de consumidor a creador.</p>
+    </div>
+
+    <div class="bloque">
+      <div class="bloque-header" onclick="toggleBloque(this)">
+        <div class="bloque-header-left"><span class="bloque-num">Bloque 1</span><span class="bloque-title">Herramientas Digitales con Propósito</span></div>
+        <span class="bloque-arrow">▼</span>
+      </div>
+      <div class="bloque-body">
+        <div class="section-title">¿Cuándo usar Google Docs y cuándo usar Canva?</div>
+        <div class="table-wrap"><table>
+          <tr><th>Criterio</th><th>Google Docs</th><th>Canva</th></tr>
+          <tr><td><strong>Tipo de contenido</strong></td><td>Textos largos, documentos estructurados, informes.</td><td>Piezas visuales: infografías, folletos, afiches, presentaciones.</td></tr>
+          <tr><td><strong>Prioridad</strong></td><td>La información y su organización lógica.</td><td>El impacto visual y la comunicación rápida.</td></tr>
+          <tr><td><strong>Ideal para…</strong></td><td>Guiones, informes, cartas, ensayos, trabajos académicos.</td><td>Infografías, portadas, presentaciones, flyers, redes sociales.</td></tr>
+        </table></div>
+        <div class="callout tip"><span class="callout-icon">✅</span><div><strong>Regla práctica:</strong> Si tu pieza tiene MÁS texto que imágenes, usá Docs. Si tiene MÁS imágenes que texto, o si necesitás un diseño visual atractivo para impactar rápidamente, usá Canva.</div></div>
+      </div>
+    </div>
+
+    <div class="bloque">
+      <div class="bloque-header" onclick="toggleBloque(this)">
+        <div class="bloque-header-left"><span class="bloque-num">Bloque 2</span><span class="bloque-title">Principios de Diseño Visual</span></div>
+        <span class="bloque-arrow">▼</span>
+      </div>
+      <div class="bloque-body">
+        <p>El diseño no es decoración: es <strong>comunicación</strong>. Un buen diseño hace que el mensaje llegue más rápido, se entienda mejor y se recuerde más.</p>
+
+        <div class="section-title">Los seis principios fundamentales</div>
+        <div class="table-wrap"><table>
+          <tr><th>Principio</th><th>Descripción</th><th>Error común a evitar</th></tr>
+          <tr><td><strong>1. Jerarquía visual</strong></td><td>Lo más importante: tamaño más grande, fuente más bold, color más contrastante.</td><td>Título y cuerpo del mismo tamaño: no hay jerarquía.</td></tr>
+          <tr><td><strong>2. Contraste</strong></td><td>Texto oscuro sobre fondo claro (o viceversa) para mejorar la legibilidad.</td><td>Texto gris claro sobre fondo blanco: casi invisible.</td></tr>
+          <tr><td><strong>3. Legibilidad</strong></td><td>Mínimo 11-12pt para cuerpo, 16-18pt para títulos. Máximo 2 fuentes distintas.</td><td>Más de 3 fuentes diferentes o fuentes decorativas en textos largos.</td></tr>
+          <tr><td><strong>4. Paleta de colores</strong></td><td>Máximo 3 colores: 60% dominante, 30% complementario, 10% acento.</td><td>Usar colores sin criterio que compitan entre sí.</td></tr>
+          <tr><td><strong>5. Espacio en blanco</strong></td><td>El área vacía no es espacio desperdiciado: da "aire" al diseño y reduce la sobrecarga visual.</td><td>Llenar todos los espacios vacíos: genera caos visual.</td></tr>
+          <tr><td><strong>6. Consistencia</strong></td><td>Misma fuente para todos los títulos del mismo nivel. Mismo color para elementos del mismo tipo.</td><td>Mezclar estilos de íconos (línea y relleno juntos).</td></tr>
+        </table></div>
+      </div>
+    </div>
+
+    <div class="bloque">
+      <div class="bloque-header" onclick="toggleBloque(this)">
+        <div class="bloque-header-left"><span class="bloque-num">Bloque 3</span><span class="bloque-title">Licencias Creative Commons</span></div>
+        <span class="bloque-arrow">▼</span>
+      </div>
+      <div class="bloque-body">
+        <div class="section-title">Los cuatro elementos CC</div>
+        <div class="table-wrap"><table>
+          <tr><th>Elemento</th><th>Símbolo</th><th>Significa</th></tr>
+          <tr><td><strong>BY (Atribución)</strong></td><td>BY</td><td>Siempre obligatorio. Debés dar crédito al autor original.</td></tr>
+          <tr><td><strong>SA (ShareAlike)</strong></td><td>SA</td><td>Si modificás la obra, debés distribuir tu versión bajo la misma licencia.</td></tr>
+          <tr><td><strong>NC (NonCommercial)</strong></td><td>NC</td><td>No podés usar la obra con fines comerciales. (Usarla en la escuela está bien.)</td></tr>
+          <tr><td><strong>ND (NoDerivatives)</strong></td><td>ND</td><td>No podés modificar la obra. Debés usarla tal como está.</td></tr>
+        </table></div>
+
+        <div class="section-title">Sitios con imágenes de licencia libre</div>
+        <div class="table-wrap"><table>
+          <tr><th>Sitio</th><th>URL</th><th>Licencia</th></tr>
+          <tr><td><strong>Unsplash</strong></td><td>unsplash.com</td><td>CC0 — completamente libre</td></tr>
+          <tr><td><strong>Pexels</strong></td><td>pexels.com</td><td>CC0 — completamente libre</td></tr>
+          <tr><td><strong>Pixabay</strong></td><td>pixabay.com</td><td>CC0 — completamente libre</td></tr>
+          <tr><td><strong>Wikimedia Commons</strong></td><td>commons.wikimedia.org</td><td>Varias CC — verificar cada imagen</td></tr>
+          <tr><td><strong>Freepik (gratis)</strong></td><td>freepik.com</td><td>CC BY — requiere citar a Freepik</td></tr>
+        </table></div>
+        <div class="callout important"><span class="callout-icon">⚠️</span><div>Usar imágenes sin citar no es un error menor: es <strong>plagio</strong>. En proyectos escolares, la falta de citación puede resultar en descuento de puntos.</div></div>
+      </div>
+    </div>
+
+    <div class="bloque">
+      <div class="bloque-header" onclick="toggleBloque(this)">
+        <div class="bloque-header-left"><span class="bloque-num">Bloque 4</span><span class="bloque-title">El Proyecto Integrador</span></div>
+        <span class="bloque-arrow">▼</span>
+      </div>
+      <div class="bloque-body">
+        <div class="section-title">Rúbrica de evaluación</div>
+        <div class="table-wrap"><table>
+          <tr><th>Criterio</th><th>Ponderación</th><th>Excelente (4)</th><th>Suficiente (2)</th></tr>
+          <tr><td><strong>Contenido y mensaje</strong></td><td>40%</td><td>Mensaje claro, preciso y adecuado al público. Información verificada y citada.</td><td>Mensaje comprensible, pero con imprecisiones o sin citar fuentes.</td></tr>
+          <tr><td><strong>Diseño y claridad visual</strong></td><td>20%</td><td>Jerarquía visual clara, tipografía legible, paleta coherente, espacio en blanco bien usado.</td><td>Diseño aceptable con fallas menores de jerarquía o legibilidad.</td></tr>
+          <tr><td><strong>Uso ético del material</strong></td><td>15%</td><td>Todas las imágenes y textos ajenos correctamente citados con licencia CC.</td><td>La mayoría citada con alguna omisión menor.</td></tr>
+          <tr><td><strong>Presentación oral</strong></td><td>25%</td><td>Clara, ordenada, explica decisiones de diseño y responde preguntas del curso.</td><td>Comprensible, pero con dificultad para responder preguntas.</td></tr>
+        </table></div>
+
+        <div class="section-title">Checklist antes de presentar</div>
+        <ul>
+          <li>☐ El mensaje principal se entiende en menos de 10 segundos sin leer todo el texto.</li>
+          <li>☐ El título es lo visualmente más grande e importante de la pieza.</li>
+          <li>☐ Hay contraste suficiente entre el texto y el fondo.</li>
+          <li>☐ No se usan más de 2 fuentes tipográficas distintas.</li>
+          <li>☐ Todas las imágenes tienen licencia CC y están citadas.</li>
+          <li>☐ La información es correcta: verificada en al menos 2 fuentes confiables.</li>
+          <li>☐ El guion oral está preparado: todos saben qué parte les toca.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="actividades-section">
+      <div class="actividades-title">🗒️ Actividades integradoras</div>
+      <div class="actividad-card" style="--act-color: var(--u4)">
+        <div class="actividad-header"><span class="actividad-num">Actividad 1</span><span class="actividad-title">Elegir la herramienta correcta</span><span class="actividad-bloque">Bloque 1</span></div>
+        <div class="actividad-body">Para cada situación, decidí si usarías Google Docs o Canva y justificá en 2 oraciones: a) Presentar resultados de una investigación sobre el cambio climático a alumnos de 1° año. b) El centro de estudiantes quiere un afiche para la feria de ciencias. c) Escribir un informe de 5 páginas sobre la Revolución Industrial. d) Crear una tarjeta de agradecimiento digital para un docente que se jubila.</div>
+      </div>
+      <div class="actividad-card" style="--act-color: var(--u4)">
+        <div class="actividad-header"><span class="actividad-num">Actividad 4</span><span class="actividad-title">Planificación del proyecto</span><span class="actividad-bloque">Bloque 4 · Grupal</span></div>
+        <div class="actividad-body">Con tu grupo, completá la ficha de proyecto en el cuaderno: 1) Tema de la pieza. 2) Público objetivo: edad, contexto, qué saben y qué no saben del tema. 3) Mensaje central: una sola oración que resume lo que quieren comunicar. 4) Formato elegido y justificación. 5) Herramienta elegida y justificación. 6) Distribución de roles. 7) Boceto del diseño en papel.</div>
+      </div>
+    </div>
+  </div><!-- /unit-4 -->
+
+
+  <!-- ════════════════════════════════════════
+       UNIDAD 5
+  ════════════════════════════════════════ -->
+  <div class="unit-content" id="unit-5">
+    <div class="unit-header">
+      <button class="back-btn" onclick="showOverview()">← Volver al inicio</button>
+      <div class="unit-header-badge" style="background:rgba(245,158,11,0.15);color:var(--u5);border:1px solid rgba(245,158,11,0.3)">Unidad 5 · Cierre del CBS</div>
+      <h2>TIC, Sociedad y Futuro</h2>
+      <p>Miramos hacia adelante — qué viene en tecnología — y hacia adentro — qué aprendimos y cómo se conecta todo en tres años.</p>
+    </div>
+
+    <div class="bloque">
+      <div class="bloque-header" onclick="toggleBloque(this)">
+        <div class="bloque-header-left"><span class="bloque-num">Bloque 1</span><span class="bloque-title">Tendencias Tecnológicas Emergentes</span></div>
+        <span class="bloque-arrow">▼</span>
+      </div>
+      <div class="bloque-body">
+        <div class="section-title">Internet de las Cosas (IoT)</div>
+        <p>El <strong>IoT</strong> es la red de objetos cotidianos conectados a Internet que pueden recopilar, enviar y recibir datos sin intervención humana directa.</p>
+        <div class="table-wrap"><table>
+          <tr><th>Sector</th><th>Ejemplo de IoT</th><th>Qué hace</th></tr>
+          <tr><td>Hogar inteligente</td><td>Termostato Nest</td><td>Aprende tus hábitos de temperatura y ajusta la calefacción automáticamente.</td></tr>
+          <tr><td>Salud</td><td>Smartwatch con sensor cardíaco</td><td>Monitorea constantemente signos vitales y alerta al médico ante anomalías.</td></tr>
+          <tr><td>Ciudad inteligente</td><td>Semáforos con sensores de tráfico</td><td>Ajustan los tiempos en tiempo real según el flujo vehicular.</td></tr>
+          <tr><td>Agricultura</td><td>Sensores de humedad en el suelo</td><td>Activan el riego automáticamente cuando el suelo lo necesita, ahorrando agua.</td></tr>
+        </table></div>
+
+        <div class="section-title">Realidad Aumentada (AR) vs. Realidad Virtual (VR)</div>
+        <div class="table-wrap"><table>
+          <tr><th>Realidad Aumentada (AR)</th><th>Realidad Virtual (VR)</th></tr>
+          <tr><td>Superpone elementos digitales sobre el mundo real. El usuario sigue viendo su entorno físico.</td><td>Sumerge completamente al usuario en un entorno digital. El mundo físico desaparece.</td></tr>
+          <tr><td>Se accede con el celular o gafas ligeras.</td><td>Requiere un casco o visor especial (Oculus, PlayStation VR).</td></tr>
+          <tr><td>Filtros de Instagram, Google Lens, Pokémon GO.</td><td>Videojuegos inmersivos, simuladores de vuelo, entrenamiento médico.</td></tr>
+        </table></div>
+
+        <div class="section-title">Vehículos autónomos: niveles de autonomía</div>
+        <div class="table-wrap"><table>
+          <tr><th>Nivel</th><th>Descripción</th><th>Ejemplo actual</th></tr>
+          <tr><td><strong>Nivel 0</strong></td><td>Sin automatización. El conductor controla todo.</td><td>Autos tradicionales.</td></tr>
+          <tr><td><strong>Nivel 2</strong></td><td>El auto puede acelerar, frenar y girar, pero el conductor debe estar atento.</td><td>Tesla Autopilot, Mercedes Drive Pilot.</td></tr>
+          <tr><td><strong>Nivel 4</strong></td><td>Alta automatización: sin conductor en zonas específicas.</td><td>Waymo (robotaxis en Phoenix y San Francisco).</td></tr>
+          <tr><td><strong>Nivel 5</strong></td><td>Automatización total en cualquier condición. Sin volante ni pedales.</td><td>No existe aún en producción comercial.</td></tr>
+        </table></div>
+
+        <div class="section-title">Computación cuántica</div>
+        <div class="table-wrap"><table>
+          <tr><th>Computadora clásica</th><th>Computadora cuántica</th></tr>
+          <tr><td>Procesa en bits: 0 o 1.</td><td>Procesa en qubits: 0, 1 o ambos a la vez (superposición).</td></tr>
+          <tr><td>Resuelve problemas secuencialmente.</td><td>Puede resolver ciertos problemas exponencialmente más rápido.</td></tr>
+          <tr><td>Los algoritmos de cifrado actuales son seguros ante ella.</td><td>Podría romper los cifrados actuales en segundos (amenaza para la ciberseguridad).</td></tr>
+        </table></div>
+      </div>
+    </div>
+
+    <div class="bloque">
+      <div class="bloque-header" onclick="toggleBloque(this)">
+        <div class="bloque-header-left"><span class="bloque-num">Bloque 2</span><span class="bloque-title">TIC y Sociedad — Dimensión Crítica</span></div>
+        <span class="bloque-arrow">▼</span>
+      </div>
+      <div class="bloque-body">
+        <div class="section-title">La brecha digital</div>
+        <p>La <strong>brecha digital</strong> es la desigualdad en el acceso y uso de las tecnologías digitales entre distintos grupos. No es solo una cuestión de tener o no tener un dispositivo: tiene múltiples dimensiones.</p>
+        <div class="table-wrap"><table>
+          <tr><th>Dimensión</th><th>Descripción</th><th>Situación en Argentina</th></tr>
+          <tr><td><strong>Acceso a dispositivos</strong></td><td>¿Tiene computadora o celular?</td><td>En hogares del decil más pobre, el acceso a PC es del 30% vs. 95% en el más rico (INDEC, 2024).</td></tr>
+          <tr><td><strong>Conectividad</strong></td><td>¿Tiene Internet estable y de calidad?</td><td>El acceso a fibra óptica es casi exclusivo de grandes ciudades. Zonas rurales dependen de 3G/4G.</td></tr>
+          <tr><td><strong>Habilidades digitales</strong></td><td>¿Sabe usar la tecnología de forma productiva?</td><td>Acceso no garantiza habilidad. Muchos usuarios solo acceden a redes sociales y entretenimiento.</td></tr>
+          <tr><td><strong>Brecha generacional</strong></td><td>¿Los adultos mayores pueden participar?</td><td>El 40% de los mayores de 65 años en Argentina no usa Internet (INDEC, 2024).</td></tr>
+        </table></div>
+        <div class="callout important"><span class="callout-icon">⚠️</span><div>Las ciudades inteligentes plantean un dilema clave: a mayor eficiencia, mayor vigilancia. Para que un sistema de gestión urbana funcione, necesita datos permanentes sobre el comportamiento de los ciudadanos. ¿Cuánto de nuestra privacidad estamos dispuestos a ceder a cambio de servicios públicos más eficientes?</div></div>
+      </div>
+    </div>
+
+    <div class="bloque">
+      <div class="bloque-header" onclick="toggleBloque(this)">
+        <div class="bloque-header-left"><span class="bloque-num">Bloque 3</span><span class="bloque-title">Síntesis del Ciclo Básico Secundario</span></div>
+        <span class="bloque-arrow">▼</span>
+      </div>
+      <div class="bloque-body">
+        <div class="section-title">El mapa de los tres años</div>
+        <div class="table-wrap"><table>
+          <tr><th>Año</th><th>Eje central</th><th>Pregunta que responde</th></tr>
+          <tr><td><strong>1° Año</strong></td><td>¿Qué es la tecnología y cómo funciona por dentro?</td><td>¿Qué es una computadora? ¿Cómo guardo y proceso información?</td></tr>
+          <tr><td><strong>2° Año</strong></td><td>¿Cómo funciona el software y cómo nos conectamos?</td><td>¿Qué sistema operativo uso? ¿Qué es Internet?</td></tr>
+          <tr><td><strong>3° Año</strong></td><td>¿Cómo vivo de forma crítica y creativa dentro del mundo digital?</td><td>¿Cuáles son mis derechos? ¿Cómo me protejo? ¿Cómo produzco? ¿Qué viene?</td></tr>
+        </table></div>
+
+        <div class="section-title">Perfil de salida del CBS</div>
+        <div class="table-wrap"><table>
+          <tr><th>Dimensión</th><th>Capacidad esperada</th></tr>
+          <tr><td><strong>Conocimiento técnico</strong></td><td>Entender qué es y cómo funciona una computadora, sus componentes, el software y las redes.</td></tr>
+          <tr><td><strong>Ciudadanía Digital</strong></td><td>Conocer sus derechos digitales, reconocer el ciberbullying y saber cómo actuar.</td></tr>
+          <tr><td><strong>Pensamiento crítico</strong></td><td>Evaluar fuentes, detectar desinformación, identificar sesgos en la IA y verificar antes de compartir.</td></tr>
+          <tr><td><strong>Ciberseguridad práctica</strong></td><td>Proteger sus dispositivos, crear contraseñas seguras, reconocer phishing y navegar de forma segura.</td></tr>
+          <tr><td><strong>Producción digital ética</strong></td><td>Crear piezas de comunicación usando herramientas digitales, aplicando principios de diseño y citando correctamente.</td></tr>
+          <tr><td><strong>Reflexión social</strong></td><td>Analizar el impacto de las TIC en la sociedad, reconocer la brecha digital y reflexionar sobre el futuro.</td></tr>
+        </table></div>
+      </div>
+    </div>
+
+    <div class="actividades-section">
+      <div class="actividades-title">🗒️ Actividades integradoras · Evaluación CBS</div>
+      <div class="actividad-card" style="--act-color: var(--u5)">
+        <div class="actividad-header"><span class="actividad-num">Pregunta 1</span><span class="actividad-title">Hardware + Ciberseguridad</span><span class="actividad-bloque">Integradora CBS</span></div>
+        <div class="actividad-body">Un ransomware cifró todos los archivos de una computadora. La víctima no tenía backup y el sistema operativo no había sido actualizado en 8 meses. a) ¿Qué es el ransomware y en qué componente están almacenados los archivos cifrados? b) ¿Por qué la falta de actualización facilitó el ataque? c) Si hubiera tenido un backup según la regla 3-2-1, ¿cómo podría haber recuperado sus archivos? d) ¿Qué tres medidas concretas debería tomar para que esto no vuelva a ocurrir?</div>
+      </div>
+      <div class="actividad-card" style="--act-color: var(--u5)">
+        <div class="actividad-header"><span class="actividad-num">Pregunta 3</span><span class="actividad-title">Ciudadanía Digital + IA</span><span class="actividad-bloque">Integradora CBS</span></div>
+        <div class="actividad-body">Una red social usa un algoritmo de IA para recomendar contenido. Marisol nota que desde que vio un video político, solo le aparecen videos del mismo tipo, cada vez más extremos. a) ¿Cómo funciona el algoritmo de recomendación? ¿Por qué hace esto? b) ¿Qué sesgo algorítmico está describiendo Marisol? ¿Cómo se llama este fenómeno? c) ¿Qué derecho digital se ve afectado? d) ¿Qué puede hacer Marisol para contrarrestar este efecto?</div>
+      </div>
+      <div class="actividad-card" style="--act-color: var(--u5)">
+        <div class="actividad-header"><span class="actividad-num">Actividad final</span><span class="actividad-title">Carta al alumno de 1° año</span><span class="actividad-bloque">Reflexión CBS</span></div>
+        <div class="actividad-body">Escribí una carta de 15 a 20 oraciones a un alumno que está empezando 1° año de TIC. Explicale: por qué importa aprender TIC en 2026, cuál fue el contenido que más te va a servir, un consejo sobre cómo usar la tecnología de forma más inteligente, una advertencia sobre algo que aprendiste de la forma difícil, y cómo cambió tu relación con la tecnología desde que empezaste el CBS.</div>
+      </div>
+    </div>
+  </div><!-- /unit-5 -->
+
+</main>
+
+<script>
+  function showOverview() {
+    document.getElementById('overview').style.display = 'block';
+    document.querySelectorAll('.unit-content').forEach(u => u.style.display = 'none');
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showUnit(n) {
+    document.getElementById('overview').style.display = 'none';
+    document.querySelectorAll('.unit-content').forEach(u => u.style.display = 'none');
+    document.getElementById('unit-' + n).style.display = 'block';
+    document.querySelectorAll('.nav-btn').forEach((b, i) => {
+      b.classList.toggle('active', i === n);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function toggleBloque(header) {
+    const bloque = header.parentElement;
+    bloque.classList.toggle('open');
+  }
+</script>
+
+</body>
+</html>

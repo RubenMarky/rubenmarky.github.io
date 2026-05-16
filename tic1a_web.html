@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>T.I.C — CEP N°38 · Prof. Rubén Markwart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,400&family=JetBrains+Mono:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4ede1;
+  --bg-paper:#ebe2d0;
+  --ink:#1a1815;
+  --ink-soft:#3a342c;
+  --accent:#0a4d3c;          /* deep phosphor green */
+  --accent-bright:#1e8a5f;
+  --amber:#c8651b;
+  --amber-soft:#e8a04a;
+  --rule:#1a1815;
+  --paper-grid:#d4c9b3;
+  --highlight:#f0d878;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Fraunces',Georgia,serif;
+  font-size:17px;
+  line-height:1.6;
+  overflow-x:hidden;
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(200,101,27,0.04) 0%, transparent 40%),
+    radial-gradient(circle at 80% 60%, rgba(10,77,60,0.05) 0%, transparent 50%);
+}
+
+/* paper grain texture */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:1;
+  opacity:0.4;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.05 0 0 0 0.15 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode:multiply;
+}
+
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+
+/* ============ TOP BAR ============ */
+.topbar{
+  position:fixed;
+  top:0;left:0;right:0;
+  z-index:100;
+  background:var(--ink);
+  color:var(--bg);
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:8px 24px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid var(--amber);
+}
+.topbar .blink{
+  display:inline-block;
+  width:8px;height:8px;
+  background:var(--accent-bright);
+  border-radius:50%;
+  margin-right:8px;
+  animation:blink 1.4s infinite;
+  box-shadow:0 0 8px var(--accent-bright);
+}
+@keyframes blink{50%{opacity:0.2}}
+.topbar nav{display:flex;gap:18px}
+.topbar nav a{transition:color 0.2s}
+.topbar nav a:hover{color:var(--amber-soft)}
+
+/* ============ HERO ============ */
+.hero{
+  min-height:100vh;
+  padding:80px 6vw 60px;
+  position:relative;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:60px;
+  align-items:center;
+  border-bottom:2px solid var(--ink);
+}
+
+.hero::after{
+  content:'';
+  position:absolute;
+  inset:60px 6vw 30px;
+  border:1px solid var(--ink);
+  pointer-events:none;
+  opacity:0.15;
+}
+
+.hero-left{position:relative;z-index:2}
+
+.eyebrow{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  margin-bottom:24px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  color:var(--accent);
+}
+.eyebrow::before{
+  content:'';
+  width:32px;height:1px;
+  background:var(--accent);
+}
+
+h1.hero-title{
+  font-family:'Fraunces',serif;
+  font-weight:900;
+  font-size:clamp(48px,7vw,108px);
+  line-height:0.92;
+  letter-spacing:-0.03em;
+  margin-bottom:32px;
+}
+h1.hero-title em{
+  font-style:italic;
+  color:var(--amber);
+  font-weight:400;
+}
+h1.hero-title .tic{
+  display:inline-block;
+  background:var(--ink);
+  color:var(--bg);
+  padding:0 18px;
+  margin:0 4px;
+  transform:rotate(-2deg);
+}
+
+.hero-sub{
+  font-size:20px;
+  line-height:1.5;
+  max-width:480px;
+  margin-bottom:36px;
+  color:var(--ink-soft);
+}
+
+.hero-meta{
+  display:flex;
+  gap:32px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  padding-top:24px;
+  border-top:1px solid var(--ink);
+}
+.hero-meta div span{display:block;color:var(--ink-soft);font-size:10px;margin-bottom:4px}
+.hero-meta div strong{font-weight:700;font-size:13px}
+
+/* hero right - visual element */
+.hero-right{
+  position:relative;
+  height:600px;
+  z-index:2;
+}
+.terminal{
+  background:var(--ink);
+  border-radius:6px;
+  padding:0;
+  font-family:'JetBrains Mono',monospace;
+  color:var(--accent-bright);
+  font-size:13px;
+  box-shadow:24px 24px 0 var(--amber);
+  position:absolute;
+  top:40px;
+  left:20px;
+  width:90%;
+  max-width:480px;
+  overflow:hidden;
+}
+.term-bar{
+  background:#2a2620;
+  padding:10px 14px;
+  display:flex;
+  gap:6px;
+  border-bottom:1px solid #3a342c;
+}
+.term-bar span{
+  width:10px;height:10px;border-radius:50%;background:#5a544c;
+}
+.term-bar span:nth-child(1){background:#e85a4f}
+.term-bar span:nth-child(2){background:#e8a04a}
+.term-bar span:nth-child(3){background:#1e8a5f}
+.term-body{padding:22px 18px;min-height:280px}
+.term-line{margin-bottom:8px}
+.term-line .prompt{color:var(--amber-soft);margin-right:8px}
+.term-line .out{color:#a8c8b8}
+.cursor{
+  display:inline-block;
+  width:8px;height:14px;
+  background:var(--accent-bright);
+  animation:blink 1s infinite;
+  vertical-align:middle;
+}
+
+.hero-stamp{
+  position:absolute;
+  bottom:20px;
+  right:40px;
+  width:140px;
+  height:140px;
+  border:2px solid var(--amber);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--amber);
+  background:var(--bg);
+  transform:rotate(8deg);
+  line-height:1.4;
+}
+.hero-stamp strong{
+  display:block;
+  font-size:24px;
+  font-family:'Fraunces',serif;
+  font-weight:900;
+  letter-spacing:0;
+  color:var(--ink);
+  margin:4px 0;
+}
+
+/* ============ SECTION HEADERS ============ */
+.section{
+  padding:100px 6vw;
+  position:relative;
+  border-bottom:1px solid var(--ink);
+}
+
+.section-num{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  letter-spacing:0.25em;
+  color:var(--amber);
+  text-transform:uppercase;
+  margin-bottom:16px;
+}
+.section-title{
+  font-family:'Fraunces',serif;
+  font-weight:900;
+  font-size:clamp(36px,5vw,72px);
+  line-height:1;
+  letter-spacing:-0.02em;
+  margin-bottom:24px;
+  max-width:900px;
+}
+.section-title em{font-style:italic;color:var(--accent);font-weight:400}
+.section-intro{
+  font-size:19px;
+  max-width:720px;
+  color:var(--ink-soft);
+  margin-bottom:60px;
+  line-height:1.5;
+}
+
+/* ============ PROGRAM CARD ============ */
+.program{
+  background:var(--bg-paper);
+  border:2px solid var(--ink);
+}
+.program-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:0;
+  margin-top:60px;
+  border:2px solid var(--ink);
+  background:var(--bg);
+}
+.program-cell{
+  padding:32px 28px;
+  border-right:1px solid var(--ink);
+  position:relative;
+}
+.program-cell:last-child{border-right:none}
+.program-cell .label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  color:var(--amber);
+  margin-bottom:14px;
+}
+.program-cell h3{
+  font-family:'Fraunces',serif;
+  font-weight:700;
+  font-size:24px;
+  line-height:1.1;
+  margin-bottom:16px;
+  letter-spacing:-0.01em;
+}
+.program-cell p{font-size:15px;line-height:1.55;color:var(--ink-soft)}
+
+.objectives{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:0;
+  margin-top:48px;
+  border:2px solid var(--ink);
+}
+.obj-cell{
+  padding:32px 24px;
+  border-right:1px solid var(--ink);
+  background:var(--bg);
+  position:relative;
+  min-height:240px;
+}
+.obj-cell:last-child{border-right:none}
+.obj-num{
+  font-family:'Instrument Serif',serif;
+  font-style:italic;
+  font-size:64px;
+  line-height:1;
+  color:var(--amber);
+  margin-bottom:16px;
+  display:block;
+}
+.obj-cell h4{
+  font-family:'Fraunces',serif;
+  font-weight:700;
+  font-size:18px;
+  margin-bottom:10px;
+  letter-spacing:-0.01em;
+}
+.obj-cell p{font-size:14px;line-height:1.5;color:var(--ink-soft)}
+
+/* ============ UNIDADES ============ */
+.units{background:var(--bg)}
+.unit{
+  display:grid;
+  grid-template-columns:120px 1fr 1fr;
+  gap:48px;
+  padding:60px 0;
+  border-top:1px solid var(--ink);
+  position:relative;
+  align-items:start;
+}
+.unit:first-of-type{border-top:2px solid var(--ink)}
+.unit-num{
+  font-family:'Instrument Serif',serif;
+  font-style:italic;
+  font-size:120px;
+  line-height:0.85;
+  color:var(--accent);
+}
+.unit-content h3{
+  font-family:'Fraunces',serif;
+  font-weight:900;
+  font-size:38px;
+  line-height:1;
+  letter-spacing:-0.02em;
+  margin-bottom:20px;
+}
+.unit-content h3 small{
+  display:block;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  color:var(--amber);
+  font-weight:400;
+  margin-bottom:8px;
+}
+.unit-content > p{font-size:16px;color:var(--ink-soft);line-height:1.55;margin-bottom:20px}
+.unit-content ul{list-style:none;padding:0}
+.unit-content ul li{
+  padding:8px 0 8px 24px;
+  position:relative;
+  font-size:15px;
+  border-bottom:1px dotted var(--paper-grid);
+}
+.unit-content ul li::before{
+  content:'▸';
+  position:absolute;
+  left:0;
+  color:var(--amber);
+}
+
+.unit-detail{
+  background:var(--bg-paper);
+  border:1px solid var(--ink);
+  padding:28px;
+  font-size:14px;
+}
+.unit-detail .tag{
+  display:inline-block;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  background:var(--ink);
+  color:var(--bg);
+  padding:3px 8px;
+  margin-bottom:12px;
+}
+.unit-detail h5{
+  font-family:'Fraunces',serif;
+  font-weight:700;
+  font-size:16px;
+  margin-bottom:12px;
+  letter-spacing:-0.01em;
+}
+.unit-detail p{margin-bottom:12px;line-height:1.55;color:var(--ink-soft)}
+.unit-detail .meta{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--amber);
+  padding-top:12px;
+  border-top:1px solid var(--ink);
+  margin-top:16px;
+}
+
+/* ============ TOOLS UNIT 4 ============ */
+.tools{
+  background:var(--ink);
+  color:var(--bg);
+  position:relative;
+}
+.tools .section-title{color:var(--bg)}
+.tools .section-title em{color:var(--amber-soft)}
+.tools .section-intro{color:#bbb1a0}
+.tools .section-num{color:var(--amber-soft)}
+
+.tools-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:24px;
+  margin-bottom:60px;
+}
+.tool-card{
+  background:#2a2620;
+  border:1px solid #3a342c;
+  padding:36px 28px;
+  position:relative;
+  overflow:hidden;
+  transition:transform 0.3s,border-color 0.3s;
+}
+.tool-card:hover{
+  transform:translateY(-4px);
+  border-color:var(--amber);
+}
+.tool-card::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:3px;
+  background:var(--accent-bright);
+}
+.tool-card.canva::before{background:#ff6b6b}
+.tool-card.audacity::before{background:var(--amber)}
+.tool-card .label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  color:#6a655a;
+  margin-bottom:12px;
+}
+.tool-card h3{
+  font-family:'Fraunces',serif;
+  font-weight:900;
+  font-size:36px;
+  margin-bottom:12px;
+  letter-spacing:-0.02em;
+}
+.tool-card .purpose{
+  font-size:15px;
+  color:#bbb1a0;
+  margin-bottom:20px;
+  line-height:1.5;
+}
+.tool-card .hito{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.1em;
+  background:#1a1815;
+  padding:12px 14px;
+  border-left:2px solid var(--accent-bright);
+  color:var(--accent-bright);
+  margin-bottom:18px;
+}
+.tool-card.canva .hito{border-color:#ff6b6b;color:#ff6b6b}
+.tool-card.audacity .hito{border-color:var(--amber);color:var(--amber-soft)}
+
+.shortcuts{
+  list-style:none;
+}
+.shortcuts li{
+  padding:10px 0;
+  border-bottom:1px dotted #3a342c;
+  font-size:13px;
+  display:flex;
+  gap:14px;
+  align-items:start;
+}
+.shortcuts li:last-child{border-bottom:none}
+.shortcuts kbd{
+  font-family:'JetBrains Mono',monospace;
+  background:#1a1815;
+  border:1px solid #3a342c;
+  border-bottom-width:2px;
+  padding:3px 8px;
+  font-size:11px;
+  color:var(--amber-soft);
+  white-space:nowrap;
+  flex-shrink:0;
+  border-radius:3px;
+}
+.shortcuts span{color:#bbb1a0;font-family:'Fraunces',serif;font-size:14px;line-height:1.4}
+
+/* ============ ACTIVITIES ============ */
+.activities{background:var(--bg-paper)}
+
+.activity-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:32px;
+  margin-top:60px;
+}
+.activity-card{
+  background:var(--bg);
+  border:2px solid var(--ink);
+  padding:40px 36px;
+  position:relative;
+  transition:transform 0.3s;
+}
+.activity-card:hover{transform:translate(-3px,-3px)}
+.activity-card::after{
+  content:'';
+  position:absolute;
+  inset:6px -6px -6px 6px;
+  background:var(--accent);
+  z-index:-1;
+  transition:inset 0.3s;
+}
+.activity-card:hover::after{inset:9px -9px -9px 9px}
+.act-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  color:var(--amber);
+  margin-bottom:14px;
+}
+.activity-card h3{
+  font-family:'Fraunces',serif;
+  font-weight:900;
+  font-size:28px;
+  line-height:1.1;
+  margin-bottom:18px;
+  letter-spacing:-0.02em;
+}
+.activity-card > p{
+  font-size:15px;
+  color:var(--ink-soft);
+  line-height:1.55;
+  margin-bottom:24px;
+}
+.activity-card .parts{
+  border-top:1px solid var(--ink);
+  padding-top:18px;
+}
+.activity-card .parts > div{
+  padding:10px 0;
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  letter-spacing:0.05em;
+  display:flex;
+  align-items:start;
+  gap:12px;
+}
+.activity-card .parts strong{
+  background:var(--ink);
+  color:var(--bg);
+  padding:2px 8px;
+  font-size:10px;
+  flex-shrink:0;
+}
+
+/* ============ EXAMS ============ */
+.exams{background:var(--bg)}
+.exam-block{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0;
+  margin-top:60px;
+  border:2px solid var(--ink);
+}
+.exam-col{
+  padding:48px 40px;
+  border-right:1px solid var(--ink);
+  background:var(--bg-paper);
+}
+.exam-col:last-child{border-right:none;background:var(--bg)}
+.exam-col h3{
+  font-family:'Fraunces',serif;
+  font-weight:900;
+  font-size:30px;
+  margin-bottom:8px;
+  letter-spacing:-0.02em;
+}
+.exam-col .subtitle{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--amber);
+  margin-bottom:24px;
+}
+.exam-col ol{padding-left:24px;font-size:14px}
+.exam-col ol li{padding:8px 0;border-bottom:1px dotted var(--paper-grid)}
+.exam-col ol li::marker{font-family:'JetBrains Mono',monospace;color:var(--accent);font-weight:700}
+
+/* ============ EVOLUTION TIMELINE ============ */
+.timeline-section{background:var(--ink);color:var(--bg);overflow:hidden}
+.timeline-section .section-title{color:var(--bg)}
+.timeline-section .section-title em{color:var(--amber-soft)}
+.timeline-section .section-intro{color:#bbb1a0}
+.timeline-section .section-num{color:var(--amber-soft)}
+
+.timeline{
+  position:relative;
+  padding:40px 0;
+  margin-top:40px;
+}
+.timeline::before{
+  content:'';
+  position:absolute;
+  left:140px;
+  top:0;
+  bottom:0;
+  width:1px;
+  background:#3a342c;
+}
+.tl-item{
+  display:grid;
+  grid-template-columns:140px 1fr;
+  gap:40px;
+  padding:24px 0;
+  position:relative;
+}
+.tl-item::before{
+  content:'';
+  position:absolute;
+  left:135px;
+  top:32px;
+  width:11px;height:11px;
+  background:var(--amber);
+  border-radius:50%;
+  box-shadow:0 0 0 4px var(--ink);
+}
+.tl-year{
+  font-family:'Instrument Serif',serif;
+  font-style:italic;
+  font-size:32px;
+  color:var(--amber-soft);
+  text-align:right;
+  padding-right:30px;
+  line-height:1;
+}
+.tl-content h4{
+  font-family:'Fraunces',serif;
+  font-weight:700;
+  font-size:18px;
+  margin-bottom:6px;
+}
+.tl-content p{color:#bbb1a0;font-size:14px;line-height:1.5}
+
+/* ============ STORAGE TABLE ============ */
+.storage-section{background:var(--bg-paper)}
+.storage-table{
+  width:100%;
+  border:2px solid var(--ink);
+  border-collapse:collapse;
+  margin-top:40px;
+  background:var(--bg);
+}
+.storage-table th{
+  background:var(--ink);
+  color:var(--bg);
+  padding:18px 20px;
+  text-align:left;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  font-weight:500;
+}
+.storage-table td{
+  padding:18px 20px;
+  border-bottom:1px solid var(--paper-grid);
+  border-right:1px solid var(--paper-grid);
+  font-size:15px;
+}
+.storage-table td:last-child{border-right:none}
+.storage-table tr:last-child td{border-bottom:none}
+.storage-table td:first-child{
+  font-family:'Fraunces',serif;
+  font-weight:700;
+  font-size:18px;
+}
+.storage-table td:nth-child(2){
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  color:var(--amber);
+}
+.storage-table td:nth-child(3){
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  color:var(--accent);
+}
+.storage-table td:last-child{color:var(--ink-soft);font-style:italic}
+
+/* ============ FOOTER ============ */
+footer{
+  background:var(--ink);
+  color:var(--bg);
+  padding:80px 6vw 40px;
+  position:relative;
+}
+.foot-grid{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr;
+  gap:60px;
+  margin-bottom:60px;
+}
+.foot-grid h4{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  color:var(--amber-soft);
+  margin-bottom:20px;
+}
+.foot-grid p{color:#bbb1a0;line-height:1.6;margin-bottom:14px;font-size:15px}
+.foot-grid ul{list-style:none}
+.foot-grid ul li{padding:6px 0;font-size:14px;color:#bbb1a0}
+.foot-grid ul li::before{content:'· ';color:var(--amber)}
+
+.foot-bottom{
+  border-top:1px solid #3a342c;
+  padding-top:30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  color:#6a655a;
+}
+.foot-bottom .big{
+  font-family:'Fraunces',serif;
+  font-weight:900;
+  font-style:italic;
+  font-size:48px;
+  color:var(--bg);
+  letter-spacing:-0.02em;
+  text-transform:none;
+}
+
+/* ============ ANIMATIONS ============ */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.fade-up{animation:fadeUp 0.8s ease both}
+.fade-up-1{animation-delay:0.1s}
+.fade-up-2{animation-delay:0.2s}
+.fade-up-3{animation-delay:0.3s}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 980px){
+  .hero{grid-template-columns:1fr;padding-top:100px}
+  .hero-right{height:auto;min-height:400px}
+  .program-grid,.tools-grid,.activity-grid,.objectives{grid-template-columns:1fr}
+  .obj-cell,.program-cell{border-right:none;border-bottom:1px solid var(--ink)}
+  .obj-cell:last-child,.program-cell:last-child{border-bottom:none}
+  .exam-block{grid-template-columns:1fr}
+  .exam-col{border-right:none;border-bottom:1px solid var(--ink)}
+  .exam-col:last-child{border-bottom:none}
+  .unit{grid-template-columns:1fr;gap:24px}
+  .unit-num{font-size:80px}
+  .timeline::before{left:80px}
+  .tl-item{grid-template-columns:80px 1fr;gap:20px}
+  .tl-item::before{left:75px}
+  .tl-year{font-size:22px;padding-right:14px}
+  .foot-grid{grid-template-columns:1fr;gap:36px}
+  .foot-bottom{flex-direction:column;gap:20px;text-align:center}
+  .foot-bottom .big{font-size:32px}
+  .topbar nav{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ========== TOP BAR ========== -->
+<div class="topbar">
+  <div><span class="blink"></span>CEP N°38 · EPJA · Jardín América, Misiones · Ciclo 2026</div>
+  <nav>
+    <a href="#programa">Programa</a>
+    <a href="#unidades">Unidades</a>
+    <a href="#unidad4">Herramientas</a>
+    <a href="#actividades">Actividades</a>
+    <a href="#examenes">Exámenes</a>
+  </nav>
+</div>
+
+<!-- ========== HERO ========== -->
+<section class="hero">
+  <div class="hero-left fade-up">
+    <div class="eyebrow">Tecnología de la Información y la Comunicación</div>
+    <h1 class="hero-title">
+      Del <em>ábaco</em><br>
+      a la <span class="tic">IA</span><br>
+      <em>en un solo</em><br>
+      cuaderno.
+    </h1>
+    <p class="hero-sub">
+      Materia de 1° A · B · C — EPJA. Una travesía desde la escritura cuneiforme hasta el <em>agentic commerce</em>: hardware, software, telecomunicaciones y producción multimedia con Google Docs, Canva y Audacity.
+    </p>
+    <div class="hero-meta">
+      <div><span>Docente</span><strong>Rubén R. Markwart</strong></div>
+      <div><span>Curso</span><strong>1° A·B·C — EPJA</strong></div>
+      <div><span>Ciclo</span><strong>2026</strong></div>
+      <div><span>Unidades</span><strong>04</strong></div>
+    </div>
+  </div>
+
+  <div class="hero-right fade-up fade-up-2">
+    <div class="terminal">
+      <div class="term-bar"><span></span><span></span><span></span></div>
+      <div class="term-body">
+        <div class="term-line"><span class="prompt">tic@cep38:~$</span> bienvenidos.sh</div>
+        <div class="term-line"><span class="out">› Cargando programa 2026...</span></div>
+        <div class="term-line"><span class="out">› Unidad 1: Introducción a las TIC ✓</span></div>
+        <div class="term-line"><span class="out">› Unidad 2: Informática y Hardware ✓</span></div>
+        <div class="term-line"><span class="out">› Unidad 3: Manejo de la información ✓</span></div>
+        <div class="term-line"><span class="out">› Unidad 4: Navegantes Digitales ✓</span></div>
+        <div class="term-line"><span class="out">› Eje transversal: Música ⇄ TIC ✓</span></div>
+        <div class="term-line">&nbsp;</div>
+        <div class="term-line"><span class="prompt">tic@cep38:~$</span> empezar<span class="cursor"></span></div>
+      </div>
+    </div>
+    <div class="hero-stamp">
+      Ed.<strong>2026</strong>
+      Misiones
+    </div>
+  </div>
+</section>
+
+<!-- ========== PROGRAMA ========== -->
+<section class="section program" id="programa">
+  <div class="section-num">§ 01 — Planificación anual</div>
+  <h2 class="section-title">Una materia <em>transversal</em> que conecta lengua, música y producción digital.</h2>
+  <p class="section-intro">
+    Esta propuesta se enmarca en la formación de ciudadanos conscientes de sus derechos y preparados para el mundo laboral, integrando saberes técnicos a las trayectorias de vida adultas. Las TIC no se reducen al hardware: fortalecen la alfabetización en múltiples lenguajes a través de herramientas profesionales y creativas.
+  </p>
+
+  <div class="program-grid">
+    <div class="program-cell">
+      <div class="label">1° Trimestre</div>
+      <h3>Bases y Conceptos</h3>
+      <p>Hardware, periféricos, memorias y el funcionamiento del sistema informático. Que el alumno sepa qué tiene frente a él y cómo funciona físicamente.</p>
+    </div>
+    <div class="program-cell">
+      <div class="label">2° Trimestre</div>
+      <h3>Gestión y Articulación</h3>
+      <p>Google Docs (escritura colaborativa), Canva (identidad visual) y unidades de medida aplicadas a archivos reales. Borrador del proyecto Música + TIC.</p>
+    </div>
+    <div class="program-cell">
+      <div class="label">3° Trimestre</div>
+      <h3>Producción y Cierre</h3>
+      <p>Edición intensiva en Audacity, debate sobre IA y mundo laboral, exportación final y muestra pedagógica del producto articulado.</p>
+    </div>
+  </div>
+
+  <div class="objectives">
+    <div class="obj-cell">
+      <span class="obj-num">01</span>
+      <h4>Alfabetización Digital</h4>
+      <p>Identificar y operar los componentes de un sistema informático (Hardware y Software).</p>
+    </div>
+    <div class="obj-cell">
+      <span class="obj-num">02</span>
+      <h4>Producción Multimedia</h4>
+      <p>Crear y editar contenidos originales integrando texto, imagen y sonido con herramientas reales.</p>
+    </div>
+    <div class="obj-cell">
+      <span class="obj-num">03</span>
+      <h4>Pensamiento Crítico</h4>
+      <p>Validar fuentes y comprender la evolución de las TIC desde el ábaco hasta la Inteligencia Artificial.</p>
+    </div>
+    <div class="obj-cell">
+      <span class="obj-num">04</span>
+      <h4>Trabajo Colaborativo</h4>
+      <p>Gestionar documentos en la nube, edición conjunta y roles de equipo bien definidos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== UNIDADES ========== -->
+<section class="section units" id="unidades">
+  <div class="section-num">§ 02 — Estructura del curso</div>
+  <h2 class="section-title">Cuatro unidades, <em>un recorrido continuo</em>.</h2>
+  <p class="section-intro">
+    El cuadernillo está organizado de manera progresiva: de los conceptos físicos al pensamiento crítico, de la máquina al producto creativo terminado.
+  </p>
+
+  <article class="unit">
+    <div class="unit-num">01</div>
+    <div class="unit-content">
+      <h3><small>Pág. 1 — 6</small>Introducción a las TIC</h3>
+      <p>El punto de partida: qué son las Tecnologías de la Información y la Comunicación, cómo se procesa y transmite el conocimiento en la era digital, y por qué la convergencia entre electrónica, informática y telecomunicaciones cambió todo desde los años 80.</p>
+      <ul>
+        <li>Evolución histórica y "Nueva Economía"</li>
+        <li>Definición operativa de TIC</li>
+        <li>Componentes: Hardware, Software, Telecomunicaciones</li>
+        <li>El proceso de la información: adquisición → producción → tratamiento → presentación</li>
+      </ul>
+    </div>
+    <aside class="unit-detail">
+      <span class="tag">Concepto clave</span>
+      <h5>El proceso de Información</h5>
+      <p>Las TIC permiten adquisición, almacenamiento, tratamiento y presentación de información acústica (voz), óptica (imágenes) y electromagnética (datos), <em>desde cualquier lugar y en cualquier momento</em>.</p>
+      <div class="meta">→ Hardware · Software · Infraestructura</div>
+    </aside>
+  </article>
+
+  <article class="unit">
+    <div class="unit-num">02</div>
+    <div class="unit-content">
+      <h3><small>Pág. 7 — 11</small>Informática y Hardware</h3>
+      <p>La anatomía completa del sistema: CPU, memorias, gabinete, periféricos y la fuente de poder. Las siete especialidades de la informática y por qué la cibernética también incluye a las prótesis biónicas y los brazos robóticos.</p>
+      <ul>
+        <li>Las 7 especialidades: Gestión, Enseñanza, Sistemas expertos, Telemática, IA, Robótica, Cibernética</li>
+        <li>CPU: Unidad de Control + Unidad Aritmético-Lógica</li>
+        <li>Memorias: RAM, ROM, HDD, SSD, Pendrive</li>
+        <li>Periféricos: Entrada, Salida, Mixtos y Almacenamiento</li>
+        <li>Sistema informático: Personas + Equipos + Datos + Programas</li>
+      </ul>
+    </div>
+    <aside class="unit-detail">
+      <span class="tag">SSD vs HDD</span>
+      <h5>El balance entre velocidad y cuidado</h5>
+      <p>Los SSD son hasta 10 veces más rápidos que un disco mecánico, resisten golpes y no hacen ruido. La contra: el borrado es definitivo y la recuperación de datos es casi imposible si el chip se daña.</p>
+      <div class="meta">→ Capacidades HDD hasta 22 TB · SSD hasta 2 TB</div>
+    </aside>
+  </article>
+
+  <article class="unit">
+    <div class="unit-num">03</div>
+    <div class="unit-content">
+      <h3><small>Pág. 12 — 16</small>Manejo de la información y evolución</h3>
+      <p>Las unidades de almacenamiento desde el bit (la decisión binaria mínima) hasta el exabyte. Una cronología completa que arranca en 3500 a.C. con la escritura cuneiforme y termina en 2026 con el <em>agentic commerce</em> y la IA que ya superó la capacidad de procesamiento humano individual.</p>
+      <ul>
+        <li>Bit, Byte y la tabla de equivalencias (base 1024)</li>
+        <li>Antecedentes primitivos (Prehistoria — siglo XIX)</li>
+        <li>Computación y radio (1900 — 1960)</li>
+        <li>Internet y primeros móviles (1960 — 1989)</li>
+        <li>Revolución digital y Smartphones (1990 — 2020)</li>
+        <li>Era de la Inteligencia Artificial (2021 — actualidad)</li>
+      </ul>
+    </div>
+    <aside class="unit-detail">
+      <span class="tag">Dato actual · 2026</span>
+      <h5>Agentic Commerce</h5>
+      <p>El 99% de la información mundial ya es digital. La IA no solo asiste en la compra: actúa de forma autónoma para optimizar transacciones comerciales. La cuarta revolución industrial está en marcha.</p>
+      <div class="meta">→ 6.31 mil millones de móviles · 5.4 mil M de usuarios</div>
+    </aside>
+  </article>
+
+  <article class="unit">
+    <div class="unit-num">04</div>
+    <div class="unit-content">
+      <h3><small>Pág. 17 — 20</small>Navegantes Digitales</h3>
+      <p>El taller práctico: dominar Google Docs, Canva y Audacity como verdaderas herramientas profesionales. Búsqueda responsable, licencias Creative Commons, gestión de permisos en la nube y producción de un proyecto multimedia articulado con Música.</p>
+      <ul>
+        <li>Búsqueda y curación de fuentes confiables</li>
+        <li>Colaboración en la nube y gestión de roles</li>
+        <li>Diseño visual: jerarquía, composición y exportación</li>
+        <li>Gestión de sonido: grabación, edición y mezcla</li>
+        <li>Producto final: podcast/canción + manual en Canva</li>
+      </ul>
+    </div>
+    <aside class="unit-detail">
+      <span class="tag">El paso de oro</span>
+      <h5>Licencias Creative Commons</h5>
+      <p>Antes de buscar en Google Imágenes: entrar a <em>Herramientas → Derechos de uso → Licencias Creative Commons</em>. Así nadie reclama derechos sobre las producciones finales de los estudiantes.</p>
+      <div class="meta">→ Tres pilares: dominio técnico · criterio · ética</div>
+    </aside>
+  </article>
+</section>
+
+<!-- ========== UNIDAD 4 — HERRAMIENTAS ========== -->
+<section class="section tools" id="unidad4">
+  <div class="section-num">§ 03 — Unidad 4 · Caja de herramientas</div>
+  <h2 class="section-title">El ecosistema TIC del <em>navegante digital</em>.</h2>
+  <p class="section-intro">
+    Tres plataformas, tres engranajes conectados en el ciclo de producción real. El guion nace en Docs, la voz cobra vida en Audacity, el empaque visual se construye en Canva. Las herramientas no son islas.
+  </p>
+
+  <div class="tools-grid">
+    <div class="tool-card docs">
+      <div class="label">01 · Google Docs</div>
+      <h3>El cuaderno de bitácora</h3>
+      <p class="purpose">Colaboración en la nube en tiempo real. Documento vivo, permisos, historial de versiones.</p>
+      <div class="hito">▸ Hito: glosario musical grupal — el "Documento Vivo"</div>
+      <ul class="shortcuts">
+        <li><kbd>Ctrl+Alt+M</kbd><span>Insertar comentario — el mecanismo de debate</span></li>
+        <li><kbd>Archivo › Historial</kbd><span>La máquina del tiempo: recuperar versiones</span></li>
+        <li><kbd>Herramientas › Dictado</kbd><span>Capturar ideas a velocidad de pensamiento</span></li>
+      </ul>
+    </div>
+
+    <div class="tool-card canva">
+      <div class="label">02 · Canva</div>
+      <h3>El empaque visual</h3>
+      <p class="purpose">Diseño, jerarquía y composición. Avatar del grupo musical, portadas, gráficos promocionales.</p>
+      <div class="hito">▸ Hito: identidad visual — avatar o logo del proyecto</div>
+      <ul class="shortcuts">
+        <li><kbd>T</kbd><span>Invoca un cuadro de texto al instante</span></li>
+        <li><kbd>R</kbd><span>Inserta un rectángulo inmediatamente</span></li>
+        <li><kbd>Ctrl+G</kbd><span>Agrupar elementos sin desarmar la estructura</span></li>
+        <li><kbd>Filtro: Gratis</kbd><span>Antes de arrastrar: evitar marcas de agua</span></li>
+      </ul>
+    </div>
+
+    <div class="tool-card audacity">
+      <div class="label">03 · Audacity</div>
+      <h3>La cabina de sonido</h3>
+      <p class="purpose">Grabación, pistas, niveles de ganancia, efectos de envolvente, limpieza de ruido ambiental.</p>
+      <div class="hito">▸ Hito: Mi Primera Grabación — saludo de 10 segundos</div>
+      <ul class="shortcuts">
+        <li><kbd>Ctrl+R</kbd><span>Empezar a grabar al instante</span></li>
+        <li><kbd>F1</kbd><span>Herramienta de Selección — cortar y limpiar</span></li>
+        <li><kbd>F2</kbd><span>Envolvente — bajar la música cuando alguien habla</span></li>
+        <li><kbd>Ctrl+Shift+E</kbd><span>Exportar como MP3 — atención: ≠ guardar proyecto</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="border-top:1px solid #3a342c;padding-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;">
+    <div>
+      <div class="label" style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.25em;text-transform:uppercase;color:var(--amber-soft);margin-bottom:14px;">Superpoderes universales</div>
+      <h3 style="font-family:'Fraunces',serif;font-weight:900;font-size:36px;line-height:1;margin-bottom:20px;letter-spacing:-0.02em;">Los cuatro atajos que ahorran <em style="font-style:italic;color:var(--amber-soft);">horas</em> de trabajo.</h3>
+      <p style="color:#bbb1a0;line-height:1.5;">Funcionan en casi todos los programas. Memorizarlos no es una opción — es parte del oficio del navegante.</p>
+    </div>
+    <ul class="shortcuts" style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px;">
+      <li><kbd>Ctrl+Z</kbd><span>El salvavidas — deshacer sin pánico</span></li>
+      <li><kbd>Ctrl+C / V</kbd><span>La clonación — copiar y pegar todo</span></li>
+      <li><kbd>Ctrl+S</kbd><span>El ancla — guardar el proyecto</span></li>
+      <li><kbd>Espacio</kbd><span>El motor — reproducir o pausar</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ========== ALMACENAMIENTO ========== -->
+<section class="section storage-section">
+  <div class="section-num">§ 04 — Unidades de medida</div>
+  <h2 class="section-title">Del <em>bit</em> al exabyte: las escalas del mundo digital.</h2>
+  <p class="section-intro">
+    El bit es la decisión binaria mínima: 0 o 1, apagado o encendido. Ocho bits forman un byte — exactamente lo que ocupa una letra. A partir de ahí, todo se multiplica por 1024.
+  </p>
+
+  <table class="storage-table">
+    <thead>
+      <tr>
+        <th>Unidad</th>
+        <th>Abreviatura</th>
+        <th>Equivalencia</th>
+        <th>Ejemplo práctico</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Kilobyte</td><td>KB</td><td>1.024 Bytes</td><td>Un documento de texto simple o informe corto</td></tr>
+      <tr><td>Megabyte</td><td>MB</td><td>1.024 KB</td><td>Una foto en alta definición o canción en MP3</td></tr>
+      <tr><td>Gigabyte</td><td>GB</td><td>1.024 MB</td><td>Una película o memoria USB estándar</td></tr>
+      <tr><td>Terabyte</td><td>TB</td><td>1.024 GB</td><td>Disco rígido de una PC moderna</td></tr>
+      <tr><td>Petabyte</td><td>PB</td><td>1.024 TB</td><td>Servidores de Google o YouTube</td></tr>
+      <tr><td>Exabyte</td><td>EB</td><td>1.024 PB</td><td>Tráfico total de Internet en un mes</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ========== TIMELINE ========== -->
+<section class="section timeline-section">
+  <div class="section-num">§ 05 — Cronología</div>
+  <h2 class="section-title">Cinco mil quinientos años de <em>tecnología</em>.</h2>
+  <p class="section-intro">
+    Una línea de tiempo selecta de los hitos que cambiaron la forma de procesar, almacenar y transmitir información — desde la escritura cuneiforme en Sumeria hasta los agentes de IA autónomos.
+  </p>
+
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-year">3500 aC</div><div class="tl-content"><h4>Escritura cuneiforme</h4><p>Sumeria inventa la primera forma de registro permanente. La información ya se puede transmitir entre generaciones.</p></div></div>
+    <div class="tl-item"><div class="tl-year">2500 aC</div><div class="tl-content"><h4>El ábaco</h4><p>El primer instrumento de cálculo de la humanidad. La aritmética se vuelve portátil.</p></div></div>
+    <div class="tl-item"><div class="tl-year">1449</div><div class="tl-content"><h4>Imprenta de Gutenberg</h4><p>Los tipos móviles democratizan la reproducción de textos. El primer libro impreso: el Misal de Constanza.</p></div></div>
+    <div class="tl-item"><div class="tl-year">1642</div><div class="tl-content"><h4>Pascalina</h4><p>Blaise Pascal construye la primera calculadora mecánica de sumas y restas.</p></div></div>
+    <div class="tl-item"><div class="tl-year">1837</div><div class="tl-content"><h4>Telégrafo</h4><p>Samuel Morse patenta la primera comunicación eléctrica de larga distancia.</p></div></div>
+    <div class="tl-item"><div class="tl-year">1876</div><div class="tl-content"><h4>Teléfono</h4><p>Alexander Graham Bell convierte la voz humana en señal eléctrica transmisible.</p></div></div>
+    <div class="tl-item"><div class="tl-year">1946</div><div class="tl-content"><h4>ENIAC</h4><p>La primera computadora digital electrónica de propósito general. Una sala entera ocupada por válvulas de vacío.</p></div></div>
+    <div class="tl-item"><div class="tl-year">1969</div><div class="tl-content"><h4>ARPANET</h4><p>Nace la antecesora de Internet, conectando universidades a través de los Estados Unidos.</p></div></div>
+    <div class="tl-item"><div class="tl-year">1989</div><div class="tl-content"><h4>World Wide Web</h4><p>Tim Berners-Lee crea el prototipo de la WWW en el CERN. La información se vuelve hiperenlazada.</p></div></div>
+    <div class="tl-item"><div class="tl-year">2007</div><div class="tl-content"><h4>iPhone</h4><p>Apple lanza el dispositivo que define la era moderna de los teléfonos inteligentes.</p></div></div>
+    <div class="tl-item"><div class="tl-year">2020</div><div class="tl-content"><h4>Big Data + IoT</h4><p>El 67% de la población mundial se conecta a Internet. Los datos masivos definen la economía.</p></div></div>
+    <div class="tl-item"><div class="tl-year">2026</div><div class="tl-content"><h4>Agentic Commerce</h4><p>La IA actúa de forma autónoma en transacciones comerciales. El 99% de la información mundial es digital.</p></div></div>
+  </div>
+</section>
+
+<!-- ========== ACTIVIDADES ========== -->
+<section class="section activities" id="actividades">
+  <div class="section-num">§ 06 — Trabajos prácticos</div>
+  <h2 class="section-title">Actividades para <em>poner el cuerpo</em> al cuadernillo.</h2>
+  <p class="section-intro">
+    Dos consignas integradoras que articulan la historia de las TIC con la práctica concreta del manejo de unidades de almacenamiento.
+  </p>
+
+  <div class="activity-grid">
+    <div class="activity-card">
+      <div class="act-tag">Actividad 01 · Unidad 1</div>
+      <h3>El Mundo de las TIC vs. Otros Inventos</h3>
+      <p>Una consigna de discriminación crítica: no todo avance tecnológico es una TIC. El alumno debe distinguir entre tecnologías que procesan o transmiten información y aquellas que resuelven otros problemas (como un lavarropas o un secarropas).</p>
+      <div class="parts">
+        <div><strong>Parte 1</strong><span>Desafío del intruso: marcar TIC entre 22 inventos mezclados</span></div>
+        <div><strong>Parte 2</strong><span>Clasificación histórica: antiguas/mecánicas vs modernas/digitales</span></div>
+        <div><strong>Cierre</strong><span>Reflexión: ¿por qué un auto no es una TIC?</span></div>
+      </div>
+    </div>
+
+    <div class="activity-card">
+      <div class="act-tag">Actividad 02 · Unidad 3</div>
+      <h3>Dominando las Unidades de Almacenamiento</h3>
+      <p>Cuatro instancias para fijar el sistema binario y las equivalencias: desde el verdadero/falso hasta la resolución de problemas reales (¿cuántas fotos entran en un pendrive de 4 GB?).</p>
+      <div class="parts">
+        <div><strong>I</strong><span>Verdadero/Falso con justificación obligatoria</span></div>
+        <div><strong>II</strong><span>Selección múltiple sobre unidades y conversiones</span></div>
+        <div><strong>III</strong><span>Problemas prácticos: pendrive, palabras y bytes</span></div>
+        <div><strong>IV</strong><span>Investigación: ¿qué viene después del Terabyte?</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== EXÁMENES ========== -->
+<section class="section exams" id="examenes">
+  <div class="section-num">§ 07 — Evaluaciones</div>
+  <h2 class="section-title">Dos exámenes, <em>un mismo recorrido</em>.</h2>
+  <p class="section-intro">
+    Las dos instancias formales de evaluación escrita del ciclo. Cubren especialidades, sistema informático, proceso de la información, hardware/software e infraestructura de telecomunicaciones.
+  </p>
+
+  <div class="exam-block">
+    <div class="exam-col">
+      <h3>Examen I</h3>
+      <div class="subtitle">Especialidades & Sistema informático</div>
+      <ol>
+        <li>¿De qué deriva la palabra Informática?</li>
+        <li>Las 5 disciplinas de las que se nutre la informática</li>
+        <li>Completar las 7 especialidades (Gestión, Robótica, Sistemas Expertos, IA, Telemática, Cibernética, Enseñanza)</li>
+        <li>Definición de Sistema Informático</li>
+        <li>Los 4 componentes del Sistema Informático</li>
+        <li>Qué es la CPU y sus partes (UC + UAL)</li>
+      </ol>
+    </div>
+    <div class="exam-col">
+      <h3>Examen II</h3>
+      <div class="subtitle">Proceso TIC & Telecomunicaciones</div>
+      <ol>
+        <li>Pasos del proceso de la información (completar diagrama: Voz/Imágenes/Datos → Adquisición → Producción → Tratamiento → Presentación)</li>
+        <li>Definición de Hardware + 5 ejemplos</li>
+        <li>Definición de Software + 5 ejemplos</li>
+        <li>De qué se ocupan las infraestructuras de telecomunicaciones</li>
+        <li>9 componentes básicos de infraestructuras de telecomunicaciones</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer>
+  <div class="foot-grid">
+    <div>
+      <h4>Sobre la cátedra</h4>
+      <p>Tecnología de la Información y la Comunicación · 1° A · B · C · EPJA. Materia anual articulada con Música y Lengua, orientada a la formación de adultos en alfabetización digital crítica.</p>
+      <p>El destino final no es memorizar botones, sino desarrollar autonomía técnica para resolver problemas y tomar decisiones estratégicas sobre la información.</p>
+    </div>
+    <div>
+      <h4>Estrategia evaluativa</h4>
+      <ul>
+        <li>Participación activa</li>
+        <li>Dominio de herramientas</li>
+        <li>Cumplimiento de entregas</li>
+        <li>Resolución de problemas</li>
+        <li>Asistencia (régimen EPJA)</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Bibliografía base</h4>
+      <ul>
+        <li>Ley Educación Nac. 26.206</li>
+        <li>Res. CFE N° 330/17</li>
+        <li>Diseño Curricular Misiones</li>
+        <li>Manuales Audacity</li>
+        <li>Guías de diseño Canva</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="foot-bottom">
+    <div>CEP N°38 — Consejo Gral. de Educación · Misiones</div>
+    <div class="big">T.I.C / 2026</div>
+    <div>Prof. Rubén R. Markwart</div>
+  </div>
+</footer>
+
+</body>
+</html>
