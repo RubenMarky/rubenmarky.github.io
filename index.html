@@ -138,6 +138,10 @@
       background: linear-gradient(90deg, var(--accent-4), var(--accent-5));
     }
 
+    .card:nth-child(4)::before {
+      background: linear-gradient(90deg, var(--accent-5), var(--accent-6));
+    }
+
     .card:hover {
       transform: translateY(-8px) scale(1.02);
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
@@ -173,6 +177,11 @@
     .card:nth-child(3) .card-icon {
       color: var(--accent-4);
       box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+    }
+
+    .card:nth-child(4) .card-icon {
+      color: var(--accent-5);
+      box-shadow: 0 0 20px rgba(236, 72, 153, 0.2);
     }
 
     .card-content h2 {
@@ -278,6 +287,21 @@
         <div class="card-content">
           <h2>Taller de Hardware y Software</h2>
           <p>Ecosistema del taller, componentes físicos, mantenimiento preventivo y reparación de equipos en 2° Año.</p>
+        </div>
+        <div class="card-footer">
+          <span>Ver material</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+
+      <!-- Tarjeta 4: Bases de Datos -->
+      <a href="./EPET7_Bases_Datos_I.html" class="card" id="card-bd">
+        <div class="card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+        </div>
+        <div class="card-content">
+          <h2>Bases de Datos I y II + Lab de Software III</h2>
+          <p>Diseño y administración de bases de datos, consultas SQL, y desarrollo de aplicaciones de software.</p>
         </div>
         <div class="card-footer">
           <span>Ver material</span>
