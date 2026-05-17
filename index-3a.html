@@ -6,7 +6,7 @@
   <title>Portal Educativo - Prof. Rubén Markwart</title>
   
   <!-- SEO -->
-  <meta name="description" content="Portal educativo del Prof. Markwart Rubén. Accede al material de Programación Lógica y Sistemas Operativos para la E.P.E.T N°7 EPJA.">
+  <meta name="description" content="Portal educativo del Prof. Markwart Rubén. Accede al material de 3° Año A - Desarrollo y Diseño.">
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -138,6 +138,10 @@
       background: linear-gradient(90deg, var(--accent-4), var(--accent-5));
     }
 
+    .card:nth-child(4)::before {
+      background: linear-gradient(90deg, var(--accent-5), var(--accent-6));
+    }
+
     .card:hover {
       transform: translateY(-8px) scale(1.02);
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
@@ -173,6 +177,11 @@
     .card:nth-child(3) .card-icon {
       color: var(--accent-4);
       box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+    }
+
+    .card:nth-child(4) .card-icon {
+      color: var(--accent-5);
+      box-shadow: 0 0 20px rgba(236, 72, 153, 0.2);
     }
 
     .card-content h2 {
@@ -240,14 +249,14 @@
 
   <main>
     <div class="grid" id="subjects-grid">
-      <!-- Tarjeta 1: Programación Lógica -->
-      <a href="https://rubenmarky.github.io/programacion-logica/" class="card" target="_blank" rel="noopener noreferrer" id="card-prog-log">
+      <!-- Tarjeta 1: Base de Datos I -->
+      <a href="./EPET7_Bases_Datos_I.html" class="card" id="card-bd1">
         <div class="card-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
         </div>
         <div class="card-content">
-          <h2>Programación Lógica</h2>
-          <p>Algoritmos, diagramas de flujo, estructuras de control, tareas y glosario técnico para 2° Año.</p>
+          <h2>Base de Datos I</h2>
+          <p>Introducción y repaso de conceptos fundamentales, modelo relacional, SQL y SGBD para 3° Año A.</p>
         </div>
         <div class="card-footer">
           <span>Ver material</span>
@@ -255,14 +264,14 @@
         </div>
       </a>
 
-      <!-- Tarjeta 2: Sistemas Operativos -->
-      <a href="./sistemas-operativos.html" class="card" id="card-so">
+      <!-- Tarjeta 2: Diseño de Páginas Web -->
+      <a href="./EPET7_Diseno_Web.html" class="card" id="card-web">
         <div class="card-icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
         </div>
         <div class="card-content">
-          <h2>Sistemas Operativos</h2>
-          <p>Conceptos básicos, gestión de archivos, uso de CMD/PowerShell, redes de computadoras y conectividad.</p>
+          <h2>Diseño de Páginas Web</h2>
+          <p>HTML, CSS, maquetación, principios de diseño responsivo y creación de sitios para 3° Año A.</p>
         </div>
         <div class="card-footer">
           <span>Ver material</span>
@@ -270,14 +279,29 @@
         </div>
       </a>
 
-      <!-- Tarjeta 3: Taller de Mantenimiento -->
-      <a href="https://rubenmarky.github.io/tallermantenimiento/" class="card" target="_blank" rel="noopener noreferrer" id="card-mantenimiento">
+      <!-- Tarjeta 3: Análisis y Diseño de Aplicaciones -->
+      <a href="./EPET7_Analisis_Diseno.html" class="card" id="card-analisis">
         <div class="card-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
         </div>
         <div class="card-content">
-          <h2>Taller de Hardware y Software</h2>
-          <p>Ecosistema del taller, componentes físicos, mantenimiento preventivo y reparación de equipos en 2° Año.</p>
+          <h2>Análisis y Diseño de Aplicaciones</h2>
+          <p>Especificación de requerimientos, diagramas, UML y diseño de sistemas informáticos para 3° Año A.</p>
+        </div>
+        <div class="card-footer">
+          <span>Ver material</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+
+      <!-- Tarjeta 4: Proyecto de Sistemas Informáticos -->
+      <a href="./EPET7_Proyecto_Sistemas.html" class="card" id="card-proyecto">
+        <div class="card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+        </div>
+        <div class="card-content">
+          <h2>Proyecto de Sistemas Informáticos</h2>
+          <p>Desarrollo integral de proyectos, metodologías ágiles y gestión de software para 3° Año A.</p>
         </div>
         <div class="card-footer">
           <span>Ver material</span>
