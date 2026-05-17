@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bases de Datos II — E.P.E.T N°7</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#090e14; --bg2:#0d1620; --bg3:#121e2c;
+    --border:#1a2e44;
+    --acc:#00cfff; --acc2:#0099cc;
+    --green:#00e0a0; --gold:#f5a623; --purp:#a78bfa;
+    --pink:#f472b6; --red:#ff4d6d; --teal:#2dd4bf;
+    --text:#dde6f0; --muted:#5a7090; --dim:#243450;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;line-height:1.6;overflow-x:hidden}
+  body::before{
+    content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(ellipse 65% 50% at 5% 5%,rgba(0,207,255,.08) 0%,transparent 65%),
+      radial-gradient(ellipse 50% 40% at 95% 90%,rgba(0,224,160,.06) 0%,transparent 60%),
+      repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(26,46,68,.3) 39px,rgba(26,46,68,.3) 40px),
+      repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(26,46,68,.3) 39px,rgba(26,46,68,.3) 40px);
+  }
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(9,14,20,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 2rem;height:62px;display:flex;align-items:center;justify-content:space-between}
+  .nav-brand{font-family:'Space Mono',monospace;font-size:.8rem;color:var(--acc);text-decoration:none;letter-spacing:.06em}
+  .nav-links{display:flex;gap:1.6rem;list-style:none}
+  .nav-links a{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--muted);text-decoration:none;letter-spacing:.1em;text-transform:uppercase;transition:color .2s}
+  .nav-links a:hover{color:var(--acc)}
+
+  .hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:110px 2rem 5rem}
+  .hero-tag{display:inline-flex;align-items:center;gap:.6rem;background:rgba(0,207,255,.07);border:1px solid rgba(0,207,255,.22);color:var(--acc);font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;padding:.4rem 1.1rem;border-radius:2px;margin-bottom:2rem;animation:fadeDown .7s ease both}
+  .hero-tag::before{content:'';width:7px;height:7px;background:var(--acc);border-radius:50%;animation:blink 2s ease infinite}
+  @keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.65)}}
+  .hero h1{font-weight:800;font-size:clamp(2.4rem,6vw,4.8rem);line-height:1.06;letter-spacing:-.025em;margin-bottom:1.5rem;animation:fadeUp .8s .1s ease both}
+  .g1{background:linear-gradient(90deg,var(--acc) 0%,var(--teal) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .hero-sub{font-size:1rem;color:var(--muted);max-width:580px;margin:0 auto 2.8rem;line-height:1.75;animation:fadeUp .8s .22s ease both}
+  .badges{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;animation:fadeUp .8s .36s ease both}
+  .badge{background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:'Space Mono',monospace;font-size:.67rem;padding:.36rem .85rem;border-radius:2px;letter-spacing:.04em}
+  .badge.ac{border-color:rgba(0,207,255,.4);color:var(--acc)}
+  .badge.gn{border-color:rgba(0,224,160,.4);color:var(--green)}
+  .badge.gd{border-color:rgba(245,166,35,.4);color:var(--gold)}
+  .badge.pp{border-color:rgba(167,139,250,.4);color:var(--purp)}
+  .badge.pk{border-color:rgba(244,114,182,.4);color:var(--pink)}
+  .badge.tl{border-color:rgba(45,212,191,.4);color:var(--teal)}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
+
+  .wrap{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:5rem 2rem}
+  .divider{border:none;border-top:1px solid var(--border)}
+  .sec-label{font-family:'Space Mono',monospace;font-size:.66rem;color:var(--acc);letter-spacing:.22em;text-transform:uppercase;margin-bottom:.55rem;display:flex;align-items:center;gap:.7rem}
+  .sec-label::before{content:'';width:20px;height:1px;background:var(--acc)}
+  .sec-title{font-size:clamp(1.6rem,3.5vw,2.5rem);font-weight:800;letter-spacing:-.02em;margin-bottom:.6rem;line-height:1.15}
+  .sec-desc{color:var(--muted);font-size:.95rem;max-width:600px;line-height:1.75;margin-bottom:2.5rem}
+
+  /* STATS */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:3rem}
+  .stat{background:var(--bg2);padding:1.7rem 1.2rem;text-align:center;transition:background .2s}
+  .stat:hover{background:var(--bg3)}
+  .stat-n{font-family:'Space Mono',monospace;font-size:1.9rem;font-weight:700;color:var(--acc);display:block;margin-bottom:.25rem}
+  .stat-l{font-size:.72rem;color:var(--muted)}
+
+  /* UNIDADES CARDS */
+  .u-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1px;background:var(--border);border:1px solid var(--border)}
+  .ucard{background:var(--bg2);padding:2rem;position:relative;overflow:hidden;transition:background .2s}
+  .ucard:hover{background:var(--bg3)}
+  .ucard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--uc,var(--acc));transform:scaleX(0);transform-origin:left;transition:transform .3s}
+  .ucard:hover::before{transform:scaleX(1)}
+  .ucard-num{font-family:'Space Mono',monospace;font-size:.61rem;color:var(--muted);letter-spacing:.2em;margin-bottom:.65rem;display:block}
+  .ucard-title{font-size:1rem;font-weight:700;margin-bottom:.6rem;line-height:1.3;color:var(--uc,var(--acc))}
+  .ucard-desc{font-size:.82rem;color:var(--muted);line-height:1.62;margin-bottom:1.1rem}
+  .ucard-tags{display:flex;flex-wrap:wrap;gap:.35rem}
+  .utag{font-family:'Space Mono',monospace;font-size:.6rem;padding:.12rem .5rem;border-radius:2px;background:rgba(0,207,255,.07);border:1px solid rgba(0,207,255,.18);color:var(--acc)}
+  .utag.gn{background:rgba(0,224,160,.07);border-color:rgba(0,224,160,.2);color:var(--green)}
+  .utag.gd{background:rgba(245,166,35,.07);border-color:rgba(245,166,35,.2);color:var(--gold)}
+  .utag.pp{background:rgba(167,139,250,.07);border-color:rgba(167,139,250,.2);color:var(--purp)}
+  .utag.pk{background:rgba(244,114,182,.07);border-color:rgba(244,114,182,.2);color:var(--pink)}
+  .u1{--uc:#00cfff}.u2{--uc:#00e0a0}.u3{--uc:#f5a623}.u4{--uc:#a78bfa}.u5{--uc:#f472b6}.u6{--uc:#2dd4bf}
+
+  /* BLOQUES DE CONCEPTO */
+  .concept-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1rem}
+  .concept{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--cc,var(--acc));padding:1.4rem 1.4rem 1.4rem 1.6rem;transition:background .2s}
+  .concept:hover{background:var(--bg3)}
+  .concept-title{font-size:.97rem;font-weight:700;margin-bottom:.35rem;color:var(--cc,var(--acc))}
+  .concept-desc{font-size:.8rem;color:var(--muted);line-height:1.62}
+  .cc1{--cc:#00cfff}.cc2{--cc:#00e0a0}.cc3{--cc:#f5a623}.cc4{--cc:#a78bfa}.cc5{--cc:#f472b6}.cc6{--cc:#2dd4bf}.cc7{--cc:#ff4d6d}
+
+  /* BLOQUES DE CÓDIGO */
+  .code-section{margin-bottom:3rem}
+  .code-title{font-family:'Space Mono',monospace;font-size:.72rem;color:var(--acc);letter-spacing:.14em;text-transform:uppercase;margin-bottom:.75rem;display:flex;align-items:center;gap:.6rem}
+  .code-title::before{content:'';width:16px;height:1px;background:var(--acc)}
+  .code-label{font-size:.85rem;color:var(--muted);margin-bottom:.6rem;line-height:1.6}
+  pre{background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--acc);padding:1.4rem 1.6rem;overflow-x:auto;font-family:'Space Mono',monospace;font-size:.78rem;line-height:1.7;color:var(--text);border-radius:0 2px 2px 0;margin-bottom:.5rem}
+  .kw{color:var(--acc)} .fn{color:var(--gold)} .str{color:var(--green)}
+  .cm{color:var(--muted);font-style:italic} .tp{color:var(--purp)} .op{color:var(--pink)}
+
+  /* NORMALIZACIÓN */
+  .fn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin-bottom:2rem}
+  .fn-card{background:var(--bg2);border:1px solid var(--border);padding:1.6rem;transition:background .2s}
+  .fn-card:hover{background:var(--bg3)}
+  .fn-num{font-family:'Space Mono',monospace;font-size:2rem;font-weight:700;color:var(--acc);margin-bottom:.4rem;display:block}
+  .fn-title{font-size:1rem;font-weight:700;margin-bottom:.5rem;color:var(--gold)}
+  .fn-req{font-size:.78rem;color:var(--teal);font-family:'Space Mono',monospace;margin-bottom:.6rem;font-style:italic}
+  .fn-desc{font-size:.81rem;color:var(--muted);line-height:1.65}
+  .fn-ej{margin-top:.75rem;padding:.8rem 1rem;background:rgba(255,255,255,.03);border:1px solid var(--border);font-family:'Space Mono',monospace;font-size:.72rem;color:var(--text)}
+
+  /* JOIN VISUAL */
+  .join-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1rem}
+  .join-card{background:var(--bg2);border:1px solid var(--border);padding:1.4rem;transition:border-color .2s,background .2s}
+  .join-card:hover{border-color:var(--acc);background:var(--bg3)}
+  .join-type{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--acc);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.5rem;display:block}
+  .join-name{font-size:.97rem;font-weight:700;margin-bottom:.35rem}
+  .join-desc{font-size:.79rem;color:var(--muted);line-height:1.55;margin-bottom:.75rem}
+  .join-code{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--teal);background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.18);padding:.4rem .7rem;display:block}
+
+  /* ACID */
+  .acid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin-bottom:2rem}
+  .acid-card{background:var(--bg2);border:1px solid var(--border);padding:1.4rem;text-align:center;transition:background .2s}
+  .acid-card:hover{background:var(--bg3)}
+  .acid-letter{font-family:'Space Mono',monospace;font-size:2.4rem;font-weight:700;color:var(--acc);display:block;margin-bottom:.3rem}
+  .acid-word{font-size:.85rem;font-weight:700;margin-bottom:.4rem;color:var(--gold)}
+  .acid-desc{font-size:.78rem;color:var(--muted);line-height:1.55}
+
+  /* ACTIVIDADES */
+  .act-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
+  .act-card{background:var(--bg2);border:1px solid var(--border);padding:1.4rem;transition:background .2s}
+  .act-card:hover{background:var(--bg3)}
+  .act-num{font-family:'Space Mono',monospace;font-size:.63rem;color:var(--gold);letter-spacing:.14em;text-transform:uppercase;margin-bottom:.45rem;display:block}
+  .act-title{font-size:.95rem;font-weight:700;margin-bottom:.4rem}
+  .act-desc{font-size:.79rem;color:var(--muted);line-height:1.58}
+  .act-tag{display:inline-block;margin-top:.65rem;font-family:'Space Mono',monospace;font-size:.6rem;padding:.12rem .5rem;border-radius:2px;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.22);color:var(--gold);letter-spacing:.07em;text-transform:uppercase}
+
+  /* TABLA DIST */
+  .dist-wrap{overflow-x:auto}
+  table.dist{width:100%;border-collapse:collapse;font-size:.86rem}
+  table.dist th{font-family:'Space Mono',monospace;font-size:.61rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);text-align:left;padding:.65rem .9rem;border-bottom:1px solid var(--border)}
+  table.dist td{padding:.78rem .9rem;border-bottom:1px solid var(--border);vertical-align:top}
+  table.dist tr:last-child td{border-bottom:none}
+  table.dist tr:hover td{background:var(--bg3)}
+  table.dist tr.tot td{font-weight:700;color:var(--acc);font-family:'Space Mono',monospace;border-top:1px solid var(--border)}
+  .pill{display:inline-block;font-family:'Space Mono',monospace;font-size:.61rem;padding:.12rem .5rem;border-radius:2px;background:rgba(0,207,255,.08);border:1px solid rgba(0,207,255,.2);color:var(--acc)}
+
+  footer{position:relative;z-index:1;border-top:1px solid var(--border);background:var(--bg2);padding:2.8rem 2rem;text-align:center}
+  .foot-school{font-family:'Space Mono',monospace;font-size:.71rem;color:var(--acc);letter-spacing:.16em;text-transform:uppercase;margin-bottom:.45rem}
+  .foot-info{font-size:.8rem;color:var(--muted);line-height:1.9}
+  .foot-copy{margin-top:1.3rem;font-family:'Space Mono',monospace;font-size:.61rem;color:var(--dim);letter-spacing:.07em}
+
+  @media(max-width:640px){.nav-links{display:none}.stats{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="#">E.P.E.T N°7 // Bases de Datos II</a>
+  <ul class="nav-links">
+    <li><a href="#unidades">Unidades</a></li>
+    <li><a href="#mer">MER</a></li>
+    <li><a href="#normalizacion">Normalización</a></li>
+    <li><a href="#ddl">DDL</a></li>
+    <li><a href="#dml">DML</a></li>
+    <li><a href="#joins">JOINs</a></li>
+    <li><a href="#transacciones">Transacciones</a></li>
+    <li><a href="#actividades">Actividades</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">E.P.E.T N°7 &mdash; 5° B Informática &mdash; Jardín América, Misiones</div>
+  <h1>Bases de<br><span class="g1">Datos II</span></h1>
+  <p class="hero-sub">
+    Página de consulta y repaso para el programa completo de BD2.
+    Modelado MER, Formas Normales, DDL en MySQL, consultas SELECT,
+    JOINs, DML y control de transacciones ACID.
+  </p>
+  <div class="badges">
+    <span class="badge ac">Modelo Entidad-Relación</span>
+    <span class="badge gn">1FN · 2FN · 3FN</span>
+    <span class="badge gd">DDL &mdash; CREATE TABLE</span>
+    <span class="badge pp">SELECT · JOINs</span>
+    <span class="badge pk">INSERT · UPDATE · DELETE</span>
+    <span class="badge tl">COMMIT · ROLLBACK · ACID</span>
+    <span class="badge">Docente: Rub&eacute;n Markwart</span>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- STATS + TABLA -->
+<section class="wrap" id="unidades">
+  <div class="sec-label">El programa en números</div>
+  <h2 class="sec-title">Las 6 unidades de BD2</h2>
+  <p class="sec-desc">
+    Bases de Datos II construye sobre los fundamentos de BD1 y agrega diseño conceptual completo,
+    normalización, SQL avanzado, transacciones y seguridad de datos.
+  </p>
+
+  <div class="stats">
+    <div class="stat"><span class="stat-n">6</span><span class="stat-l">Unidades didácticas</span></div>
+    <div class="stat"><span class="stat-n">MER</span><span class="stat-l">Modelo Entidad-Relación</span></div>
+    <div class="stat"><span class="stat-n">3FN</span><span class="stat-l">Tercera Forma Normal</span></div>
+    <div class="stat"><span class="stat-n">DDL</span><span class="stat-l">Definición de estructura</span></div>
+    <div class="stat"><span class="stat-n">DML</span><span class="stat-l">Manipulación de datos</span></div>
+    <div class="stat"><span class="stat-n">ACID</span><span class="stat-l">Propiedades de transacciones</span></div>
+  </div>
+
+  <div class="dist-wrap">
+    <table class="dist">
+      <thead><tr><th>Unidad</th><th>Título</th><th>Temas principales</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pill">U1</span></td><td>Elementos de las BD</td><td>Repaso: datos, entidades, PK, FK, SGBD, tipos de BD.</td></tr>
+        <tr><td><span class="pill">U2</span></td><td>Diseño de Modelos Lógicos Normalizados</td><td>MER, cardinalidades, MER extendido, Modelo Relacional, 1FN · 2FN · 3FN · FNBC.</td></tr>
+        <tr><td><span class="pill">U3</span></td><td>Diseño Físico — DDL</td><td>CREATE DATABASE, CREATE TABLE, tipos de datos, PK, FK, CHECK, DEFAULT, ON DELETE.</td></tr>
+        <tr><td><span class="pill">U4</span></td><td>Consulta de BD — DML SELECT</td><td>SELECT, WHERE, subconsultas, ORDER BY, funciones, GROUP BY, HAVING, JOINs, UNION.</td></tr>
+        <tr><td><span class="pill">U5</span></td><td>Modificación de BD — DML INSERT/UPDATE/DELETE</td><td>INSERT, UPDATE, DELETE, transacciones ACID, COMMIT, ROLLBACK, SAVEPOINT.</td></tr>
+        <tr><td><span class="pill">U6</span></td><td>Seguridad — DCL</td><td>CREATE USER, GRANT, REVOKE, roles, vistas de seguridad, concurrencia.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top:2.5rem">
+  <div class="u-grid">
+    <div class="ucard u1">
+      <span class="ucard-num">UNIDAD 1 &mdash; Base</span>
+      <div class="ucard-title">Elementos de las Bases de Datos</div>
+      <p class="ucard-desc">Repaso de BD1. Conceptos fundamentales: dato, entidad, tabla, campo, registro, clave primaria, clave foránea, integridad referencial, metadatos y SGBD.</p>
+      <div class="ucard-tags"><span class="utag">PK</span><span class="utag">FK</span><span class="utag">SGBD</span><span class="utag">Metadatos</span></div>
+    </div>
+    <div class="ucard u2">
+      <span class="ucard-num">UNIDAD 2 &mdash; Diseño</span>
+      <div class="ucard-title">Diseño de Modelos Lógicos Normalizados</div>
+      <p class="ucard-desc">El corazón de BD2. MER con entidades, atributos, relaciones y cardinalidades. Paso al Modelo Relacional. Normalización 1FN, 2FN, 3FN y FNBC.</p>
+      <div class="ucard-tags"><span class="utag gn">MER</span><span class="utag gn">1FN</span><span class="utag gn">2FN</span><span class="utag gn">3FN</span><span class="utag gn">FNBC</span></div>
+    </div>
+    <div class="ucard u3">
+      <span class="ucard-num">UNIDAD 3 &mdash; Físico</span>
+      <div class="ucard-title">Diseño Físico de Bases de Datos — DDL</div>
+      <p class="ucard-desc">Implementación en MySQL / Oracle. CREATE TABLE con tipos de datos precisos, restricciones, PK, FK, CHECK, DEFAULT y manejo de eliminaciones en cascada.</p>
+      <div class="ucard-tags"><span class="utag gd">CREATE TABLE</span><span class="utag gd">CONSTRAINT</span><span class="utag gd">ON DELETE</span></div>
+    </div>
+    <div class="ucard u4">
+      <span class="ucard-num">UNIDAD 4 &mdash; Consulta</span>
+      <div class="ucard-title">Consulta de Bases de Datos — SELECT</div>
+      <p class="ucard-desc">SELECT con todas sus cláusulas: WHERE, ORDER BY, GROUP BY, HAVING. Funciones numéricas, de texto y de fecha. Subconsultas. JOINs: INNER, LEFT, RIGHT, FULL, SELF.</p>
+      <div class="ucard-tags"><span class="utag pp">SELECT</span><span class="utag pp">JOIN</span><span class="utag pp">GROUP BY</span><span class="utag pp">Subconsultas</span></div>
+    </div>
+    <div class="ucard u5">
+      <span class="ucard-num">UNIDAD 5 &mdash; Modificación</span>
+      <div class="ucard-title">Modificación de Bases de Datos — DML</div>
+      <p class="ucard-desc">INSERT, UPDATE y DELETE con condiciones y subconsultas. Control de transacciones: propiedades ACID, COMMIT, ROLLBACK, SAVEPOINT y concurrencia.</p>
+      <div class="ucard-tags"><span class="utag pk">INSERT</span><span class="utag pk">UPDATE</span><span class="utag pk">DELETE</span><span class="utag pk">ACID</span></div>
+    </div>
+    <div class="ucard u6">
+      <span class="ucard-num">UNIDAD 6 &mdash; Seguridad</span>
+      <div class="ucard-title">Seguridad de los Datos — DCL</div>
+      <p class="ucard-desc">Creación y gestión de usuarios. Control de acceso: GRANT y REVOKE. Roles de base de datos. Vistas de seguridad. Concurrencia y bloqueos.</p>
+      <div class="ucard-tags"><span class="utag">GRANT</span><span class="utag">REVOKE</span><span class="utag">CREATE USER</span><span class="utag">Roles</span></div>
+    </div>
+  </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- MER -->
+<section class="wrap" id="mer">
+  <div class="sec-label">Unidad 2 &mdash; Diseño conceptual</div>
+  <h2 class="sec-title">Modelo Entidad-Relación (MER)</h2>
+  <p class="sec-desc">
+    El MER es el modelo más usado para el diseño conceptual de bases de datos.
+    Introducido por Peter Chen en 1976, se basa en entidades, atributos y relaciones.
+  </p>
+
+  <div class="concept-grid" style="margin-bottom:2.5rem">
+    <div class="concept cc1">
+      <div class="concept-title">Entidad fuerte</div>
+      <p class="concept-desc">Entidad que tiene existencia propia e independiente. Se identifica con su propia clave primaria sin depender de otra entidad.<br><br><strong>Ejemplo:</strong> CLIENTE, PRODUCTO, EMPLEADO.</p>
+    </div>
+    <div class="concept cc2">
+      <div class="concept-title">Entidad débil</div>
+      <p class="concept-desc">Entidad que depende de una fuerte para existir o identificarse. En dependencia de identificación, su PK se forma con la PK de la fuerte + su discriminador.<br><br><strong>Ejemplo:</strong> MUNICIPIO depende de PROVINCIA.</p>
+    </div>
+    <div class="concept cc3">
+      <div class="concept-title">Cardinalidad 1:1</div>
+      <p class="concept-desc">A cada elemento de A le corresponde como máximo un elemento de B y viceversa.<br><br><strong>Ejemplo:</strong> Una persona tiene un único DNI. Un DNI pertenece a una única persona.</p>
+    </div>
+    <div class="concept cc4">
+      <div class="concept-title">Cardinalidad 1:N</div>
+      <p class="concept-desc">Un elemento de A puede relacionarse con muchos de B, pero cada B solo se relaciona con un A.<br><br><strong>Ejemplo:</strong> Un departamento tiene muchos empleados. Cada empleado pertenece a un departamento.</p>
+    </div>
+    <div class="concept cc5">
+      <div class="concept-title">Cardinalidad N:M</div>
+      <p class="concept-desc">Cualquier cantidad de A puede relacionarse con cualquier cantidad de B. Siempre genera una tabla intermedia en el modelo relacional.<br><br><strong>Ejemplo:</strong> Un alumno cursa muchas materias. Una materia la cursan muchos alumnos.</p>
+    </div>
+    <div class="concept cc6">
+      <div class="concept-title">Atributo propio de relación</div>
+      <p class="concept-desc">Atributo cuyo valor solo existe en la relación, no en ninguna de las entidades por separado.<br><br><strong>Ejemplo:</strong> En la relación Compra (CLIENTE–PRODUCTO), la Cantidad solo existe cuando un cliente compra un producto.</p>
+    </div>
+    <div class="concept cc7">
+      <div class="concept-title">MER Extendido &mdash; Jerarquía</div>
+      <p class="concept-desc">Relación "es un tipo de". La entidad padre se llama supertipo y las hijas, subtipos. Se representa con triángulo invertido. Puede ser total (todos los casos están cubiertos) o parcial.<br><br><strong>Ejemplo:</strong> EMPLEADO → INGENIERO, SECRETARIO, TÉCNICO.</p>
+    </div>
+    <div class="concept cc1">
+      <div class="concept-title">Paso al Modelo Relacional</div>
+      <p class="concept-desc"><strong>Regla clave:</strong> Relación N:M → siempre genera tabla. Relación 1:N → la PK del lado "1" pasa como FK al lado "N". Relación 1:1 → la FK va a la entidad con participación mínima 0 para evitar nulos.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- NORMALIZACIÓN -->
+<section class="wrap" id="normalizacion">
+  <div class="sec-label">Unidad 2 &mdash; Formas normales</div>
+  <h2 class="sec-title">Normalización: 1FN, 2FN, 3FN y FNBC</h2>
+  <p class="sec-desc">
+    La normalización es el proceso de organizar las tablas para eliminar redundancias e inconsistencias.
+    Se aplica revisando las dependencias funcionales de cada tabla.
+  </p>
+
+  <div class="fn-grid">
+    <div class="fn-card">
+      <span class="fn-num">1FN</span>
+      <div class="fn-title">Primera Forma Normal</div>
+      <div class="fn-req">Requisito: todos los valores de cada campo deben ser atómicos (indivisibles).</div>
+      <p class="fn-desc">No puede haber campos que contengan múltiples valores en una sola celda ni grupos repetidos. Si un campo almacena varios teléfonos, viola la 1FN.</p>
+      <div class="fn-ej">❌ Alumno: {DNI, Nombre, Teléfonos}<br>✓ Solución: tabla separada TELÉFONOS (DNI, Teléfono)</div>
+    </div>
+    <div class="fn-card">
+      <span class="fn-num">2FN</span>
+      <div class="fn-title">Segunda Forma Normal</div>
+      <div class="fn-req">Requisito: estar en 1FN y que todos los atributos no clave dependan COMPLETAMENTE de la PK.</div>
+      <p class="fn-desc">Solo se aplica cuando la PK es compuesta. Si un campo depende solo de una parte de la PK, hay que separarlo en otra tabla.</p>
+      <div class="fn-ej">❌ MATRÍCULA(DNI, Curso, FechaMatrícula, Tutor)<br>Tutor depende solo de Curso, no de (DNI, Curso).<br>✓ Tabla CURSOS(Curso, Tutor) separada.</div>
+    </div>
+    <div class="fn-card">
+      <span class="fn-num">3FN</span>
+      <div class="fn-title">Tercera Forma Normal</div>
+      <div class="fn-req">Requisito: estar en 2FN y no existir dependencias transitivas.</div>
+      <p class="fn-desc">Una dependencia transitiva ocurre cuando un atributo no-clave depende de otro atributo no-clave. Todos los atributos deben depender directamente de la PK.</p>
+      <div class="fn-ej">❌ ALUMNO(DNI, Nombre, Localidad, Provincia)<br>DNI → Localidad → Provincia (transitiva)<br>✓ Tabla LOCALIDADES(Localidad, Provincia) separada.</div>
+    </div>
+    <div class="fn-card">
+      <span class="fn-num">FNBC</span>
+      <div class="fn-title">Forma Normal de Boyce-Codd</div>
+      <div class="fn-req">Requisito: estar en 3FN y no existir solapamiento de claves candidatas compuestas.</div>
+      <p class="fn-desc">Solo aplica cuando hay varias claves candidatas compuestas que se solapan. Poco frecuente, pero importante en diseños complejos.</p>
+      <div class="fn-ej">❌ SUMINISTROS(CIF, Nombre, CódigoPieza, Cantidad)<br>CIF↔Nombre crea solapamiento de claves.<br>✓ Separar en PROVEEDORES(CIF, Nombre) + SUMINISTROS(CIF, CódigoPieza, Cantidad).</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- DDL -->
+<section class="wrap" id="ddl">
+  <div class="sec-label">Unidad 3 &mdash; Lenguaje de definición</div>
+  <h2 class="sec-title">DDL — Creación de tablas en MySQL</h2>
+  <p class="sec-desc">
+    El DDL (Data Definition Language) define la estructura física de la base de datos.
+    Las instrucciones más importantes son CREATE TABLE, ALTER TABLE y DROP TABLE.
+  </p>
+
+  <div class="code-section">
+    <div class="code-title">Tipos de datos principales en MySQL</div>
+    <div class="concept-grid" style="margin-bottom:1.5rem">
+      <div class="concept cc1"><div class="concept-title">Texto</div><p class="concept-desc"><code>CHAR(n)</code> — longitud fija. <code>VARCHAR(n)</code> — longitud variable hasta n. <code>TEXT</code> — texto largo. <code>ENUM('v1','v2')</code> — lista cerrada de valores.</p></div>
+      <div class="concept cc2"><div class="concept-title">Números</div><p class="concept-desc"><code>INT</code> — entero. <code>BIGINT</code> — entero grande. <code>DECIMAL(p,s)</code> — decimal exacto. <code>FLOAT</code> / <code>DOUBLE</code> — punto flotante.</p></div>
+      <div class="concept cc3"><div class="concept-title">Fechas</div><p class="concept-desc"><code>DATE</code> — solo fecha (YYYY-MM-DD). <code>DATETIME</code> — fecha y hora. <code>TIMESTAMP</code> — instante con zona horaria. <code>YEAR</code> — solo año.</p></div>
+      <div class="concept cc4"><div class="concept-title">Otros</div><p class="concept-desc"><code>BOOLEAN</code> / <code>TINYINT(1)</code> — verdadero/falso. <code>BLOB</code> — datos binarios (imágenes). <code>AUTO_INCREMENT</code> — autonumérico.</p></div>
+    </div>
+
+    <div class="code-title">Ejemplo completo: CREATE TABLE con todas las restricciones</div>
+    <div class="code-label">Sistema de pedidos: tablas CLIENTES, PRODUCTOS y PEDIDOS con sus relaciones.</div>
+<pre>
+<span class="cm">-- ====================================================</span>
+<span class="cm">-- BASE DE DATOS: sistema_pedidos</span>
+<span class="cm">-- ====================================================</span>
+<span class="kw">CREATE DATABASE</span> sistema_pedidos
+  <span class="kw">CHARACTER SET</span> utf8mb4
+  <span class="kw">COLLATE</span> utf8mb4_spanish_ci;
+
+<span class="kw">USE</span> sistema_pedidos;
+
+<span class="cm">-- Tabla CLIENTES (entidad principal)</span>
+<span class="kw">CREATE TABLE</span> <span class="fn">CLIENTES</span> (
+  cod_cliente   <span class="tp">INT</span>          <span class="kw">AUTO_INCREMENT</span>,
+  nombre        <span class="tp">VARCHAR</span>(60)  <span class="kw">NOT NULL</span>,
+  apellido      <span class="tp">VARCHAR</span>(60)  <span class="kw">NOT NULL</span>,
+  email         <span class="tp">VARCHAR</span>(100) <span class="kw">UNIQUE</span>,
+  telefono      <span class="tp">CHAR</span>(15),
+  fecha_alta    <span class="tp">DATE</span>         <span class="kw">DEFAULT</span> (<span class="fn">CURDATE</span>()),
+  activo        <span class="tp">BOOLEAN</span>      <span class="kw">DEFAULT</span> <span class="str">TRUE</span>,
+  <span class="kw">CONSTRAINT</span> pk_clientes <span class="kw">PRIMARY KEY</span> (cod_cliente),
+  <span class="kw">CONSTRAINT</span> chk_email   <span class="kw">CHECK</span> (email <span class="kw">LIKE</span> <span class="str">'%@%.%'</span>)
+);
+
+<span class="cm">-- Tabla PRODUCTOS</span>
+<span class="kw">CREATE TABLE</span> <span class="fn">PRODUCTOS</span> (
+  cod_producto  <span class="tp">INT</span>           <span class="kw">AUTO_INCREMENT</span>,
+  descripcion   <span class="tp">VARCHAR</span>(100)  <span class="kw">NOT NULL</span>,
+  precio        <span class="tp">DECIMAL</span>(10,2) <span class="kw">NOT NULL</span>,
+  stock         <span class="tp">INT</span>           <span class="kw">DEFAULT</span> 0,
+  categoria     <span class="tp">ENUM</span>(<span class="str">'electrónica'</span>,<span class="str">'ropa'</span>,<span class="str">'alimentos'</span>),
+  <span class="kw">CONSTRAINT</span> pk_productos  <span class="kw">PRIMARY KEY</span> (cod_producto),
+  <span class="kw">CONSTRAINT</span> chk_precio    <span class="kw">CHECK</span> (precio > 0),
+  <span class="kw">CONSTRAINT</span> chk_stock     <span class="kw">CHECK</span> (stock >= 0)
+);
+
+<span class="cm">-- Tabla PEDIDOS (relación N:M entre CLIENTES y PRODUCTOS)</span>
+<span class="kw">CREATE TABLE</span> <span class="fn">PEDIDOS</span> (
+  nro_pedido    <span class="tp">INT</span>           <span class="kw">AUTO_INCREMENT</span>,
+  cod_cliente   <span class="tp">INT</span>           <span class="kw">NOT NULL</span>,
+  cod_producto  <span class="tp">INT</span>           <span class="kw">NOT NULL</span>,
+  cantidad      <span class="tp">INT</span>           <span class="kw">NOT NULL</span>    <span class="kw">DEFAULT</span> 1,
+  fecha_pedido  <span class="tp">DATETIME</span>      <span class="kw">DEFAULT</span>     <span class="fn">NOW</span>(),
+  <span class="kw">CONSTRAINT</span> pk_pedidos     <span class="kw">PRIMARY KEY</span> (nro_pedido),
+  <span class="kw">CONSTRAINT</span> fk_ped_cliente <span class="kw">FOREIGN KEY</span> (cod_cliente)
+    <span class="kw">REFERENCES</span> <span class="fn">CLIENTES</span>(cod_cliente)
+    <span class="kw">ON DELETE RESTRICT</span>
+    <span class="kw">ON UPDATE CASCADE</span>,
+  <span class="kw">CONSTRAINT</span> fk_ped_prod    <span class="kw">FOREIGN KEY</span> (cod_producto)
+    <span class="kw">REFERENCES</span> <span class="fn">PRODUCTOS</span>(cod_producto)
+    <span class="kw">ON DELETE RESTRICT</span>
+    <span class="kw">ON UPDATE CASCADE</span>,
+  <span class="kw">CONSTRAINT</span> chk_cantidad   <span class="kw">CHECK</span> (cantidad > 0)
+);
+</pre>
+
+    <div class="code-title">Opciones de ON DELETE y ON UPDATE</div>
+    <div class="concept-grid">
+      <div class="concept cc1"><div class="concept-title">RESTRICT</div><p class="concept-desc">Impide borrar/modificar la fila padre si tiene filas hijas referenciándola. La opción más segura para proteger la integridad.</p></div>
+      <div class="concept cc5"><div class="concept-title">CASCADE</div><p class="concept-desc">Borra/modifica automáticamente todas las filas hijas cuando se borra/modifica la fila padre. Útil para mantener consistencia.</p></div>
+      <div class="concept cc3"><div class="concept-title">SET NULL</div><p class="concept-desc">Al borrar la fila padre, la FK en las filas hijas queda en NULL. Requiere que la columna FK admita nulos.</p></div>
+      <div class="concept cc2"><div class="concept-title">SET DEFAULT</div><p class="concept-desc">Al borrar la fila padre, la FK adopta su valor DEFAULT. Poco común pero útil para categorías genéricas.</p></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- DML SELECT -->
+<section class="wrap" id="dml">
+  <div class="sec-label">Unidad 4 &mdash; Consultas</div>
+  <h2 class="sec-title">DML — Consultas SELECT</h2>
+  <p class="sec-desc">
+    El SELECT es la instrucción más poderosa de SQL. Puede incluir filtros, ordenamiento,
+    agrupaciones, subconsultas y combinación de múltiples tablas.
+  </p>
+
+  <div class="code-section">
+    <div class="code-title">Estructura completa del SELECT</div>
+<pre>
+<span class="kw">SELECT</span>   [<span class="kw">DISTINCT</span>] columnas | expresiones | funciones
+<span class="kw">FROM</span>     tabla1 [<span class="kw">JOIN</span> tabla2 <span class="kw">ON</span> condicion]
+<span class="kw">WHERE</span>    condicion_de_filas
+<span class="kw">GROUP BY</span> columnas_de_agrupacion
+<span class="kw">HAVING</span>   condicion_sobre_grupos
+<span class="kw">ORDER BY</span> columna [<span class="kw">ASC</span> | <span class="kw">DESC</span>]
+<span class="kw">LIMIT</span>    n;
+
+<span class="cm">-- ORDEN DE EJECUCIÓN (no es el orden de escritura):</span>
+<span class="cm">-- 1. FROM  2. WHERE  3. GROUP BY  4. HAVING  5. SELECT  6. ORDER BY  7. LIMIT</span>
+</pre>
+
+    <div class="code-title">Funciones de agregación — GROUP BY y HAVING</div>
+    <div class="code-label">Las funciones de agregación calculan un valor a partir de varias filas. HAVING filtra sobre grupos (como el WHERE pero después de agrupar).</div>
+<pre>
+<span class="cm">-- Cantidad de pedidos y total gastado por cada cliente</span>
+<span class="kw">SELECT</span>
+  c.nombre,
+  c.apellido,
+  <span class="fn">COUNT</span>(p.nro_pedido)              <span class="kw">AS</span> cantidad_pedidos,
+  <span class="fn">SUM</span>(p.cantidad * pr.precio)      <span class="kw">AS</span> total_gastado,
+  <span class="fn">AVG</span>(p.cantidad * pr.precio)      <span class="kw">AS</span> promedio_por_pedido,
+  <span class="fn">MAX</span>(p.fecha_pedido)              <span class="kw">AS</span> ultimo_pedido
+<span class="kw">FROM</span> CLIENTES c
+  <span class="kw">JOIN</span> PEDIDOS p   <span class="kw">ON</span> c.cod_cliente  = p.cod_cliente
+  <span class="kw">JOIN</span> PRODUCTOS pr <span class="kw">ON</span> p.cod_producto = pr.cod_producto
+<span class="kw">GROUP BY</span> c.cod_cliente, c.nombre, c.apellido
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(p.nro_pedido) > 2     <span class="cm">-- solo clientes con más de 2 pedidos</span>
+<span class="kw">ORDER BY</span> total_gastado <span class="kw">DESC</span>;
+</pre>
+
+    <div class="code-title">Subconsultas</div>
+    <div class="code-label">Una subconsulta usa el resultado de un SELECT dentro de otro. Se puede colocar en WHERE, HAVING o FROM.</div>
+<pre>
+<span class="cm">-- Clientes que gastaron más que el promedio general</span>
+<span class="kw">SELECT</span> nombre, apellido
+<span class="kw">FROM</span> CLIENTES
+<span class="kw">WHERE</span> cod_cliente <span class="kw">IN</span> (
+  <span class="kw">SELECT</span> cod_cliente
+  <span class="kw">FROM</span> PEDIDOS p <span class="kw">JOIN</span> PRODUCTOS pr <span class="kw">ON</span> p.cod_producto = pr.cod_producto
+  <span class="kw">GROUP BY</span> cod_cliente
+  <span class="kw">HAVING</span> <span class="fn">SUM</span>(p.cantidad * pr.precio) > (
+    <span class="kw">SELECT</span> <span class="fn">AVG</span>(total)
+    <span class="kw">FROM</span> (
+      <span class="kw">SELECT</span> <span class="fn">SUM</span>(p2.cantidad * pr2.precio) <span class="kw">AS</span> total
+      <span class="kw">FROM</span> PEDIDOS p2 <span class="kw">JOIN</span> PRODUCTOS pr2 <span class="kw">ON</span> p2.cod_producto = pr2.cod_producto
+      <span class="kw">GROUP BY</span> p2.cod_cliente
+    ) totales
+  )
+);
+</pre>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- JOINs -->
+<section class="wrap" id="joins">
+  <div class="sec-label">Unidad 4 &mdash; Combinación de tablas</div>
+  <h2 class="sec-title">Tipos de JOIN</h2>
+  <p class="sec-desc">
+    Los JOINs combinan filas de dos o más tablas basándose en una condición.
+    La elección del tipo de JOIN determina qué filas aparecen cuando no hay coincidencia.
+  </p>
+
+  <div class="join-grid" style="margin-bottom:2rem">
+    <div class="join-card">
+      <span class="join-type">Inner Join</span>
+      <div class="join-name">INNER JOIN (JOIN)</div>
+      <p class="join-desc">Solo las filas que tienen coincidencia en AMBAS tablas. Si no hay coincidencia, la fila no aparece en ningún lado.</p>
+      <code class="join-code">FROM A JOIN B ON A.id = B.id</code>
+    </div>
+    <div class="join-card">
+      <span class="join-type">Left Outer Join</span>
+      <div class="join-name">LEFT JOIN</div>
+      <p class="join-desc">TODAS las filas de la tabla izquierda (A), más las coincidencias de B. Si B no tiene coincidencia, aparece NULL.</p>
+      <code class="join-code">FROM A LEFT JOIN B ON A.id = B.id</code>
+    </div>
+    <div class="join-card">
+      <span class="join-type">Right Outer Join</span>
+      <div class="join-name">RIGHT JOIN</div>
+      <p class="join-desc">TODAS las filas de la tabla derecha (B), más las coincidencias de A. Si A no tiene coincidencia, aparece NULL.</p>
+      <code class="join-code">FROM A RIGHT JOIN B ON A.id = B.id</code>
+    </div>
+    <div class="join-card">
+      <span class="join-type">Full Outer Join</span>
+      <div class="join-name">FULL JOIN</div>
+      <p class="join-desc">TODAS las filas de AMBAS tablas. Donde no hay coincidencia en el otro lado, aparece NULL.</p>
+      <code class="join-code">FROM A FULL JOIN B ON A.id = B.id</code>
+    </div>
+    <div class="join-card">
+      <span class="join-type">Self Join</span>
+      <div class="join-name">SELF JOIN</div>
+      <p class="join-desc">Una tabla se une consigo misma. Útil para relaciones jerárquicas dentro de la misma tabla (empleado-jefe, categoría-subcategoría).</p>
+      <code class="join-code">FROM EMPLEADOS e JOIN EMPLEADOS j ON e.jefe_id = j.emp_id</code>
+    </div>
+    <div class="join-card">
+      <span class="join-type">Natural Join</span>
+      <div class="join-name">NATURAL JOIN</div>
+      <p class="join-desc">Une automáticamente por todas las columnas con el mismo nombre en ambas tablas. Peligroso si hay columnas con nombres coincidentes inesperados.</p>
+      <code class="join-code">FROM A NATURAL JOIN B</code>
+    </div>
+  </div>
+
+  <div class="code-section">
+    <div class="code-title">Ejemplo: múltiples JOINs en una sola consulta</div>
+<pre>
+<span class="cm">-- Informe completo de pedidos con nombre de cliente y producto</span>
+<span class="kw">SELECT</span>
+  p.nro_pedido,
+  <span class="fn">CONCAT</span>(c.nombre, <span class="str">' '</span>, c.apellido)  <span class="kw">AS</span> cliente,
+  pr.descripcion                       <span class="kw">AS</span> producto,
+  p.cantidad,
+  pr.precio,
+  (p.cantidad * pr.precio)             <span class="kw">AS</span> subtotal,
+  p.fecha_pedido
+<span class="kw">FROM</span> PEDIDOS p
+  <span class="kw">JOIN</span> CLIENTES  c  <span class="kw">ON</span> p.cod_cliente  = c.cod_cliente
+  <span class="kw">JOIN</span> PRODUCTOS pr <span class="kw">ON</span> p.cod_producto = pr.cod_producto
+<span class="kw">WHERE</span> p.fecha_pedido >= <span class="str">'2026-01-01'</span>
+<span class="kw">ORDER BY</span> p.fecha_pedido <span class="kw">DESC</span>;
+</pre>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- INSERT UPDATE DELETE -->
+<section class="wrap">
+  <div class="sec-label">Unidad 5 &mdash; Modificación de datos</div>
+  <h2 class="sec-title">DML — INSERT, UPDATE y DELETE</h2>
+  <p class="sec-desc">
+    Las instrucciones de modificación alteran los datos almacenados.
+    Siempre deben usarse con cuidado, especialmente DELETE y UPDATE sin WHERE.
+  </p>
+
+  <div class="code-section">
+    <div class="code-title">INSERT — Insertar datos</div>
+<pre>
+<span class="cm">-- Insertar un cliente completo</span>
+<span class="kw">INSERT INTO</span> CLIENTES (nombre, apellido, email, telefono)
+<span class="kw">VALUES</span> (<span class="str">'Juan'</span>, <span class="str">'García'</span>, <span class="str">'jgarcia@mail.com'</span>, <span class="str">'3755001234'</span>);
+
+<span class="cm">-- Insertar varios registros en una sola instrucción</span>
+<span class="kw">INSERT INTO</span> PRODUCTOS (descripcion, precio, stock, categoria)
+<span class="kw">VALUES</span>
+  (<span class="str">'Notebook 15"'</span>,   185000.00, 10, <span class="str">'electrónica'</span>),
+  (<span class="str">'Mouse inalámbrico'</span>, 8500.00, 50, <span class="str">'electrónica'</span>),
+  (<span class="str">'Remera talle M'</span>,   3200.00, 30, <span class="str">'ropa'</span>);
+
+<span class="cm">-- Insertar datos obtenidos de una consulta</span>
+<span class="kw">INSERT INTO</span> CLIENTES_VIP (cod_cliente, nombre, apellido)
+<span class="kw">SELECT</span> cod_cliente, nombre, apellido
+<span class="kw">FROM</span> CLIENTES
+<span class="kw">WHERE</span> cod_cliente <span class="kw">IN</span> (
+  <span class="kw">SELECT</span> cod_cliente <span class="kw">FROM</span> PEDIDOS
+  <span class="kw">GROUP BY</span> cod_cliente <span class="kw">HAVING</span> <span class="fn">COUNT</span>(*) > 10
+);
+</pre>
+
+    <div class="code-title">UPDATE — Modificar datos</div>
+<pre>
+<span class="cm">-- Actualizar un campo específico con condición</span>
+<span class="kw">UPDATE</span> PRODUCTOS
+<span class="kw">SET</span> precio = precio * 1.10   <span class="cm">-- aumentar precio 10%</span>
+<span class="kw">WHERE</span> categoria = <span class="str">'electrónica'</span>;
+
+<span class="cm">-- Actualizar con subconsulta</span>
+<span class="kw">UPDATE</span> CLIENTES
+<span class="kw">SET</span> activo = <span class="str">FALSE</span>
+<span class="kw">WHERE</span> cod_cliente <span class="kw">NOT IN</span> (
+  <span class="kw">SELECT</span> <span class="kw">DISTINCT</span> cod_cliente
+  <span class="kw">FROM</span> PEDIDOS
+  <span class="kw">WHERE</span> fecha_pedido >= <span class="fn">DATE_SUB</span>(<span class="fn">CURDATE</span>(), <span class="kw">INTERVAL</span> 1 <span class="kw">YEAR</span>)
+);
+<span class="cm">-- ⚠ UPDATE sin WHERE modifica TODOS los registros</span>
+</pre>
+
+    <div class="code-title">DELETE — Eliminar datos</div>
+<pre>
+<span class="cm">-- Eliminar un registro específico</span>
+<span class="kw">DELETE FROM</span> PEDIDOS
+<span class="kw">WHERE</span> nro_pedido = 15;
+
+<span class="cm">-- Eliminar con subconsulta</span>
+<span class="kw">DELETE FROM</span> CLIENTES
+<span class="kw">WHERE</span> cod_cliente <span class="kw">IN</span> (
+  <span class="kw">SELECT</span> cod_cliente <span class="kw">FROM</span> CLIENTES_INACTIVOS
+);
+<span class="cm">-- ⚠ DELETE sin WHERE elimina TODOS los registros de la tabla</span>
+<span class="cm">-- ⚠ Si hay FK con ON DELETE RESTRICT, no podrás borrar si hay hijos</span>
+</pre>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- TRANSACCIONES -->
+<section class="wrap" id="transacciones">
+  <div class="sec-label">Unidad 5 &mdash; Control de transacciones</div>
+  <h2 class="sec-title">Transacciones y propiedades ACID</h2>
+  <p class="sec-desc">
+    Una transacción es un conjunto de operaciones que se ejecutan como una unidad:
+    o todas ocurren, o ninguna. Garantizan la consistencia de los datos.
+  </p>
+
+  <div class="acid">
+    <div class="acid-card"><span class="acid-letter">A</span><div class="acid-word">Atomicidad</div><p class="acid-desc">La transacción es todo o nada. Si cualquier operación falla, se revierten todas las anteriores. No puede haber estados intermedios.</p></div>
+    <div class="acid-card"><span class="acid-letter">C</span><div class="acid-word">Consistencia</div><p class="acid-desc">La BD pasa de un estado válido a otro estado válido. Todas las restricciones de integridad se mantienen antes y después.</p></div>
+    <div class="acid-card"><span class="acid-letter">I</span><div class="acid-word">Aislamiento</div><p class="acid-desc">Las transacciones concurrentes no se interfieren entre sí. Cada transacción ve la BD como si fuera la única que está operando.</p></div>
+    <div class="acid-card"><span class="acid-letter">D</span><div class="acid-word">Durabilidad</div><p class="acid-desc">Una vez confirmada (COMMIT), los cambios son permanentes aunque el sistema falle. Se garantiza mediante logs de transacciones.</p></div>
+  </div>
+
+  <div class="code-section">
+    <div class="code-title">COMMIT, ROLLBACK y SAVEPOINT</div>
+<pre>
+<span class="cm">-- Inicio de transacción (en MySQL con autocommit desactivado)</span>
+<span class="kw">START TRANSACTION</span>;
+
+<span class="cm">-- Operaciones de la transacción</span>
+<span class="kw">UPDATE</span> PRODUCTOS <span class="kw">SET</span> stock = stock - 5
+<span class="kw">WHERE</span> cod_producto = 1;
+
+<span class="kw">INSERT INTO</span> PEDIDOS (cod_cliente, cod_producto, cantidad)
+<span class="kw">VALUES</span> (3, 1, 5);
+
+<span class="cm">-- Punto de ruptura intermedio</span>
+<span class="kw">SAVEPOINT</span> despues_de_pedido;
+
+<span class="kw">UPDATE</span> CLIENTES <span class="kw">SET</span> activo = <span class="str">TRUE</span>
+<span class="kw">WHERE</span> cod_cliente = 3;
+
+<span class="cm">-- Si algo falla, volver al savepoint (no deshace todo)</span>
+<span class="kw">ROLLBACK TO SAVEPOINT</span> despues_de_pedido;
+
+<span class="cm">-- Confirmar todos los cambios de forma permanente</span>
+<span class="kw">COMMIT</span>;
+
+<span class="cm">-- Si algo grave falla antes del COMMIT, deshacer todo</span>
+<span class="kw">ROLLBACK</span>;
+</pre>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- DCL -->
+<section class="wrap">
+  <div class="sec-label">Unidad 6 &mdash; Seguridad</div>
+  <h2 class="sec-title">DCL — Control de acceso y seguridad</h2>
+  <p class="sec-desc">
+    El DCL (Data Control Language) gestiona quién puede hacer qué en la base de datos.
+    Se basa en usuarios, privilegios y roles.
+  </p>
+
+  <div class="code-section">
+    <div class="code-title">Gestión de usuarios y privilegios en MySQL</div>
+<pre>
+<span class="cm">-- Crear un usuario nuevo</span>
+<span class="kw">CREATE USER</span> <span class="str">'alumno1'</span>@<span class="str">'localhost'</span>
+  <span class="kw">IDENTIFIED BY</span> <span class="str">'Contraseña_2026!'</span>;
+
+<span class="cm">-- Dar privilegios específicos sobre una BD</span>
+<span class="kw">GRANT</span> <span class="kw">SELECT</span>, <span class="kw">INSERT</span>, <span class="kw">UPDATE</span>
+  <span class="kw">ON</span> sistema_pedidos.*
+  <span class="kw">TO</span> <span class="str">'alumno1'</span>@<span class="str">'localhost'</span>;
+
+<span class="cm">-- Dar todos los privilegios (administrador de esa BD)</span>
+<span class="kw">GRANT ALL PRIVILEGES</span>
+  <span class="kw">ON</span> sistema_pedidos.*
+  <span class="kw">TO</span> <span class="str">'admin_bd'</span>@<span class="str">'localhost'</span>;
+
+<span class="cm">-- Quitar un privilegio específico</span>
+<span class="kw">REVOKE</span> <span class="kw">DELETE</span>
+  <span class="kw">ON</span> sistema_pedidos.*
+  <span class="kw">FROM</span> <span class="str">'alumno1'</span>@<span class="str">'localhost'</span>;
+
+<span class="cm">-- Ver los privilegios de un usuario</span>
+<span class="kw">SHOW GRANTS FOR</span> <span class="str">'alumno1'</span>@<span class="str">'localhost'</span>;
+
+<span class="cm">-- Eliminar un usuario</span>
+<span class="kw">DROP USER</span> <span class="str">'alumno1'</span>@<span class="str">'localhost'</span>;
+</pre>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ACTIVIDADES -->
+<section class="wrap" id="actividades">
+  <div class="sec-label">Práctica y autoevaluación</div>
+  <h2 class="sec-title">Actividades de repaso</h2>
+  <p class="sec-desc">
+    Actividades organizadas por unidad. Pueden resolverse con MySQL Workbench,
+    en papel o en el cuaderno según lo indicado por el docente.
+  </p>
+
+  <div class="act-grid">
+    <div class="act-card">
+      <span class="act-num">Act. 2.1 &mdash; MER</span>
+      <div class="act-title">Identificar cardinalidades</div>
+      <p class="act-desc">Para cada par de entidades, determiná la cardinalidad correcta y justificá:<br><br>
+      a) MÉDICO – PACIENTE (hospital)<br>b) ALUMNO – MATERIA (escuela)<br>c) PERSONA – DNI<br>d) PROVEEDOR – PRODUCTO (en un sistema de compras)<br>e) EMPLEADO – DEPARTAMENTO</p>
+      <span class="act-tag">MER &mdash; Papel</span>
+    </div>
+    <div class="act-card">
+      <span class="act-num">Act. 2.2 &mdash; Normalización</span>
+      <div class="act-title">Llevar a 3FN</div>
+      <p class="act-desc">Dado el esquema:<br><br>
+      VENTA(NroVenta, FechaVenta, CodCliente, NombreCliente, LocalidadCliente, ProvinciaCliente, CodProducto, NombreProducto, Precio, Cantidad)<br><br>
+      a) Identificá todas las dependencias funcionales.<br>b) Llevalo a 1FN, 2FN y 3FN paso a paso.<br>c) Mostrá el resultado final con todas las tablas.</p>
+      <span class="act-tag">Normalización &mdash; Papel</span>
+    </div>
+    <div class="act-card">
+      <span class="act-num">Act. 3.1 &mdash; DDL</span>
+      <div class="act-title">Crear el script SQL de las tablas normalizadas</div>
+      <p class="act-desc">A partir del resultado de la Actividad 2.2, generá el script SQL completo en MySQL con:<br><br>
+      • Tipos de datos correctos para cada columna.<br>• PK, FK y restricciones CHECK donde corresponda.<br>• ON DELETE y ON UPDATE adecuados para cada FK.<br>• Al menos un DEFAULT con valor.</p>
+      <span class="act-tag">DDL &mdash; MySQL Workbench</span>
+    </div>
+    <div class="act-card">
+      <span class="act-num">Act. 4.1 &mdash; SELECT</span>
+      <div class="act-title">Consultas sobre el sistema de pedidos</div>
+      <p class="act-desc">Sobre el sistema de pedidos del ejemplo, escribí las consultas para:<br><br>
+      a) Nombre y email de todos los clientes activos, ordenados por apellido.<br>b) Productos con stock menor a 10.<br>c) El producto más vendido (mayor cantidad total en pedidos).<br>d) Clientes que nunca hicieron un pedido (LEFT JOIN).<br>e) Total facturado por mes en 2026.</p>
+      <span class="act-tag">SELECT &mdash; MySQL Workbench</span>
+    </div>
+    <div class="act-card">
+      <span class="act-num">Act. 5.1 &mdash; DML + Transacciones</span>
+      <div class="act-title">Registrar una venta completa</div>
+      <p class="act-desc">Escribí una transacción completa que registre la venta de 3 unidades del producto 5 al cliente 2. La transacción debe:<br><br>
+      1. Verificar que hay stock suficiente.<br>2. Insertar el pedido.<br>3. Decrementar el stock.<br>4. Si el stock queda en 0, marcar el producto como inactivo.<br>5. COMMIT si todo sale bien, ROLLBACK si algo falla.</p>
+      <span class="act-tag">Transacciones &mdash; MySQL Workbench</span>
+    </div>
+    <div class="act-card">
+      <span class="act-num">Act. 6.1 &mdash; DCL</span>
+      <div class="act-title">Gestión de usuarios y privilegios</div>
+      <p class="act-desc">Creá los siguientes usuarios con los permisos indicados:<br><br>
+      a) 'vendedor' — solo puede SELECT e INSERT en PEDIDOS.<br>b) 'supervisor' — puede SELECT, INSERT, UPDATE en todas las tablas.<br>c) 'auditor' — solo puede SELECT en todas las tablas.<br>d) Luego revocale a 'vendedor' el permiso INSERT.<br>e) Verificá los permisos de cada usuario con SHOW GRANTS.</p>
+      <span class="act-tag">DCL &mdash; MySQL Workbench</span>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<footer>
+  <div class="foot-school">E.P.E.T N°7 &mdash; Jardín América, Misiones</div>
+  <div class="foot-info">
+    5° B Informática &mdash; Bases de Datos II<br>
+    Docente: Markwart Rubén Rodolfo &mdash; Ciclo lectivo 2026<br>
+    Basado en: Gestión de Bases de Datos v1.0 — IES Luis Vélez de Guevara
+  </div>
+  <div class="foot-copy">Elaborado con asistencia de Claude (Anthropic) &mdash; Mayo 2026</div>
+</footer>
+
+</body>
+</html>
