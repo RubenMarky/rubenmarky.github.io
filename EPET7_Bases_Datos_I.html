@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bases de Datos I — Introducción — E.P.E.T N°7</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:     #090e14;
+    --bg2:    #0d1520;
+    --bg3:    #121d2b;
+    --border: #192840;
+    --acc:    #00cfff;
+    --green:  #00e0a0;
+    --gold:   #f5a623;
+    --purp:   #a78bfa;
+    --pink:   #f472b6;
+    --red:    #ff4d6d;
+    --teal:   #2dd4bf;
+    --text:   #dde6f0;
+    --muted:  #5a7090;
+    --dim:    #243448;
+  }
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; }
+  body { background:var(--bg); color:var(--text); font-family:'Syne',sans-serif; line-height:1.6; overflow-x:hidden; }
+
+  body::before {
+    content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(ellipse 65% 50% at 5%  5%,  rgba(0,207,255,0.08)  0%, transparent 65%),
+      radial-gradient(ellipse 55% 40% at 95% 90%,  rgba(0,224,160,0.06)  0%, transparent 60%),
+      radial-gradient(ellipse 45% 40% at 50% 50%,  rgba(45,212,191,0.03) 0%, transparent 70%),
+      repeating-linear-gradient(0deg,  transparent, transparent 39px, rgba(25,40,64,0.3) 39px, rgba(25,40,64,0.3) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(25,40,64,0.3) 39px, rgba(25,40,64,0.3) 40px);
+  }
+
+  /* ── NAV ── */
+  nav {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background:rgba(9,14,20,0.9); backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--border);
+    padding:0 2rem; height:62px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .nav-brand { font-family:'Space Mono',monospace; font-size:.82rem; color:var(--acc); text-decoration:none; letter-spacing:.06em; }
+  .nav-links  { display:flex; gap:1.8rem; list-style:none; }
+  .nav-links a { font-family:'Space Mono',monospace; font-size:.72rem; color:var(--muted); text-decoration:none; letter-spacing:.1em; text-transform:uppercase; transition:color .2s; }
+  .nav-links a:hover { color:var(--acc); }
+
+  /* ── HERO ── */
+  .hero {
+    position:relative; z-index:1; min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:110px 2rem 5rem;
+  }
+  .hero-tag {
+    display:inline-flex; align-items:center; gap:.6rem;
+    background:rgba(0,207,255,.07); border:1px solid rgba(0,207,255,.22);
+    color:var(--acc); font-family:'Space Mono',monospace;
+    font-size:.7rem; letter-spacing:.18em; text-transform:uppercase;
+    padding:.4rem 1.1rem; border-radius:2px; margin-bottom:2.2rem;
+    animation:fadeDown .7s ease both;
+  }
+  .hero-tag::before { content:''; width:7px; height:7px; background:var(--acc); border-radius:50%; animation:blink 2.2s ease infinite; }
+  @keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.3;transform:scale(.65)} }
+  .hero h1 { font-weight:800; font-size:clamp(2.5rem,6.5vw,5rem); line-height:1.06; letter-spacing:-.025em; margin-bottom:1.6rem; animation:fadeUp .8s .12s ease both; }
+  .grad-teal { background:linear-gradient(90deg,var(--teal) 0%,var(--green) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .hero-sub { font-size:1.05rem; color:var(--muted); max-width:580px; margin:0 auto 3rem; line-height:1.75; animation:fadeUp .8s .25s ease both; }
+  .hero-badges { display:flex; flex-wrap:wrap; gap:.7rem; justify-content:center; animation:fadeUp .8s .4s ease both; }
+  .badge { background:var(--bg3); border:1px solid var(--border); color:var(--text); font-family:'Space Mono',monospace; font-size:.7rem; padding:.38rem .9rem; border-radius:2px; letter-spacing:.05em; }
+  .badge.ac  { border-color:rgba(0,207,255,.4);  color:var(--acc); }
+  .badge.gn  { border-color:rgba(0,224,160,.4);  color:var(--green); }
+  .badge.gd  { border-color:rgba(245,166,35,.4); color:var(--gold); }
+  .badge.pp  { border-color:rgba(167,139,250,.4);color:var(--purp); }
+  .badge.tl  { border-color:rgba(45,212,191,.4); color:var(--teal); }
+  @keyframes fadeUp   { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:none} }
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-12px)} to{opacity:1;transform:none} }
+
+  /* ── WRAP ── */
+  .wrap { position:relative; z-index:1; max-width:1120px; margin:0 auto; padding:5rem 2rem; }
+  .divider { border:none; border-top:1px solid var(--border); }
+  .sec-label {
+    font-family:'Space Mono',monospace; font-size:.68rem; color:var(--acc);
+    letter-spacing:.22em; text-transform:uppercase; margin-bottom:.6rem;
+    display:flex; align-items:center; gap:.75rem;
+  }
+  .sec-label::before { content:''; width:22px; height:1px; background:var(--acc); }
+  .sec-title { font-size:clamp(1.7rem,4vw,2.6rem); font-weight:800; letter-spacing:-.02em; margin-bottom:.65rem; line-height:1.15; }
+  .sec-desc  { color:var(--muted); font-size:.97rem; max-width:600px; line-height:1.75; margin-bottom:2.8rem; }
+
+  /* ── STATS ── */
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(145px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); margin-bottom:3.5rem; }
+  .stat { background:var(--bg2); padding:1.8rem 1.3rem; text-align:center; transition:background .2s; }
+  .stat:hover { background:var(--bg3); }
+  .stat-n { font-family:'Space Mono',monospace; font-size:2rem; font-weight:700; color:var(--acc); display:block; margin-bottom:.3rem; }
+  .stat-l { font-size:.74rem; color:var(--muted); }
+
+  /* ── COMPARACIÓN ARCHIVOS VS BD ── */
+  .cmp { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--border); border:1px solid var(--border); }
+  .cmp-col { background:var(--bg2); padding:2rem; }
+  .cmp-col:hover { background:var(--bg3); }
+  .cmp-head { font-family:'Space Mono',monospace; font-size:.72rem; letter-spacing:.15em; text-transform:uppercase; margin-bottom:1rem; padding-bottom:.75rem; border-bottom:1px solid var(--border); }
+  .cmp-head.bad  { color:var(--red); }
+  .cmp-head.good { color:var(--green); }
+  .cmp-list { list-style:none; }
+  .cmp-list li { font-size:.85rem; color:var(--muted); padding:.5rem 0; border-bottom:1px solid var(--border); display:flex; gap:.75rem; align-items:flex-start; line-height:1.5; }
+  .cmp-list li:last-child { border-bottom:none; }
+  .cmp-list li::before { flex-shrink:0; font-size:.85rem; margin-top:.05em; }
+  .cmp-list.bad  li::before { content:'✗'; color:var(--red); }
+  .cmp-list.good li::before { content:'✓'; color:var(--green); }
+
+  /* ── TIPOS DE BD ── */
+  .tipos { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); }
+  .tipo-card { background:var(--bg2); padding:2rem; position:relative; overflow:hidden; transition:background .2s; }
+  .tipo-card:hover { background:var(--bg3); }
+  .tipo-card::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; background:var(--tc,var(--acc)); transform:scaleX(0); transform-origin:left; transition:transform .3s; }
+  .tipo-card:hover::before { transform:scaleX(1); }
+  .tipo-num   { font-family:'Space Mono',monospace; font-size:.62rem; color:var(--muted); letter-spacing:.2em; margin-bottom:.7rem; display:block; }
+  .tipo-title { font-size:1rem; font-weight:700; margin-bottom:.5rem; color:var(--tc,var(--acc)); }
+  .tipo-desc  { font-size:.83rem; color:var(--muted); line-height:1.62; margin-bottom:1rem; }
+  .tipo-ej    { font-family:'Space Mono',monospace; font-size:.65rem; color:var(--dim); padding:.4rem .7rem; background:rgba(255,255,255,.03); border:1px solid var(--border); border-radius:2px; }
+  .t1{--tc:#00cfff} .t2{--tc:#f5a623} .t3{--tc:#00e0a0} .t4{--tc:#a78bfa} .t5{--tc:#2dd4bf}
+
+  /* ── CONCEPTOS ── */
+  .conceptos { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1rem; }
+  .concepto {
+    background:var(--bg2); border:1px solid var(--border);
+    border-left:3px solid var(--cc,var(--acc));
+    padding:1.4rem 1.4rem 1.4rem 1.6rem; transition:background .2s;
+  }
+  .concepto:hover { background:var(--bg3); }
+  .concepto-icon  { font-size:1.5rem; margin-bottom:.5rem; display:block; }
+  .concepto-title { font-size:.97rem; font-weight:700; margin-bottom:.35rem; color:var(--cc,var(--acc)); }
+  .concepto-desc  { font-size:.81rem; color:var(--muted); line-height:1.6; }
+  .concepto-code  { font-family:'Space Mono',monospace; font-size:.72rem; color:var(--teal); margin-top:.5rem; display:block; }
+  .cc1{--cc:#00cfff} .cc2{--cc:#00e0a0} .cc3{--cc:#f5a623} .cc4{--cc:#a78bfa}
+  .cc5{--cc:#f472b6} .cc6{--cc:#2dd4bf} .cc7{--cc:#ff4d6d} .cc8{--cc:#4ade80}
+
+  /* ── SGBD ── */
+  .sgbd-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:1rem; }
+  .sgbd-card { background:var(--bg2); border:1px solid var(--border); padding:1.4rem; transition:border-color .2s, background .2s; }
+  .sgbd-card:hover { border-color:var(--acc); background:var(--bg3); }
+  .sgbd-logo  { font-size:2rem; margin-bottom:.6rem; display:block; }
+  .sgbd-name  { font-size:1rem; font-weight:700; margin-bottom:.3rem; }
+  .sgbd-type  { font-family:'Space Mono',monospace; font-size:.65rem; color:var(--acc); letter-spacing:.08em; text-transform:uppercase; margin-bottom:.5rem; display:block; }
+  .sgbd-desc  { font-size:.8rem; color:var(--muted); line-height:1.55; }
+
+  /* ── TABLA RELACIONAL ── */
+  .rel-demo { overflow-x:auto; }
+  table.rel { width:100%; border-collapse:collapse; font-size:.85rem; font-family:'Space Mono',monospace; }
+  table.rel caption { text-align:left; font-size:.7rem; color:var(--acc); letter-spacing:.15em; text-transform:uppercase; margin-bottom:.5rem; padding-bottom:.5rem; border-bottom:1px solid var(--border); }
+  table.rel th { background:var(--bg3); color:var(--acc); padding:.6rem 1rem; text-align:left; border-bottom:2px solid var(--acc); font-size:.72rem; letter-spacing:.05em; }
+  table.rel td { padding:.55rem 1rem; border-bottom:1px solid var(--border); color:var(--text); font-size:.8rem; }
+  table.rel tr:hover td { background:var(--bg3); }
+  table.rel .pk { color:var(--gold); font-weight:700; }
+  table.rel .fk { color:var(--purp); }
+  .rel-wrap { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:2rem; margin-bottom:1.5rem; }
+
+  /* ── ACTIVIDADES ── */
+  .acts { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:1rem; }
+  .act-card { background:var(--bg2); border:1px solid var(--border); padding:1.4rem; transition:background .2s; }
+  .act-card:hover { background:var(--bg3); }
+  .act-num   { font-family:'Space Mono',monospace; font-size:.65rem; color:var(--gold); letter-spacing:.15em; text-transform:uppercase; margin-bottom:.5rem; display:block; }
+  .act-title { font-size:.97rem; font-weight:700; margin-bottom:.4rem; }
+  .act-desc  { font-size:.8rem; color:var(--muted); line-height:1.6; }
+  .act-tipo  { display:inline-block; margin-top:.75rem; font-family:'Space Mono',monospace; font-size:.62rem; padding:.15rem .55rem; border-radius:2px; background:rgba(245,166,35,.09); border:1px solid rgba(245,166,35,.25); color:var(--gold); letter-spacing:.08em; text-transform:uppercase; }
+
+  /* ── FOOTER ── */
+  footer { position:relative; z-index:1; border-top:1px solid var(--border); background:var(--bg2); padding:3rem 2rem; text-align:center; }
+  .foot-school { font-family:'Space Mono',monospace; font-size:.73rem; color:var(--acc); letter-spacing:.16em; text-transform:uppercase; margin-bottom:.5rem; }
+  .foot-info   { font-size:.82rem; color:var(--muted); line-height:1.9; }
+  .foot-copy   { margin-top:1.4rem; font-family:'Space Mono',monospace; font-size:.63rem; color:var(--dim); letter-spacing:.08em; }
+
+  @media(max-width:640px){
+    .nav-links{display:none;}
+    .stats{grid-template-columns:repeat(2,1fr);}
+    .cmp{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <a class="nav-brand" href="#">E.P.E.T N°7 // Bases de Datos I</a>
+  <ul class="nav-links">
+    <li><a href="#intro">Introducción</a></li>
+    <li><a href="#tipos">Tipos de BD</a></li>
+    <li><a href="#conceptos">Conceptos</a></li>
+    <li><a href="#relacional">Modelo relacional</a></li>
+    <li><a href="#sgbd">SGBD</a></li>
+    <li><a href="#actividades">Actividades</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">E.P.E.T N°7 &mdash; EPJA &mdash; Jardín América, Misiones</div>
+  <h1>Bases de<br><span class="grad-teal">Datos I</span></h1>
+  <p class="hero-sub">
+    Introducción y repaso de los conceptos fundamentales de las bases de datos.
+    Del archivo de cajones al sistema relacional moderno: qué es un dato,
+    una entidad, una clave primaria, y por qué el modelo relacional
+    domina el mundo del software hoy.
+  </p>
+  <div class="hero-badges">
+    <span class="badge tl">Modelo relacional</span>
+    <span class="badge gn">SGBD</span>
+    <span class="badge ac">SQL</span>
+    <span class="badge gd">Claves primarias y foráneas</span>
+    <span class="badge pp">Normalización</span>
+    <span class="badge">3° A &mdash; EPJA</span>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- INTRO + STATS -->
+<section class="wrap" id="intro">
+  <div class="sec-label">¿Por qué existen las bases de datos?</div>
+  <h2 class="sec-title">Del fichero de cartón al sistema relacional</h2>
+  <p class="sec-desc">
+    Antes de las bases de datos, las empresas guardaban su información en ficheros físicos:
+    cajones, carpetas y fichas de cartón. El tiempo para manipular esos datos era enorme.
+    La informática reprodujo ese modelo —seguimos hablando de archivos, carpetas y formularios—
+    pero lo hizo millones de veces más eficiente.
+  </p>
+
+  <div class="stats">
+    <div class="stat"><span class="stat-n">5</span><span class="stat-l">Modelos de BD históricos</span></div>
+    <div class="stat"><span class="stat-n">BD</span><span class="stat-l">Colección de datos relacionados con significado implícito</span></div>
+    <div class="stat"><span class="stat-n">SGBD</span><span class="stat-l">Software que define, crea y mantiene la BD</span></div>
+    <div class="stat"><span class="stat-n">SQL</span><span class="stat-l">Lenguaje estándar de consulta (ISO)</span></div>
+    <div class="stat"><span class="stat-n">PK</span><span class="stat-l">Clave primaria: identifica un registro de forma única</span></div>
+    <div class="stat"><span class="stat-n">FK</span><span class="stat-l">Clave foránea: conecta dos tablas entre sí</span></div>
+  </div>
+
+  <!-- COMPARACIÓN -->
+  <h3 style="font-family:'Space Mono',monospace;font-size:.75rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:1.2rem;">
+    Archivos tradicionales vs. Bases de datos relacionales
+  </h3>
+  <div class="cmp">
+    <div class="cmp-col">
+      <div class="cmp-head bad">⚠ Sistema de archivos tradicional</div>
+      <ul class="cmp-list bad">
+        <li>Datos redundantes: la misma información se repite en múltiples archivos (nombre y dirección del cliente en CLIENTES y en FACTURAS).</li>
+        <li>Costo de almacenamiento elevado al guardar el mismo dato en varias aplicaciones.</li>
+        <li>Tiempos de procesamiento elevados por la falta de optimización.</li>
+        <li>Alta probabilidad de inconsistencia: el mismo cliente puede aparecer como "Juan" en un archivo y "Joaquín" en otro.</li>
+        <li>Difícil modificación: cada cambio debe replicarse en todas las copias del dato, algo casi imposible en la práctica.</li>
+        <li>Cada programa maneja sus propios datos de forma caótica e independiente.</li>
+      </ul>
+    </div>
+    <div class="cmp-col">
+      <div class="cmp-head good">✔ Base de datos relacional</div>
+      <ul class="cmp-list good">
+        <li>Menor redundancia: los datos se almacenan una sola vez y se referencian desde cualquier aplicación.</li>
+        <li>Menor espacio de almacenamiento gracias a una mejor estructuración de los datos.</li>
+        <li>Acceso más eficiente: la organización produce un resultado óptimo en rendimiento.</li>
+        <li>Datos documentados gracias a los metadatos que describen la estructura de la BD.</li>
+        <li>Independencia entre datos y programas: se pueden modificar los datos sin tocar el código de las aplicaciones.</li>
+        <li>Integridad y mayor seguridad: acceso controlado por usuario y consistencia garantizada.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- TIPOS DE BD -->
+<section class="wrap" id="tipos">
+  <div class="sec-label">Evolución histórica</div>
+  <h2 class="sec-title">Modelos de bases de datos</h2>
+  <p class="sec-desc">
+    Las bases de datos evolucionaron junto con la tecnología.
+    Cada modelo resolvió las limitaciones del anterior.
+    Hoy el modelo relacional domina, pero convive con los demás en casos específicos.
+  </p>
+
+  <div class="tipos">
+
+    <div class="tipo-card t1">
+      <span class="tipo-num">MODELO 01 &mdash; Origen</span>
+      <div class="tipo-title">Jerárquico</div>
+      <p class="tipo-desc">
+        Las relaciones entre registros forman una estructura en árbol: cada nodo
+        tiene un padre y puede tener muchos hijos, pero no al revés.
+        Fue el modelo de las primeras bases de datos.
+      </p>
+      <div class="tipo-ej">Ejemplos: IMS de IBM &mdash; Registro de Windows</div>
+    </div>
+
+    <div class="tipo-card t2">
+      <span class="tipo-num">MODELO 02 &mdash; 1969</span>
+      <div class="tipo-title">En red</div>
+      <p class="tipo-desc">
+        Admite relaciones más complejas que el jerárquico: cada registro
+        puede relacionarse con varios otros y seguirse por distintos caminos.
+        Inventado por Charles Bachman, estandarizado por CODASYL.
+      </p>
+      <div class="tipo-ej">Estándar: CODASYL (1969)</div>
+    </div>
+
+    <div class="tipo-card t3">
+      <span class="tipo-num">MODELO 03 &mdash; El dominante</span>
+      <div class="tipo-title">Relacional ★</div>
+      <p class="tipo-desc">
+        Almacena los datos en tablas (filas y columnas). Las tablas se conectan
+        entre sí mediante claves comunes. Es el modelo más extendido en el mundo
+        y el que estudiamos en este curso.
+      </p>
+      <div class="tipo-ej">MySQL &mdash; PostgreSQL &mdash; Oracle &mdash; SQL Server &mdash; SQLite</div>
+    </div>
+
+    <div class="tipo-card t4">
+      <span class="tipo-num">MODELO 04 &mdash; Analítico</span>
+      <div class="tipo-title">Multidimensional</div>
+      <p class="tipo-desc">
+        Similar al relacional pero con N dimensiones en lugar de las dos
+        filas-columnas. Ofrece el aspecto de una hoja de cálculo tridimensional.
+        Usado en análisis de grandes volúmenes de datos (Business Intelligence).
+      </p>
+      <div class="tipo-ej">Ejemplo: cubos OLAP &mdash; Data Warehouses</div>
+    </div>
+
+    <div class="tipo-card t5">
+      <span class="tipo-num">MODELO 05 &mdash; Moderno</span>
+      <div class="tipo-title">Orientado a objetos</div>
+      <p class="tipo-desc">
+        Diseñado siguiendo el paradigma OO. Soporta tipos de datos complejos
+        como gráficos, imágenes, voz y texto de forma natural.
+        Muy usado en aplicaciones web multimedia.
+      </p>
+      <div class="tipo-ej">Ejemplo: MongoDB &mdash; CouchDB &mdash; db4o</div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- CONCEPTOS BÁSICOS -->
+<section class="wrap" id="conceptos">
+  <div class="sec-label">Vocabulario fundamental</div>
+  <h2 class="sec-title">Conceptos básicos de una base de datos</h2>
+  <p class="sec-desc">
+    Estos son los términos que aparecen en toda discusión sobre bases de datos.
+    Dominarlos es el primer paso para diseñar y consultar cualquier sistema.
+  </p>
+
+  <div class="conceptos">
+
+    <div class="concepto cc1">
+      <span class="concepto-icon">📊</span>
+      <div class="concepto-title">Dato</div>
+      <p class="concepto-desc">Hecho conocido que puede registrarse y que tiene un significado implícito. El significado depende del contexto: "fecha" en una BD de ventas es la fecha de factura; en una BD de música, la fecha de grabación.</p>
+      <span class="concepto-code">Ejemplo: 3256789 | "Elena Sánchez" | "18 de julio de 1880"</span>
+    </div>
+
+    <div class="concepto cc2">
+      <span class="concepto-icon">🏷️</span>
+      <div class="concepto-title">Entidad</div>
+      <p class="concepto-desc">Todo aquello de lo cual interesa guardar datos. Puede ser una persona, un objeto, un evento o un concepto del mundo real que tenga existencia independiente.</p>
+      <span class="concepto-code">Ejemplos: CLIENTES | FACTURAS | PRODUCTOS</span>
+    </div>
+
+    <div class="concepto cc3">
+      <span class="concepto-icon">📋</span>
+      <div class="concepto-title">Tabla</div>
+      <p class="concepto-desc">Conjunto de filas y columnas bajo un mismo nombre que representa los valores almacenados para una entidad. Cada tabla tiene un nombre único en la base de datos.</p>
+      <span class="concepto-code">Ejemplo: tabla CLIENTES con todos los clientes de la empresa</span>
+    </div>
+
+    <div class="concepto cc4">
+      <span class="concepto-icon">📌</span>
+      <div class="concepto-title">Campo (atributo)</div>
+      <p class="concepto-desc">Cada columna de una tabla. Identifica una familia de datos del mismo tipo. Tiene un nombre, un tipo de dato y una longitud máxima definidos en los metadatos.</p>
+      <span class="concepto-code">Ejemplo: campo "fechaNacimiento" en tabla CLIENTES</span>
+    </div>
+
+    <div class="concepto cc5">
+      <span class="concepto-icon">📄</span>
+      <div class="concepto-title">Registro (tupla)</div>
+      <p class="concepto-desc">Cada fila de la tabla. Representa una instancia concreta de la entidad: un cliente, una factura, un producto específico con todos sus datos.</p>
+      <span class="concepto-code">Ejemplo: {1225 | "Juan García" | "Guaná 1202" | ...}</span>
+    </div>
+
+    <div class="concepto cc6">
+      <span class="concepto-icon">🔑</span>
+      <div class="concepto-title">Clave primaria (PK)</div>
+      <p class="concepto-desc">Campo o conjunto de campos que identifica de forma única a cada registro de la tabla. No puede repetirse ni estar vacío. Es el identificador irrepetible de cada fila.</p>
+      <span class="concepto-code">Ejemplo: CódigoCliente en CLIENTES &mdash; NúmeroFactura en FACTURAS</span>
+    </div>
+
+    <div class="concepto cc7">
+      <span class="concepto-icon">🔗</span>
+      <div class="concepto-title">Clave foránea (FK)</div>
+      <p class="concepto-desc">Campo de una tabla que contiene la clave primaria de otra tabla. Es el mecanismo que crea relaciones entre tablas. Garantiza la integridad referencial: no puede apuntar a un registro inexistente.</p>
+      <span class="concepto-code">Ejemplo: CódigoCliente en FACTURAS apunta a CLIENTES</span>
+    </div>
+
+    <div class="concepto cc8">
+      <span class="concepto-icon">🗂️</span>
+      <div class="concepto-title">Metadatos</div>
+      <p class="concepto-desc">Datos acerca de los datos. Describen la estructura de la base de datos: qué tipo tiene cada campo, cómo se llama, cómo están agrupados y cómo se relacionan. Son el "manual de instrucciones" de la BD.</p>
+      <span class="concepto-code">Ejemplo: Num → Numérico → longitud 4 | Nombre → Alfab. → 20</span>
+    </div>
+
+    <div class="concepto cc1">
+      <span class="concepto-icon">🔍</span>
+      <div class="concepto-title">Consulta (Query)</div>
+      <p class="concepto-desc">Instrucción escrita en SQL que hace una petición a la base de datos. Puede recuperar, insertar, modificar o eliminar datos. Es la forma principal de interactuar con la BD.</p>
+      <span class="concepto-code">SELECT * FROM CLIENTES WHERE ciudad = 'Jardín América'</span>
+    </div>
+
+    <div class="concepto cc2">
+      <span class="concepto-icon">👁️</span>
+      <div class="concepto-title">Vista</div>
+      <p class="concepto-desc">Tabla virtual obtenida al guardar una consulta. No almacena datos físicamente; muestra el resultado de la consulta como si fuera una tabla real. Se actualiza automáticamente con los datos subyacentes.</p>
+      <span class="concepto-code">CREATE VIEW clientes_activos AS SELECT ...</span>
+    </div>
+
+    <div class="concepto cc3">
+      <span class="concepto-icon">📑</span>
+      <div class="concepto-title">Informe</div>
+      <p class="concepto-desc">Listado ordenado de campos y registros seleccionados en un formato fácil de leer e imprimir. Permite presentar la información de la BD de forma estructurada y comprensible para el usuario final.</p>
+      <span class="concepto-code">Ejemplo: facturas impagas de enero ordenadas por cliente</span>
+    </div>
+
+    <div class="concepto cc4">
+      <span class="concepto-icon">⚙️</span>
+      <div class="concepto-title">Procedimiento almacenado</div>
+      <p class="concepto-desc">Script especial almacenado dentro de la BD que forma parte de su esquema. Ejecuta operaciones avanzadas o de mantenimiento de forma automatizada y repetible.</p>
+      <span class="concepto-code">CREATE PROCEDURE actualizar_precios() ...</span>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- MODELO RELACIONAL EN ACCIÓN -->
+<section class="wrap" id="relacional">
+  <div class="sec-label">El modelo en acción</div>
+  <h2 class="sec-title">Tablas, claves y relaciones</h2>
+  <p class="sec-desc">
+    El modelo relacional organiza la información en tablas conectadas por claves.
+    Este ejemplo muestra cómo CLIENTES, FACTURAS y PRODUCTOS se relacionan
+    entre sí, eliminando la redundancia del sistema de archivos tradicional.
+  </p>
+
+  <div class="rel-wrap rel-demo">
+    <div>
+      <table class="rel">
+        <caption>CLIENTES</caption>
+        <thead><tr><th>CodCli (PK)</th><th>Nombre</th><th>Domicilio</th><th>Teléfono</th></tr></thead>
+        <tbody>
+          <tr><td class="pk">1225</td><td>Juan García</td><td>Guaná 1202</td><td>985674863</td></tr>
+          <tr><td class="pk">1226</td><td>Fernando Martínez</td><td>Rincón 876</td><td>984568643</td></tr>
+          <tr><td class="pk">1227</td><td>María López</td><td>San Martín 450</td><td>983214567</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <table class="rel">
+        <caption>PRODUCTOS</caption>
+        <thead><tr><th>CodProd (PK)</th><th>Descripción</th><th>Precio</th><th>Stock</th></tr></thead>
+        <tbody>
+          <tr><td class="pk">P001</td><td>Azulejos 30x30</td><td>$1.250</td><td>500</td></tr>
+          <tr><td class="pk">P002</td><td>Pintura látex blanca</td><td>$900</td><td>120</td></tr>
+          <tr><td class="pk">P003</td><td>Cemento 50 kg</td><td>$2.100</td><td>80</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="rel-demo">
+    <table class="rel">
+      <caption>FACTURAS — Las claves foráneas (FK) conectan esta tabla con CLIENTES y PRODUCTOS</caption>
+      <thead><tr><th>NroFactura (PK)</th><th>CodCli (FK→CLIENTES)</th><th>CodProd (FK→PRODUCTOS)</th><th>Cantidad</th><th>Total</th></tr></thead>
+      <tbody>
+        <tr><td class="pk">F0001</td><td class="fk">1225</td><td class="fk">P001</td><td>10</td><td>$12.500</td></tr>
+        <tr><td class="pk">F0002</td><td class="fk">1226</td><td class="fk">P002</td><td>2</td><td>$1.800</td></tr>
+        <tr><td class="pk">F0003</td><td class="fk">1225</td><td class="fk">P003</td><td>5</td><td>$10.500</td></tr>
+        <tr><td class="pk">F0004</td><td class="fk">1227</td><td class="fk">P001</td><td>20</td><td>$25.000</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top:1.5rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;">
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--gold);padding:1.3rem;">
+      <div style="font-family:'Space Mono',monospace;font-size:.68rem;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.6rem;">Claves primarias (PK)</div>
+      <p style="font-size:.83rem;color:var(--muted);line-height:1.6;">CodCli identifica a cada cliente de forma única. NroFactura a cada factura. CodProd a cada producto. Ningún valor puede repetirse ni estar vacío.</p>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--purp);padding:1.3rem;">
+      <div style="font-family:'Space Mono',monospace;font-size:.68rem;color:var(--purp);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.6rem;">Claves foráneas (FK)</div>
+      <p style="font-size:.83rem;color:var(--muted);line-height:1.6;">CodCli en FACTURAS apunta a CLIENTES. CodProd en FACTURAS apunta a PRODUCTOS. Si el cliente 1225 no existe en CLIENTES, la factura F0001 no puede crearse.</p>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--green);padding:1.3rem;">
+      <div style="font-family:'Space Mono',monospace;font-size:.68rem;color:var(--green);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.6rem;">Integridad referencial</div>
+      <p style="font-size:.83rem;color:var(--muted);line-height:1.6;">El SGBD garantiza que ninguna FK apunte a un registro inexistente. Si intentás borrar el cliente 1225 mientras tiene facturas, el sistema lo impide automáticamente.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- SGBD -->
+<section class="wrap" id="sgbd">
+  <div class="sec-label">Sistemas gestores</div>
+  <h2 class="sec-title">¿Qué es un SGBD y cuáles existen?</h2>
+  <p class="sec-desc">
+    Un SGBD (Sistema Gestor de Bases de Datos) es el software que permite
+    definir, crear, mantener y consultar una base de datos con acceso controlado.
+    Proporciona DDL (definición), DML (manipulación) y DCL (control de acceso).
+  </p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin-bottom:3rem;">
+    <div style="background:var(--bg2);border:1px solid var(--border);padding:1.5rem;">
+      <div style="font-family:'Space Mono',monospace;font-size:.68rem;color:var(--teal);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.75rem;">DDL — Data Definition Language</div>
+      <p style="font-size:.83rem;color:var(--muted);line-height:1.6;margin-bottom:.75rem;">Define y modifica la estructura de la BD: crea tablas, define tipos de datos y establece restricciones.</p>
+      <code style="font-family:'Space Mono',monospace;font-size:.72rem;color:var(--teal);">CREATE TABLE | ALTER TABLE | DROP TABLE</code>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);padding:1.5rem;">
+      <div style="font-family:'Space Mono',monospace;font-size:.68rem;color:var(--acc);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.75rem;">DML — Data Manipulation Language</div>
+      <p style="font-size:.83rem;color:var(--muted);line-height:1.6;margin-bottom:.75rem;">Inserta, actualiza, elimina y consulta los datos almacenados en la BD.</p>
+      <code style="font-family:'Space Mono',monospace;font-size:.72rem;color:var(--acc);">SELECT | INSERT | UPDATE | DELETE</code>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);padding:1.5rem;">
+      <div style="font-family:'Space Mono',monospace;font-size:.68rem;color:var(--purp);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.75rem;">DCL — Data Control Language</div>
+      <p style="font-size:.83rem;color:var(--muted);line-height:1.6;margin-bottom:.75rem;">Controla los permisos de acceso: quién puede ver, modificar o administrar la BD.</p>
+      <code style="font-family:'Space Mono',monospace;font-size:.72rem;color:var(--purp);">GRANT | REVOKE | DENY</code>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Space Mono',monospace;font-size:.75rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:1.2rem;">
+    SGBD más conocidos
+  </h3>
+  <div class="sgbd-grid">
+    <div class="sgbd-card">
+      <span class="sgbd-logo">🐬</span>
+      <div class="sgbd-name">MySQL</div>
+      <span class="sgbd-type">Relacional &mdash; Gratuito / Open Source</span>
+      <p class="sgbd-desc">El más usado en aplicaciones web del mundo. Base de sitios como WordPress, Facebook (en sus orígenes) y millones de sistemas empresariales.</p>
+    </div>
+    <div class="sgbd-card">
+      <span class="sgbd-logo">🐘</span>
+      <div class="sgbd-name">PostgreSQL</div>
+      <span class="sgbd-type">Relacional &mdash; Gratuito / Open Source</span>
+      <p class="sgbd-desc">Preferido para sistemas que requieren alta confiabilidad y funciones avanzadas. Soporta JSON, arrays y tipos de datos complejos.</p>
+    </div>
+    <div class="sgbd-card">
+      <span class="sgbd-logo">🔶</span>
+      <div class="sgbd-name">Oracle</div>
+      <span class="sgbd-type">Relacional &mdash; Corporativo / De pago</span>
+      <p class="sgbd-desc">Uno de los más potentes y usados en grandes empresas y bancos. Versión gratuita disponible con fines educativos (Oracle XE).</p>
+    </div>
+    <div class="sgbd-card">
+      <span class="sgbd-logo">🪟</span>
+      <div class="sgbd-name">Microsoft Access</div>
+      <span class="sgbd-type">Relacional &mdash; Ofimático</span>
+      <p class="sgbd-desc">SGBD para bases de datos pequeñas. Ideal para doméstico y pequeñas empresas. Incluye interfaz visual para crear tablas y formularios sin escribir SQL.</p>
+    </div>
+    <div class="sgbd-card">
+      <span class="sgbd-logo">📦</span>
+      <div class="sgbd-name">SQLite</div>
+      <span class="sgbd-type">Relacional &mdash; Embebido / Gratuito</span>
+      <p class="sgbd-desc">BD que vive dentro de un único archivo. Usado en apps móviles (Android, iOS), navegadores web y herramientas de escritorio. Sin servidor.</p>
+    </div>
+    <div class="sgbd-card">
+      <span class="sgbd-logo">🍃</span>
+      <div class="sgbd-name">LibreOffice Base</div>
+      <span class="sgbd-type">Ofimático &mdash; Gratuito / Open Source</span>
+      <p class="sgbd-desc">Alternativa libre a Microsoft Access. Permite crear bases de datos con interfaz gráfica. Ideal para aprendizaje en el aula sin costo de licencia.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ACTIVIDADES -->
+<section class="wrap" id="actividades">
+  <div class="sec-label">Práctica y autoevaluación</div>
+  <h2 class="sec-title">Actividades propuestas</h2>
+  <p class="sec-desc">
+    Actividades de repaso basadas en el material de la unidad.
+    Pueden resolverse con computadora, celular o solo con cuaderno y lápiz.
+  </p>
+
+  <div class="acts">
+
+    <div class="act-card">
+      <span class="act-num">Actividad 1.1</span>
+      <div class="act-title">Inconvenientes del sistema de archivos</div>
+      <p class="act-desc">¿Cuáles de los siguientes representan inconvenientes de los sistemas de ficheros tradicionales?<br><br>
+        a) Redundancia e inconsistencia de datos.<br>
+        b) Sistema independiente de la máquina y del SO.<br>
+        c) Control de concurrencia.<br>
+        d) Difícil modificación de los datos.<br><br>
+        Justificá cada respuesta en una oración.
+      </p>
+      <span class="act-tipo">Selección múltiple</span>
+    </div>
+
+    <div class="act-card">
+      <span class="act-num">Actividad 1.2</span>
+      <div class="act-title">Ventajas de los sistemas orientados a BD</div>
+      <p class="act-desc">De las siguientes opciones, ¿cuáles son ventajas de las bases de datos frente a los archivos tradicionales?<br><br>
+        a) Integridad de los datos.<br>
+        b) Redundancia de información.<br>
+        c) Cada aplicación maneja sus propios datos.<br>
+        d) Independencia entre datos y aplicaciones.<br><br>
+        Justificá por qué las otras son incorrectas.
+      </p>
+      <span class="act-tipo">Selección múltiple</span>
+    </div>
+
+    <div class="act-card">
+      <span class="act-num">Actividad 1.3</span>
+      <div class="act-title">Definición de conceptos clave</div>
+      <p class="act-desc">Definí con tus propias palabras los siguientes conceptos (sin copiar el texto del material):<br><br>
+        1. Dato &nbsp;&nbsp; 2. Tipo de Dato &nbsp;&nbsp; 3. Campo<br>
+        4. Registro &nbsp;&nbsp; 5. Tabla &nbsp;&nbsp; 6. Relación<br>
+        7. Consulta &nbsp;&nbsp; 8. Procedimiento<br><br>
+        Para cada uno, incluí un ejemplo propio diferente al del material.
+      </p>
+      <span class="act-tipo">Definición escrita</span>
+    </div>
+
+    <div class="act-card">
+      <span class="act-num">Actividad 1.4</span>
+      <div class="act-title">¿Qué es un SGBD?</div>
+      <p class="act-desc">
+        Redactá una definición completa de SGBD en no más de 4 oraciones.<br><br>
+        Luego indicá: ¿cuál es la diferencia entre DDL, DML y DCL?<br><br>
+        Extra: nombrá un SGBD que usarías para una pequeña empresa local de Jardín América y justificá la elección.
+      </p>
+      <span class="act-tipo">Respuesta escrita</span>
+    </div>
+
+    <div class="act-card">
+      <span class="act-num">Actividad 1.5</span>
+      <div class="act-title">Claves primarias y foráneas</div>
+      <p class="act-desc">
+        Observá las tablas CLIENTES, FACTURAS y PRODUCTOS de la sección "Modelo relacional".<br><br>
+        a) Identificá todas las claves primarias (PK).<br>
+        b) Identificá todas las claves foráneas (FK) y a qué tabla apuntan.<br>
+        c) ¿Qué pasaría si intentamos registrar una factura para el cliente 9999 que no existe en CLIENTES?<br>
+        d) ¿Qué restricción de integridad lo impide?
+      </p>
+      <span class="act-tipo">Análisis de tablas</span>
+    </div>
+
+    <div class="act-card">
+      <span class="act-num">Actividad 1.6 — Bonus</span>
+      <div class="act-title">Autoevaluación: Verdadero o Falso</div>
+      <p class="act-desc">
+        Marcá V o F y justificá en una oración:<br><br>
+        1. El modelo esencial dice qué debe hacer el sistema, no cómo. ( )<br>
+        2. Una clave foránea puede tener valores repetidos. ( )<br>
+        3. Los metadatos son los registros almacenados en las tablas. ( )<br>
+        4. SQL es un estándar ISO utilizado por todos los SGBD relacionales. ( )<br>
+        5. En un sistema de archivos tradicional, modificar un dato requiere actualizarlo en todos los archivos donde aparece. ( )
+      </p>
+      <span class="act-tipo">Verdadero / Falso</span>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-school">E.P.E.T N°7 &mdash; Jardín América, Misiones</div>
+  <div class="foot-info">
+    Educación Permanente de Jóvenes y Adultos (EPJA) — 3° A<br>
+    Materia: Bases de Datos I &mdash; Introducción y repaso<br>
+    Docente: Markwart Rubén Rodolfo &mdash; Ciclo lectivo 2026
+  </div>
+  <div class="foot-copy">
+    Elaborado con asistencia de Claude (Anthropic) &mdash; Mayo 2026
+  </div>
+</footer>
+
+</body>
+</html>

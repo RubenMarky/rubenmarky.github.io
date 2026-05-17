@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diseño de Páginas Web — E.P.E.T N°7</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #0a0c10;
+    --bg2:      #0f1218;
+    --bg3:      #151a22;
+    --border:   #1e2736;
+    --accent:   #00d4ff;
+    --accent2:  #0088cc;
+    --gold:     #f0b429;
+    --green:    #00e5a0;
+    --text:     #e2e8f0;
+    --muted:    #64748b;
+    --dim:      #334155;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── FONDO ANIMADO ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(0,212,255,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 90%, rgba(0,136,204,0.05) 0%, transparent 60%),
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(30,39,54,0.4) 39px, rgba(30,39,54,0.4) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(30,39,54,0.4) 39px, rgba(30,39,54,0.4) 40px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAVBAR ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(10,12,16,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-brand {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 0.8rem;
+    font-family: 'Space Mono', monospace;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 100px 2rem 4rem;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.25);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.4rem 1rem;
+    border-radius: 2px;
+    margin-bottom: 2rem;
+    animation: fadeDown 0.8s ease both;
+  }
+
+  .hero-tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s ease infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.8s 0.15s ease both;
+  }
+
+  .hero h1 span {
+    background: linear-gradient(90deg, var(--accent) 0%, var(--green) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 560px;
+    margin: 0 auto 3rem;
+    line-height: 1.7;
+    animation: fadeUp 0.8s 0.3s ease both;
+  }
+
+  .hero-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    animation: fadeUp 0.8s 0.45s ease both;
+  }
+
+  .badge {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 2px;
+    letter-spacing: 0.05em;
+  }
+
+  .badge.gold { border-color: rgba(240,180,41,0.4); color: var(--gold); }
+  .badge.green { border-color: rgba(0,229,160,0.4); color: var(--green); }
+  .badge.blue { border-color: rgba(0,212,255,0.4); color: var(--accent); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SECCIONES ── */
+  section {
+    position: relative;
+    z-index: 1;
+    padding: 5rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .section-label::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .section-title {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+    line-height: 1.15;
+  }
+
+  .section-desc {
+    color: var(--muted);
+    font-size: 1rem;
+    max-width: 600px;
+    line-height: 1.7;
+    margin-bottom: 3rem;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
+  }
+
+  /* ── STATS ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 5rem;
+  }
+
+  .stat-box {
+    background: var(--bg2);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    transition: background 0.2s;
+  }
+
+  .stat-box:hover { background: var(--bg3); }
+
+  .stat-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .stat-label {
+    font-size: 0.78rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── UNIDADES ── */
+  .units-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .unit-card {
+    background: var(--bg2);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.2s;
+    cursor: default;
+  }
+
+  .unit-card:hover { background: var(--bg3); }
+
+  .unit-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent-c, var(--accent));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  .unit-card:hover::before { transform: scaleX(1); }
+
+  .unit-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+
+  .unit-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+  }
+
+  .unit-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+  }
+
+  .unit-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--dim);
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+    margin-top: auto;
+  }
+
+  .unit-clases {
+    color: var(--accent);
+  }
+
+  /* colores por unidad */
+  .u1 { --accent-c: #00d4ff; }
+  .u2 { --accent-c: #00e5a0; }
+  .u3 { --accent-c: #f0b429; }
+  .u4 { --accent-c: #a78bfa; }
+  .u5 { --accent-c: #f87171; }
+  .u6 { --accent-c: #fb923c; }
+  .u7 { --accent-c: #34d399; }
+
+  /* ── HERRAMIENTAS ── */
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .tool-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    border-radius: 2px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .tool-card:hover {
+    border-color: var(--accent);
+    background: var(--bg3);
+  }
+
+  .tool-icon {
+    font-size: 1.8rem;
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+
+  .tool-name {
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .tool-desc {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .tool-tag {
+    display: inline-block;
+    margin-top: 0.75rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.2);
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ── TABLA DISTRIBUCIÓN ── */
+  .dist-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+
+  .dist-table th {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dist-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  .dist-table tr:last-child td { border-bottom: none; }
+
+  .dist-table tr:hover td { background: var(--bg3); }
+
+  .dist-table tr.total td {
+    font-weight: 700;
+    color: var(--accent);
+    border-top: 1px solid var(--border);
+    font-family: 'Space Mono', monospace;
+  }
+
+  .pill {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.2);
+    color: var(--accent);
+  }
+
+  /* ── CRITERIOS ── */
+  .criterios-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  .criterios-list li {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 1rem 1.25rem;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+
+  .criterios-list li::before {
+    content: '▸';
+    color: var(--accent);
+    flex-shrink: 0;
+    font-size: 0.9rem;
+    margin-top: 0.05em;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    background: var(--bg2);
+    padding: 3rem 2rem;
+    text-align: center;
+  }
+
+  .footer-school {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-info {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  .footer-copy {
+    margin-top: 1.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--dim);
+    letter-spacing: 0.08em;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <a class="nav-brand" href="#">E.P.E.T N°7 // Diseño Web</a>
+  <ul class="nav-links">
+    <li><a href="#programa">Programa</a></li>
+    <li><a href="#unidades">Unidades</a></li>
+    <li><a href="#herramientas">Herramientas</a></li>
+    <li><a href="#proyecto">Proyecto</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">E.P.E.T N°7 &mdash; EPJA &mdash; Jardín América, Misiones</div>
+  <h1>Diseño de<br><span>Páginas Web</span></h1>
+  <p class="hero-sub">
+    Aprendé a crear y publicar tu propio sitio web desde cero,
+    sin saber programar, usando herramientas gratuitas y accesibles
+    desde cualquier dispositivo.
+  </p>
+  <div class="hero-badges">
+    <span class="badge blue">Google Sites</span>
+    <span class="badge green">Canva</span>
+    <span class="badge gold">Google Drive</span>
+    <span class="badge blue">YouTube</span>
+    <span class="badge">30 clases efectivas</span>
+    <span class="badge">18 a 50 años</span>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- STATS -->
+<section id="programa">
+  <div class="section-label">El programa en números</div>
+  <h2 class="section-title">Datos del curso</h2>
+  <p class="section-desc">
+    Un programa diseñado para la realidad de la EPJA: clases de 60 minutos,
+    herramientas gratuitas y contenido progresivo que lleva a un proyecto
+    web real publicado en Internet.
+  </p>
+
+  <div class="stats-row">
+    <div class="stat-box">
+      <span class="stat-num">40</span>
+      <span class="stat-label">Clases totales en el año</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-num">30</span>
+      <span class="stat-label">Clases efectivas</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-num">60'</span>
+      <span class="stat-label">Minutos por clase</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-num">6</span>
+      <span class="stat-label">Unidades didácticas</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-num">4</span>
+      <span class="stat-label">Herramientas gratuitas</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-num">1</span>
+      <span class="stat-label">Sitio web publicado</span>
+    </div>
+  </div>
+
+  <!-- TABLA DISTRIBUCIÓN -->
+  <table class="dist-table">
+    <thead>
+      <tr>
+        <th>Unidad</th>
+        <th>Título</th>
+        <th>Clases</th>
+        <th>Período</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="pill">U1</span></td>
+        <td>¿Qué es una página web? Internet sin misterios</td>
+        <td>4</td>
+        <td>C1 – C4</td>
+      </tr>
+      <tr>
+        <td><span class="pill">U2</span></td>
+        <td>Primeros pasos en Google Sites</td>
+        <td>5</td>
+        <td>C5 – C9</td>
+      </tr>
+      <tr>
+        <td><span class="pill">U3</span></td>
+        <td>Texto, formato y diseño visual</td>
+        <td>5</td>
+        <td>C10 – C14</td>
+      </tr>
+      <tr>
+        <td><span class="pill">U4</span></td>
+        <td>Imágenes, colores y temas</td>
+        <td>5</td>
+        <td>C15 – C19</td>
+      </tr>
+      <tr>
+        <td><span class="pill">U5</span></td>
+        <td>Hipervínculos y páginas internas</td>
+        <td>5</td>
+        <td>C20 – C24</td>
+      </tr>
+      <tr>
+        <td><span class="pill">U6</span></td>
+        <td>Videos, formulario y publicación</td>
+        <td>3</td>
+        <td>C25 – C27</td>
+      </tr>
+      <tr>
+        <td><span class="pill">PI</span></td>
+        <td>Proyecto integrador + presentación final</td>
+        <td>3</td>
+        <td>C28 – C30</td>
+      </tr>
+      <tr class="total">
+        <td colspan="2">TOTAL</td>
+        <td>30</td>
+        <td>—</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<hr class="divider">
+
+<!-- UNIDADES -->
+<section id="unidades">
+  <div class="section-label">Contenido del programa</div>
+  <h2 class="section-title">Las 6 unidades</h2>
+  <p class="section-desc">
+    Cada unidad incluye contenido conceptual, paso a paso detallado,
+    actividad práctica con versión para celular, y glosario de términos.
+  </p>
+
+  <div class="units-grid">
+    <div class="unit-card u1">
+      <span class="unit-num">UNIDAD 01 &mdash; C1 a C4</span>
+      <div class="unit-title">¿Qué es una página web?<br>Internet sin misterios</div>
+      <p class="unit-desc">
+        Qué es Internet, la diferencia entre página web y sitio web,
+        cómo funciona una URL, partes de una página y herramientas
+        que vamos a usar durante el año.
+      </p>
+      <div class="unit-footer">
+        <span>4 clases</span>
+        <span class="unit-clases">Sin requisitos previos</span>
+      </div>
+    </div>
+
+    <div class="unit-card u2">
+      <span class="unit-num">UNIDAD 02 &mdash; C5 a C9</span>
+      <div class="unit-title">Primeros pasos<br>en Google Sites</div>
+      <p class="unit-desc">
+        Crear cuenta de Google, crear el primer sitio, conocer la interfaz,
+        diferencia entre editar y publicar, vista previa, primera publicación.
+        Incluye 1 clase de reserva.
+      </p>
+      <div class="unit-footer">
+        <span>5 clases</span>
+        <span class="unit-clases">1 clase de reserva</span>
+      </div>
+    </div>
+
+    <div class="unit-card u3">
+      <span class="unit-num">UNIDAD 03 &mdash; C10 a C14</span>
+      <div class="unit-title">Texto, formato<br>y diseño visual</div>
+      <p class="unit-desc">
+        Tipos de texto (H1, H2, H3), negrita, cursiva, color, alineación,
+        listas, secciones con fondos de color y jerarquía visual.
+        Incluye 1 clase de reserva.
+      </p>
+      <div class="unit-footer">
+        <span>5 clases</span>
+        <span class="unit-clases">1 clase de reserva</span>
+      </div>
+    </div>
+
+    <div class="unit-card u4">
+      <span class="unit-num">UNIDAD 04 &mdash; C15 a C19</span>
+      <div class="unit-title">Imágenes, colores<br>y temas</div>
+      <p class="unit-desc">
+        Insertar imágenes desde 4 orígenes, crear banners en Canva,
+        aplicar temas visuales, paleta de colores y código hexadecimal.
+        Incluye 1 clase de reserva.
+      </p>
+      <div class="unit-footer">
+        <span>5 clases</span>
+        <span class="unit-clases">1 clase de reserva</span>
+      </div>
+    </div>
+
+    <div class="unit-card u5">
+      <span class="unit-num">UNIDAD 05 &mdash; C20 a C24</span>
+      <div class="unit-title">Hipervínculos<br>y páginas internas</div>
+      <p class="unit-desc">
+        Tipos de links (externos, internos, email), crear hipervínculos
+        en texto e imágenes, agregar páginas, menú de navegación automático.
+        Incluye 1 clase de reserva.
+      </p>
+      <div class="unit-footer">
+        <span>5 clases</span>
+        <span class="unit-clases">1 clase de reserva</span>
+      </div>
+    </div>
+
+    <div class="unit-card u6">
+      <span class="unit-num">UNIDAD 06 &mdash; C25 a C27</span>
+      <div class="unit-title">Videos, formulario<br>y publicación</div>
+      <p class="unit-desc">
+        Incrustar videos de YouTube, crear formulario con Google Forms,
+        lista de verificación completa antes de la presentación final.
+      </p>
+      <div class="unit-footer">
+        <span>3 clases</span>
+        <span class="unit-clases">Cierre del programa</span>
+      </div>
+    </div>
+
+    <div class="unit-card u7">
+      <span class="unit-num">PROYECTO INTEGRADOR &mdash; C28 a C30</span>
+      <div class="unit-title">Tu página web final<br>+ Presentación</div>
+      <p class="unit-desc">
+        Sitio completo con todas las unidades integradas: texto, imágenes,
+        colores, hipervínculos, video y formulario. Presentación oral
+        ante el grupo con rúbrica de 100 puntos.
+      </p>
+      <div class="unit-footer">
+        <span>3 clases</span>
+        <span class="unit-clases">Evaluación final</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- HERRAMIENTAS -->
+<section id="herramientas">
+  <div class="section-label">Tecnologías del curso</div>
+  <h2 class="section-title">Herramientas que vamos a usar</h2>
+  <p class="section-desc">
+    Todas gratuitas, sin necesidad de instalar nada, accesibles
+    desde cualquier dispositivo con conexión a Internet.
+  </p>
+
+  <div class="tools-grid">
+    <div class="tool-card">
+      <span class="tool-icon">🌐</span>
+      <div class="tool-name">Google Sites</div>
+      <p class="tool-desc">Herramienta principal para crear y publicar el sitio web sin saber programar.</p>
+      <span class="tool-tag">sites.google.com</span>
+    </div>
+    <div class="tool-card">
+      <span class="tool-icon">🎨</span>
+      <div class="tool-name">Canva</div>
+      <p class="tool-desc">Diseño de banners, imágenes y recursos visuales para el sitio.</p>
+      <span class="tool-tag">canva.com</span>
+    </div>
+    <div class="tool-card">
+      <span class="tool-icon">💾</span>
+      <div class="tool-name">Google Drive</div>
+      <p class="tool-desc">Almacenamiento y organización de archivos e imágenes para el sitio.</p>
+      <span class="tool-tag">drive.google.com</span>
+    </div>
+    <div class="tool-card">
+      <span class="tool-icon">▶️</span>
+      <div class="tool-name">YouTube</div>
+      <p class="tool-desc">Obtener el enlace de videos para incrustarlos directamente en la página.</p>
+      <span class="tool-tag">youtube.com</span>
+    </div>
+    <div class="tool-card">
+      <span class="tool-icon">📋</span>
+      <div class="tool-name">Google Forms</div>
+      <p class="tool-desc">Crear formularios de contacto que se insertan en el sitio web.</p>
+      <span class="tool-tag">forms.google.com</span>
+    </div>
+    <div class="tool-card">
+      <span class="tool-icon">🎨</span>
+      <div class="tool-name">Coolors.co</div>
+      <p class="tool-desc">Generador de paletas de colores armoniosas para el diseño del sitio.</p>
+      <span class="tool-tag">coolors.co</span>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- PROYECTO -->
+<section id="proyecto">
+  <div class="section-label">Evaluación final</div>
+  <h2 class="section-title">Proyecto integrador</h2>
+  <p class="section-desc">
+    Al terminar el año, cada alumno presenta su propio sitio web publicado en Internet.
+    No es un examen: es una obra real, construida clase a clase.
+  </p>
+
+  <ul class="criterios-list">
+    <li>Al menos 3 páginas: Inicio, contenido principal y Contacto.</li>
+    <li>Texto con formato: títulos H1/H2, negrita, cursiva y listas.</li>
+    <li>Al menos 3 imágenes, incluyendo un banner creado en Canva.</li>
+    <li>Tema visual coherente aplicado a todo el sitio.</li>
+    <li>2 hipervínculos externos y 1 enlace interno entre páginas.</li>
+    <li>Al menos 1 video de YouTube incrustado y reproducible.</li>
+    <li>Formulario de contacto funcional con Google Forms.</li>
+    <li>Presentación oral de 5 a 10 minutos ante el grupo.</li>
+  </ul>
+</section>
+
+<hr class="divider">
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-school">E.P.E.T N°7 &mdash; Jardín América, Misiones</div>
+  <div class="footer-info">
+    Educación Permanente de Jóvenes y Adultos (EPJA)<br>
+    Materia: Diseño de Páginas Web &mdash; Profesor: Rubén Markwart<br>
+    Ciclo lectivo 2026
+  </div>
+  <div class="footer-copy">
+    Elaborado con asistencia de Claude (Anthropic) &mdash; Mayo 2026
+  </div>
+</footer>
+
+</body>
+</html>

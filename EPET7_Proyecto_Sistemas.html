@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proyecto de Sistemas Informáticos — E.P.E.T N°7</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #090d13;
+    --bg2:     #0e1420;
+    --bg3:     #141c2a;
+    --border:  #1c2840;
+    --accent:  #00cfff;
+    --accent2: #0077bb;
+    --gold:    #f5a623;
+    --green:   #00e0a0;
+    --red:     #ff4d6d;
+    --purp:    #a78bfa;
+    --text:    #dde6f0;
+    --muted:   #5a7090;
+    --dim:     #2a3a52;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* fondo grid animado */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 70% 55% at 15% 10%, rgba(0,207,255,0.07) 0%, transparent 65%),
+      radial-gradient(ellipse 55% 45% at 85% 85%, rgba(167,139,250,0.05) 0%, transparent 60%),
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(28,40,64,0.35) 39px, rgba(28,40,64,0.35) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(28,40,64,0.35) 39px, rgba(28,40,64,0.35) 40px);
+    pointer-events: none;
+  }
+
+  /* ── NAVBAR ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(9,13,19,0.88);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem; height: 62px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-brand {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.82rem; color: var(--accent);
+    letter-spacing: 0.06em; text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem; color: var(--muted); text-decoration: none;
+    letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 110px 2rem 5rem;
+  }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    background: rgba(0,207,255,0.07);
+    border: 1px solid rgba(0,207,255,0.22);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase;
+    padding: 0.4rem 1.1rem; border-radius: 2px;
+    margin-bottom: 2.2rem;
+    animation: fadeDown 0.7s ease both;
+  }
+  .hero-tag::before {
+    content: ''; width: 7px; height: 7px;
+    background: var(--accent); border-radius: 50%;
+    animation: blink 2.2s ease infinite;
+  }
+  @keyframes blink {
+    0%,100%{opacity:1;transform:scale(1)}
+    50%{opacity:0.3;transform:scale(0.65)}
+  }
+  .hero h1 {
+    font-weight: 800;
+    font-size: clamp(2.6rem, 6.5vw, 5.2rem);
+    line-height: 1.06; letter-spacing: -0.025em;
+    margin-bottom: 1.6rem;
+    animation: fadeUp 0.8s 0.12s ease both;
+  }
+  .hero h1 .grad {
+    background: linear-gradient(90deg, var(--accent) 0%, var(--purp) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-sub {
+    font-size: 1.05rem; color: var(--muted);
+    max-width: 560px; margin: 0 auto 3rem; line-height: 1.75;
+    animation: fadeUp 0.8s 0.25s ease both;
+  }
+  .hero-badges {
+    display: flex; flex-wrap: wrap; gap: 0.7rem; justify-content: center;
+    animation: fadeUp 0.8s 0.4s ease both;
+  }
+  .badge {
+    background: var(--bg3); border: 1px solid var(--border);
+    color: var(--text); font-family: 'Space Mono', monospace;
+    font-size: 0.7rem; padding: 0.38rem 0.9rem; border-radius: 2px;
+    letter-spacing: 0.05em;
+  }
+  .badge.ac  { border-color: rgba(0,207,255,0.4);  color: var(--accent); }
+  .badge.gd  { border-color: rgba(245,166,35,0.4); color: var(--gold); }
+  .badge.gn  { border-color: rgba(0,224,160,0.4);  color: var(--green); }
+  .badge.pp  { border-color: rgba(167,139,250,0.4);color: var(--purp); }
+
+  @keyframes fadeUp   { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:none} }
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-12px)} to{opacity:1;transform:none} }
+
+  /* ── CONTENEDOR ── */
+  .wrap {
+    position: relative; z-index: 1;
+    max-width: 1120px; margin: 0 auto; padding: 5rem 2rem;
+  }
+  .divider { border: none; border-top: 1px solid var(--border); }
+  .sec-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem; color: var(--accent);
+    letter-spacing: 0.22em; text-transform: uppercase;
+    margin-bottom: 0.6rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .sec-label::before {
+    content: ''; width: 22px; height: 1px; background: var(--accent);
+  }
+  .sec-title {
+    font-size: clamp(1.7rem, 4vw, 2.6rem);
+    font-weight: 800; letter-spacing: -0.02em;
+    margin-bottom: 0.65rem; line-height: 1.15;
+  }
+  .sec-desc {
+    color: var(--muted); font-size: 0.97rem;
+    max-width: 580px; line-height: 1.75; margin-bottom: 2.8rem;
+  }
+
+  /* ── STATS ── */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
+    gap: 1px; background: var(--border);
+    border: 1px solid var(--border); margin-bottom: 3.5rem;
+  }
+  .stat {
+    background: var(--bg2); padding: 1.8rem 1.4rem;
+    text-align: center; transition: background 0.2s;
+  }
+  .stat:hover { background: var(--bg3); }
+  .stat-n {
+    font-family: 'Space Mono', monospace;
+    font-size: 2rem; font-weight: 700; color: var(--accent);
+    display: block; margin-bottom: 0.3rem;
+  }
+  .stat-l { font-size: 0.76rem; color: var(--muted); letter-spacing: 0.04em; }
+
+  /* ── TABLA DISTRIBUCIÓN ── */
+  .dist-wrap { overflow-x: auto; }
+  table.dist {
+    width: 100%; border-collapse: collapse; font-size: 0.88rem;
+  }
+  table.dist th {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.63rem; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--muted);
+    text-align: left; padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  table.dist td {
+    padding: 0.82rem 1rem; border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  table.dist tr:last-child td { border-bottom: none; }
+  table.dist tr:hover td { background: var(--bg3); }
+  table.dist tr.total td {
+    font-weight: 700; color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    border-top: 1px solid var(--border);
+  }
+  .pill {
+    display: inline-block;
+    font-family: 'Space Mono', monospace; font-size: 0.63rem;
+    padding: 0.15rem 0.55rem; border-radius: 2px;
+    background: rgba(0,207,255,0.09);
+    border: 1px solid rgba(0,207,255,0.22); color: var(--accent);
+  }
+  .pill.gd { background:rgba(245,166,35,0.09); border-color:rgba(245,166,35,0.25); color:var(--gold); }
+
+  /* ── UNIDADES ── */
+  .units {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(305px,1fr));
+    gap: 1px; background: var(--border); border: 1px solid var(--border);
+  }
+  .ucard {
+    background: var(--bg2); padding: 2rem;
+    position: relative; overflow: hidden;
+    transition: background 0.2s; cursor: default;
+  }
+  .ucard:hover { background: var(--bg3); }
+  .ucard::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--uc, var(--accent));
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+  .ucard:hover::before { transform: scaleX(1); }
+  .ucard-num {
+    font-family: 'Space Mono', monospace; font-size: 0.63rem;
+    color: var(--muted); letter-spacing: 0.2em; margin-bottom: 0.7rem;
+    display: block;
+  }
+  .ucard-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.7rem; line-height: 1.3; }
+  .ucard-desc  { font-size: 0.83rem; color: var(--muted); line-height: 1.62; margin-bottom: 1.2rem; }
+  .ucard-foot  {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: 'Space Mono', monospace; font-size: 0.66rem;
+    color: var(--dim); border-top: 1px solid var(--border); padding-top: 0.9rem;
+  }
+  .ucard-foot span:last-child { color: var(--uc, var(--accent)); }
+
+  .u1{--uc:#00cfff} .u2{--uc:#00e0a0} .u3{--uc:#f5a623}
+  .u4{--uc:#a78bfa} .u5{--uc:#ff4d6d} .u6{--uc:#4ade80} .upi{--uc:#f5a623}
+
+  /* ── FASES DEL PLAN ── */
+  .fases {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
+    gap: 1rem;
+  }
+  .fase {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-left: 3px solid var(--fc, var(--accent));
+    padding: 1.4rem 1.4rem 1.4rem 1.6rem;
+    transition: background 0.2s;
+  }
+  .fase:hover { background: var(--bg3); }
+  .fase-num  {
+    font-family:'Space Mono',monospace; font-size:0.62rem;
+    color: var(--fc,var(--accent)); letter-spacing:0.18em;
+    text-transform:uppercase; margin-bottom:0.5rem; display:block;
+  }
+  .fase-title{ font-size:0.95rem; font-weight:700; margin-bottom:0.4rem; }
+  .fase-desc { font-size:0.81rem; color:var(--muted); line-height:1.6; }
+  .f1{--fc:#00cfff} .f2{--fc:#00e0a0} .f3{--fc:#f5a623}
+  .f4{--fc:#a78bfa} .f5{--fc:#ff4d6d} .f6{--fc:#4ade80} .f7{--fc:#38bdf8}
+
+  /* ── RÚBRICA ── */
+  .rubrica {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px,1fr));
+    gap: 1rem;
+  }
+  .rub-item {
+    background: var(--bg2); border: 1px solid var(--border);
+    padding: 1.3rem; transition: background 0.2s;
+    display: flex; gap: 1rem; align-items: flex-start;
+  }
+  .rub-item:hover { background: var(--bg3); }
+  .rub-pts {
+    font-family:'Space Mono',monospace; font-size:1.3rem; font-weight:700;
+    color: var(--accent); min-width: 52px; text-align:center; flex-shrink:0;
+    border-right:1px solid var(--border); padding-right:1rem;
+  }
+  .rub-body { flex:1; }
+  .rub-label{ font-size:0.9rem; font-weight:700; margin-bottom:0.25rem; }
+  .rub-desc { font-size:0.79rem; color:var(--muted); line-height:1.55; }
+
+  /* ── TEMAS SUGERIDOS ── */
+  .temas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px,1fr));
+    gap: 1rem;
+  }
+  .tema {
+    background: var(--bg2); border: 1px solid var(--border);
+    padding: 1.3rem 1.4rem; transition: border-color 0.2s, background 0.2s;
+  }
+  .tema:hover { border-color: var(--accent); background: var(--bg3); }
+  .tema-icon { font-size:1.6rem; margin-bottom:0.6rem; display:block; }
+  .tema-name { font-size:0.95rem; font-weight:700; margin-bottom:0.3rem; }
+  .tema-desc { font-size:0.8rem; color:var(--muted); line-height:1.55; }
+
+  /* ── FOOTER ── */
+  footer {
+    position:relative; z-index:1;
+    border-top:1px solid var(--border); background:var(--bg2);
+    padding:3rem 2rem; text-align:center;
+  }
+  .foot-school {
+    font-family:'Space Mono',monospace; font-size:0.73rem;
+    color:var(--accent); letter-spacing:0.16em; text-transform:uppercase;
+    margin-bottom:0.5rem;
+  }
+  .foot-info { font-size:0.82rem; color:var(--muted); line-height:1.9; }
+  .foot-copy {
+    margin-top:1.4rem; font-family:'Space Mono',monospace;
+    font-size:0.63rem; color:var(--dim); letter-spacing:0.08em;
+  }
+
+  @media(max-width:640px){
+    .nav-links{display:none;}
+    .stats{grid-template-columns:repeat(2,1fr);}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <a class="nav-brand" href="#">E.P.E.T N°7 // Sistemas Informáticos</a>
+  <ul class="nav-links">
+    <li><a href="#programa">Programa</a></li>
+    <li><a href="#unidades">Unidades</a></li>
+    <li><a href="#plan">Plan de proyecto</a></li>
+    <li><a href="#proyecto">Proyecto final</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">E.P.E.T N°7 &mdash; EPJA &mdash; Jardín América, Misiones</div>
+  <h1>Proyecto de<br><span class="grad">Sistemas Informáticos</span></h1>
+  <p class="hero-sub">
+    Aprendé a gestionar, planificar y documentar proyectos de sistemas reales.
+    Desde la estimación hasta la presentación final, con herramientas y métodos
+    usados en la industria del software.
+  </p>
+  <div class="hero-badges">
+    <span class="badge ac">Gestión de proyectos</span>
+    <span class="badge gn">Diagrama de Gantt</span>
+    <span class="badge pp">Requerimientos</span>
+    <span class="badge gd">Análisis de riesgos</span>
+    <span class="badge">30 clases efectivas</span>
+    <span class="badge">3° A &mdash; EPJA</span>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- STATS + DISTRIBUCIÓN -->
+<section class="wrap" id="programa">
+  <div class="sec-label">El programa en números</div>
+  <h2 class="sec-title">Datos del curso</h2>
+  <p class="sec-desc">
+    Un programa diseñado sobre la realidad del aula EPJA: 30 clases efectivas
+    de 60 minutos, contenido progresivo y un pre-proyecto real como producto final.
+  </p>
+
+  <div class="stats">
+    <div class="stat"><span class="stat-n">40</span><span class="stat-l">Clases totales en el año</span></div>
+    <div class="stat"><span class="stat-n">30</span><span class="stat-l">Clases efectivas</span></div>
+    <div class="stat"><span class="stat-n">60'</span><span class="stat-l">Minutos por clase</span></div>
+    <div class="stat"><span class="stat-n">6</span><span class="stat-l">Unidades didácticas</span></div>
+    <div class="stat"><span class="stat-n">8+</span><span class="stat-l">Requerimientos a documentar</span></div>
+    <div class="stat"><span class="stat-n">1</span><span class="stat-l">Pre-proyecto real entregado</span></div>
+  </div>
+
+  <div class="dist-wrap">
+    <table class="dist">
+      <thead>
+        <tr>
+          <th>Unidad</th><th>Título</th><th>Clases</th><th>Período</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="pill">U1</span></td>
+          <td>¿Qué es un proyecto de sistema o software?</td>
+          <td>4</td><td>C1 – C4</td>
+        </tr>
+        <tr>
+          <td><span class="pill">U2</span></td>
+          <td>Administración y planeación de proyectos</td>
+          <td>5</td><td>C5 – C9</td>
+        </tr>
+        <tr>
+          <td><span class="pill">U3</span></td>
+          <td>Estructura del plan de proyecto</td>
+          <td>5</td><td>C10 – C14</td>
+        </tr>
+        <tr>
+          <td><span class="pill">U4</span></td>
+          <td>Gráficas, prototipos y requerimientos</td>
+          <td>5</td><td>C15 – C19</td>
+        </tr>
+        <tr>
+          <td><span class="pill">U5</span></td>
+          <td>Gestión de riesgos y pautas de gestión</td>
+          <td>5</td><td>C20 – C24</td>
+        </tr>
+        <tr>
+          <td><span class="pill">U6</span></td>
+          <td>Razones para proponer proyectos y evaluación</td>
+          <td>3</td><td>C25 – C27</td>
+        </tr>
+        <tr>
+          <td><span class="pill gd">PI</span></td>
+          <td>Proyecto integrador — Pre-proyecto + presentación final</td>
+          <td>3</td><td>C28 – C30</td>
+        </tr>
+        <tr class="total">
+          <td colspan="2">TOTAL</td><td>30</td><td>—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- UNIDADES -->
+<section class="wrap" id="unidades">
+  <div class="sec-label">Contenido del programa</div>
+  <h2 class="sec-title">Las 6 unidades</h2>
+  <p class="sec-desc">
+    Cada unidad construye una sección del pre-proyecto final.
+    Incluye contenido conceptual, analogías laborales, actividad práctica
+    con versión sin tecnología y glosario de términos.
+  </p>
+
+  <div class="units">
+
+    <div class="ucard u1">
+      <span class="ucard-num">UNIDAD 01 &mdash; C1 a C4</span>
+      <div class="ucard-title">¿Qué es un proyecto de<br>sistema o software?</div>
+      <p class="ucard-desc">
+        Definición de proyecto, el proceso de estimación, los tres escenarios
+        (mejor/probable/peor caso), los factores que afectan la precisión
+        y el Triángulo de Hierro: tiempo, costo y recursos.
+      </p>
+      <div class="ucard-foot">
+        <span>4 clases</span>
+        <span>Sin requisitos previos</span>
+      </div>
+    </div>
+
+    <div class="ucard u2">
+      <span class="ucard-num">UNIDAD 02 &mdash; C5 a C9</span>
+      <div class="ucard-title">Administración y planeación<br>de proyectos</div>
+      <p class="ucard-desc">
+        Las 5 actividades de administración, el ciclo completo de planeación
+        (inicio → ciclo continuo → problema), diferencia entre hito y tarea,
+        restricciones, entregables. Incluye 1 clase de reserva.
+      </p>
+      <div class="ucard-foot">
+        <span>5 clases</span>
+        <span>1 clase de reserva</span>
+      </div>
+    </div>
+
+    <div class="ucard u3">
+      <span class="ucard-num">UNIDAD 03 &mdash; C10 a C14</span>
+      <div class="ucard-title">Estructura del plan<br>de proyecto</div>
+      <p class="ucard-desc">
+        Las 7 secciones del plan formal, las 4 preguntas de la introducción,
+        desglose de trabajo (WBS) con ejemplo de 3 niveles,
+        mecanismos de monitoreo y reporte. Incluye 1 clase de reserva.
+      </p>
+      <div class="ucard-foot">
+        <span>5 clases</span>
+        <span>1 clase de reserva</span>
+      </div>
+    </div>
+
+    <div class="ucard u4">
+      <span class="ucard-num">UNIDAD 04 &mdash; C15 a C19</span>
+      <div class="ucard-title">Gráficas, prototipos<br>y requerimientos</div>
+      <p class="ucard-desc">
+        Diagrama de Gantt paso a paso, redes de actividades y trayectoria crítica,
+        prototipos evolucionarios vs. desechables, y las 3 características
+        de un buen requerimiento con ejemplos. Incluye 1 clase de reserva.
+      </p>
+      <div class="ucard-foot">
+        <span>5 clases</span>
+        <span>1 clase de reserva</span>
+      </div>
+    </div>
+
+    <div class="ucard u5">
+      <span class="ucard-num">UNIDAD 05 &mdash; C20 a C24</span>
+      <div class="ucard-title">Gestión de riesgos<br>y pautas de gestión</div>
+      <p class="ucard-desc">
+        5 tipos de riesgo, análisis de probabilidad e impacto, tabla de riesgos
+        con respuestas, las 7 pautas de gestión y definición de puntos
+        de control. Incluye 1 clase de reserva.
+      </p>
+      <div class="ucard-foot">
+        <span>5 clases</span>
+        <span>1 clase de reserva</span>
+      </div>
+    </div>
+
+    <div class="ucard u6">
+      <span class="ucard-num">UNIDAD 06 &mdash; C25 a C27</span>
+      <div class="ucard-title">Razones para proponer<br>proyectos y evaluación</div>
+      <p class="ucard-desc">
+        Las 3 razones para proponer un proyecto, 5 tipos de beneficios,
+        cómo justificar con retorno de inversión simplificado
+        e integración del pre-proyecto final.
+      </p>
+      <div class="ucard-foot">
+        <span>3 clases</span>
+        <span>Cierre del programa</span>
+      </div>
+    </div>
+
+    <div class="ucard upi" style="grid-column: 1 / -1;">
+      <span class="ucard-num">PROYECTO INTEGRADOR &mdash; C28 a C30</span>
+      <div class="ucard-title">Pre-proyecto documentado + Presentación final</div>
+      <p class="ucard-desc">
+        Integración de todos los documentos producidos durante el año en un único
+        pre-proyecto de sistema real: introducción, organización del equipo, WBS,
+        diagrama de Gantt, requerimientos, tabla de riesgos y justificación.
+        Presentación oral ante el grupo de 8 a 10 minutos con rúbrica de 100 puntos.
+      </p>
+      <div class="ucard-foot">
+        <span>3 clases</span>
+        <span>Evaluación final del año</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ESTRUCTURA DEL PLAN -->
+<section class="wrap" id="plan">
+  <div class="sec-label">Secciones del plan de proyecto</div>
+  <h2 class="sec-title">Estructura del plan formal</h2>
+  <p class="sec-desc">
+    El pre-proyecto final integra estas 7 secciones, construidas
+    una a una a lo largo del año lectivo.
+  </p>
+
+  <div class="fases">
+    <div class="fase f1">
+      <span class="fase-num">Sección 01</span>
+      <div class="fase-title">Introducción</div>
+      <p class="fase-desc">Contexto, objetivo, alcance y justificación del sistema propuesto. Responde qué, por qué, para quién y qué no incluye.</p>
+    </div>
+    <div class="fase f2">
+      <span class="fase-num">Sección 02</span>
+      <div class="fase-title">Organización del proyecto</div>
+      <p class="fase-desc">Estructura del equipo: roles, responsabilidades y relaciones entre los integrantes. Define quién hace qué.</p>
+    </div>
+    <div class="fase f3">
+      <span class="fase-num">Sección 03</span>
+      <div class="fase-title">Análisis de riesgos</div>
+      <p class="fase-desc">Lista de posibles problemas con su probabilidad, impacto y respuesta planificada para mitigarlos o evitarlos.</p>
+    </div>
+    <div class="fase f4">
+      <span class="fase-num">Sección 04</span>
+      <div class="fase-title">Requerimientos de hardware y software</div>
+      <p class="fase-desc">Tecnología necesaria para desarrollar y ejecutar el sistema: servidores, licencias, dispositivos y conectividad.</p>
+    </div>
+    <div class="fase f5">
+      <span class="fase-num">Sección 05</span>
+      <div class="fase-title">Desglose de trabajo (WBS)</div>
+      <p class="fase-desc">Descomposición jerárquica de todo el trabajo en fases, sub-fases y tareas concretas con duraciones estimadas.</p>
+    </div>
+    <div class="fase f6">
+      <span class="fase-num">Sección 06</span>
+      <div class="fase-title">Calendario del proyecto</div>
+      <p class="fase-desc">Diagrama de Gantt con fechas de inicio y fin de cada tarea, dependencias entre actividades e hitos marcados.</p>
+    </div>
+    <div class="fase f7">
+      <span class="fase-num">Sección 07</span>
+      <div class="fase-title">Mecanismos de monitoreo y reporte</div>
+      <p class="fase-desc">Cómo y cuándo se informa el avance: informes semanales, reuniones de seguimiento, tablero Kanban y revisiones de hitos.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- PROYECTO FINAL -->
+<section class="wrap" id="proyecto">
+  <div class="sec-label">Evaluación final</div>
+  <h2 class="sec-title">Proyecto integrador</h2>
+  <p class="sec-desc">
+    Al terminar el año, cada grupo presenta su pre-proyecto ante el curso
+    como lo haría un analista ante un cliente real.
+    El documento integra todo el trabajo del año.
+  </p>
+
+  <!-- RÚBRICA -->
+  <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:1.2rem;color:var(--muted);letter-spacing:0.05em;text-transform:uppercase;font-family:'Space Mono',monospace;font-size:0.75rem;">
+    Rúbrica de evaluación — 100 puntos
+  </h3>
+  <div class="rubrica" style="margin-bottom:3rem;">
+    <div class="rub-item">
+      <div class="rub-pts">15</div>
+      <div class="rub-body">
+        <div class="rub-label">Introducción</div>
+        <p class="rub-desc">Descripción del sistema, justificación, objetivo, alcance y usuarios identificados.</p>
+      </div>
+    </div>
+    <div class="rub-item">
+      <div class="rub-pts">10</div>
+      <div class="rub-body">
+        <div class="rub-label">Organización del equipo</div>
+        <p class="rub-desc">Roles y responsabilidades de cada integrante claramente definidos.</p>
+      </div>
+    </div>
+    <div class="rub-item">
+      <div class="rub-pts">15</div>
+      <div class="rub-body">
+        <div class="rub-label">Análisis de riesgos</div>
+        <p class="rub-desc">Al menos 5 riesgos con probabilidad, impacto y respuesta planificada.</p>
+      </div>
+    </div>
+    <div class="rub-item">
+      <div class="rub-pts">15</div>
+      <div class="rub-body">
+        <div class="rub-label">Requerimientos</div>
+        <p class="rub-desc">Al menos 8 requerimientos verificables, funcionales y especificados por escrito.</p>
+      </div>
+    </div>
+    <div class="rub-item">
+      <div class="rub-pts">10</div>
+      <div class="rub-body">
+        <div class="rub-label">Desglose de trabajo (WBS)</div>
+        <p class="rub-desc">Al menos 2 niveles con mínimo 6 tareas y duraciones estimadas.</p>
+      </div>
+    </div>
+    <div class="rub-item">
+      <div class="rub-pts">15</div>
+      <div class="rub-body">
+        <div class="rub-label">Diagrama de Gantt</div>
+        <p class="rub-desc">Al menos 6 tareas con fechas, dependencias y 2 hitos marcados.</p>
+      </div>
+    </div>
+    <div class="rub-item">
+      <div class="rub-pts">20</div>
+      <div class="rub-body">
+        <div class="rub-label">Presentación oral</div>
+        <p class="rub-desc">Exposición clara de 8 a 10 minutos con defensa ante preguntas del docente y compañeros.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEMAS SUGERIDOS -->
+  <h3 style="font-family:'Space Mono',monospace;font-size:0.75rem;color:var(--muted);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:1.2rem;">
+    Temas sugeridos para el pre-proyecto
+  </h3>
+  <div class="temas">
+    <div class="tema">
+      <span class="tema-icon">🔧</span>
+      <div class="tema-name">Sistema de gestión de turnos</div>
+      <p class="tema-desc">Para un taller, consultorio, peluquería o cualquier servicio con citas.</p>
+    </div>
+    <div class="tema">
+      <span class="tema-icon">📦</span>
+      <div class="tema-name">Sistema de inventario</div>
+      <p class="tema-desc">Para un almacén, ferretería, veterinaria o negocio con stock de productos.</p>
+    </div>
+    <div class="tema">
+      <span class="tema-icon">🧾</span>
+      <div class="tema-name">Sistema de facturación</div>
+      <p class="tema-desc">Para un comercio o emprendimiento que necesite emitir y registrar facturas.</p>
+    </div>
+    <div class="tema">
+      <span class="tema-icon">📋</span>
+      <div class="tema-name">Control de asistencia</div>
+      <p class="tema-desc">Para una escuela, empresa o institución que necesite registrar presencia.</p>
+    </div>
+    <div class="tema">
+      <span class="tema-icon">📚</span>
+      <div class="tema-name">Gestión de biblioteca</div>
+      <p class="tema-desc">Para la biblioteca de la escuela o un espacio comunitario de la zona.</p>
+    </div>
+    <div class="tema">
+      <span class="tema-icon">🛒</span>
+      <div class="tema-name">Sistema de pedidos online</div>
+      <p class="tema-desc">Para un emprendimiento de comida, ropa u otro producto que quiera vender por Internet.</p>
+    </div>
+    <div class="tema">
+      <span class="tema-icon">💡</span>
+      <div class="tema-name">Proyecto propio</div>
+      <p class="tema-desc">Cualquier sistema real relacionado con el trabajo o entorno personal del alumno.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-school">E.P.E.T N°7 &mdash; Jardín América, Misiones</div>
+  <div class="foot-info">
+    Educación Permanente de Jóvenes y Adultos (EPJA)<br>
+    Materia: Proyecto de Sistemas Informáticos &mdash; 3° A<br>
+    Profesor: Rubén Markwart &mdash; Ciclo lectivo 2026
+  </div>
+  <div class="foot-copy">
+    Elaborado con asistencia de Claude (Anthropic) &mdash; Mayo 2026
+  </div>
+</footer>
+
+</body>
+</html>

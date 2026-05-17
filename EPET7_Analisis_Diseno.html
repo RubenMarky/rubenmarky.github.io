@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Análisis y Diseño de Aplicaciones — E.P.E.T N°7</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:     #090d14;
+    --bg2:    #0d1520;
+    --bg3:    #121d2b;
+    --border: #1a2840;
+    --acc:    #00cfff;
+    --acc2:   #0088bb;
+    --gold:   #f5a623;
+    --green:  #00e0a0;
+    --purp:   #a78bfa;
+    --pink:   #f472b6;
+    --red:    #ff4d6d;
+    --text:   #dde6f0;
+    --muted:  #5a7090;
+    --dim:    #243448;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Syne', sans-serif; line-height: 1.6; overflow-x: hidden;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 70% 50% at 10% 8%,  rgba(0,207,255,0.07)  0%, transparent 65%),
+      radial-gradient(ellipse 55% 45% at 90% 90%,  rgba(167,139,250,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 50% 50%,  rgba(244,114,182,0.03) 0%, transparent 70%),
+      repeating-linear-gradient(0deg,  transparent, transparent 39px, rgba(26,40,64,0.3) 39px, rgba(26,40,64,0.3) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(26,40,64,0.3) 39px, rgba(26,40,64,0.3) 40px);
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top:0; left:0; right:0; z-index:100;
+    background: rgba(9,13,20,0.9); backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem; height: 62px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-brand { font-family:'Space Mono',monospace; font-size:.82rem; color:var(--acc); text-decoration:none; letter-spacing:.06em; }
+  .nav-links { display:flex; gap:1.8rem; list-style:none; }
+  .nav-links a { font-family:'Space Mono',monospace; font-size:.72rem; color:var(--muted); text-decoration:none; letter-spacing:.1em; text-transform:uppercase; transition:color .2s; }
+  .nav-links a:hover { color:var(--acc); }
+
+  /* ── HERO ── */
+  .hero {
+    position:relative; z-index:1; min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:110px 2rem 5rem;
+  }
+  .hero-tag {
+    display:inline-flex; align-items:center; gap:.6rem;
+    background:rgba(0,207,255,.07); border:1px solid rgba(0,207,255,.22);
+    color:var(--acc); font-family:'Space Mono',monospace;
+    font-size:.7rem; letter-spacing:.18em; text-transform:uppercase;
+    padding:.4rem 1.1rem; border-radius:2px; margin-bottom:2.2rem;
+    animation:fadeDown .7s ease both;
+  }
+  .hero-tag::before { content:''; width:7px; height:7px; background:var(--acc); border-radius:50%; animation:blink 2.2s ease infinite; }
+  @keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.3;transform:scale(.65)} }
+  .hero h1 { font-weight:800; font-size:clamp(2.5rem,6.5vw,5rem); line-height:1.06; letter-spacing:-.025em; margin-bottom:1.6rem; animation:fadeUp .8s .12s ease both; }
+  .grad-acc  { background:linear-gradient(90deg,var(--acc)  0%,var(--green) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .grad-purp { background:linear-gradient(90deg,var(--purp) 0%,var(--pink)  100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .hero-sub { font-size:1.05rem; color:var(--muted); max-width:580px; margin:0 auto 3rem; line-height:1.75; animation:fadeUp .8s .25s ease both; }
+  .hero-badges { display:flex; flex-wrap:wrap; gap:.7rem; justify-content:center; animation:fadeUp .8s .4s ease both; }
+  .badge { background:var(--bg3); border:1px solid var(--border); color:var(--text); font-family:'Space Mono',monospace; font-size:.7rem; padding:.38rem .9rem; border-radius:2px; letter-spacing:.05em; }
+  .badge.ac  { border-color:rgba(0,207,255,.4);  color:var(--acc); }
+  .badge.gd  { border-color:rgba(245,166,35,.4); color:var(--gold); }
+  .badge.gn  { border-color:rgba(0,224,160,.4);  color:var(--green); }
+  .badge.pp  { border-color:rgba(167,139,250,.4);color:var(--purp); }
+  .badge.pk  { border-color:rgba(244,114,182,.4);color:var(--pink); }
+  @keyframes fadeUp   { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:none} }
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-12px)} to{opacity:1;transform:none} }
+
+  /* ── WRAP / SECCIÓN ── */
+  .wrap { position:relative; z-index:1; max-width:1120px; margin:0 auto; padding:5rem 2rem; }
+  .divider { border:none; border-top:1px solid var(--border); }
+  .sec-label {
+    font-family:'Space Mono',monospace; font-size:.68rem; color:var(--acc);
+    letter-spacing:.22em; text-transform:uppercase; margin-bottom:.6rem;
+    display:flex; align-items:center; gap:.75rem;
+  }
+  .sec-label::before { content:''; width:22px; height:1px; background:var(--acc); }
+  .sec-title { font-size:clamp(1.7rem,4vw,2.6rem); font-weight:800; letter-spacing:-.02em; margin-bottom:.65rem; line-height:1.15; }
+  .sec-desc { color:var(--muted); font-size:.97rem; max-width:600px; line-height:1.75; margin-bottom:2.8rem; }
+
+  /* ── STATS ── */
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(145px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); margin-bottom:3.5rem; }
+  .stat { background:var(--bg2); padding:1.8rem 1.3rem; text-align:center; transition:background .2s; }
+  .stat:hover { background:var(--bg3); }
+  .stat-n { font-family:'Space Mono',monospace; font-size:2rem; font-weight:700; color:var(--acc); display:block; margin-bottom:.3rem; }
+  .stat-l { font-size:.74rem; color:var(--muted); }
+
+  /* ── TRIMESTRES ── */
+  .trim-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); }
+  .trim-card {
+    background:var(--bg2); padding:2rem; position:relative; overflow:hidden; transition:background .2s;
+  }
+  .trim-card:hover { background:var(--bg3); }
+  .trim-card::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; background:var(--tc,var(--acc)); transform:scaleX(0); transform-origin:left; transition:transform .3s; }
+  .trim-card:hover::before { transform:scaleX(1); }
+  .trim-num  { font-family:'Space Mono',monospace; font-size:.63rem; color:var(--muted); letter-spacing:.2em; margin-bottom:.7rem; display:block; }
+  .trim-title{ font-size:1.05rem; font-weight:700; margin-bottom:.7rem; line-height:1.3; color:var(--tc,var(--acc)); }
+  .trim-desc { font-size:.83rem; color:var(--muted); line-height:1.65; margin-bottom:1.2rem; }
+  .trim-tags { display:flex; flex-wrap:wrap; gap:.4rem; }
+  .ttag { font-family:'Space Mono',monospace; font-size:.62rem; padding:.15rem .55rem; border-radius:2px; background:rgba(0,207,255,.08); border:1px solid rgba(0,207,255,.18); color:var(--acc); }
+  .ttag.gd { background:rgba(245,166,35,.08); border-color:rgba(245,166,35,.2); color:var(--gold); }
+  .ttag.pp { background:rgba(167,139,250,.08);border-color:rgba(167,139,250,.2);color:var(--purp); }
+  .ttag.gn { background:rgba(0,224,160,.08);  border-color:rgba(0,224,160,.2);  color:var(--green); }
+  .ttag.pk { background:rgba(244,114,182,.08);border-color:rgba(244,114,182,.2);color:var(--pink); }
+  .t1{--tc:#00cfff} .t2{--tc:#a78bfa} .t3{--tc:#f472b6}
+
+  /* ── UNIDADES ── */
+  .units { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); }
+  .ucard { background:var(--bg2); padding:2rem; position:relative; overflow:hidden; transition:background .2s; }
+  .ucard:hover { background:var(--bg3); }
+  .ucard::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; background:var(--uc,var(--acc)); transform:scaleX(0); transform-origin:left; transition:transform .3s; }
+  .ucard:hover::before { transform:scaleX(1); }
+  .ucard-num  { font-family:'Space Mono',monospace; font-size:.63rem; color:var(--muted); letter-spacing:.2em; margin-bottom:.7rem; display:block; }
+  .ucard-title{ font-size:1rem; font-weight:700; margin-bottom:.7rem; line-height:1.3; }
+  .ucard-desc { font-size:.83rem; color:var(--muted); line-height:1.62; margin-bottom:1.2rem; }
+  .ucard-foot { display:flex; justify-content:space-between; align-items:center; font-family:'Space Mono',monospace; font-size:.66rem; color:var(--dim); border-top:1px solid var(--border); padding-top:.9rem; }
+  .ucard-foot span:last-child { color:var(--uc,var(--acc)); }
+  .u1{--uc:#00cfff} .u2{--uc:#00e0a0} .u3{--uc:#f5a623} .u4{--uc:#a78bfa} .u5{--uc:#f472b6} .upi{--uc:#f5a623}
+
+  /* ── MODELOS ── */
+  .modelos-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1rem; }
+  .modelo-card {
+    background:var(--bg2); border:1px solid var(--border);
+    border-left:3px solid var(--mc,var(--acc));
+    padding:1.5rem 1.4rem 1.5rem 1.6rem; transition:background .2s;
+  }
+  .modelo-card:hover { background:var(--bg3); }
+  .modelo-icon  { font-size:1.6rem; margin-bottom:.6rem; display:block; }
+  .modelo-title { font-size:.97rem; font-weight:700; margin-bottom:.4rem; color:var(--mc,var(--acc)); }
+  .modelo-desc  { font-size:.81rem; color:var(--muted); line-height:1.6; }
+  .mc1{--mc:#00cfff} .mc2{--mc:#00e0a0} .mc3{--mc:#f5a623} .mc4{--mc:#a78bfa} .mc5{--mc:#f472b6} .mc6{--mc:#ff4d6d}
+
+  /* ── METODOLOGÍA ── */
+  .met-list { list-style:none; display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem; }
+  .met-list li {
+    background:var(--bg2); border:1px solid var(--border);
+    padding:1.1rem 1.25rem; font-size:.88rem; line-height:1.55;
+    display:flex; gap:.75rem; align-items:flex-start; transition:background .2s;
+  }
+  .met-list li:hover { background:var(--bg3); }
+  .met-list li::before { content:'▸'; color:var(--acc); flex-shrink:0; font-size:.9rem; margin-top:.05em; }
+
+  /* ── TABLA DIST ── */
+  .dist-wrap { overflow-x:auto; }
+  table.dist { width:100%; border-collapse:collapse; font-size:.88rem; }
+  table.dist th { font-family:'Space Mono',monospace; font-size:.62rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); text-align:left; padding:.7rem 1rem; border-bottom:1px solid var(--border); }
+  table.dist td { padding:.82rem 1rem; border-bottom:1px solid var(--border); vertical-align:top; }
+  table.dist tr:last-child td { border-bottom:none; }
+  table.dist tr:hover td { background:var(--bg3); }
+  table.dist tr.total td { font-weight:700; color:var(--acc); font-family:'Space Mono',monospace; border-top:1px solid var(--border); }
+  .pill { display:inline-block; font-family:'Space Mono',monospace; font-size:.62rem; padding:.15rem .55rem; border-radius:2px; background:rgba(0,207,255,.09); border:1px solid rgba(0,207,255,.22); color:var(--acc); }
+  .pill.gd { background:rgba(245,166,35,.09); border-color:rgba(245,166,35,.25); color:var(--gold); }
+
+  /* ── CRITERIOS ── */
+  .criterios { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:1rem; }
+  .crit-card { background:var(--bg2); border:1px solid var(--border); padding:1.3rem; transition:background .2s; display:flex; gap:.9rem; align-items:flex-start; }
+  .crit-card:hover { background:var(--bg3); }
+  .crit-icon { font-size:1.5rem; flex-shrink:0; }
+  .crit-label { font-size:.9rem; font-weight:700; margin-bottom:.25rem; }
+  .crit-desc  { font-size:.79rem; color:var(--muted); line-height:1.55; }
+
+  /* ── FOOTER ── */
+  footer { position:relative; z-index:1; border-top:1px solid var(--border); background:var(--bg2); padding:3rem 2rem; text-align:center; }
+  .foot-school { font-family:'Space Mono',monospace; font-size:.73rem; color:var(--acc); letter-spacing:.16em; text-transform:uppercase; margin-bottom:.5rem; }
+  .foot-info   { font-size:.82rem; color:var(--muted); line-height:1.9; }
+  .foot-copy   { margin-top:1.4rem; font-family:'Space Mono',monospace; font-size:.63rem; color:var(--dim); letter-spacing:.08em; }
+
+  @media(max-width:640px){ .nav-links{display:none;} .stats{grid-template-columns:repeat(2,1fr);} }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <a class="nav-brand" href="#">E.P.E.T N°7 // Análisis y Diseño</a>
+  <ul class="nav-links">
+    <li><a href="#programa">Programa</a></li>
+    <li><a href="#trimestres">Trimestres</a></li>
+    <li><a href="#unidades">Unidades</a></li>
+    <li><a href="#modelos">Modelos</a></li>
+    <li><a href="#evaluacion">Evaluación</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">E.P.E.T N°7 &mdash; EPJA &mdash; Jardín América, Misiones</div>
+  <h1>Análisis y Diseño<br>de <span class="grad-acc">Aplicaciones</span></h1>
+  <p class="hero-sub">
+    Aprendé a analizar problemas reales, diseñar soluciones informáticas,
+    documentar requerimientos y construir modelos de sistemas usando
+    metodologías profesionales. Orientación: Operador de Informática para
+    Administración y Gestión.
+  </p>
+  <div class="hero-badges">
+    <span class="badge ac">Modelo Esencial</span>
+    <span class="badge gn">Diagramas de Flujo (DFD)</span>
+    <span class="badge pp">UML y Casos de Uso</span>
+    <span class="badge gd">Bases de Datos</span>
+    <span class="badge pk">Diseño de Interfaces</span>
+    <span class="badge">3° A &mdash; EPJA</span>
+    <span class="badge">30 clases efectivas</span>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- STATS + TABLA -->
+<section class="wrap" id="programa">
+  <div class="sec-label">El programa en números</div>
+  <h2 class="sec-title">Datos del curso</h2>
+  <p class="sec-desc">
+    Planificación anual basada en 30 clases efectivas de 60 minutos,
+    organizada en 3 trimestres con enfoque en aprendizaje basado en proyectos (ABP)
+    y análisis de casos reales del entorno laboral de los alumnos.
+  </p>
+
+  <div class="stats">
+    <div class="stat"><span class="stat-n">40</span><span class="stat-l">Clases totales en el año</span></div>
+    <div class="stat"><span class="stat-n">30</span><span class="stat-l">Clases efectivas</span></div>
+    <div class="stat"><span class="stat-n">3</span><span class="stat-l">Trimestres</span></div>
+    <div class="stat"><span class="stat-n">5</span><span class="stat-l">Unidades didácticas</span></div>
+    <div class="stat"><span class="stat-n">ABP</span><span class="stat-l">Aprendizaje basado en proyectos</span></div>
+    <div class="stat"><span class="stat-n">1</span><span class="stat-l">Sistema completo documentado</span></div>
+  </div>
+
+  <div class="dist-wrap">
+    <table class="dist">
+      <thead>
+        <tr><th>Período</th><th>Eje temático</th><th>Contenidos principales</th><th>Clases</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="pill">1er Trim.</span></td>
+          <td>El Modelo Ambiental y Requerimientos</td>
+          <td>Declaración de propósitos, Diagrama de contexto, Lista de acontecimientos, Frontera del sistema.</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <td><span class="pill">2do Trim.</span></td>
+          <td>El Modelo de Comportamiento y Datos</td>
+          <td>DFD por acontecimiento, Bases de datos relacionales, Normalización, SQL básico, Diccionario de datos.</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <td><span class="pill">3er Trim.</span></td>
+          <td>Diseño de Interfaz y Nuevas Tendencias</td>
+          <td>Diseño de GUI, Programación orientada a eventos, Prototipado rápido (Mockups), IA en análisis de datos.</td>
+          <td>10</td>
+        </tr>
+        <tr class="total">
+          <td colspan="3">TOTAL</td>
+          <td>30</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- TRIMESTRES -->
+<section class="wrap" id="trimestres">
+  <div class="sec-label">Organización del año</div>
+  <h2 class="sec-title">Los 3 trimestres</h2>
+  <p class="sec-desc">
+    Cada trimestre construye sobre el anterior: del qué (requerimientos)
+    al cómo (comportamiento y datos) y finalmente al para quién (interfaz de usuario).
+  </p>
+
+  <div class="trim-grid">
+
+    <div class="trim-card t1">
+      <span class="trim-num">1° TRIMESTRE &mdash; C1 a C10</span>
+      <div class="trim-title">El Modelo Ambiental<br>y Requerimientos</div>
+      <p class="trim-desc">
+        El alumno aprende a definir la frontera del sistema: qué está adentro
+        y qué está afuera. Construye la Declaración de Propósitos, el Diagrama
+        de Contexto y la Lista de Acontecimientos que describen el entorno
+        del sistema sin depender de ninguna tecnología específica.
+      </p>
+      <div class="trim-tags">
+        <span class="ttag">Modelo Esencial</span>
+        <span class="ttag">Declaración de propósitos</span>
+        <span class="ttag">Diagrama de contexto</span>
+        <span class="ttag">Lista de acontecimientos</span>
+        <span class="ttag">Terminadores</span>
+        <span class="ttag">Frontera del sistema</span>
+      </div>
+    </div>
+
+    <div class="trim-card t2">
+      <span class="trim-num">2° TRIMESTRE &mdash; C11 a C20</span>
+      <div class="trim-title">El Modelo de Comportamiento<br>y Datos</div>
+      <p class="trim-desc">
+        El alumno describe cómo se comporta el sistema internamente ante
+        cada acontecimiento. Construye DFDs por acontecimiento y trabaja
+        con bases de datos relacionales: diseño de tablas, normalización
+        y consultas SQL básicas sobre casos reales.
+      </p>
+      <div class="trim-tags">
+        <span class="ttag pp">DFD por acontecimiento</span>
+        <span class="ttag pp">Modelo relacional</span>
+        <span class="ttag pp">Normalización</span>
+        <span class="ttag pp">SQL</span>
+        <span class="ttag pp">Diccionario de datos</span>
+        <span class="ttag pp">Redundancia</span>
+      </div>
+    </div>
+
+    <div class="trim-card t3">
+      <span class="trim-num">3° TRIMESTRE &mdash; C21 a C30</span>
+      <div class="trim-title">Diseño de Interfaz<br>y Nuevas Tendencias</div>
+      <p class="trim-desc">
+        El alumno diseña cómo el usuario final interactúa con el sistema.
+        Aprende principios de GUI, prototipado rápido con Mockups,
+        y explora el rol de la IA en el análisis de datos moderno
+        con criterio ético y práctico.
+      </p>
+      <div class="trim-tags">
+        <span class="ttag pk">Diseño de GUI</span>
+        <span class="ttag pk">Mockups</span>
+        <span class="ttag pk">Prog. orientada a eventos</span>
+        <span class="ttag pk">IA en análisis</span>
+        <span class="ttag pk">Mantenibilidad</span>
+        <span class="ttag pk">Confiabilidad</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- UNIDADES -->
+<section class="wrap" id="unidades">
+  <div class="sec-label">Contenido detallado</div>
+  <h2 class="sec-title">Las unidades didácticas</h2>
+  <p class="sec-desc">
+    Cada unidad incluye conceptos desarrollados con ejemplos del mundo laboral,
+    actividades prácticas con versión sin tecnología y glosario de términos clave.
+  </p>
+
+  <div class="units">
+
+    <div class="ucard u1">
+      <span class="ucard-num">UNIDAD I &mdash; 1er Trimestre</span>
+      <div class="ucard-title">¿Qué es el Software?<br>El Rol del Analista y los SI</div>
+      <p class="ucard-desc">
+        Definición de software e Ingeniería de Software. El analista como agente de cambio.
+        Sistemas de Información: elementos, estructura y participantes. Atributos de calidad:
+        mantenibilidad, confiabilidad, eficiencia y aceptabilidad. Ética profesional.
+        Diferencias entre IS, Ciencias de la Computación e Ingeniería de Sistemas.
+      </p>
+      <div class="ucard-foot">
+        <span>1er trimestre</span>
+        <span>Base del año</span>
+      </div>
+    </div>
+
+    <div class="ucard u2">
+      <span class="ucard-num">UNIDAD II &mdash; 1er Trimestre</span>
+      <div class="ucard-title">Ingeniería de Requerimientos<br>y el Modelo Ambiental</div>
+      <p class="ucard-desc">
+        Requerimientos funcionales, no funcionales, del usuario y del sistema.
+        Documento de requerimientos (ERS). Modelo Esencial: modelo ambiental
+        (Declaración de Propósitos, Diagrama de Contexto, Lista de
+        Acontecimientos) y modelo de comportamiento. Frontera e interfaces del sistema.
+      </p>
+      <div class="ucard-foot">
+        <span>1er trimestre</span>
+        <span>Núcleo del 1er trim.</span>
+      </div>
+    </div>
+
+    <div class="ucard u3">
+      <span class="ucard-num">UNIDAD III &mdash; 2do Trimestre</span>
+      <div class="ucard-title">Proceso de Desarrollo<br>y Modelos de Proceso</div>
+      <p class="ucard-desc">
+        SDLC: fases del ciclo de vida. Modelos: Cascada, Incremental, Espiral,
+        Prototipado y Orientado a Objetos (RUP/UML). Introducción al prototipado rápido
+        (Mockups). Gestión de proyectos: planificación, calendarización
+        (Gantt/PERT) y gestión de riesgos.
+      </p>
+      <div class="ucard-foot">
+        <span>2do trimestre</span>
+        <span>Metodologías</span>
+      </div>
+    </div>
+
+    <div class="ucard u4">
+      <span class="ucard-num">UNIDAD IV &mdash; 2do Trimestre</span>
+      <div class="ucard-title">Diseño Arquitectónico<br>Bases de Datos y UML</div>
+      <p class="ucard-desc">
+        Diseño OO: casos de uso, diagrama de clases y de secuencia en UML.
+        Modelo de dominio. Bases de datos relacionales: diseño, normalización
+        y SQL. Diccionario de datos. Resolución de redundancias en casos
+        simples de comercio local.
+      </p>
+      <div class="ucard-foot">
+        <span>2do trimestre</span>
+        <span>Diseño técnico</span>
+      </div>
+    </div>
+
+    <div class="ucard u5">
+      <span class="ucard-num">UNIDAD V &mdash; 3er Trimestre</span>
+      <div class="ucard-title">Diseño de Interfaces<br>y Nuevas Tendencias</div>
+      <p class="ucard-desc">
+        Principios de GUI: usabilidad, accesibilidad y consistencia visual.
+        Programación orientada a eventos. Diseño de seguridad, auditoría
+        y recuperación. Sistemas en la nube. Rol ético y práctico de la IA
+        en el análisis de datos. Mantenibilidad y confiabilidad del sistema.
+      </p>
+      <div class="ucard-foot">
+        <span>3er trimestre</span>
+        <span>Cierre del programa</span>
+      </div>
+    </div>
+
+    <div class="ucard upi" style="grid-column:1/-1;">
+      <span class="ucard-num">PROYECTO INTEGRADOR &mdash; Todo el año</span>
+      <div class="ucard-title">Sistema completo documentado — Aprendizaje Basado en Proyectos (ABP)</div>
+      <p class="ucard-desc">
+        A lo largo del año, cada grupo desarrolla un sistema pequeño real
+        (Gestión de Biblioteca, Sistema de Pedidos u otro). Al final del año presentan:
+        Declaración de propósitos, Diagrama de contexto, Lista de acontecimientos,
+        DFDs, diseño de base de datos normalizada y prototipo de interfaz.
+        La presentación oral evalúa la capacidad de defender decisiones técnicas ante
+        el grupo, emulando un entorno profesional real.
+      </p>
+      <div class="ucard-foot">
+        <span>Evaluación integradora</span>
+        <span>Presentación oral + documentación completa</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- MODELOS CLAVE -->
+<section class="wrap" id="modelos">
+  <div class="sec-label">Herramientas conceptuales</div>
+  <h2 class="sec-title">Modelos y herramientas del análisis</h2>
+  <p class="sec-desc">
+    Estos son los instrumentos que el analista usa para documentar,
+    comunicar y validar el sistema con el cliente y el equipo técnico.
+  </p>
+
+  <div class="modelos-grid">
+
+    <div class="modelo-card mc1">
+      <span class="modelo-icon">📋</span>
+      <div class="modelo-title">Declaración de Propósitos</div>
+      <p class="modelo-desc">Descripción breve y concisa del objetivo del sistema. Responde qué hace, para quién y qué queda fuera del alcance. Nunca más de un párrafo.</p>
+    </div>
+
+    <div class="modelo-card mc2">
+      <span class="modelo-icon">🔵</span>
+      <div class="modelo-title">Diagrama de Contexto</div>
+      <p class="modelo-desc">Una sola burbuja representa todo el sistema. Los terminadores (clientes, administración, contabilidad) se comunican con el sistema a través de flujos de datos. Define la frontera.</p>
+    </div>
+
+    <div class="modelo-card mc3">
+      <span class="modelo-icon">⚡</span>
+      <div class="modelo-title">Lista de Acontecimientos</div>
+      <p class="modelo-desc">Catálogo de todos los eventos que "despiertan" al sistema: de flujo (F), temporales (T) o de control (C). Cada acontecimiento genera un DFD propio.</p>
+    </div>
+
+    <div class="modelo-card mc4">
+      <span class="modelo-icon">🔄</span>
+      <div class="modelo-title">DFD (Diagrama de Flujo de Datos)</div>
+      <p class="modelo-desc">Muestra cómo fluyen los datos dentro del sistema, qué procesos los transforman y dónde se almacenan. Herramienta central del modelo de comportamiento.</p>
+    </div>
+
+    <div class="modelo-card mc5">
+      <span class="modelo-icon">🗃️</span>
+      <div class="modelo-title">Modelo Relacional y SQL</div>
+      <p class="modelo-desc">Diseño de bases de datos en tablas relacionadas. Normalización para eliminar redundancias. Consultas SQL para recuperar, insertar y modificar datos.</p>
+    </div>
+
+    <div class="modelo-card mc6">
+      <span class="modelo-icon">🖥️</span>
+      <div class="modelo-title">Prototipo de Interfaz (Mockup)</div>
+      <p class="modelo-desc">Representación visual de las pantallas del sistema antes de programarlas. Permite validar con el cliente que la interfaz cubre sus necesidades antes de invertir en desarrollo.</p>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- METODOLOGÍA -->
+<section class="wrap">
+  <div class="sec-label">Estrategias de enseñanza</div>
+  <h2 class="sec-title">Cómo se trabaja en clase</h2>
+  <p class="sec-desc">
+    Las estrategias están pensadas para el perfil del alumno adulto EPJA,
+    aprovechando su experiencia laboral y conectando la teoría con problemas reales.
+  </p>
+
+  <ul class="met-list">
+    <li><strong>Aprendizaje Basado en Proyectos (ABP):</strong> Se desarrolla un sistema pequeño a lo largo de todo el año (Gestión de Biblioteca, Sistema de Pedidos u otro elegido por el grupo).</li>
+    <li><strong>Análisis de Casos:</strong> Discusión sobre sistemas reales que los alumnos usan en sus trabajos o vida cotidiana para identificar fallas de diseño y oportunidades de mejora.</li>
+    <li><strong>Talleres Prácticos:</strong> Uso de herramientas de diagramación y motores de bases de datos para llevar la teoría a la práctica inmediata en el aula.</li>
+    <li><strong>Entrevistas Simuladas:</strong> Técnicas de relevamiento de requerimientos adaptadas a adultos: cuestionarios, entrevistas y análisis de documentos de contextos laborales reales.</li>
+    <li><strong>La "Zona Gris":</strong> Debate sobre la frontera del sistema. ¿Qué entra y qué queda afuera? Actividad clave para desarrollar pensamiento analítico.</li>
+    <li><strong>Excel y VBA:</strong> Automatización de prototipos rápidos y gestión de datos administrativos como puente entre la teoría y la herramienta cotidiana.</li>
+    <li><strong>Pizarrón colaborativo:</strong> Construcción colectiva de diagramas de contexto y DFDs que todos copian, discuten y refinan en tiempo real.</li>
+    <li><strong>IA con criterio ético:</strong> Introducción al rol de la inteligencia artificial en el análisis de datos, con enfoque en uso responsable y limitaciones reales.</li>
+  </ul>
+</section>
+
+<hr class="divider">
+
+<!-- EVALUACIÓN -->
+<section class="wrap" id="evaluacion">
+  <div class="sec-label">Criterios de evaluación</div>
+  <h2 class="sec-title">¿Cómo se evalúa?</h2>
+  <p class="sec-desc">
+    La evaluación integra el desempeño técnico, la documentación y el trabajo
+    colaborativo, emulando las condiciones de un entorno profesional real.
+  </p>
+
+  <div class="criterios">
+    <div class="crit-card">
+      <div class="crit-icon">🎯</div>
+      <div>
+        <div class="crit-label">Interpretación de requerimientos</div>
+        <p class="crit-desc">Capacidad para traducir las necesidades del usuario en una solución técnica viable, correctamente documentada y verificable.</p>
+      </div>
+    </div>
+    <div class="crit-card">
+      <div class="crit-icon">✏️</div>
+      <div>
+        <div class="crit-label">Calidad del diseño</div>
+        <p class="crit-desc">Aplicación correcta de las reglas de normalización, diseño de interfaces intuitivas y coherencia entre los modelos producidos.</p>
+      </div>
+    </div>
+    <div class="crit-card">
+      <div class="crit-icon">📄</div>
+      <div>
+        <div class="crit-label">Documentación</div>
+        <p class="crit-desc">Claridad y precisión en la redacción de declaraciones de propósitos, diagramas de flujo y especificaciones del sistema.</p>
+      </div>
+    </div>
+    <div class="crit-card">
+      <div class="crit-icon">🤝</div>
+      <div>
+        <div class="crit-label">Participación colaborativa</div>
+        <p class="crit-desc">Desempeño dentro del equipo de trabajo, respeto por los roles y contribución activa al proyecto grupal durante todo el año.</p>
+      </div>
+    </div>
+    <div class="crit-card">
+      <div class="crit-icon">🔍</div>
+      <div>
+        <div class="crit-label">Identificación de la frontera</div>
+        <p class="crit-desc">Habilidad para determinar con precisión qué forma parte del sistema y qué pertenece al ambiente externo, evitando proyectos inmanejables.</p>
+      </div>
+    </div>
+    <div class="crit-card">
+      <div class="crit-icon">🎤</div>
+      <div>
+        <div class="crit-label">Presentación oral del proyecto</div>
+        <p class="crit-desc">Exposición clara del sistema desarrollado, capacidad para defender decisiones técnicas y responder preguntas del docente y compañeros.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- RECURSOS -->
+<section class="wrap">
+  <div class="sec-label">Recursos y bibliografía</div>
+  <h2 class="sec-title">Materiales del curso</h2>
+  <p class="sec-desc">Todos los recursos son accesibles desde el aula. La mayoría no requieren conexión permanente a Internet.</p>
+
+  <div class="modelos-grid">
+    <div class="modelo-card mc1">
+      <span class="modelo-icon">💻</span>
+      <div class="modelo-title">Herramientas tecnológicas</div>
+      <p class="modelo-desc">Computadoras con entorno de desarrollo y motores SQL. Herramientas de modelado (CASE / software de diagramación). Excel y VBA para prototipos rápidos.</p>
+    </div>
+    <div class="modelo-card mc2">
+      <span class="modelo-icon">📚</span>
+      <div class="modelo-title">Bibliografía principal</div>
+      <p class="modelo-desc">Yourdon, Edward — Análisis Estructurado Moderno (referencia para el Modelo Esencial). Material de cátedra: Resumen Análisis y Diseño de Sistemas.</p>
+    </div>
+    <div class="modelo-card mc3">
+      <span class="modelo-icon">📐</span>
+      <div class="modelo-title">Diagramación y modelado</div>
+      <p class="modelo-desc">Pizarrón y proyectores para el análisis colectivo de diagramas de contexto. Herramientas CASE o software de diagramación gratuito para DFDs y UML.</p>
+    </div>
+    <div class="modelo-card mc4">
+      <span class="modelo-icon">⚖️</span>
+      <div class="modelo-title">Marco normativo</div>
+      <p class="modelo-desc">Resolución CFE N° 163/11 — Marcos de Referencia Educación Secundaria Orientada. Orientación: Operador de Informática para Administración y Gestión.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-school">E.P.E.T N°7 &mdash; Jardín América, Misiones</div>
+  <div class="foot-info">
+    Educación Permanente de Jóvenes y Adultos (EPJA) — 3° A<br>
+    Materia: Análisis y Diseño de Aplicaciones<br>
+    Orientación: Operador de Informática para Administración y Gestión<br>
+    Docente: Markwart Rubén Rodolfo &mdash; Ciclo lectivo 2026
+  </div>
+  <div class="foot-copy">
+    Elaborado con asistencia de Claude (Anthropic) &mdash; Mayo 2026
+  </div>
+</footer>
+
+</body>
+</html>
