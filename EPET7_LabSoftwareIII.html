@@ -210,6 +210,24 @@ footer { position: relative; z-index: 1; border-top: 1px solid var(--border); ba
 .foot-copy { margin-top: 1.3rem; font-family: 'JetBrains Mono', monospace; font-size: .6rem; color: var(--dim); letter-spacing: .07em; }
 
 @media(max-width: 640px) { .nav-links { display: none; } .stats { grid-template-columns: repeat(2,1fr); } }
+
+/* ── Letter-by-letter title animation ── */
+header h1, .hero-title, .header h1 { perspective: 900px; }
+.al {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(38px) rotateX(-38deg);
+  transform-origin: 50% 80%;
+  animation: al-in 0.85s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  animation-delay: calc(var(--i, 0) * 55ms + 0.25s);
+  will-change: transform, opacity;
+}
+@keyframes al-in {
+  to { opacity: 1; transform: translateY(0) rotateX(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .al { animation-duration: .01ms !important; animation-delay: 0 !important; opacity: 1 !important; transform: none !important; }
+}
 </style>
 </head>
 <body>
@@ -743,5 +761,37 @@ footer { position: relative; z-index: 1; border-top: 1px solid var(--border); ba
   <div class="foot-copy">Elaborado con asistencia de Claude (Anthropic) &mdash; Mayo 2026</div>
 </footer>
 
+
+<script>
+(function () {
+  const h1 = document.querySelector('header h1') || document.querySelector('.hero-title') || document.querySelector('h1');
+  if (!h1) return;
+  let counter = 0;
+  function walk(node) {
+    if (node.nodeType === 3) {
+      const text = node.textContent;
+      if (!text || !text.trim()) return;
+      const frag = document.createDocumentFragment();
+      for (const ch of text) {
+        if (ch === ' ' || ch === '\n' || ch === '\t') {
+          frag.appendChild(document.createTextNode(ch));
+        } else {
+          const s = document.createElement('span');
+          s.className = 'al';
+          s.style.setProperty('--i', counter++);
+          s.textContent = ch;
+          frag.appendChild(s);
+        }
+      }
+      node.parentNode.replaceChild(frag, node);
+    } else if (node.nodeType === 1) {
+      const tag = node.tagName.toLowerCase();
+      if (tag === 'br') return;
+      [...node.childNodes].forEach(walk);
+    }
+  }
+  walk(h1);
+})();
+</script>
 </body>
 </html>
