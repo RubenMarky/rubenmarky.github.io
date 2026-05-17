@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Material de cátedra de Programación Lógica — E.P.E.T N°7 EPJA Jardín América, Misiones. Algoritmos, DFD, tarea y rúbrica de evaluación. Ciclo lectivo 2026.">
+<meta name="author" content="Prof. Markwart Rubén — E.P.E.T N°7">
+<meta property="og:title" content="Programación Lógica — E.P.E.T N°7 EPJA">
+<meta property="og:description" content="Material completo: algoritmos, diagramas de flujo, tarea, rúbrica y glosario. 2° Año A y B — 2026.">
+<meta property="og:type" content="website">
+<title>Programación Lógica — E.P.E.T N°7 EPJA</title>
+
+<!-- Preconexión a Google Fonts para carga más rápida -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Source+Serif+4:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --azul: #1a3a5c;
+    --azul-medio: #2560a0;
+    --azul-claro: #d6e8f7;
+    --acento: #e05c2a;
+    --acento-claro: #fdf0ea;
+    --verde: #1a6b3c;
+    --verde-claro: #e0f2ea;
+    --gris: #f4f3f0;
+    --gris-borde: #dddbd4;
+    --texto: #1a1917;
+    --texto-suave: #5a5854;
+    --blanco: #fdfcfa;
+    --sombra: 0 2px 12px rgba(26,58,92,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--blanco);
+    color: var(--texto);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  /* ── ENCABEZADO ── */
+  .encabezado {
+    background: var(--azul);
+    color: white;
+    padding: 3rem 2rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .encabezado::before {
+    content: '';
+    position: absolute;
+    top: -50px; right: -50px;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    border: 45px solid rgba(255,255,255,0.05);
+    pointer-events: none;
+  }
+  .encabezado::after {
+    content: '';
+    position: absolute;
+    bottom: -30px; left: 35%;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    border: 30px solid rgba(255,255,255,0.04);
+    pointer-events: none;
+  }
+  .inst {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.65;
+    margin-bottom: 0.6rem;
+    position: relative;
+  }
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    position: relative;
+  }
+  .meta-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 1.5rem;
+    position: relative;
+  }
+  .chip {
+    background: rgba(255,255,255,0.13);
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 12px;
+    font-family: 'Syne', sans-serif;
+  }
+
+  /* ── NAVEGACIÓN ── */
+  nav {
+    background: var(--azul-medio);
+    display: flex;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  nav a {
+    color: rgba(255,255,255,0.82);
+    text-decoration: none;
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.4px;
+    padding: 13px 16px;
+    transition: background 0.18s, color 0.18s;
+    white-space: nowrap;
+  }
+  nav a:hover, nav a:focus { background: rgba(255,255,255,0.16); color: white; outline: none; }
+
+  /* ── LAYOUT ── */
+  main { max-width: 920px; margin: 0 auto; padding: 3rem 2rem 6rem; }
+  .seccion { margin-bottom: 4.5rem; }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--azul);
+    border-left: 4px solid var(--acento);
+    padding-left: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--azul-medio);
+    margin: 2rem 0 0.75rem;
+  }
+  p { margin-bottom: 1rem; }
+
+  /* ── DEFINICIÓN ── */
+  .definicion {
+    background: var(--azul-claro);
+    border-left: 5px solid var(--azul-medio);
+    border-radius: 0 8px 8px 0;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .definicion strong { font-family: 'Syne', sans-serif; color: var(--azul); }
+
+  /* ── TARJETAS CARACTERÍSTICAS ── */
+  .grid-caract {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+    gap: 14px;
+    margin: 1.5rem 0;
+  }
+  .caract-card {
+    background: var(--gris);
+    border: 1px solid var(--gris-borde);
+    border-radius: 10px;
+    padding: 1.2rem;
+  }
+  .caract-card .ic {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+  .caract-card h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+  }
+  .caract-card p { font-size: 13px; margin: 0; color: var(--texto-suave); }
+  .c-az .ic { background: var(--azul-claro); color: var(--azul-medio); }
+  .c-az h4 { color: var(--azul); }
+  .c-ac .ic { background: var(--acento-claro); color: var(--acento); }
+  .c-ac h4 { color: var(--acento); }
+  .c-vd .ic { background: var(--verde-claro); color: var(--verde); }
+  .c-vd h4 { color: var(--verde); }
+
+  /* ── PASOS ── */
+  .pasos { list-style: none; margin: 1.5rem 0; }
+  .pasos li {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--gris-borde);
+  }
+  .pasos li:last-child { border-bottom: none; }
+  .pn {
+    background: var(--azul-medio);
+    color: white;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    min-width: 28px; height: 28px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .pt { font-size: 15px; }
+
+  /* ── ENTRADA / PROCESO / SALIDA ── */
+  .eps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 1px solid var(--gris-borde);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 1.5rem 0;
+  }
+  .eps-i { padding: 1.2rem; text-align: center; }
+  .eps-i:not(:last-child) { border-right: 1px solid var(--gris-borde); }
+  .eps-i .lbl {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .eps-i .cnt { font-size: 13px; color: var(--texto-suave); }
+  .e-en { background: var(--azul-claro); }
+  .e-en .lbl { color: var(--azul); }
+  .e-pr { background: var(--acento-claro); }
+  .e-pr .lbl { color: var(--acento); }
+  .e-sa { background: var(--verde-claro); }
+  .e-sa .lbl { color: var(--verde); }
+
+  /* ── SÍMBOLOS DFD ── */
+  .simbolos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+    gap: 12px;
+    margin: 1.5rem 0;
+  }
+  .sim-card {
+    border: 1px solid var(--gris-borde);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    background: white;
+  }
+  .sim-card svg { display: block; margin: 0 auto 8px; }
+  .sim-card .snm { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; color: var(--azul); margin-bottom: 4px; }
+  .sim-card .sdsc { font-size: 12px; color: var(--texto-suave); line-height: 1.5; }
+
+  /* ── DIAGRAMA ── */
+  .dfd-wrap {
+    background: var(--gris);
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+    margin: 1rem 0;
+  }
+  .dfd-wrap svg { max-width: 100%; height: auto; }
+
+  /* ── TIPOS TABLA ── */
+  .tipos-t {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 1.5rem 0;
+  }
+  .tipos-t th {
+    background: var(--azul);
+    color: white;
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: left;
+    padding: 10px 14px;
+  }
+  .tipos-t td { padding: 10px 14px; border-bottom: 1px solid var(--gris-borde); vertical-align: top; }
+  .tipos-t tr:nth-child(even) td { background: var(--gris); }
+  .tipos-t tr:last-child td { border-bottom: none; }
+  .bdg {
+    display: inline-block;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  .b-az { background: var(--azul-claro); color: var(--azul); }
+  .b-ac { background: var(--acento-claro); color: var(--acento); }
+
+  /* ── VENTAJAS/DESVENTAJAS ── */
+  .vd { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 1.5rem 0; }
+  .v-box { background: var(--verde-claro); border: 1px solid #a7d9bc; border-radius: 10px; padding: 1.2rem; }
+  .d-box { background: var(--acento-claro); border: 1px solid #f0b898; border-radius: 10px; padding: 1.2rem; }
+  .v-box h4 { font-family: 'Syne', sans-serif; color: var(--verde); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+  .d-box h4 { font-family: 'Syne', sans-serif; color: var(--acento); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+  .v-box ul, .d-box ul { padding-left: 1.2rem; font-size: 14px; }
+  .v-box li, .d-box li { margin-bottom: 5px; }
+
+  /* ── ALERTA / CONTRAEJEMPLO ── */
+  .alerta {
+    background: #fff8e1;
+    border: 1px solid #f0d060;
+    border-left: 4px solid #d4a017;
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    font-size: 14px;
+  }
+  .alerta strong { font-family: 'Syne', sans-serif; color: #7a5800; display: block; margin-bottom: 5px; }
+
+  /* ── TAREA ── */
+  .tarea-box {
+    background: var(--azul);
+    color: white;
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem 0;
+    box-shadow: var(--sombra);
+  }
+  .tarea-box h3 { font-family: 'Syne', sans-serif; font-size: 1.25rem; font-weight: 800; margin-bottom: 0.75rem; color: white; }
+  .tarea-box p { color: rgba(255,255,255,0.87); margin-bottom: 0.5rem; }
+  .t-req { background: rgba(255,255,255,0.12); border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; }
+  .t-req li { margin-bottom: 5px; font-size: 14px; color: rgba(255,255,255,0.9); }
+  .t-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1rem; }
+  .t-chip {
+    background: rgba(255,255,255,0.14);
+    border: 1px solid rgba(255,255,255,0.24);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 13px;
+  }
+
+  /* ── RÚBRICA ── */
+  .rubrica { width: 100%; border-collapse: collapse; font-size: 13px; margin: 1.5rem 0; }
+  .rubrica th { padding: 10px 12px; text-align: center; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid var(--gris-borde); }
+  .rubrica td { padding: 10px 12px; border: 1px solid var(--gris-borde); vertical-align: top; line-height: 1.5; }
+  .rubrica .crit { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; color: var(--azul); background: var(--gris); }
+  .r-ex { background: #1a6b3c; color: white; }
+  .r-bn { background: #2560a0; color: white; }
+  .r-rg { background: #d4a017; color: white; }
+  .r-in { background: #993c1d; color: white; }
+  .n-ex { background: #f0faf4; }
+  .n-bn { background: #f0f7ff; }
+  .n-rg { background: #fffbeb; }
+  .n-in { background: #fff4f0; }
+
+  /* ── AUTOEVALUACIÓN ── */
+  .auto-grid { display: grid; gap: 12px; margin: 1.5rem 0; }
+  .auto-item {
+    background: var(--gris);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .auto-q { font-size: 14px; flex: 1; min-width: 200px; }
+  .auto-ops { display: flex; gap: 8px; flex-wrap: wrap; }
+  .auto-btn {
+    border: 1px solid var(--gris-borde);
+    border-radius: 6px;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-family: 'Syne', sans-serif;
+    cursor: pointer;
+    background: white;
+    transition: all 0.15s;
+    color: var(--texto);
+  }
+  .auto-btn:hover { background: var(--azul-claro); border-color: var(--azul-medio); }
+  .auto-btn:focus { outline: 2px solid var(--azul-medio); outline-offset: 2px; }
+  .sel-si { background: var(--verde-claro) !important; border-color: var(--verde) !important; color: var(--verde) !important; font-weight: 700; }
+  .sel-no { background: var(--acento-claro) !important; border-color: var(--acento) !important; color: var(--acento) !important; font-weight: 700; }
+  .sel-duda { background: #fff8e1 !important; border-color: #d4a017 !important; color: #7a5800 !important; font-weight: 700; }
+
+  /* ── PLANIFICACIÓN ── */
+  .trim-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 1.5rem 0; }
+  .trim-card { border-radius: 10px; overflow: hidden; border: 1px solid var(--gris-borde); }
+  .trim-hdr { padding: 12px 16px; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: white; }
+  .t1 .trim-hdr { background: var(--azul); }
+  .t2 .trim-hdr { background: var(--azul-medio); }
+  .t3 .trim-hdr { background: var(--acento); }
+  .trim-body { padding: 14px 16px; }
+  .trim-body ul { list-style: none; padding: 0; }
+  .trim-body li { font-size: 13px; padding: 5px 0; border-bottom: 1px solid var(--gris-borde); color: var(--texto-suave); }
+  .trim-body li:last-child { border-bottom: none; }
+  .trim-body li::before { content: '→ '; color: var(--azul-medio); font-weight: 700; }
+  .t3 .trim-body li::before { color: var(--acento); }
+
+  /* ── GLOSARIO ── */
+  .glos { display: grid; gap: 0; margin: 1.5rem 0; }
+  .glos-item { display: grid; grid-template-columns: 165px 1fr; gap: 12px; align-items: start; padding: 10px 0; border-bottom: 1px solid var(--gris-borde); }
+  .glos-item:last-child { border-bottom: none; }
+  .glos-t { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--azul); }
+  .glos-d { font-size: 14px; color: var(--texto-suave); }
+
+  /* ── NOTAS ── */
+  .nota {
+    background: var(--gris);
+    border: 1px solid var(--gris-borde);
+    border-top: 3px solid var(--azul-medio);
+    border-radius: 0 0 8px 8px;
+    padding: 1.25rem 1.5rem;
+    margin: 2rem 0;
+    font-size: 14px;
+  }
+  .nota strong { font-family: 'Syne', sans-serif; color: var(--azul); }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 12px;
+    color: var(--texto-suave);
+    border-top: 1px solid var(--gris-borde);
+    font-family: 'Syne', sans-serif;
+    letter-spacing: 0.5px;
+    background: var(--gris);
+  }
+  footer a { color: var(--azul-medio); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ── PRINT ── */
+  @media print {
+    nav, .auto-btn, footer a { display: none; }
+    body { font-size: 13px; background: white; }
+    .tarea-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .encabezado { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    main { padding: 1rem; }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .eps { grid-template-columns: 1fr; }
+    .eps-i:not(:last-child) { border-right: none; border-bottom: 1px solid var(--gris-borde); }
+    .vd { grid-template-columns: 1fr; }
+    .glos-item { grid-template-columns: 1fr; }
+    .rubrica { font-size: 11px; }
+    .rubrica th, .rubrica td { padding: 7px 8px; }
+    h1 { font-size: 2rem; }
+    nav a { padding: 10px 12px; font-size: 11px; }
+  }
+
+/* ── Letter-by-letter title animation ── */
+.encabezado h1, header h1 { perspective: 900px; }
+.al {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(38px) rotateX(-38deg);
+  transform-origin: 50% 80%;
+  animation: al-in 0.85s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  animation-delay: calc(var(--i, 0) * 55ms + 0.25s);
+  will-change: transform, opacity;
+}
+@keyframes al-in {
+  to { opacity: 1; transform: translateY(0) rotateX(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .al { animation-duration: .01ms !important; animation-delay: 0 !important; opacity: 1 !important; transform: none !important; }
+}
+/* Center the programacion-logica header to match other portals */
+.encabezado { text-align: center; }
+.encabezado .meta-chips { justify-content: center; }
+.encabezado .inst { letter-spacing: 2px; }
+</style>
+</head>
+<body>
+
+<header class="encabezado">
+  <p class="inst">E.P.E.T N°7 (EPJA) — Jardín América, Misiones · Prof. Markwart Rubén · 2026</p>
+  <h1>Programación<br>Lógica</h1>
+  <div class="meta-chips">
+    <span class="chip">2° Año A y B</span>
+    <span class="chip">Operador de Informática para Administración y Gestión</span>
+    <span class="chip">Ciclo Lectivo 2026</span>
+  </div>
+</header>
+
+<nav aria-label="Navegación de secciones">
+  <a href="#definicion">Algoritmos</a>
+  <a href="#caracteristicas">Características</a>
+  <a href="#tipos">Tipos</a>
+  <a href="#dfd">DFD</a>
+  <a href="#ejemplos">Ejemplos</a>
+  <a href="#tarea">Tarea</a>
+  <a href="#rubrica">Rúbrica</a>
+  <a href="#planificacion">Planificación</a>
+  <a href="#glosario">Glosario</a>
+</nav>
+
+<main>
+
+<!-- 1. DEFINICIÓN -->
+<section class="seccion" id="definicion">
+  <h2>1. ¿Qué es un algoritmo?</h2>
+
+  <div class="definicion">
+    <strong>Definición:</strong> Un algoritmo es una <em>secuencia de pasos lógicos, ordenados y finitos</em> necesarios para llevar a cabo una tarea específica o resolver un problema.
+  </div>
+
+  <p>Los algoritmos son <strong>independientes</strong> del lenguaje de programación y de la computadora que los ejecuta. En cada problema el algoritmo puede expresarse en un lenguaje diferente y ejecutarse en una máquina distinta; sin embargo, <em>el algoritmo será siempre el mismo</em>.</p>
+
+  <p>Una buena analogía: una receta de cocina puede estar escrita en español, inglés o portugués, pero los pasos para preparar el plato son los mismos sin importar el idioma ni el cocinero.</p>
+
+  <h3>Las tres partes de todo algoritmo</h3>
+  <p>Todo algoritmo debe describir claramente estas tres partes:</p>
+
+  <div class="eps">
+    <div class="eps-i e-en"><div class="lbl">Entrada</div><div class="cnt">Datos o recursos con los que se trabaja al comenzar.</div></div>
+    <div class="eps-i e-pr"><div class="lbl">Proceso</div><div class="cnt">Acciones o transformaciones que se realizan con los datos.</div></div>
+    <div class="eps-i e-sa"><div class="lbl">Salida</div><div class="cnt">Resultado obtenido luego de ejecutar todos los pasos.</div></div>
+  </div>
+
+  <p><strong>Ejemplo — Receta de cocina:</strong></p>
+  <div class="eps">
+    <div class="eps-i e-en"><div class="lbl">Entrada</div><div class="cnt">Ingredientes y utensilios empleados.</div></div>
+    <div class="eps-i e-pr"><div class="lbl">Proceso</div><div class="cnt">Elaboración de la receta paso a paso.</div></div>
+    <div class="eps-i e-sa"><div class="lbl">Salida</div><div class="cnt">El plato terminado (ej. un reviro, un asado).</div></div>
+  </div>
+
+  <h3>¿Para qué sirve?</h3>
+  <p>Para llegar a la realización de un programa de computadora es <strong>necesario diseñar primero el algoritmo</strong>. Sin algoritmo no puede existir un programa. Esta habilidad también aplica en la vida diaria: liquidar un sueldo, controlar el stock de un negocio, completar un formulario, son situaciones que siguen una lógica algorítmica.</p>
+</section>
+
+<!-- 2. CARACTERÍSTICAS -->
+<section class="seccion" id="caracteristicas">
+  <h2>2. Características de los algoritmos</h2>
+
+  <p>Todo algoritmo correcto debe cumplir con las siguientes propiedades. Si alguna de ellas falla, el algoritmo es defectuoso.</p>
+
+  <div class="grid-caract">
+    <div class="caract-card c-az"><div class="ic">P</div><h4>Preciso</h4><p>Indica el orden exacto en que debe realizarse cada paso. No deja lugar a interpretaciones.</p></div>
+    <div class="caract-card c-az"><div class="ic">D</div><h4>Definido</h4><p>Si se sigue dos veces con los mismos datos, debe obtenerse el mismo resultado.</p></div>
+    <div class="caract-card c-az"><div class="ic">F</div><h4>Finito</h4><p>Debe terminar en algún momento. Tiene un número finito de pasos.</p></div>
+    <div class="caract-card c-ac"><div class="ic">L</div><h4>Legible</h4><p>Cualquier persona que lo lea debe poder comprenderlo sin ambigüedades.</p></div>
+    <div class="caract-card c-ac"><div class="ic">E</div><h4>Eficiente</h4><p>Resuelve el problema usando la menor cantidad de pasos posibles sin perder claridad.</p></div>
+    <div class="caract-card c-vd"><div class="ic">C</div><h4>Concreto</h4><p>Exacto. No usa palabras vagas como "un rato", "bastante" o "más o menos".</p></div>
+  </div>
+
+  <h3>Ejemplo: Cambiar un foco quemado</h3>
+  <div class="alerta">
+    <strong>⚠ Algoritmo ambiguo (incorrecto):</strong>
+    1. Quitar el foco quemado. &nbsp; 2. Colocar un foco nuevo.
+    <br>Este algoritmo es impreciso: ¿cómo se quita el foco? ¿Qué foco nuevo? ¿Desde dónde? Un robot o una persona sin experiencia no podría seguirlo.
+  </div>
+
+  <p>El mismo algoritmo, escrito correctamente:</p>
+  <ol class="pasos">
+    <li><span class="pn">1</span><span class="pt">Situar la escalera debajo del foco quemado.</span></li>
+    <li><span class="pn">2</span><span class="pt">Elegir un foco de reemplazo de la misma potencia que el anterior.</span></li>
+    <li><span class="pn">3</span><span class="pt">Subir por la escalera hasta alcanzar el foco.</span></li>
+    <li><span class="pn">4</span><span class="pt">Girar el foco en sentido contrario a las agujas del reloj hasta que esté suelto.</span></li>
+    <li><span class="pn">5</span><span class="pt">Ubicar el foco nuevo en el mismo lugar que el anterior.</span></li>
+    <li><span class="pn">6</span><span class="pt">Enroscar en el sentido de las agujas del reloj hasta que quede bien ajustado.</span></li>
+    <li><span class="pn">7</span><span class="pt">Bajar de la escalera.</span></li>
+  </ol>
+
+  <h3>Actividad: Encontrá el error</h3>
+  <div class="alerta">
+    <strong>Leé este algoritmo y encontrá al menos 2 problemas:</strong>
+    <br>Algoritmo para hacer un mate: 1. Poner agua. 2. Poner yerba. 3. Servir el mate. 4. Tomar.
+    <br><br><em>Pistas: ¿Cuánta agua? ¿A qué temperatura? ¿En qué recipiente? ¿La yerba va antes o después del agua? ¿El mate ya está cebado?</em>
+  </div>
+</section>
+
+<!-- 3. TIPOS -->
+<section class="seccion" id="tipos">
+  <h2>3. Tipos de algoritmo</h2>
+  <p>Los algoritmos se clasifican de distintas formas según sus características:</p>
+
+  <div style="overflow-x:auto;">
+  <table class="tipos-t">
+    <thead><tr><th>Criterio</th><th>Tipo</th><th>Descripción</th><th>Ejemplo cotidiano</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="2"><span class="bdg b-az">Sistema de signos</span></td><td><strong>Cualitativo</strong></td><td>Usa texto y lenguaje verbal para describir los pasos.</td><td>Una receta de cocina, instrucciones de un medicamento.</td></tr>
+      <tr><td><strong>Cuantitativo</strong></td><td>Emplea cálculos numéricos y operaciones algebraicas.</td><td>Calcular el vuelto de una compra, hacer un presupuesto.</td></tr>
+      <tr><td rowspan="3"><span class="bdg b-ac">Función</span></td><td><strong>Ordenamiento</strong></td><td>Organizan elementos en una secuencia determinada.</td><td>Ordenar facturas por fecha, organizar una lista de clientes.</td></tr>
+      <tr><td><strong>Búsqueda</strong></td><td>Recuperan elementos específicos de una lista.</td><td>Buscar el nombre de un cliente en un registro.</td></tr>
+      <tr><td><strong>Encaminamiento</strong></td><td>Determinan qué proceso seguirá una instrucción.</td><td>El menú de atención telefónica: "Presione 1 para ventas…"</td></tr>
+      <tr><td rowspan="2"><span class="bdg b-az">Estrategia</span></td><td><strong>Determinista</strong></td><td>Opera de manera lineal; sus resultados son predecibles.</td><td>El proceso de cobro en caja: siempre los mismos pasos.</td></tr>
+      <tr><td><strong>Cotidiano</strong></td><td>Usados en la toma cotidiana de decisiones sencillas.</td><td>Decidir qué ropa usar según el clima del día.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Ventajas y desventajas</h3>
+  <div class="vd">
+    <div class="v-box">
+      <h4>Ventajas</h4>
+      <ul>
+        <li>Permiten ordenar los procesos y reducir errores.</li>
+        <li>Ayudan a resolver problemas más rápido y con menor esfuerzo.</li>
+        <li>Son precisos: sirven como guía concreta.</li>
+        <li>Pueden comunicarse a otras personas o máquinas.</li>
+      </ul>
+    </div>
+    <div class="d-box">
+      <h4>Desventajas</h4>
+      <ul>
+        <li>Requieren conocimiento previo sobre el problema.</li>
+        <li>Los algoritmos complejos usan un lenguaje técnico difícil de aprender.</li>
+        <li>La confianza ciega en la lógica puede ignorar soluciones creativas.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 4. DFD -->
+<section class="seccion" id="dfd">
+  <h2>4. Diagramas de Flujo (DFD)</h2>
+
+  <div class="definicion">
+    <strong>Definición:</strong> Un Diagrama de Flujo es un esquema gráfico que representa los pasos de un algoritmo usando <em>símbolos estandarizados</em> conectados por flechas que muestran el orden de ejecución.
+  </div>
+
+  <h3>Simbología estándar</h3>
+  <p>Es obligatorio usar los símbolos correctos. Cada figura tiene un significado único:</p>
+
+  <div class="simbolos">
+    <div class="sim-card">
+      <svg width="80" height="44" viewBox="0 0 80 44" aria-hidden="true">
+        <ellipse cx="40" cy="22" rx="36" ry="18" fill="#d6e8f7" stroke="#2560a0" stroke-width="1.5"/>
+        <text x="40" y="27" text-anchor="middle" font-size="11" font-family="Syne,sans-serif" fill="#1a3a5c" font-weight="700">INICIO / FIN</text>
+      </svg>
+      <div class="snm">Óvalo</div>
+      <div class="sdsc">Marca el inicio o el fin del algoritmo. Todo DFD comienza y termina con este símbolo.</div>
+    </div>
+    <div class="sim-card">
+      <svg width="80" height="44" viewBox="0 0 80 44" aria-hidden="true">
+        <rect x="8" y="8" width="64" height="28" rx="2" fill="#e0f2ea" stroke="#1a6b3c" stroke-width="1.5"/>
+        <text x="40" y="26" text-anchor="middle" font-size="12" font-family="Syne,sans-serif" fill="#1a3a5c" font-weight="700">PROCESO</text>
+      </svg>
+      <div class="snm">Rectángulo</div>
+      <div class="sdsc">Representa una acción o instrucción concreta (ej: "calcular el total").</div>
+    </div>
+    <div class="sim-card">
+      <svg width="80" height="52" viewBox="0 0 80 52" aria-hidden="true">
+        <polygon points="40,4 76,26 40,48 4,26" fill="#fdf0ea" stroke="#e05c2a" stroke-width="1.5"/>
+        <text x="40" y="30" text-anchor="middle" font-size="11" font-family="Syne,sans-serif" fill="#993c1d" font-weight="700">DECISIÓN</text>
+      </svg>
+      <div class="snm">Rombo</div>
+      <div class="sdsc">Pregunta con respuesta Sí / No. El flujo se bifurca según la respuesta.</div>
+    </div>
+    <div class="sim-card">
+      <svg width="80" height="44" viewBox="0 0 80 44" aria-hidden="true">
+        <polygon points="14,8 66,8 80,22 66,36 14,36 0,22" fill="#fff8e1" stroke="#d4a017" stroke-width="1.5"/>
+        <text x="40" y="27" text-anchor="middle" font-size="11" font-family="Syne,sans-serif" fill="#7a5800" font-weight="700">ENTRADA</text>
+      </svg>
+      <div class="snm">Paralelogramo</div>
+      <div class="sdsc">Indica la entrada de datos o la salida (mostrar resultados).</div>
+    </div>
+    <div class="sim-card">
+      <svg width="80" height="44" viewBox="0 0 80 44" aria-hidden="true">
+        <defs><marker id="arr0" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#2560a0"/></marker></defs>
+        <line x1="40" y1="6" x2="40" y2="36" stroke="#2560a0" stroke-width="1.5" marker-end="url(#arr0)"/>
+        <text x="54" y="26" font-size="11" font-family="Syne,sans-serif" fill="#1a3a5c">Flujo</text>
+      </svg>
+      <div class="snm">Flecha</div>
+      <div class="sdsc">Indica la dirección y el orden en que se siguen los pasos.</div>
+    </div>
+  </div>
+
+  <h3>Ejemplo — DFD: ¿La lámpara funciona?</h3>
+  <div class="dfd-wrap">
+    <svg viewBox="0 0 400 480" width="360" aria-label="Diagrama de flujo para diagnosticar una lámpara que no funciona">
+      <title>Diagrama: ¿La lámpara funciona?</title>
+      <defs><marker id="a1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#888"/></marker></defs>
+      <ellipse cx="200" cy="30" rx="90" ry="22" fill="#d6e8f7" stroke="#2560a0" stroke-width="1.5"/>
+      <text x="200" y="35" text-anchor="middle" font-size="13" font-family="Syne,sans-serif" fill="#1a3a5c" font-weight="700">INICIO</text>
+      <line x1="200" y1="52" x2="200" y2="76" stroke="#888" stroke-width="1.5" marker-end="url(#a1)"/>
+      <rect x="110" y="76" width="180" height="36" rx="3" fill="#e0f2ea" stroke="#1a6b3c" stroke-width="1.5"/>
+      <text x="200" y="98" text-anchor="middle" font-size="12" font-family="Syne,sans-serif" fill="#1a3a5c">La lámpara no funciona</text>
+      <line x1="200" y1="112" x2="200" y2="148" stroke="#888" stroke-width="1.5" marker-end="url(#a1)"/>
+      <polygon points="200,148 260,178 200,208 140,178" fill="#fdf0ea" stroke="#e05c2a" stroke-width="1.5"/>
+      <text x="200" y="182" text-anchor="middle" font-size="12" font-family="Syne,sans-serif" fill="#993c1d" font-weight="700">¿Enchufada?</text>
+      <line x1="260" y1="178" x2="336" y2="178" stroke="#888" stroke-width="1.5" marker-end="url(#a1)"/>
+      <rect x="336" y="162" width="56" height="32" rx="3" fill="#e0f2ea" stroke="#1a6b3c" stroke-width="1.5"/>
+      <text x="364" y="182" text-anchor="middle" font-size="11" font-family="Syne,sans-serif" fill="#1a3a5c">Enchufar</text>
+      <text x="278" y="170" font-size="10" font-family="Syne,sans-serif" fill="#993c1d">No</text>
+      <line x1="200" y1="208" x2="200" y2="244" stroke="#888" stroke-width="1.5" marker-end="url(#a1)"/>
+      <text x="208" y="232" font-size="10" font-family="Syne,sans-serif" fill="#1a6b3c">Sí</text>
+      <polygon points="200,244 260,274 200,304 140,274" fill="#fdf0ea" stroke="#e05c2a" stroke-width="1.5"/>
+      <text x="200" y="278" text-anchor="middle" font-size="12" font-family="Syne,sans-serif" fill="#993c1d" font-weight="700">¿Foco quemado?</text>
+      <line x1="260" y1="274" x2="336" y2="274" stroke="#888" stroke-width="1.5" marker-end="url(#a1)"/>
+      <rect x="336" y="258" width="56" height="32" rx="3" fill="#e0f2ea" stroke="#1a6b3c" stroke-width="1.5"/>
+      <text x="364" y="276" text-anchor="middle" font-size="10" font-family="Syne,sans-serif" fill="#1a3a5c">Reemplazar</text>
+      <text x="278" y="266" font-size="10" font-family="Syne,sans-serif" fill="#1a6b3c">Sí</text>
+      <line x1="200" y1="304" x2="200" y2="340" stroke="#888" stroke-width="1.5" marker-end="url(#a1)"/>
+      <text x="208" y="328" font-size="10" font-family="Syne,sans-serif" fill="#993c1d">No</text>
+      <rect x="110" y="340" width="180" height="36" rx="3" fill="#fdf0ea" stroke="#e05c2a" stroke-width="1.5"/>
+      <text x="200" y="362" text-anchor="middle" font-size="12" font-family="Syne,sans-serif" fill="#993c1d">Comprar nueva lámpara</text>
+      <line x1="200" y1="376" x2="200" y2="412" stroke="#888" stroke-width="1.5" marker-end="url(#a1)"/>
+      <ellipse cx="200" cy="432" rx="90" ry="22" fill="#d6e8f7" stroke="#2560a0" stroke-width="1.5"/>
+      <text x="200" y="437" text-anchor="middle" font-size="13" font-family="Syne,sans-serif" fill="#1a3a5c" font-weight="700">FIN</text>
+    </svg>
+  </div>
+
+  <h3>Pasos para formular un algoritmo</h3>
+  <ol class="pasos">
+    <li><span class="pn">1</span><span class="pt"><strong>Enunciar el problema:</strong> Definir claramente qué se quiere resolver. Recopilar datos y plantearlo desde una perspectiva amplia y a la vez puntual.</span></li>
+    <li><span class="pn">2</span><span class="pt"><strong>Analizar la solución:</strong> Cotejar los datos disponibles con las posibles soluciones. Explorar herramientas, fórmulas y aproximarse a distintas tentativas.</span></li>
+    <li><span class="pn">3</span><span class="pt"><strong>Elaborar el algoritmo:</strong> Elegir el tipo adecuado, plantearlo paso a paso y probarlo para verificar que resuelve el problema correctamente.</span></li>
+  </ol>
+</section>
+
+<!-- 5. EJEMPLOS -->
+<section class="seccion" id="ejemplos">
+  <h2>5. Ejemplos de algoritmos cotidianos</h2>
+
+  <h3>Ejemplo 1 — Lavarse los dientes</h3>
+  <div class="eps" style="margin-bottom:1rem;">
+    <div class="eps-i e-en"><div class="lbl">Entrada</div><div class="cnt">Cepillo, pasta dental, canilla.</div></div>
+    <div class="eps-i e-pr"><div class="lbl">Proceso</div><div class="cnt">Secuencia de pasos de higiene.</div></div>
+    <div class="eps-i e-sa"><div class="lbl">Salida</div><div class="cnt">Dientes limpios.</div></div>
+  </div>
+  <ol class="pasos">
+    <li><span class="pn">1</span><span class="pt">Ir hasta el baño.</span></li>
+    <li><span class="pn">2</span><span class="pt">Tomar el cepillo de dientes.</span></li>
+    <li><span class="pn">3</span><span class="pt">Tomar la pasta dental.</span></li>
+    <li><span class="pn">4</span><span class="pt">Colocar pasta suficiente en el cepillo (aprox. 1 cm).</span></li>
+    <li><span class="pn">5</span><span class="pt">Cepillarse los dientes durante 2 minutos en forma circular.</span></li>
+    <li><span class="pn">6</span><span class="pt">Abrir la canilla con agua fría.</span></li>
+    <li><span class="pn">7</span><span class="pt">Enjuagarse la boca completamente.</span></li>
+    <li><span class="pn">8</span><span class="pt">Guardar el cepillo en su lugar habitual.</span></li>
+  </ol>
+
+  <h3>Ejemplo 2 — Mayor de dos números (DFD)</h3>
+  <p>Ejemplo cuantitativo con decisión. El usuario ingresa dos números A y B:</p>
+  <div class="dfd-wrap">
+    <svg viewBox="0 0 440 340" width="400" aria-label="Diagrama de flujo para calcular el mayor de dos números A y B">
+      <title>Diagrama: Mayor de dos números</title>
+      <defs><marker id="a2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#888"/></marker></defs>
+      <ellipse cx="220" cy="28" rx="80" ry="20" fill="#d6e8f7" stroke="#2560a0" stroke-width="1.5"/>
+      <text x="220" y="33" text-anchor="middle" font-size="13" font-family="Syne,sans-serif" fill="#1a3a5c" font-weight="700">INICIO</text>
+      <line x1="220" y1="48" x2="220" y2="72" stroke="#888" stroke-width="1.5" marker-end="url(#a2)"/>
+      <polygon points="10,72 160,72 220,90 160,108 10,108 70,90" fill="#fff8e1" stroke="#d4a017" stroke-width="1.5"/>
+      <text x="95" y="95" text-anchor="middle" font-size="12" font-family="Syne,sans-serif" fill="#7a5800">Ingresar A y B</text>
+      <line x1="220" y1="108" x2="220" y2="148" stroke="#888" stroke-width="1.5" marker-end="url(#a2)"/>
+      <polygon points="220,148 300,183 220,218 140,183" fill="#fdf0ea" stroke="#e05c2a" stroke-width="1.5"/>
+      <text x="220" y="187" text-anchor="middle" font-size="13" font-family="Syne,sans-serif" fill="#993c1d" font-weight="700">A &gt; B ?</text>
+      <line x1="300" y1="183" x2="370" y2="183" stroke="#888" stroke-width="1.5" marker-end="url(#a2)"/>
+      <rect x="370" y="166" width="62" height="34" rx="3" fill="#fff8e1" stroke="#d4a017" stroke-width="1.5"/>
+      <text x="401" y="187" text-anchor="middle" font-size="11" font-family="Syne,sans-serif" fill="#7a5800">"A es mayor"</text>
+      <text x="328" y="174" font-size="10" font-family="Syne,sans-serif" fill="#1a6b3c">Sí</text>
+      <line x1="220" y1="218" x2="220" y2="254" stroke="#888" stroke-width="1.5" marker-end="url(#a2)"/>
+      <text x="228" y="242" font-size="10" font-family="Syne,sans-serif" fill="#993c1d">No</text>
+      <rect x="140" y="254" width="160" height="34" rx="3" fill="#fff8e1" stroke="#d4a017" stroke-width="1.5"/>
+      <text x="220" y="275" text-anchor="middle" font-size="11" font-family="Syne,sans-serif" fill="#7a5800">"B es mayor"</text>
+      <line x1="401" y1="200" x2="401" y2="290" stroke="#888" stroke-width="1" stroke-dasharray="4,3"/>
+      <line x1="401" y1="290" x2="300" y2="290" stroke="#888" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#a2)"/>
+      <line x1="220" y1="288" x2="220" y2="314" stroke="#888" stroke-width="1.5" marker-end="url(#a2)"/>
+      <ellipse cx="220" cy="330" rx="80" ry="18" fill="#d6e8f7" stroke="#2560a0" stroke-width="1.5"/>
+      <text x="220" y="335" text-anchor="middle" font-size="13" font-family="Syne,sans-serif" fill="#1a3a5c" font-weight="700">FIN</text>
+    </svg>
+  </div>
+
+  <div class="nota">
+    <strong>Conexión con la realidad laboral:</strong> Este mismo tipo de decisión (si A &gt; B) se usa para comparar precios, evaluar si un stock bajó del mínimo, o decidir si un empleado trabajó más horas de las pactadas. La lógica es idéntica.
+  </div>
+</section>
+
+<!-- 6. TAREA -->
+<section class="seccion" id="tarea">
+  <h2>6. Tarea: Algoritmos de la vida cotidiana</h2>
+
+  <div class="tarea-box">
+    <h3>Consigna</h3>
+    <p>Desarrollá <strong>3 algoritmos</strong> basados en situaciones de tu vida cotidiana o laboral. Cada algoritmo debe cumplir con <em>todos</em> los siguientes requisitos:</p>
+    <div class="t-req">
+      <ul>
+        <li>Mínimo 8 pasos — Máximo 15 pasos.</li>
+        <li>Identificar claramente las partes: <strong>Entrada, Proceso y Salida</strong>.</li>
+        <li>Los pasos deben ser concretos, precisos y sin ambigüedades.</li>
+        <li>Al menos 1 de los 3 algoritmos debe incluir una <strong>decisión</strong> (Sí/No).</li>
+        <li>Representar al menos 1 de los 3 como <strong>Diagrama de Flujo</strong> con la simbología correcta.</li>
+        <li>Al leer el algoritmo, cualquier compañero debe poder ejecutarlo sin hacer preguntas adicionales.</li>
+      </ul>
+    </div>
+    <p>Podés elegir entre estos temas o proponer el tuyo propio:</p>
+    <div class="t-chips">
+      <span class="t-chip">Cocinar un reviro</span>
+      <span class="t-chip">Hacer un asado</span>
+      <span class="t-chip">Plantar una planta</span>
+      <span class="t-chip">Cobrar en caja</span>
+      <span class="t-chip">Registrar una venta</span>
+      <span class="t-chip">Llamar por teléfono</span>
+      <span class="t-chip">Calcular un presupuesto</span>
+      <span class="t-chip">Verificar el stock</span>
+      <span class="t-chip">Pagar una factura de servicios</span>
+      <span class="t-chip">Tu propia idea…</span>
+    </div>
+  </div>
+
+  <div class="nota">
+    <strong>Para el perfil EPJA:</strong> Se recomienda elegir situaciones vinculadas al trabajo, el hogar o el emprendimiento propio. Un buen algoritmo de gestión (ej. "cómo registrar una venta en mi negocio") demuestra que entendés el concepto <em>y</em> lo podés aplicar a tu realidad.
+  </div>
+</section>
+
+<!-- 7. RÚBRICA -->
+<section class="seccion" id="rubrica">
+  <h2>7. Rúbrica de evaluación</h2>
+  <p>Cada criterio se evalúa en cuatro niveles. Puntaje total máximo: <strong>20 puntos</strong>.</p>
+
+  <div style="overflow-x:auto;">
+  <table class="rubrica">
+    <thead>
+      <tr>
+        <th style="background:var(--azul);color:white;text-align:left;min-width:140px;">Criterio</th>
+        <th class="r-ex">Excelente (4)</th>
+        <th class="r-bn">Bien (3)</th>
+        <th class="r-rg">Regular (2)</th>
+        <th class="r-in">En inicio (1)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="crit">1. Identificación de Entrada / Proceso / Salida</td>
+        <td class="n-ex">Identifica y diferencia claramente las 3 partes en cada algoritmo.</td>
+        <td class="n-bn">Las identifica en la mayoría de los algoritmos con pequeños errores.</td>
+        <td class="n-rg">Las menciona pero sin distinguirlas claramente.</td>
+        <td class="n-in">No identifica las partes o las confunde.</td>
+      </tr>
+      <tr>
+        <td class="crit">2. Precisión y claridad de los pasos</td>
+        <td class="n-ex">Todos los pasos son concretos, sin ambigüedades. Cualquier persona puede seguirlos.</td>
+        <td class="n-bn">La mayoría de los pasos son claros; alguno es vago o poco preciso.</td>
+        <td class="n-rg">Varios pasos son ambiguos o requieren interpretación.</td>
+        <td class="n-in">Los pasos son confusos, incompletos o desordenados.</td>
+      </tr>
+      <tr>
+        <td class="crit">3. Cantidad y secuencia de pasos</td>
+        <td class="n-ex">Cada algoritmo tiene entre 8 y 15 pasos en orden correcto y lógico.</td>
+        <td class="n-bn">Cumple el rango pero la secuencia tiene 1 o 2 errores de orden.</td>
+        <td class="n-rg">No respeta el rango (menos de 8 o más de 15 pasos).</td>
+        <td class="n-in">Los pasos están desordenados o faltan pasos esenciales.</td>
+      </tr>
+      <tr>
+        <td class="crit">4. Uso de decisiones (Si–Entonces)</td>
+        <td class="n-ex">Al menos 1 algoritmo incluye una decisión correctamente formulada con ambos caminos (Sí y No).</td>
+        <td class="n-bn">Incluye una decisión pero le falta uno de los caminos posibles.</td>
+        <td class="n-rg">Intenta incluir una decisión pero está mal formulada.</td>
+        <td class="n-in">No incluye ninguna decisión en ningún algoritmo.</td>
+      </tr>
+      <tr>
+        <td class="crit">5. Diagrama de Flujo (simbología)</td>
+        <td class="n-ex">El DFD usa los símbolos correctos (óvalo, rectángulo, rombo, paralelogramo, flechas) y refleja exactamente el algoritmo escrito.</td>
+        <td class="n-bn">Usa la mayoría de los símbolos correctamente; alguno equivocado.</td>
+        <td class="n-rg">El DFD existe pero tiene varios errores de simbología.</td>
+        <td class="n-in">No presenta DFD o es irreconocible.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <p style="margin-top:1rem;font-size:13px;color:var(--texto-suave);">Escala: 17–20 = Excelente &nbsp;·&nbsp; 13–16 = Muy bueno &nbsp;·&nbsp; 9–12 = Bueno &nbsp;·&nbsp; 5–8 = Regular &nbsp;·&nbsp; 1–4 = En inicio.</p>
+
+  <h3>Autoevaluación — Antes de entregar, verificá tu trabajo</h3>
+  <p style="font-size:14px;">Marcá cada ítem según tu propio análisis honesto:</p>
+
+  <div class="auto-grid">
+    <div class="auto-item">
+      <span class="auto-q">¿Identifiqué la Entrada, el Proceso y la Salida en cada algoritmo?</span>
+      <div class="auto-ops">
+        <button class="auto-btn" onclick="marcar(this,'si')">Sí</button>
+        <button class="auto-btn" onclick="marcar(this,'no')">No</button>
+        <button class="auto-btn" onclick="marcar(this,'duda')">Tengo dudas</button>
+      </div>
+    </div>
+    <div class="auto-item">
+      <span class="auto-q">¿Cada paso es concreto y libre de palabras vagas como "un poco", "rápido", "varios"?</span>
+      <div class="auto-ops">
+        <button class="auto-btn" onclick="marcar(this,'si')">Sí</button>
+        <button class="auto-btn" onclick="marcar(this,'no')">No</button>
+        <button class="auto-btn" onclick="marcar(this,'duda')">Tengo dudas</button>
+      </div>
+    </div>
+    <div class="auto-item">
+      <span class="auto-q">¿Mis algoritmos tienen entre 8 y 15 pasos cada uno?</span>
+      <div class="auto-ops">
+        <button class="auto-btn" onclick="marcar(this,'si')">Sí</button>
+        <button class="auto-btn" onclick="marcar(this,'no')">No</button>
+        <button class="auto-btn" onclick="marcar(this,'duda')">Tengo dudas</button>
+      </div>
+    </div>
+    <div class="auto-item">
+      <span class="auto-q">¿Al menos uno de mis algoritmos incluye una decisión Sí/No con ambos caminos?</span>
+      <div class="auto-ops">
+        <button class="auto-btn" onclick="marcar(this,'si')">Sí</button>
+        <button class="auto-btn" onclick="marcar(this,'no')">No</button>
+        <button class="auto-btn" onclick="marcar(this,'duda')">Tengo dudas</button>
+      </div>
+    </div>
+    <div class="auto-item">
+      <span class="auto-q">¿Presenté al menos un DFD con los símbolos correctos (óvalo, rectángulo, rombo)?</span>
+      <div class="auto-ops">
+        <button class="auto-btn" onclick="marcar(this,'si')">Sí</button>
+        <button class="auto-btn" onclick="marcar(this,'no')">No</button>
+        <button class="auto-btn" onclick="marcar(this,'duda')">Tengo dudas</button>
+      </div>
+    </div>
+    <div class="auto-item">
+      <span class="auto-q">¿Si le diera mis algoritmos a un compañero, podría seguirlos sin hacerme preguntas?</span>
+      <div class="auto-ops">
+        <button class="auto-btn" onclick="marcar(this,'si')">Sí</button>
+        <button class="auto-btn" onclick="marcar(this,'no')">No</button>
+        <button class="auto-btn" onclick="marcar(this,'duda')">Tengo dudas</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. PLANIFICACIÓN -->
+<section class="seccion" id="planificacion">
+  <h2>8. Planificación anual 2026</h2>
+
+  <div class="trim-grid">
+    <div class="trim-card t1">
+      <div class="trim-hdr">1er Trimestre — Introducción</div>
+      <div class="trim-body">
+        <ul>
+          <li>Definición y características del algoritmo.</li>
+          <li>Las 3 partes: Entrada, Proceso, Salida.</li>
+          <li>Tipos: cualitativos y cuantitativos.</li>
+          <li>Algoritmos cotidianos vinculados al trabajo y hogar.</li>
+          <li>Pasos para formular: Enunciar, Analizar, Elaborar.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="trim-card t2">
+      <div class="trim-hdr">2do Trimestre — Representación</div>
+      <div class="trim-body">
+        <ul>
+          <li>Diagramas de Flujo: simbología estándar completa.</li>
+          <li>Resolución de problemas simples con DFD.</li>
+          <li>Estructuras de decisión: Si–Entonces.</li>
+          <li>Introducción al pseudocódigo.</li>
+          <li>Software PSeInt: primeros diagramas digitales.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="trim-card t3">
+      <div class="trim-hdr">3er Trimestre — Control</div>
+      <div class="trim-body">
+        <ul>
+          <li>Variables y constantes: concepto y uso.</li>
+          <li>Estructuras de repetición: Mientras y Hasta.</li>
+          <li>Algoritmos aplicados a economía doméstica y laboral.</li>
+          <li>Proyecto final: pseudocódigo + DFD (8–15 pasos).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="nota">
+    <strong>Nota EPJA (18–50 años):</strong> Los ejercicios del 3er trimestre se aplican preferentemente a situaciones de economía doméstica o laboral — cálculo de presupuesto, control de stock de un emprendimiento, liquidación de horas trabajadas — para mantener el interés y la relevancia práctica.
+  </div>
+</section>
+
+<!-- 9. GLOSARIO -->
+<section class="seccion" id="glosario">
+  <h2>9. Glosario de términos clave</h2>
+
+  <div class="glos">
+    <div class="glos-item"><span class="glos-t">Algoritmo</span><span class="glos-d">Secuencia de pasos lógicos, ordenados y finitos para resolver un problema o realizar una tarea.</span></div>
+    <div class="glos-item"><span class="glos-t">Variable</span><span class="glos-d">Espacio en la memoria que almacena un dato que puede cambiar durante la ejecución. Ej: precio, nombre, cantidad.</span></div>
+    <div class="glos-item"><span class="glos-t">Constante</span><span class="glos-d">Valor fijo que no cambia durante la ejecución. Ej: IVA del 21%, precio de un producto fijo.</span></div>
+    <div class="glos-item"><span class="glos-t">Entrada</span><span class="glos-d">Datos o recursos que se necesitan al inicio del algoritmo para poder ejecutarlo.</span></div>
+    <div class="glos-item"><span class="glos-t">Proceso</span><span class="glos-d">Conjunto de acciones o transformaciones que se realizan con los datos de entrada.</span></div>
+    <div class="glos-item"><span class="glos-t">Salida</span><span class="glos-d">Resultado que produce el algoritmo después de ejecutar todos sus pasos.</span></div>
+    <div class="glos-item"><span class="glos-t">Diagrama de Flujo</span><span class="glos-d">Representación gráfica de un algoritmo usando símbolos estandarizados y flechas para mostrar el orden de los pasos.</span></div>
+    <div class="glos-item"><span class="glos-t">Condicional (Si–Entonces)</span><span class="glos-d">Estructura de decisión que ejecuta distintos pasos según si una condición es verdadera o falsa.</span></div>
+    <div class="glos-item"><span class="glos-t">Bucle (repetición)</span><span class="glos-d">Estructura que repite un conjunto de pasos mientras se cumpla una condición determinada.</span></div>
+    <div class="glos-item"><span class="glos-t">Pseudocódigo</span><span class="glos-d">Forma de escribir un algoritmo en lenguaje casi natural pero con estructura técnica, sin depender de un lenguaje de programación específico.</span></div>
+    <div class="glos-item"><span class="glos-t">PSeInt</span><span class="glos-d">Software gratuito que permite escribir pseudocódigo y visualizar su ejecución mediante diagramas de flujo.</span></div>
+    <div class="glos-item"><span class="glos-t">Ambigüedad</span><span class="glos-d">Cuando un paso puede interpretarse de más de una manera. Un buen algoritmo NO debe ser ambiguo.</span></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>E.P.E.T N°7 (EPJA) — Jardín América, Misiones &nbsp;·&nbsp; Programación Lógica · 2° Año A y B &nbsp;·&nbsp; Prof. Markwart Rubén &nbsp;·&nbsp; Ciclo Lectivo 2026</p>
+</footer>
+
+<script>
+  function marcar(btn, tipo) {
+    const grupo = btn.closest('.auto-ops');
+    grupo.querySelectorAll('.auto-btn').forEach(b => {
+      b.classList.remove('sel-si', 'sel-no', 'sel-duda');
+    });
+    btn.classList.add('sel-' + tipo);
+  }
+
+  /* Scroll suave para navegadores que no soporten scroll-behavior */
+  document.querySelectorAll('nav a').forEach(link => {
+    link.addEventListener('click', function(e) {
+      const href = this.getAttribute('href');
+      if (href.startsWith('#')) {
+        e.preventDefault();
+        const target = document.querySelector(href);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    });
+  });
+</script>
+
+<script>
+(function () {
+  const h1 = document.querySelector('.encabezado h1') || document.querySelector('header h1') || document.querySelector('h1');
+  if (!h1) return;
+  let counter = 0;
+  function walk(node) {
+    if (node.nodeType === 3) {
+      const text = node.textContent;
+      if (!text || !text.trim()) return;
+      const frag = document.createDocumentFragment();
+      for (const ch of text) {
+        if (ch === ' ' || ch === '\n' || ch === '\t') {
+          frag.appendChild(document.createTextNode(ch));
+        } else {
+          const s = document.createElement('span');
+          s.className = 'al';
+          s.style.setProperty('--i', counter++);
+          s.textContent = ch;
+          frag.appendChild(s);
+        }
+      }
+      node.parentNode.replaceChild(frag, node);
+    } else if (node.nodeType === 1) {
+      const tag = node.tagName.toLowerCase();
+      if (tag === 'br') return;
+      [...node.childNodes].forEach(walk);
+    }
+  }
+  walk(h1);
+})();
+</script>
+</body>
+</html>
