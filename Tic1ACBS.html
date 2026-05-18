@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TIC · CEP N° 38 — Material 2026</title>
+<meta name="description" content="Portal de materiales de Tecnología de la Información y la Comunicación — 1° A · CBS — Prof. Rubén Markwart" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --navy: #0f2c52;
+    --navy-2: #1f3a68;
+    --navy-soft: #2a4a7f;
+    --gold: #c8a14a;
+    --gold-soft: #e8c97a;
+    --cream: #faf6ee;
+    --cream-2: #f3ebd9;
+    --paper: #fdfbf5;
+    --ink: #1a2438;
+    --ink-soft: #4a5878;
+    --line: #d9cfb8;
+    --rust: #b34a2a;
+    --teal: #2c6e6a;
+    --shadow: 0 1px 2px rgba(15, 44, 82, 0.06), 0 8px 24px rgba(15, 44, 82, 0.08);
+    --shadow-hover: 0 4px 8px rgba(15, 44, 82, 0.1), 0 16px 40px rgba(15, 44, 82, 0.14);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.55;
+    font-weight: 400;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(circle at 8% 12%, rgba(200, 161, 74, 0.08) 0%, transparent 35%),
+      radial-gradient(circle at 92% 88%, rgba(15, 44, 82, 0.05) 0%, transparent 40%);
+  }
+
+  /* ============ HEADER ============ */
+  header {
+    position: relative;
+    background: var(--navy);
+    color: var(--cream);
+    padding: 4rem 2rem 3.5rem;
+    overflow: hidden;
+    border-bottom: 4px double var(--gold);
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(45deg, transparent 0, transparent 60px, rgba(200, 161, 74, 0.03) 60px, rgba(200, 161, 74, 0.03) 61px),
+      repeating-linear-gradient(-45deg, transparent 0, transparent 60px, rgba(200, 161, 74, 0.03) 60px, rgba(200, 161, 74, 0.03) 61px);
+    pointer-events: none;
+  }
+
+  .header-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 3rem;
+    align-items: end;
+  }
+
+  .header-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-soft);
+    margin-bottom: 1.2rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .header-eyebrow::before {
+    content: '';
+    width: 32px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  h1.title {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: clamp(2.4rem, 5.5vw, 4.4rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.2rem;
+  }
+
+  h1.title em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--gold-soft);
+  }
+
+  .header-meta {
+    font-size: 1rem;
+    color: rgba(250, 246, 238, 0.78);
+    max-width: 580px;
+    line-height: 1.6;
+  }
+
+  .header-meta strong {
+    color: var(--cream);
+    font-weight: 500;
+  }
+
+  .compass {
+    width: 130px;
+    height: 130px;
+    flex-shrink: 0;
+    opacity: 0.92;
+    animation: rotate 60s linear infinite;
+  }
+
+  @keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* ============ INFO STRIP ============ */
+  .info-strip {
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+    padding: 1.5rem 2rem;
+  }
+
+  .info-strip-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+  }
+
+  .info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .info-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.66rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .info-value {
+    font-family: 'Fraunces', serif;
+    font-size: 1.05rem;
+    color: var(--navy);
+    font-weight: 500;
+  }
+
+  /* ============ MAIN ============ */
+  main {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 4rem 2rem 6rem;
+  }
+
+  .section {
+    margin-bottom: 4.5rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .section-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    font-weight: 500;
+  }
+
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+    flex: 1;
+  }
+
+  .section-desc {
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+    max-width: 700px;
+    margin-top: -1rem;
+    margin-bottom: 2rem;
+    font-style: italic;
+  }
+
+  /* ============ CARDS ============ */
+  .grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+  .card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 2rem 1.8rem;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: var(--gold);
+    transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
+    border-color: var(--navy-2);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .card:hover::before {
+    width: 100%;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .card-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.66rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    padding: 0.3rem 0.6rem;
+    background: var(--cream-2);
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  .card-tag.tag-doc { color: var(--rust); background: #fbe8df; }
+  .card-tag.tag-eval { color: var(--teal); background: #d8eae8; }
+  .card-tag.tag-act { color: var(--navy-2); background: #d6e3f3; }
+  .card-tag.tag-plan { color: #6b4d8a; background: #e8dff0; }
+
+  .card-icon {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+  }
+
+  .card-title {
+    font-family: 'Fraunces', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--navy);
+    line-height: 1.15;
+    letter-spacing: -0.005em;
+  }
+
+  .card-desc {
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    flex-grow: 1;
+  }
+
+  .card-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--line);
+    margin-top: 0.5rem;
+  }
+
+  .card-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+  }
+
+  .card-action {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--navy);
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: gap 0.25s ease;
+  }
+
+  .card:hover .card-action {
+    gap: 0.7rem;
+    color: var(--gold);
+  }
+
+  /* ============ FEATURED CARD (cuadernillo) ============ */
+  .featured {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-soft) 100%);
+    color: var(--cream);
+    border: none;
+    padding: 2.8rem 2.5rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  .featured::before { background: var(--gold-soft); }
+
+  .featured .card-tag {
+    background: rgba(200, 161, 74, 0.2);
+    color: var(--gold-soft);
+  }
+
+  .featured .card-title {
+    color: var(--cream);
+    font-size: 1.9rem;
+    margin-top: 1rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .featured .card-desc {
+    color: rgba(250, 246, 238, 0.8);
+    font-size: 1rem;
+    max-width: 580px;
+  }
+
+  .featured .card-action {
+    color: var(--gold-soft);
+  }
+
+  .featured .card-foot {
+    border-top-color: rgba(200, 161, 74, 0.25);
+  }
+
+  .featured .card-meta {
+    color: rgba(250, 246, 238, 0.6);
+  }
+
+  .featured:hover {
+    border: none;
+  }
+
+  .featured:hover .card-action {
+    color: var(--gold-soft);
+  }
+
+  .featured-stat {
+    text-align: right;
+    border-left: 1px solid rgba(200, 161, 74, 0.3);
+    padding-left: 2.5rem;
+  }
+
+  .featured-stat-num {
+    font-family: 'Fraunces', serif;
+    font-size: 4rem;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--gold-soft);
+    letter-spacing: -0.03em;
+  }
+
+  .featured-stat-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(250, 246, 238, 0.7);
+    margin-top: 0.4rem;
+  }
+
+  /* ============ FOOTER ============ */
+  footer {
+    background: var(--navy);
+    color: rgba(250, 246, 238, 0.7);
+    padding: 3rem 2rem 2.5rem;
+    border-top: 4px double var(--gold);
+  }
+
+  .footer-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .footer-brand {
+    font-family: 'Fraunces', serif;
+    color: var(--cream);
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-text {
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+
+  .footer-col h4 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold-soft);
+    margin-bottom: 0.8rem;
+    font-weight: 500;
+  }
+
+  .footer-col p,
+  .footer-col li {
+    font-size: 0.85rem;
+    line-height: 1.7;
+  }
+
+  .footer-col ul { list-style: none; }
+
+  .footer-bottom {
+    max-width: 1180px;
+    margin: 2.5rem auto 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(200, 161, 74, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(250, 246, 238, 0.5);
+  }
+
+  /* ============ STAGGERED ENTRANCE ============ */
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card {
+    animation: rise 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  }
+
+  .grid > .card:nth-child(1) { animation-delay: 0.05s; }
+  .grid > .card:nth-child(2) { animation-delay: 0.12s; }
+  .grid > .card:nth-child(3) { animation-delay: 0.19s; }
+  .grid > .card:nth-child(4) { animation-delay: 0.26s; }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 880px) {
+    header { padding: 2.5rem 1.5rem 2.5rem; }
+    .header-inner { grid-template-columns: 1fr; gap: 1.5rem; }
+    .compass { width: 80px; height: 80px; align-self: flex-start; }
+    .info-strip-inner { grid-template-columns: repeat(2, 1fr); gap: 1.2rem; }
+    main { padding: 2.5rem 1.2rem 4rem; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .featured { grid-template-columns: 1fr; padding: 2rem 1.5rem; gap: 1.5rem; }
+    .featured-stat { text-align: left; border-left: none; border-top: 1px solid rgba(200, 161, 74, 0.3); padding-left: 0; padding-top: 1.5rem; }
+    .footer-inner { grid-template-columns: 1fr; gap: 2rem; }
+    .footer-bottom { flex-direction: column; gap: 0.8rem; text-align: center; }
+    .section-header { flex-direction: column; gap: 0.4rem; align-items: flex-start; }
+  }
+
+/* ── Letter-by-letter title animation ── */
+h1.title { perspective: 900px; }
+.al {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(38px) rotateX(-38deg);
+  transform-origin: 50% 80%;
+  animation: al-in 0.85s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  animation-delay: calc(var(--i, 0) * 55ms + 0.25s);
+  will-change: transform, opacity;
+}
+@keyframes al-in {
+  to { opacity: 1; transform: translateY(0) rotateX(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .al { animation-duration: .01ms !important; animation-delay: 0 !important; opacity: 1 !important; transform: none !important; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div>
+      <span class="header-eyebrow">CEP N° 38 · Jardín América · Misiones</span>
+      <h1 class="title">Tecnología de la Información<br/>y la <em>Comunicación</em></h1>
+      <p class="header-meta">
+        Material didáctico completo para <strong>1° A · CBS</strong> — ciclo lectivo 2026.
+        Cuadernillo, planificación, actividades y evaluaciones organizadas por unidad.
+      </p>
+    </div>
+
+    <!-- Brújula inspirada en "Navegantes Digitales" -->
+    <svg class="compass" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="50" cy="50" r="46" fill="none" stroke="#c8a14a" stroke-width="1.2"/>
+      <circle cx="50" cy="50" r="38" fill="none" stroke="#c8a14a" stroke-width="0.6" stroke-dasharray="2 2"/>
+      <circle cx="50" cy="50" r="3" fill="#c8a14a"/>
+      <!-- Aguja N -->
+      <polygon points="50,8 53,50 50,52 47,50" fill="#e8c97a"/>
+      <polygon points="50,8 50,52 47,50" fill="#c8a14a"/>
+      <!-- Aguja S -->
+      <polygon points="50,92 53,50 50,48 47,50" fill="#1f3a68" opacity="0.7"/>
+      <!-- Letras cardinales -->
+      <text x="50" y="6" text-anchor="middle" fill="#c8a14a" font-family="Fraunces, serif" font-size="6" font-weight="700">N</text>
+      <text x="94" y="52" text-anchor="middle" fill="#c8a14a" font-family="Fraunces, serif" font-size="5">E</text>
+      <text x="50" y="98" text-anchor="middle" fill="#c8a14a" font-family="Fraunces, serif" font-size="5">S</text>
+      <text x="6" y="52" text-anchor="middle" fill="#c8a14a" font-family="Fraunces, serif" font-size="5">W</text>
+    </svg>
+  </div>
+</header>
+
+<div class="info-strip">
+  <div class="info-strip-inner">
+    <div class="info-item">
+      <span class="info-label">Docente</span>
+      <span class="info-value">Rubén Markwart</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Modalidad</span>
+      <span class="info-value">CBS</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Orientación</span>
+      <span class="info-value">Cs. Naturales y Sociales</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Articulación</span>
+      <span class="info-value">Música + TIC</span>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- ============ SECCIÓN 1: BASE TEÓRICA ============ -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-num">01 / Marco</span>
+      <h2 class="section-title">Base teórica y curricular</h2>
+    </div>
+    <p class="section-desc">El cuadernillo principal, la planificación anual y la guía visual de herramientas digitales que sostienen el recorrido del año.</p>
+
+    <div class="grid grid-2">
+
+      <!-- Featured: Cuadernillo -->
+      <a href="TIC_1A_CBS.pdf" class="card featured" target="_blank" rel="noopener">
+        <div>
+          <span class="card-tag">Cuadernillo principal</span>
+          <h3 class="card-title">TIC para 1° A · CBS</h3>
+          <p class="card-desc">Material teórico completo organizado en 4 unidades: introducción a las TIC, hardware e informática, manejo de la información y evolución histórica, y herramientas digitales para la gestión.</p>
+          <div class="card-foot">
+            <span class="card-meta">PDF · 20 páginas</span>
+            <span class="card-action">Abrir cuadernillo →</span>
+          </div>
+        </div>
+        <div class="featured-stat">
+          <div class="featured-stat-num">04</div>
+          <div class="featured-stat-label">Unidades</div>
+        </div>
+      </a>
+
+      <!-- Planificación -->
+      <a href="Planificacion_tic.pdf" class="card" target="_blank" rel="noopener">
+        <div class="card-header">
+          <span class="card-tag tag-plan">Institucional</span>
+          <svg class="card-icon" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="8" y="6" width="24" height="30" rx="1" fill="none" stroke="#1f3a68" stroke-width="1.5"/>
+            <line x1="13" y1="13" x2="27" y2="13" stroke="#c8a14a" stroke-width="1.2"/>
+            <line x1="13" y1="19" x2="27" y2="19" stroke="#c8a14a" stroke-width="1.2"/>
+            <line x1="13" y1="25" x2="22" y2="25" stroke="#c8a14a" stroke-width="1.2"/>
+            <circle cx="29" cy="32" r="3" fill="#c8a14a"/>
+          </svg>
+        </div>
+        <h3 class="card-title">Planificación anual 2026</h3>
+        <p class="card-desc">Fundamentación, propósitos formativos, objetivos por capacidad, eje transversal con Música, contenidos por trimestre, criterios de promoción y bibliografía.</p>
+        <div class="card-foot">
+          <span class="card-meta">PDF · Formato tabla</span>
+          <span class="card-action">Ver planificación →</span>
+        </div>
+      </a>
+
+      <!-- Navegantes Digitales -->
+      <a href="Navegantes_Digitales_Estrategicos.pdf" class="card" target="_blank" rel="noopener">
+        <div class="card-header">
+          <span class="card-tag tag-doc">Guía visual</span>
+          <svg class="card-icon" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="20" cy="20" r="14" fill="none" stroke="#1f3a68" stroke-width="1.5"/>
+            <circle cx="20" cy="20" r="2" fill="#c8a14a"/>
+            <polygon points="20,8 22,20 20,21 18,20" fill="#c8a14a"/>
+            <polygon points="20,32 22,20 18,20" fill="#1f3a68" opacity="0.6"/>
+          </svg>
+        </div>
+        <h3 class="card-title">Navegantes Digitales</h3>
+        <p class="card-desc">Guía táctica visual para dominar Google Docs, Canva y Audacity. Atajos de teclado, criterios de búsqueda responsable y el "Paso de Oro" para licencias Creative Commons.</p>
+        <div class="card-foot">
+          <span class="card-meta">PDF · 17 láminas</span>
+          <span class="card-action">Abrir guía →</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ============ SECCIÓN 2: ACTIVIDADES ============ -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-num">02 / Práctica</span>
+      <h2 class="section-title">Actividades de clase</h2>
+    </div>
+    <p class="section-desc">Trabajos prácticos para consolidar los conceptos del cuadernillo. Pensados para resolver de forma individual en clase.</p>
+
+    <div class="grid grid-2">
+
+      <!-- Actividad: Mundo de las TIC -->
+      <a href="Actividad_El_Mundo_de_las_TIC_vs_Otros_Inventos.pdf" class="card" target="_blank" rel="noopener">
+        <div class="card-header">
+          <span class="card-tag tag-act">Actividad</span>
+          <svg class="card-icon" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="6" y="10" width="12" height="20" rx="1" fill="none" stroke="#1f3a68" stroke-width="1.4"/>
+            <rect x="22" y="10" width="12" height="20" rx="1" fill="none" stroke="#c8a14a" stroke-width="1.4"/>
+            <circle cx="12" cy="16" r="1.2" fill="#1f3a68"/>
+            <circle cx="12" cy="20" r="1.2" fill="#1f3a68"/>
+            <circle cx="12" cy="24" r="1.2" fill="#1f3a68"/>
+            <circle cx="28" cy="16" r="1.2" fill="#c8a14a"/>
+            <circle cx="28" cy="20" r="1.2" fill="#c8a14a"/>
+            <circle cx="28" cy="24" r="1.2" fill="#c8a14a"/>
+          </svg>
+        </div>
+        <h3 class="card-title">El Mundo de las TIC vs. Otros Inventos</h3>
+        <p class="card-desc">Desafío del intruso: identificar qué inventos son TIC y cuáles no. Después, clasificarlos en TIC antiguas/mecánicas vs. TIC modernas/digitales con reflexión final.</p>
+        <div class="card-foot">
+          <span class="card-meta">Unidad 3 · Para Cuadernillo Pág. 13-15</span>
+          <span class="card-action">Descargar actividad →</span>
+        </div>
+      </a>
+
+      <!-- Actividad: Almacenamiento (versión corregida) -->
+      <a href="Actividad_medidas_de_almacenamiento_corregida.pdf" class="card" target="_blank" rel="noopener">
+        <div class="card-header">
+          <span class="card-tag tag-act">Actividad</span>
+          <svg class="card-icon" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <ellipse cx="20" cy="11" rx="11" ry="3" fill="none" stroke="#1f3a68" stroke-width="1.4"/>
+            <path d="M9 11 V20 Q9 23 20 23 Q31 23 31 20 V11" fill="none" stroke="#1f3a68" stroke-width="1.4"/>
+            <path d="M9 20 V29 Q9 32 20 32 Q31 32 31 29 V20" fill="none" stroke="#c8a14a" stroke-width="1.4"/>
+          </svg>
+        </div>
+        <h3 class="card-title">Dominando las Unidades de Almacenamiento</h3>
+        <p class="card-desc">Verdadero/falso, selección múltiple, problemas prácticos (pendrive, palabras, canciones MP3) y un desafío de investigación. Versión revisada para 1° A CBS.</p>
+        <div class="card-foot">
+          <span class="card-meta">Unidad 3 · Pág. 12 cuadernillo</span>
+          <span class="card-action">Descargar actividad →</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ============ SECCIÓN 3: EVALUACIONES ============ -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-num">03 / Evaluación</span>
+      <h2 class="section-title">Exámenes</h2>
+    </div>
+    <p class="section-desc">Instrumentos de evaluación escritos para 1° trimestre. Diseñados para imprimir directamente.</p>
+
+    <div class="grid grid-2">
+
+      <!-- Examen proceso -->
+      <a href="examen_proceso_tic.pdf" class="card" target="_blank" rel="noopener">
+        <div class="card-header">
+          <span class="card-tag tag-eval">Examen</span>
+          <svg class="card-icon" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="8" y="5" width="24" height="30" rx="1" fill="none" stroke="#2c6e6a" stroke-width="1.5"/>
+            <line x1="13" y1="12" x2="27" y2="12" stroke="#2c6e6a" stroke-width="1.2"/>
+            <line x1="13" y1="17" x2="27" y2="17" stroke="#2c6e6a" stroke-width="1.2"/>
+            <line x1="13" y1="22" x2="23" y2="22" stroke="#2c6e6a" stroke-width="1.2"/>
+            <path d="M22 27 L25 30 L30 25" fill="none" stroke="#c8a14a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3 class="card-title">Examen — Proceso de la Información</h3>
+        <p class="card-desc">Completar el diagrama del proceso de información, definir hardware y software con ejemplos, infraestructuras de telecomunicaciones y sus 9 componentes básicos.</p>
+        <div class="card-foot">
+          <span class="card-meta">Unidades 1 y 2 · 5 consignas</span>
+          <span class="card-action">Descargar examen →</span>
+        </div>
+      </a>
+
+      <!-- Examen especialidades -->
+      <a href="examen_Especialidades.pdf" class="card" target="_blank" rel="noopener">
+        <div class="card-header">
+          <span class="card-tag tag-eval">Examen</span>
+          <svg class="card-icon" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="8" y="5" width="24" height="30" rx="1" fill="none" stroke="#2c6e6a" stroke-width="1.5"/>
+            <circle cx="14" cy="13" r="1.4" fill="#c8a14a"/>
+            <circle cx="14" cy="19" r="1.4" fill="#c8a14a"/>
+            <circle cx="14" cy="25" r="1.4" fill="#c8a14a"/>
+            <line x1="18" y1="13" x2="28" y2="13" stroke="#2c6e6a" stroke-width="1.2"/>
+            <line x1="18" y1="19" x2="28" y2="19" stroke="#2c6e6a" stroke-width="1.2"/>
+            <line x1="18" y1="25" x2="26" y2="25" stroke="#2c6e6a" stroke-width="1.2"/>
+          </svg>
+        </div>
+        <h3 class="card-title">Examen — Especialidades de la Informática</h3>
+        <p class="card-desc">Origen de la palabra "informática", disciplinas que la nutren, identificación de sus 7 especialidades, definición de sistema informático con sus componentes y CPU.</p>
+        <div class="card-foot">
+          <span class="card-meta">Unidad 2 · 6 consignas</span>
+          <span class="card-action">Descargar examen →</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">CEP N° 38 — TIC 2026</div>
+      <p class="footer-text">
+        Centro Educativo Polimodal N° 38, Ciclo Básico Secundario.<br/>
+        Jardín América, Misiones. República Argentina.
+      </p>
+    </div>
+    <div class="footer-col">
+      <h4>Cátedra</h4>
+      <p>Prof. Rubén Markwart<br/>1° A · CBS<br/>Ciclo Lectivo 2026</p>
+    </div>
+    <div class="footer-col">
+      <h4>Articulación</h4>
+      <p>Lengua · Música · TIC<br/>Producción multimedia<br/>Google Docs · Canva · Audacity</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>Material didáctico institucional</span>
+    <span>Provincia de Misiones · CGE</span>
+  </div>
+</footer>
+
+
+<script>
+(function () {
+  const h1 = document.querySelector('h1.title') || document.querySelector('header h1') || document.querySelector('h1');
+  if (!h1) return;
+  let counter = 0;
+  function walk(node) {
+    if (node.nodeType === 3) {
+      const text = node.textContent;
+      if (!text || !text.trim()) return;
+      const frag = document.createDocumentFragment();
+      for (const ch of text) {
+        if (ch === ' ' || ch === '\n' || ch === '\t') {
+          frag.appendChild(document.createTextNode(ch));
+        } else {
+          const s = document.createElement('span');
+          s.className = 'al';
+          s.style.setProperty('--i', counter++);
+          s.textContent = ch;
+          frag.appendChild(s);
+        }
+      }
+      node.parentNode.replaceChild(frag, node);
+    } else if (node.nodeType === 1) {
+      const tag = node.tagName.toLowerCase();
+      if (tag === 'br') return;
+      [...node.childNodes].forEach(walk);
+    }
+  }
+  walk(h1);
+})();
+</script>
+</body>
+</html>
