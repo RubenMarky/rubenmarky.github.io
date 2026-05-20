@@ -1,0 +1,17 @@
+body {
+  font-family: Arial;
+  text-align: center;
+  background: #f4f4f4;
+}
+
+input, button {
+  margin: 5px;
+  padding: 10px;
+}
+
+li {
+  list-style: none;
+  background: white;
+  margin: 5px;
+  padding: 10px;
+}
