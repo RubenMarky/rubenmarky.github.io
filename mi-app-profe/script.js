@@ -3,6 +3,8 @@ let alumnos = JSON.parse(localStorage.getItem("alumnos")) || [];
 mostrarAlumnos();
 
 function agregarAlumno() {
+  document.getElementById("nombre").value = "";
+  document.getElementById("nota").value = "";
   let nombre = document.getElementById("nombre").value;
   let nota = document.getElementById("nota").value;
 
