@@ -34,10 +34,15 @@ function mostrarAlumnos() {
     let li = document.createElement("li");
     li.textContent = alumno.nombre + " - Nota: " + alumno.nota;
 
-    // ❌ eliminar
-    let btnEliminar = document.createElement("button");
-    btnEliminar.textContent = "❌";
-    btnEliminar.onclick = () => eliminarAlumno(index);
+function eliminarAlumno(index) {
+  let confirmar = confirm("¿Estás seguro que querés eliminar este alumno?");
+
+  if (confirmar) {
+    alumnos.splice(index, 1);
+    guardarDatos();
+    mostrarAlumnos();
+  }
+}
 
     // ✏️ editar
     let btnEditar = document.createElement("button");
