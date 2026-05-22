@@ -71,7 +71,8 @@
   .hero-tag::before { content:''; width:7px; height:7px; background:var(--acc); border-radius:50%; animation:blink 2.2s ease infinite; }
   @keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.3;transform:scale(.65)} }
   .hero h1 { font-weight:800; font-size:clamp(2.5rem,6.5vw,5rem); line-height:1.06; letter-spacing:-.025em; margin-bottom:1.6rem; animation:fadeUp .8s .12s ease both; }
-  .grad-teal { background:linear-gradient(90deg,var(--teal) 0%,var(--green) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .grad-teal { color:var(--teal); }
+  .grad-teal .al { background:linear-gradient(90deg,var(--teal) 0%,var(--green) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; color:transparent; }
   .hero-sub { font-size:1.05rem; color:var(--muted); max-width:580px; margin:0 auto 3rem; line-height:1.75; animation:fadeUp .8s .25s ease both; }
   .hero-badges { display:flex; flex-wrap:wrap; gap:.7rem; justify-content:center; animation:fadeUp .8s .4s ease both; }
   .badge { background:var(--bg3); border:1px solid var(--border); color:var(--text); font-family:'Space Mono',monospace; font-size:.7rem; padding:.38rem .9rem; border-radius:2px; letter-spacing:.05em; }
