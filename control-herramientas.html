@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control de Herramientas · E.P.E.T N°7</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+:root {
+  --ink: #0c1320;
+  --ink-soft: #1a2436;
+  --paper: #f4f1ea;
+  --paper-2: #e9e4d8;
+  --line: #cbc4b3;
+  --orange: #ff5722;
+  --orange-2: #ff7a4d;
+  --steel: #1f4e79;
+  --steel-2: #2a6bb0;
+  --green: #1f7a4d;
+  --amber: #e8a400;
+  --red: #c0392b;
+  --shadow: 4px 4px 0 var(--ink);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Sora', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── HEADER ── */
+header {
+  background: var(--ink);
+  color: #fff;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.header-title { display: flex; flex-direction: column; gap: 0.1rem; }
+.header-title h1 {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: clamp(1rem, 3vw, 1.4rem);
+  letter-spacing: -0.5px;
+}
+.header-title small {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  color: #adb8c9;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.btn-config {
+  background: transparent;
+  border: 2px solid rgba(255,255,255,0.3);
+  color: #fff;
+  padding: 0.4rem 0.9rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  cursor: pointer;
+  border-radius: 0;
+  transition: background 0.2s;
+}
+.btn-config:hover { background: rgba(255,255,255,0.1); }
+
+/* ── NAV TABS ── */
+nav {
+  background: var(--ink-soft);
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+nav::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 0.75rem 1.25rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #7a8ca0;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+.tab:hover { color: #fff; }
+.tab.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+/* ── MAIN LAYOUT ── */
+main { flex: 1; padding: 1.5rem; max-width: 1100px; width: 100%; margin: 0 auto; }
+.section { display: none; }
+.section.active { display: block; }
+
+/* ── SETUP SCREEN ── */
+#setup {
+  max-width: 500px;
+  margin: 3rem auto;
+  background: #fff;
+  border: 2px solid var(--ink);
+  box-shadow: var(--shadow);
+  padding: 2rem;
+}
+#setup h2 {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+#setup p {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+.setup-steps {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.8rem;
+  line-height: 1.8;
+  font-family: 'Space Mono', monospace;
+}
+.setup-steps b { color: var(--steel); }
+
+/* ── FORMS ── */
+.form-group { margin-bottom: 1rem; }
+label {
+  display: block;
+  font-size: 0.75rem;
+  font-family: 'Space Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.35rem;
+  color: var(--ink-soft);
+}
+input, select, textarea {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: 2px solid var(--line);
+  background: #fff;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.88rem;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s;
+  border-radius: 0;
+  appearance: none;
+}
+input:focus, select:focus { border-color: var(--steel); }
+select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8z' fill='%230c1320'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; padding-right: 2.5rem; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-block;
+  padding: 0.55rem 1.1rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border: 2px solid var(--ink);
+  background: var(--ink);
+  color: #fff;
+  box-shadow: var(--shadow);
+  transition: transform 0.1s, box-shadow 0.1s;
+  text-decoration: none;
+}
+.btn:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+.btn-orange { background: var(--orange); border-color: var(--orange); }
+.btn-orange:hover { box-shadow: 6px 6px 0 var(--orange); }
+.btn-steel { background: var(--steel); border-color: var(--steel); }
+.btn-green { background: var(--green); border-color: var(--green); }
+.btn-red { background: var(--red); border-color: var(--red); }
+.btn-amber { background: var(--amber); border-color: var(--amber); color: var(--ink); }
+.btn-outline {
+  background: transparent;
+  color: var(--ink);
+  box-shadow: var(--shadow);
+}
+.btn-sm { padding: 0.3rem 0.7rem; font-size: 0.68rem; box-shadow: 2px 2px 0 var(--ink); }
+.btn-sm:hover { box-shadow: 4px 4px 0 var(--ink); }
+
+/* ── SECTION HEADER ── */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.section-header h2 {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 1.25rem;
+}
+
+/* ── CARD FORM ── */
+.card-form {
+  background: #fff;
+  border: 2px solid var(--ink);
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: none;
+}
+.card-form.open { display: block; }
+.card-form h3 {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--paper-2);
+}
+.form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }
+.form-actions { display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap; }
+
+/* ── TABLE ── */
+.table-wrap { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  background: #fff;
+  border: 2px solid var(--ink);
+}
+thead th {
+  background: var(--ink);
+  color: #fff;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.65rem 0.85rem;
+  text-align: left;
+  white-space: nowrap;
+}
+tbody tr { border-bottom: 1px solid var(--line); transition: background 0.15s; }
+tbody tr:hover { background: var(--paper); }
+tbody tr:last-child { border-bottom: none; }
+td { padding: 0.65rem 0.85rem; vertical-align: middle; }
+.td-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+/* ── BADGES ── */
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  border: 1.5px solid currentColor;
+}
+.badge-green { color: var(--green); }
+.badge-red { color: var(--red); }
+.badge-amber { color: var(--amber); }
+
+/* ── DASHBOARD CARDS ── */
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.dash-card {
+  background: #fff;
+  border: 2px solid var(--ink);
+  box-shadow: var(--shadow);
+  padding: 1.25rem;
+}
+.dash-card .number {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 2.5rem;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+.dash-card .label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #666;
+}
+.dash-card.orange { border-color: var(--orange); }
+.dash-card.orange .number { color: var(--orange); }
+.dash-card.green { border-color: var(--green); }
+.dash-card.green .number { color: var(--green); }
+.dash-card.steel { border-color: var(--steel); }
+.dash-card.steel .number { color: var(--steel); }
+
+/* ── EMPTY STATE ── */
+.empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #999;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+}
+
+/* ── ALERT ── */
+.alert {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.82rem;
+  border: 2px solid;
+  display: none;
+}
+.alert.show { display: block; }
+.alert-ok { border-color: var(--green); background: #e8f5ee; color: var(--green); }
+.alert-err { border-color: var(--red); background: #fdecea; color: var(--red); }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--ink);
+  color: #7a8ca0;
+  text-align: center;
+  padding: 0.75rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── SPINNER ── */
+.spinner {
+  display: inline-block;
+  width: 18px; height: 18px;
+  border: 3px solid rgba(0,0,0,0.15);
+  border-top-color: var(--ink);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+  margin-right: 0.4rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading { text-align: center; padding: 2rem; color: #888; font-family: 'Space Mono', monospace; font-size: 0.8rem; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ HEADER ═══════════════════════════ -->
+<header>
+  <div class="header-title">
+    <h1>&#128295; Control de Herramientas</h1>
+    <small>E.P.E.T N°7 · Taller de Informática</small>
+  </div>
+  <button class="btn-config" onclick="toggleSetup()">&#9881; Configurar</button>
+</header>
+
+<!-- ═══════════════════════════ TABS ════════════════════════════ -->
+<nav id="nav-tabs">
+  <button class="tab active" onclick="showTab('dashboard')">Dashboard</button>
+  <button class="tab" onclick="showTab('retiros')">Retiros</button>
+  <button class="tab" onclick="showTab('herramientas')">Herramientas</button>
+  <button class="tab" onclick="showTab('profesores')">Profesores</button>
+  <button class="tab" onclick="showTab('alumnos')">Alumnos</button>
+</nav>
+
+<main>
+
+<!-- ═══════════════════════ SETUP SCREEN ════════════════════════ -->
+<div id="setup" class="section active">
+  <h2>Configurar Supabase</h2>
+  <p>Esta app usa <strong>Supabase</strong> como base de datos gratuita en la nube. Seguí estos pasos para conectarla:</p>
+  <div class="setup-steps">
+    <b>1.</b> Creá una cuenta en <b>supabase.com</b><br>
+    <b>2.</b> Creá un nuevo proyecto<br>
+    <b>3.</b> Ejecutá el archivo <b>control-herramientas-schema.sql</b> en SQL Editor<br>
+    <b>4.</b> Copiá la URL y la clave anónima desde <b>Settings → API</b><br>
+    <b>5.</b> Pegalas abajo y guardá
+  </div>
+  <div class="form-group">
+    <label>URL del Proyecto</label>
+    <input type="url" id="input-url" placeholder="https://xxxxxxxxxxxx.supabase.co">
+  </div>
+  <div class="form-group">
+    <label>Clave Anónima (anon public)</label>
+    <input type="text" id="input-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6...">
+  </div>
+  <div id="alert-setup" class="alert"></div>
+  <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem;">
+    <button class="btn btn-orange" onclick="saveConfig()">Guardar y conectar</button>
+    <button class="btn btn-outline" onclick="clearConfig()">Borrar configuración</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════ DASHBOARD ════════════════════════════ -->
+<div id="dashboard" class="section">
+  <div class="section-header">
+    <h2>Dashboard</h2>
+    <button class="btn btn-outline btn-sm" onclick="loadDashboard()">&#8635; Actualizar</button>
+  </div>
+  <div class="dash-grid">
+    <div class="dash-card orange">
+      <div class="number" id="d-activos">–</div>
+      <div class="label">Retiros activos</div>
+    </div>
+    <div class="dash-card green">
+      <div class="number" id="d-hoy">–</div>
+      <div class="label">Devueltos hoy</div>
+    </div>
+    <div class="dash-card steel">
+      <div class="number" id="d-herramientas">–</div>
+      <div class="label">Herramientas</div>
+    </div>
+  </div>
+  <h3 style="font-family:'Archivo Black',sans-serif;margin-bottom:1rem;">Préstamos activos</h3>
+  <div class="table-wrap">
+    <table id="tbl-dashboard">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Herramienta</th>
+          <th>Alumno</th>
+          <th>Profesor</th>
+          <th>Fecha retiro</th>
+          <th>Estado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tbody-dashboard"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════ RETIROS ══════════════════════════════ -->
+<div id="retiros" class="section">
+  <div class="section-header">
+    <h2>Retiros</h2>
+    <button class="btn btn-orange" onclick="toggleForm('form-retiro')">+ Nuevo retiro</button>
+  </div>
+
+  <div id="form-retiro" class="card-form">
+    <h3>Registrar retiro de herramienta</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Herramienta</label>
+        <select id="r-herramienta"><option value="">Seleccionar…</option></select>
+      </div>
+      <div class="form-group">
+        <label>Alumno</label>
+        <select id="r-alumno"><option value="">Seleccionar…</option></select>
+      </div>
+      <div class="form-group">
+        <label>Profesor</label>
+        <select id="r-profesor"><option value="">Seleccionar…</option></select>
+      </div>
+      <div class="form-group">
+        <label>Fecha y hora de retiro</label>
+        <input type="datetime-local" id="r-fecha">
+      </div>
+    </div>
+    <div id="alert-retiro" class="alert"></div>
+    <div class="form-actions">
+      <button class="btn btn-orange" onclick="addRetiro()">Registrar</button>
+      <button class="btn btn-outline" onclick="toggleForm('form-retiro')">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Herramienta</th>
+          <th>Alumno</th>
+          <th>Curso</th>
+          <th>Profesor</th>
+          <th>Retiro</th>
+          <th>Devolución</th>
+          <th>Estado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tbody-retiros"><tr><td colspan="9" class="loading"><span class="spinner"></span>Cargando…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════ HERRAMIENTAS ════════════════════════ -->
+<div id="herramientas" class="section">
+  <div class="section-header">
+    <h2>Herramientas</h2>
+    <button class="btn btn-orange" onclick="toggleForm('form-herramienta')">+ Agregar</button>
+  </div>
+
+  <div id="form-herramienta" class="card-form">
+    <h3 id="fh-title">Agregar herramienta</h3>
+    <input type="hidden" id="h-id">
+    <div class="form-group">
+      <label>Nombre</label>
+      <input type="text" id="h-nombre" placeholder="Ej: Destornillador Phillips N°2">
+    </div>
+    <div id="alert-herramienta" class="alert"></div>
+    <div class="form-actions">
+      <button class="btn btn-orange" onclick="saveHerramienta()">Guardar</button>
+      <button class="btn btn-outline" onclick="cancelHerramienta()">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>#</th><th>Nombre</th><th>En uso</th><th></th></tr>
+      </thead>
+      <tbody id="tbody-herramientas"><tr><td colspan="4" class="loading"><span class="spinner"></span>Cargando…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PROFESORES ══════════════════════════ -->
+<div id="profesores" class="section">
+  <div class="section-header">
+    <h2>Profesores</h2>
+    <button class="btn btn-orange" onclick="toggleForm('form-profesor')">+ Agregar</button>
+  </div>
+
+  <div id="form-profesor" class="card-form">
+    <h3 id="fp-title">Agregar profesor</h3>
+    <input type="hidden" id="p-id">
+    <div class="form-group">
+      <label>Nombre</label>
+      <input type="text" id="p-nombre" placeholder="Ej: García, Carlos">
+    </div>
+    <div id="alert-profesor" class="alert"></div>
+    <div class="form-actions">
+      <button class="btn btn-orange" onclick="saveProfesor()">Guardar</button>
+      <button class="btn btn-outline" onclick="cancelProfesor()">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>#</th><th>Nombre</th><th></th></tr>
+      </thead>
+      <tbody id="tbody-profesores"><tr><td colspan="3" class="loading"><span class="spinner"></span>Cargando…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════ ALUMNOS ═════════════════════════════ -->
+<div id="alumnos" class="section">
+  <div class="section-header">
+    <h2>Alumnos</h2>
+    <button class="btn btn-orange" onclick="toggleForm('form-alumno')">+ Agregar</button>
+  </div>
+
+  <div id="form-alumno" class="card-form">
+    <h3 id="fa-title">Agregar alumno</h3>
+    <input type="hidden" id="a-id">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Nombre</label>
+        <input type="text" id="a-nombre" placeholder="Ej: Rodríguez, Juan">
+      </div>
+      <div class="form-group">
+        <label>Curso</label>
+        <input type="text" id="a-curso" placeholder="Ej: 3° A">
+      </div>
+    </div>
+    <div id="alert-alumno" class="alert"></div>
+    <div class="form-actions">
+      <button class="btn btn-orange" onclick="saveAlumno()">Guardar</button>
+      <button class="btn btn-outline" onclick="cancelAlumno()">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>#</th><th>Nombre</th><th>Curso</th><th></th></tr>
+      </thead>
+      <tbody id="tbody-alumnos"><tr><td colspan="4" class="loading"><span class="spinner"></span>Cargando…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+</main>
+
+<footer>E.P.E.T N°7 · Control de Herramientas · Taller de Informática</footer>
+
+<!-- ═══════════════════════ JAVASCRIPT ══════════════════════════ -->
+<script>
+// ─── Supabase client ───────────────────────────────────────────
+let db = null;
+
+function initSupabase(url, key) {
+  try {
+    db = supabase.createClient(url, key);
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
+
+// ─── Config ────────────────────────────────────────────────────
+function loadConfig() {
+  const url = localStorage.getItem('sb_url');
+  const key = localStorage.getItem('sb_key');
+  if (url && key) {
+    document.getElementById('input-url').value = url;
+    document.getElementById('input-key').value = key;
+    if (initSupabase(url, key)) {
+      showTab('dashboard');
+      return true;
+    }
+  }
+  showSection('setup');
+  return false;
+}
+
+function saveConfig() {
+  const url = document.getElementById('input-url').value.trim();
+  const key = document.getElementById('input-key').value.trim();
+  const alertEl = document.getElementById('alert-setup');
+
+  if (!url || !key) {
+    showAlert(alertEl, 'err', 'Completá los dos campos.');
+    return;
+  }
+  if (!url.startsWith('https://')) {
+    showAlert(alertEl, 'err', 'La URL debe empezar con https://');
+    return;
+  }
+
+  if (!initSupabase(url, key)) {
+    showAlert(alertEl, 'err', 'No se pudo inicializar el cliente. Verificá los datos.');
+    return;
+  }
+
+  localStorage.setItem('sb_url', url);
+  localStorage.setItem('sb_key', key);
+
+  // Test connection
+  db.from('herramienta').select('id', { count: 'exact', head: true })
+    .then(({ error }) => {
+      if (error) {
+        showAlert(alertEl, 'err', 'Conexión fallida: ' + error.message);
+      } else {
+        showAlert(alertEl, 'ok', '¡Conexión exitosa! Redirigiendo…');
+        setTimeout(() => showTab('dashboard'), 1000);
+      }
+    });
+}
+
+function clearConfig() {
+  localStorage.removeItem('sb_url');
+  localStorage.removeItem('sb_key');
+  db = null;
+  showSection('setup');
+}
+
+function toggleSetup() {
+  const s = document.getElementById('setup');
+  if (s.classList.contains('active')) {
+    if (db) showTab('dashboard');
+  } else {
+    showSection('setup');
+  }
+}
+
+// ─── Navigation ────────────────────────────────────────────────
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showTab(id) {
+  if (!db) { showSection('setup'); return; }
+  showSection(id);
+  const tabs = document.querySelectorAll('.tab');
+  const order = ['dashboard','retiros','herramientas','profesores','alumnos'];
+  const idx = order.indexOf(id);
+  if (idx >= 0) tabs[idx].classList.add('active');
+
+  const loaders = { dashboard: loadDashboard, retiros: loadRetiros, herramientas: loadHerramientas, profesores: loadProfesores, alumnos: loadAlumnos };
+  if (loaders[id]) loaders[id]();
+}
+
+function toggleForm(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+// ─── Alerts ────────────────────────────────────────────────────
+function showAlert(el, type, msg) {
+  el.className = 'alert show alert-' + (type === 'ok' ? 'ok' : 'err');
+  el.textContent = msg;
+  setTimeout(() => { el.className = 'alert'; }, 4000);
+}
+
+// ─── Helpers ───────────────────────────────────────────────────
+function fmt(dt) {
+  if (!dt) return '–';
+  const d = new Date(dt);
+  return d.toLocaleDateString('es-AR', { day:'2-digit', month:'2-digit', year:'2-digit' })
+    + ' ' + d.toLocaleTimeString('es-AR', { hour:'2-digit', minute:'2-digit' });
+}
+
+function localNow() {
+  const now = new Date();
+  const offset = now.getTimezoneOffset();
+  const local = new Date(now.getTime() - offset * 60000);
+  return local.toISOString().slice(0, 16);
+}
+
+// ─── DASHBOARD ─────────────────────────────────────────────────
+async function loadDashboard() {
+  const tbody = document.getElementById('tbody-dashboard');
+  tbody.innerHTML = '<tr><td colspan="7" class="loading"><span class="spinner"></span>Cargando…</td></tr>';
+
+  const [rActivos, rHoy, rHerr] = await Promise.all([
+    db.from('retiro').select('id', { count: 'exact', head: true }).is('fecha_devolucion', null),
+    db.from('retiro').select('id', { count: 'exact', head: true }).gte('fecha_devolucion', new Date().toISOString().slice(0,10)),
+    db.from('herramienta').select('id', { count: 'exact', head: true }),
+  ]);
+
+  document.getElementById('d-activos').textContent = rActivos.count ?? '?';
+  document.getElementById('d-hoy').textContent    = rHoy.count ?? '?';
+  document.getElementById('d-herramientas').textContent = rHerr.count ?? '?';
+
+  const { data, error } = await db.from('retiro')
+    .select('id, fecha_retiro, fecha_devolucion, herramienta(nombre), alumno(nombre, curso), profesor(nombre)')
+    .is('fecha_devolucion', null)
+    .order('fecha_retiro', { ascending: false });
+
+  if (error) { tbody.innerHTML = `<tr><td colspan="7" class="empty">Error: ${error.message}</td></tr>`; return; }
+  if (!data.length) { tbody.innerHTML = '<tr><td colspan="7" class="empty">No hay préstamos activos ✓</td></tr>'; return; }
+
+  tbody.innerHTML = data.map(r => `
+    <tr>
+      <td><code>${r.id}</code></td>
+      <td>${r.herramienta?.nombre ?? '–'}</td>
+      <td>${r.alumno?.nombre ?? '–'}</td>
+      <td>${r.profesor?.nombre ?? '–'}</td>
+      <td>${fmt(r.fecha_retiro)}</td>
+      <td><span class="badge badge-amber">En uso</span></td>
+      <td><button class="btn btn-green btn-sm" onclick="registrarDevolucion(${r.id})">Devolver</button></td>
+    </tr>`).join('');
+}
+
+// ─── RETIROS ───────────────────────────────────────────────────
+async function loadRetiros() {
+  const tbody = document.getElementById('tbody-retiros');
+  tbody.innerHTML = '<tr><td colspan="9" class="loading"><span class="spinner"></span>Cargando…</td></tr>';
+
+  await populateSelectsRetiro();
+
+  const { data, error } = await db.from('retiro')
+    .select('id, fecha_retiro, fecha_devolucion, herramienta(nombre), alumno(nombre, curso), profesor(nombre)')
+    .order('fecha_retiro', { ascending: false });
+
+  if (error) { tbody.innerHTML = `<tr><td colspan="9" class="empty">Error: ${error.message}</td></tr>`; return; }
+  if (!data.length) { tbody.innerHTML = '<tr><td colspan="9" class="empty">Sin registros aún</td></tr>'; return; }
+
+  tbody.innerHTML = data.map(r => {
+    const devuelto = !!r.fecha_devolucion;
+    const badge = devuelto
+      ? '<span class="badge badge-green">Devuelto</span>'
+      : '<span class="badge badge-amber">En uso</span>';
+    const action = devuelto ? '' : `<button class="btn btn-green btn-sm" onclick="registrarDevolucion(${r.id})">Devolver</button>`;
+    return `<tr>
+      <td><code>${r.id}</code></td>
+      <td>${r.herramienta?.nombre ?? '–'}</td>
+      <td>${r.alumno?.nombre ?? '–'}</td>
+      <td>${r.alumno?.curso ?? '–'}</td>
+      <td>${r.profesor?.nombre ?? '–'}</td>
+      <td>${fmt(r.fecha_retiro)}</td>
+      <td>${fmt(r.fecha_devolucion)}</td>
+      <td>${badge}</td>
+      <td class="td-actions">${action}
+        <button class="btn btn-red btn-sm" onclick="deleteRetiro(${r.id})">✕</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function populateSelectsRetiro() {
+  const [{ data: hs }, { data: as }, { data: ps }] = await Promise.all([
+    db.from('herramienta').select('id, nombre').order('nombre'),
+    db.from('alumno').select('id, nombre, curso').order('nombre'),
+    db.from('profesor').select('id, nombre').order('nombre'),
+  ]);
+
+  const fill = (id, items, label) => {
+    const sel = document.getElementById(id);
+    sel.innerHTML = `<option value="">Seleccionar…</option>` +
+      items.map(i => `<option value="${i.id}">${i.nombre}${label && i[label] ? ' · ' + i[label] : ''}</option>`).join('');
+  };
+  fill('r-herramienta', hs || [], null);
+  fill('r-alumno', as || [], 'curso');
+  fill('r-profesor', ps || [], null);
+
+  document.getElementById('r-fecha').value = localNow();
+}
+
+async function addRetiro() {
+  const alertEl = document.getElementById('alert-retiro');
+  const idH = document.getElementById('r-herramienta').value;
+  const idA = document.getElementById('r-alumno').value;
+  const idP = document.getElementById('r-profesor').value;
+  const fecha = document.getElementById('r-fecha').value;
+
+  if (!idH || !idA || !idP || !fecha) {
+    showAlert(alertEl, 'err', 'Completá todos los campos.'); return;
+  }
+
+  const { error } = await db.from('retiro').insert({
+    id_herramienta: parseInt(idH),
+    id_alumno: parseInt(idA),
+    id_profesor: parseInt(idP),
+    fecha_retiro: new Date(fecha).toISOString(),
+  });
+
+  if (error) { showAlert(alertEl, 'err', error.message); return; }
+
+  showAlert(alertEl, 'ok', 'Retiro registrado.');
+  document.getElementById('form-retiro').classList.remove('open');
+  loadRetiros();
+}
+
+async function registrarDevolucion(id) {
+  if (!confirm('¿Confirmar devolución?')) return;
+  const { error } = await db.from('retiro').update({ fecha_devolucion: new Date().toISOString() }).eq('id', id);
+  if (error) { alert(error.message); return; }
+  loadRetiros();
+  if (document.getElementById('dashboard').classList.contains('active')) loadDashboard();
+}
+
+async function deleteRetiro(id) {
+  if (!confirm('¿Eliminar este registro?')) return;
+  const { error } = await db.from('retiro').delete().eq('id', id);
+  if (error) { alert(error.message); return; }
+  loadRetiros();
+}
+
+// ─── HERRAMIENTAS ──────────────────────────────────────────────
+let herramientaEditId = null;
+
+async function loadHerramientas() {
+  const tbody = document.getElementById('tbody-herramientas');
+  tbody.innerHTML = '<tr><td colspan="4" class="loading"><span class="spinner"></span>Cargando…</td></tr>';
+
+  const { data: hs, error } = await db.from('herramienta').select('id, nombre').order('nombre');
+  if (error) { tbody.innerHTML = `<tr><td colspan="4" class="empty">Error: ${error.message}</td></tr>`; return; }
+
+  // Count active retiros per herramienta
+  const { data: activos } = await db.from('retiro').select('id_herramienta').is('fecha_devolucion', null);
+  const enUso = new Set((activos || []).map(r => r.id_herramienta));
+
+  if (!hs.length) { tbody.innerHTML = '<tr><td colspan="4" class="empty">Sin herramientas cargadas</td></tr>'; return; }
+
+  tbody.innerHTML = hs.map(h => `<tr>
+    <td><code>${h.id}</code></td>
+    <td>${h.nombre}</td>
+    <td>${enUso.has(h.id) ? '<span class="badge badge-amber">En uso</span>' : '<span class="badge badge-green">Disponible</span>'}</td>
+    <td class="td-actions">
+      <button class="btn btn-steel btn-sm" onclick="editHerramienta(${h.id},'${h.nombre.replace(/'/g,"\\'")}')">Editar</button>
+      <button class="btn btn-red btn-sm" onclick="deleteHerramienta(${h.id})">✕</button>
+    </td>
+  </tr>`).join('');
+}
+
+function editHerramienta(id, nombre) {
+  herramientaEditId = id;
+  document.getElementById('h-id').value = id;
+  document.getElementById('h-nombre').value = nombre;
+  document.getElementById('fh-title').textContent = 'Editar herramienta';
+  document.getElementById('form-herramienta').classList.add('open');
+}
+
+function cancelHerramienta() {
+  herramientaEditId = null;
+  document.getElementById('h-id').value = '';
+  document.getElementById('h-nombre').value = '';
+  document.getElementById('fh-title').textContent = 'Agregar herramienta';
+  document.getElementById('form-herramienta').classList.remove('open');
+}
+
+async function saveHerramienta() {
+  const alertEl = document.getElementById('alert-herramienta');
+  const nombre = document.getElementById('h-nombre').value.trim();
+  if (!nombre) { showAlert(alertEl, 'err', 'Ingresá un nombre.'); return; }
+
+  const payload = { nombre };
+  let error;
+
+  if (herramientaEditId) {
+    ({ error } = await db.from('herramienta').update(payload).eq('id', herramientaEditId));
+  } else {
+    ({ error } = await db.from('herramienta').insert(payload));
+  }
+
+  if (error) { showAlert(alertEl, 'err', error.message); return; }
+  showAlert(alertEl, 'ok', 'Guardado.');
+  cancelHerramienta();
+  loadHerramientas();
+}
+
+async function deleteHerramienta(id) {
+  if (!confirm('¿Eliminar herramienta? Se perderán los registros de retiro asociados.')) return;
+  const { error } = await db.from('herramienta').delete().eq('id', id);
+  if (error) { alert(error.message); return; }
+  loadHerramientas();
+}
+
+// ─── PROFESORES ────────────────────────────────────────────────
+let profesorEditId = null;
+
+async function loadProfesores() {
+  const tbody = document.getElementById('tbody-profesores');
+  tbody.innerHTML = '<tr><td colspan="3" class="loading"><span class="spinner"></span>Cargando…</td></tr>';
+
+  const { data, error } = await db.from('profesor').select('id, nombre').order('nombre');
+  if (error) { tbody.innerHTML = `<tr><td colspan="3" class="empty">Error: ${error.message}</td></tr>`; return; }
+  if (!data.length) { tbody.innerHTML = '<tr><td colspan="3" class="empty">Sin profesores cargados</td></tr>'; return; }
+
+  tbody.innerHTML = data.map(p => `<tr>
+    <td><code>${p.id}</code></td>
+    <td>${p.nombre}</td>
+    <td class="td-actions">
+      <button class="btn btn-steel btn-sm" onclick="editProfesor(${p.id},'${p.nombre.replace(/'/g,"\\'")}')">Editar</button>
+      <button class="btn btn-red btn-sm" onclick="deleteProfesor(${p.id})">✕</button>
+    </td>
+  </tr>`).join('');
+}
+
+function editProfesor(id, nombre) {
+  profesorEditId = id;
+  document.getElementById('p-id').value = id;
+  document.getElementById('p-nombre').value = nombre;
+  document.getElementById('fp-title').textContent = 'Editar profesor';
+  document.getElementById('form-profesor').classList.add('open');
+}
+
+function cancelProfesor() {
+  profesorEditId = null;
+  document.getElementById('p-id').value = '';
+  document.getElementById('p-nombre').value = '';
+  document.getElementById('fp-title').textContent = 'Agregar profesor';
+  document.getElementById('form-profesor').classList.remove('open');
+}
+
+async function saveProfesor() {
+  const alertEl = document.getElementById('alert-profesor');
+  const nombre = document.getElementById('p-nombre').value.trim();
+  if (!nombre) { showAlert(alertEl, 'err', 'Ingresá un nombre.'); return; }
+
+  const payload = { nombre };
+  let error;
+  if (profesorEditId) {
+    ({ error } = await db.from('profesor').update(payload).eq('id', profesorEditId));
+  } else {
+    ({ error } = await db.from('profesor').insert(payload));
+  }
+
+  if (error) { showAlert(alertEl, 'err', error.message); return; }
+  showAlert(alertEl, 'ok', 'Guardado.');
+  cancelProfesor();
+  loadProfesores();
+}
+
+async function deleteProfesor(id) {
+  if (!confirm('¿Eliminar profesor?')) return;
+  const { error } = await db.from('profesor').delete().eq('id', id);
+  if (error) { alert(error.message); return; }
+  loadProfesores();
+}
+
+// ─── ALUMNOS ───────────────────────────────────────────────────
+let alumnoEditId = null;
+
+async function loadAlumnos() {
+  const tbody = document.getElementById('tbody-alumnos');
+  tbody.innerHTML = '<tr><td colspan="4" class="loading"><span class="spinner"></span>Cargando…</td></tr>';
+
+  const { data, error } = await db.from('alumno').select('id, nombre, curso').order('nombre');
+  if (error) { tbody.innerHTML = `<tr><td colspan="4" class="empty">Error: ${error.message}</td></tr>`; return; }
+  if (!data.length) { tbody.innerHTML = '<tr><td colspan="4" class="empty">Sin alumnos cargados</td></tr>'; return; }
+
+  tbody.innerHTML = data.map(a => `<tr>
+    <td><code>${a.id}</code></td>
+    <td>${a.nombre}</td>
+    <td>${a.curso ?? '–'}</td>
+    <td class="td-actions">
+      <button class="btn btn-steel btn-sm" onclick="editAlumno(${a.id},'${a.nombre.replace(/'/g,"\\'")}','${(a.curso||'').replace(/'/g,"\\'")}')">Editar</button>
+      <button class="btn btn-red btn-sm" onclick="deleteAlumno(${a.id})">✕</button>
+    </td>
+  </tr>`).join('');
+}
+
+function editAlumno(id, nombre, curso) {
+  alumnoEditId = id;
+  document.getElementById('a-id').value = id;
+  document.getElementById('a-nombre').value = nombre;
+  document.getElementById('a-curso').value = curso;
+  document.getElementById('fa-title').textContent = 'Editar alumno';
+  document.getElementById('form-alumno').classList.add('open');
+}
+
+function cancelAlumno() {
+  alumnoEditId = null;
+  document.getElementById('a-id').value = '';
+  document.getElementById('a-nombre').value = '';
+  document.getElementById('a-curso').value = '';
+  document.getElementById('fa-title').textContent = 'Agregar alumno';
+  document.getElementById('form-alumno').classList.remove('open');
+}
+
+async function saveAlumno() {
+  const alertEl = document.getElementById('alert-alumno');
+  const nombre = document.getElementById('a-nombre').value.trim();
+  const curso  = document.getElementById('a-curso').value.trim();
+  if (!nombre) { showAlert(alertEl, 'err', 'Ingresá un nombre.'); return; }
+
+  const payload = { nombre, curso: curso || null };
+  let error;
+  if (alumnoEditId) {
+    ({ error } = await db.from('alumno').update(payload).eq('id', alumnoEditId));
+  } else {
+    ({ error } = await db.from('alumno').insert(payload));
+  }
+
+  if (error) { showAlert(alertEl, 'err', error.message); return; }
+  showAlert(alertEl, 'ok', 'Guardado.');
+  cancelAlumno();
+  loadAlumnos();
+}
+
+async function deleteAlumno(id) {
+  if (!confirm('¿Eliminar alumno?')) return;
+  const { error } = await db.from('alumno').delete().eq('id', id);
+  if (error) { alert(error.message); return; }
+  loadAlumnos();
+}
+
+// ─── Init ──────────────────────────────────────────────────────
+loadConfig();
+</script>
+</body>
+</html>
