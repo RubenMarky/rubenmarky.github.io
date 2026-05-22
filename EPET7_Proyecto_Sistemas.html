@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Proyecto de Sistemas Informáticos — E.P.E.T N°7</title>
+
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-epet.png">
+<link rel="apple-touch-icon" sizes="180x180" href="favicon-epet-180.png">
+<link rel="shortcut icon" href="favicon-epet.png">
+
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -102,10 +107,12 @@
     margin-bottom: 1.6rem;
     animation: fadeUp 0.8s 0.12s ease both;
   }
-  .hero h1 .grad {
+  .hero h1 .grad { color: var(--accent); }
+  .hero h1 .grad .al {
     background: linear-gradient(90deg, var(--accent) 0%, var(--purp) 100%);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text;
+    color: transparent;
   }
   .hero-sub {
     font-size: 1.05rem; color: var(--muted);
