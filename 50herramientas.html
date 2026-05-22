@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>50 Herramientas · Taller de Informática · E.P.E.T N°7 EPJA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0c1320;
+    --ink-soft:#1a2436;
+    --paper:#f4f1ea;
+    --paper-2:#e9e4d8;
+    --line:#cbc4b3;
+    --orange:#ff5722;
+    --orange-2:#ff7a4d;
+    --steel:#1f4e79;
+    --steel-2:#2a6bb0;
+    --green:#1f7a4d;
+    --amber:#e8a400;
+    --violet:#6d3fb0;
+    --red:#c0392b;
+    --shadow: 6px 6px 0 var(--ink);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Sora',sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    overflow-x:hidden;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(12,19,32,.07) 1px, transparent 0);
+    background-size:22px 22px;
+  }
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:relative;
+    background:var(--ink);
+    color:var(--paper);
+    padding:64px 24px 90px;
+    overflow:hidden;
+    border-bottom:6px solid var(--orange);
+  }
+  header::before{
+    content:"";
+    position:absolute;inset:0;
+    background-image:
+      repeating-linear-gradient(45deg, transparent 0 18px, rgba(255,87,34,.05) 18px 19px);
+    pointer-events:none;
+  }
+  .badge{
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:'Space Mono',monospace;
+    font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;
+    border:1.5px solid rgba(244,241,234,.4);
+    padding:7px 14px;border-radius:40px;
+    color:var(--paper);
+    margin-bottom:28px;
+  }
+  .badge .dot{width:8px;height:8px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 3px rgba(255,87,34,.25)}
+  h1.title{
+    font-family:'Archivo Black',sans-serif;
+    line-height:.92;
+    font-size:clamp(2.6rem,9vw,6.4rem);
+    letter-spacing:-.01em;
+    text-transform:uppercase;
+  }
+  h1.title .num{
+    color:var(--orange);
+    -webkit-text-stroke:0;
+    position:relative;
+  }
+  h1.title .out{
+    color:transparent;
+    -webkit-text-stroke:1.6px var(--paper);
+  }
+  .subtitle{
+    margin-top:24px;
+    max-width:620px;
+    font-weight:300;
+    font-size:1.05rem;
+    line-height:1.6;
+    color:rgba(244,241,234,.82);
+  }
+  .meta-row{
+    margin-top:34px;
+    display:flex;flex-wrap:wrap;gap:10px;
+    font-family:'Space Mono',monospace;
+    font-size:.74rem;letter-spacing:.05em;
+  }
+  .meta-row span{
+    border:1px solid rgba(244,241,234,.25);
+    padding:8px 13px;border-radius:6px;
+    color:rgba(244,241,234,.85);
+    display:flex;align-items:center;gap:7px;
+  }
+  .meta-row span b{color:var(--orange);font-weight:700}
+
+  /* deco corner */
+  .corner-tag{
+    position:absolute;top:0;right:0;
+    background:var(--orange);color:var(--ink);
+    font-family:'Archivo Black',sans-serif;
+    font-size:.78rem;letter-spacing:.05em;
+    padding:14px 22px;
+    clip-path:polygon(22px 0,100% 0,100% 100%,0 100%);
+    text-transform:uppercase;
+  }
+
+  /* ---------- TOOLBAR ---------- */
+  .toolbar{
+    position:sticky;top:0;z-index:60;
+    background:var(--paper);
+    border-bottom:2px solid var(--ink);
+    padding:16px 24px;
+    box-shadow:0 6px 0 -3px rgba(12,19,32,.12);
+  }
+  .toolbar-inner{
+    max-width:1180px;margin:0 auto;
+    display:flex;flex-wrap:wrap;gap:14px;align-items:center;
+  }
+  .search-wrap{
+    flex:1 1 260px;
+    position:relative;
+    min-width:220px;
+  }
+  .search-wrap svg{
+    position:absolute;left:14px;top:50%;transform:translateY(-50%);
+    width:18px;height:18px;stroke:var(--ink);opacity:.5;
+  }
+  #search{
+    width:100%;
+    font-family:'Space Mono',monospace;
+    font-size:.9rem;
+    padding:13px 16px 13px 44px;
+    border:2px solid var(--ink);
+    border-radius:8px;
+    background:#fff;
+    color:var(--ink);
+    box-shadow:var(--shadow);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  #search:focus{outline:none;transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--orange)}
+  #search::placeholder{color:rgba(12,19,32,.4)}
+
+  .counter{
+    font-family:'Space Mono',monospace;
+    font-size:.8rem;
+    background:var(--ink);color:var(--paper);
+    padding:11px 15px;border-radius:8px;
+    white-space:nowrap;
+  }
+  .counter b{color:var(--orange)}
+
+  .filters{
+    width:100%;
+    display:flex;flex-wrap:wrap;gap:9px;
+    max-width:1180px;margin:14px auto 0;
+  }
+  .chip{
+    font-family:'Space Mono',monospace;
+    font-size:.74rem;letter-spacing:.04em;
+    padding:8px 14px;
+    border:2px solid var(--ink);
+    border-radius:40px;
+    background:#fff;cursor:pointer;
+    text-transform:uppercase;
+    transition:all .14s ease;
+    user-select:none;
+    display:flex;align-items:center;gap:7px;
+  }
+  .chip .swatch{width:9px;height:9px;border-radius:50%}
+  .chip:hover{transform:translateY(-2px)}
+  .chip.active{background:var(--ink);color:var(--paper)}
+  .chip[data-cat="all"].active{background:var(--orange);color:var(--ink);border-color:var(--ink)}
+
+  /* ---------- MAIN GRID ---------- */
+  main{max-width:1180px;margin:0 auto;padding:48px 24px 40px}
+
+  .cat-header{
+    display:flex;align-items:center;gap:18px;
+    margin:54px 0 26px;
+    scroll-margin-top:140px;
+  }
+  .cat-header:first-child{margin-top:0}
+  .cat-header .cat-index{
+    font-family:'Archivo Black',sans-serif;
+    font-size:2.4rem;line-height:1;
+    color:transparent;-webkit-text-stroke:1.5px var(--ink);
+  }
+  .cat-header h2{
+    font-family:'Archivo Black',sans-serif;
+    font-size:clamp(1.3rem,3.6vw,2rem);
+    text-transform:uppercase;letter-spacing:-.01em;
+  }
+  .cat-header .rule{flex:1;height:3px;background:var(--ink)}
+  .cat-header .pill{
+    font-family:'Space Mono',monospace;font-size:.72rem;
+    padding:5px 11px;border-radius:30px;color:#fff;font-weight:700;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:18px;
+  }
+
+  .card{
+    position:relative;
+    background:#fff;
+    border:2px solid var(--ink);
+    border-radius:12px;
+    padding:22px 20px 20px;
+    box-shadow:var(--shadow);
+    transition:transform .16s cubic-bezier(.2,.8,.2,1), box-shadow .16s ease;
+    overflow:hidden;
+    animation:pop .4s backwards;
+  }
+  @keyframes pop{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  .card::after{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:6px;
+    background:var(--c,var(--steel));
+  }
+  .card:hover{
+    transform:translate(-3px,-3px);
+    box-shadow:9px 9px 0 var(--c,var(--steel));
+  }
+  .card-top{
+    display:flex;align-items:flex-start;gap:14px;margin-bottom:12px;
+  }
+  .icon-box{
+    flex:none;width:52px;height:52px;border-radius:10px;
+    background:var(--c,var(--steel));
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;
+  }
+  .icon-box svg{width:28px;height:28px;stroke:#fff;fill:none;stroke-width:1.8}
+  .card .id{
+    font-family:'Archivo Black',sans-serif;
+    font-size:1.5rem;line-height:1;
+    color:transparent;-webkit-text-stroke:1.4px var(--c,var(--steel));
+    margin-left:auto;
+  }
+  .card h3{
+    font-size:1.06rem;font-weight:700;line-height:1.2;
+    margin-bottom:9px;color:var(--ink);
+  }
+  .card p{
+    font-size:.86rem;line-height:1.55;font-weight:300;
+    color:var(--ink-soft);
+  }
+  .card .tag{
+    display:inline-block;margin-top:14px;
+    font-family:'Space Mono',monospace;font-size:.66rem;
+    letter-spacing:.08em;text-transform:uppercase;
+    padding:4px 10px;border-radius:5px;
+    color:var(--c,var(--steel));
+    border:1.5px solid var(--c,var(--steel));
+  }
+
+  .empty{
+    text-align:center;padding:60px 20px;
+    font-family:'Space Mono',monospace;color:var(--ink-soft);
+    display:none;
+  }
+  .empty.show{display:block}
+  .empty b{font-size:1.1rem;color:var(--ink)}
+
+  /* ---------- PROMPTS SECTION ---------- */
+  .prompts{
+    background:var(--ink);color:var(--paper);
+    margin-top:70px;padding:64px 24px;
+    border-top:6px solid var(--orange);
+    position:relative;
+  }
+  .prompts-inner{max-width:1180px;margin:0 auto}
+  .prompts h2{
+    font-family:'Archivo Black',sans-serif;
+    font-size:clamp(1.6rem,4.5vw,2.6rem);
+    text-transform:uppercase;line-height:1;
+  }
+  .prompts h2 span{color:var(--orange)}
+  .prompts .lead{
+    margin:18px 0 36px;max-width:640px;
+    font-weight:300;color:rgba(244,241,234,.8);line-height:1.6;
+  }
+  .prompts .lead code{
+    font-family:'Space Mono',monospace;background:rgba(255,87,34,.18);
+    color:var(--orange-2);padding:2px 7px;border-radius:5px;font-size:.85em;
+  }
+  .prompt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+  .prompt-card{
+    background:var(--ink-soft);
+    border:1.5px solid rgba(244,241,234,.18);
+    border-radius:12px;padding:22px;
+    display:flex;flex-direction:column;
+  }
+  .prompt-card .pc-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .prompt-card .pc-num{
+    font-family:'Archivo Black',sans-serif;font-size:1.1rem;
+    color:var(--ink);background:var(--orange);
+    width:32px;height:32px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;flex:none;
+  }
+  .prompt-card h4{font-size:.98rem;font-weight:700;line-height:1.2}
+  .prompt-card .pc-body{
+    font-family:'Space Mono',monospace;font-size:.78rem;line-height:1.6;
+    color:rgba(244,241,234,.78);
+    background:rgba(0,0,0,.25);
+    border-radius:8px;padding:14px;flex:1;
+    border-left:3px solid var(--orange);
+    white-space:pre-wrap;
+  }
+  .copy-btn{
+    margin-top:14px;align-self:flex-start;
+    font-family:'Space Mono',monospace;font-size:.74rem;letter-spacing:.06em;
+    text-transform:uppercase;cursor:pointer;
+    background:var(--orange);color:var(--ink);font-weight:700;
+    border:none;padding:9px 16px;border-radius:7px;
+    transition:transform .12s ease, background .12s ease;
+    display:flex;align-items:center;gap:8px;
+  }
+  .copy-btn:hover{transform:translateY(-2px)}
+  .copy-btn.copied{background:var(--green);color:#fff}
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    background:var(--paper-2);
+    padding:40px 24px;
+    border-top:2px solid var(--ink);
+    text-align:center;
+  }
+  footer .f-title{
+    font-family:'Archivo Black',sans-serif;font-size:1rem;text-transform:uppercase;
+    letter-spacing:.02em;margin-bottom:8px;
+  }
+  footer .f-sub{
+    font-family:'Space Mono',monospace;font-size:.78rem;
+    color:var(--ink-soft);letter-spacing:.04em;
+  }
+  footer .f-sub b{color:var(--orange)}
+
+  /* back to top */
+  .top-btn{
+    position:fixed;right:22px;bottom:22px;z-index:80;
+    width:50px;height:50px;border-radius:12px;
+    background:var(--orange);border:2px solid var(--ink);
+    box-shadow:4px 4px 0 var(--ink);cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;pointer-events:none;transition:opacity .25s ease, transform .12s ease;
+  }
+  .top-btn.show{opacity:1;pointer-events:auto}
+  .top-btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+  .top-btn svg{width:22px;height:22px;stroke:var(--ink);stroke-width:2.4;fill:none}
+
+  @media(max-width:560px){
+    header{padding:48px 18px 70px}
+    main{padding:34px 16px}
+    .toolbar{padding:14px 16px}
+    .card{padding:18px 16px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="corner-tag">EPJA · 2026</div>
+  <div class="badge"><span class="dot"></span> Operador de Informática · Administración y Gestión</div>
+  <h1 class="title"><span class="num">50</span> <span class="out">Herra</span>mientas<br>del Taller</h1>
+  <p class="subtitle">Guía interactiva de las herramientas fundamentales del taller de informática: hardware, periféricos, redes, software, mantenimiento y seguridad. Buscá, filtrá y aprendé.</p>
+  <div class="meta-row">
+    <span><b>6</b> categorías</span>
+    <span><b>50</b> herramientas</span>
+    <span><b>5</b> prompts de IA</span>
+    <span>E.P.E.T N°7 · Jardín América, Misiones</span>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="toolbar-inner">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="search" type="text" placeholder="Buscar herramienta... (ej: RAM, router, antivirus)">
+    </div>
+    <div class="counter">Mostrando <b id="count">50</b> / 50</div>
+  </div>
+  <div class="filters" id="filters"></div>
+</div>
+
+<main id="main">
+  <div class="empty" id="empty"><b>Sin resultados</b><br>Probá con otra palabra clave.</div>
+</main>
+
+<section class="prompts" id="prompts">
+  <div class="prompts-inner">
+    <h2>Prompts para <span>generar imágenes</span> con IA</h2>
+    <p class="lead">Copiá un prompt, reemplazá <code>[nombre del componente]</code> por la herramienta que necesités ilustrar y pegalo en Gemini (gemini.google.com) o Google ImageFX. Podés ajustar estilo, color y tamaño.</p>
+    <div class="prompt-grid" id="promptGrid"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="f-title">E.P.E.T N°7 (EPJA) — Jardín América, Misiones</div>
+  <div class="f-sub">Operador de Informática para Administración y Gestión · <b>Prof. Markwart Rubén</b> · Ciclo Lectivo 2026</div>
+</footer>
+
+<button class="top-btn" id="topBtn" aria-label="Volver arriba">
+  <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<script>
+/* ---------- ICONOS (SVG path data) ---------- */
+const ICONS = {
+  desktop:'<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/>',
+  monitor:'<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M9 20h6M12 16v4"/>',
+  keyboard:'<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/>',
+  mouse:'<rect x="7" y="3" width="10" height="18" rx="5"/><path d="M12 7v4"/>',
+  cpu:'<rect x="6" y="6" width="12" height="12" rx="1.5"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3"/>',
+  laptop:'<rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 20h20"/>',
+  ram:'<rect x="2" y="8" width="20" height="9" rx="1"/><path d="M6 8v-2M10 8v-2M14 8v-2M18 8v-2M5 11v3M9 11v3M13 11v3M17 11v3"/>',
+  gpu:'<rect x="2" y="6" width="20" height="11" rx="1.5"/><circle cx="9" cy="11.5" r="3"/><path d="M15 9h4M15 13h4"/>',
+  hdd:'<rect x="3" y="7" width="18" height="10" rx="2"/><circle cx="8" cy="12" r="2.5"/><path d="M16 12h2"/>',
+  usb:'<rect x="8" y="3" width="8" height="14" rx="1.5"/><path d="M12 17v4M10 7h.01"/><circle cx="12" cy="10" r="1"/>',
+  printer:'<path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="1.5"/><rect x="7" y="14" width="10" height="6"/>',
+  scanner:'<rect x="3" y="6" width="18" height="6" rx="1.5"/><path d="M5 16h14M5 19h9"/>',
+  projector:'<rect x="3" y="7" width="14" height="9" rx="1.5"/><circle cx="10" cy="11.5" r="2.5"/><path d="M17 11h4"/>',
+  headset:'<path d="M4 13v-1a8 8 0 0116 0v1"/><rect x="2" y="13" width="4" height="6" rx="1.5"/><rect x="18" y="13" width="4" height="6" rx="1.5"/><path d="M20 19a4 4 0 01-4 4h-2"/>',
+  webcam:'<circle cx="12" cy="11" r="6"/><circle cx="12" cy="11" r="2.5"/><path d="M8 21h8"/>',
+  speaker:'<rect x="5" y="3" width="14" height="18" rx="2"/><circle cx="12" cy="14" r="3.5"/><circle cx="12" cy="7" r="1"/>',
+  mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3M8 21h8"/>',
+  tablet:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M11 18h2"/>',
+  phone:'<rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/>',
+  hdmi:'<path d="M4 9h16l-2 6H6z"/><path d="M8 9V7h8v2"/>',
+  router:'<rect x="3" y="13" width="18" height="6" rx="1.5"/><path d="M7 16h.01M11 16h.01M8 13l-2-4M16 13l2-4M12 13V8"/>',
+  switch:'<rect x="3" y="9" width="18" height="6" rx="1.5"/><path d="M7 12h.01M11 12h.01M15 12h.01M19 12h.01"/>',
+  cable:'<path d="M4 12a4 4 0 014-4h2a4 4 0 014 4 4 4 0 004 4h2"/><rect x="2" y="10" width="3" height="4" rx="1"/>',
+  wifi:'<path d="M5 12.5a10 10 0 0114 0M8 16a5 5 0 018 0"/><circle cx="12" cy="19" r="1.2"/>',
+  bluetooth:'<path d="M8 7l8 10-4 3V4l4 3-8 10"/>',
+  fiber:'<path d="M3 12c4-6 14 6 18 0"/><circle cx="3" cy="12" r="1.5"/><circle cx="21" cy="12" r="1.5"/>',
+  netusb:'<rect x="4" y="8" width="16" height="9" rx="1.5"/><path d="M12 8V4M10 4h4"/>',
+  os:'<rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18M7 6.5h.01M9.5 6.5h.01"/>',
+  word:'<path d="M6 2h9l5 5v15a1 1 0 01-1 1H6a1 1 0 01-1-1V3a1 1 0 011-1z"/><path d="M14 2v6h6M8 13l1.5 5 1.5-4 1.5 4L14 13"/>',
+  excel:'<path d="M6 2h9l5 5v15a1 1 0 01-1 1H6a1 1 0 01-1-1V3a1 1 0 011-1z"/><path d="M14 2v6h6M8 13l4 5M12 13l-4 5"/>',
+  present:'<rect x="3" y="4" width="18" height="11" rx="1.5"/><path d="M12 15v4M8 19h8"/><path d="M7 8h6M7 11h4"/>',
+  browser:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 3 2.5 15 0 18M12 3c-2.5 3-2.5 15 0 18"/>',
+  mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+  shield:'<path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5z"/><path d="M9 12l2 2 4-4"/>',
+  zip:'<path d="M6 2h9l5 5v15a1 1 0 01-1 1H6a1 1 0 01-1-1V3a1 1 0 011-1z"/><path d="M10 2v2M12 4v2M10 6v2M12 8v2M10 10v3h2v-3"/>',
+  cloud:'<path d="M7 18a4 4 0 010-8 5 5 0 019.5-1A4 4 0 1117 18z"/><path d="M12 13v5M9.5 16l2.5 2.5L14.5 16"/>',
+  database:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>',
+  screwdriver:'<path d="M14 4l6 6-2 2-2-2-7 7-3 1 1-3 7-7-2-2z"/>',
+  pliers:'<path d="M8 3l4 8 4-8M12 11v4M9 22l3-7 3 7"/>',
+  wristband:'<circle cx="12" cy="12" r="7"/><path d="M12 5v3M12 16v3M5 12h3M16 12h3"/>',
+  thermal:'<rect x="8" y="3" width="8" height="16" rx="2"/><path d="M9 7h6M8 19h8"/>',
+  multimeter:'<rect x="4" y="3" width="16" height="14" rx="2"/><rect x="7" y="6" width="10" height="4" rx="1"/><path d="M9 21l3-4 3 4"/>',
+  solder:'<path d="M3 21l5-5M8 16l8-8 3 3-8 8z"/><path d="M16 8l3-3"/>',
+  spray:'<rect x="8" y="7" width="8" height="14" rx="2"/><path d="M9 7V4h6v3M18 5h2M18 8h2"/>',
+  flashlight:'<path d="M8 3h8l-1 5H9zM9 8h6v11a1 1 0 01-1 1h-4a1 1 0 01-1-1z"/><path d="M11 12h2"/>',
+  blower:'<circle cx="9" cy="12" r="6"/><path d="M15 12h6M19 9l2 3-2 3"/>',
+  tape:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/>',
+  qr:'<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3M20 14v3M14 20h3M20 20h.01"/>',
+  lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/><circle cx="12" cy="16" r="1.5"/>',
+  ups:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M13 8l-3 5h3l-2 4"/>'
+};
+
+/* ---------- CATEGORÍAS ---------- */
+const CATS = {
+  hw:   {name:'Hardware Principal',   color:'#1f4e79'},
+  peri: {name:'Periféricos',          color:'#2560a0'},
+  red:  {name:'Red y Conectividad',   color:'#e8a400'},
+  sw:   {name:'Software y Sistemas',  color:'#1f7a4d'},
+  mant: {name:'Mantenimiento',        color:'#c0392b'},
+  seg:  {name:'Seguridad y Gestión',  color:'#6d3fb0'},
+};
+
+/* ---------- DATOS ---------- */
+const TOOLS = [
+  {id:1,cat:'hw',icon:'desktop',name:'Computadora de escritorio (PC)',desc:'Equipo de procesamiento fijo compuesto por CPU, monitor, teclado y mouse. Es el centro de trabajo en el taller. Permite ejecutar sistemas operativos, software de gestión y herramientas de diagnóstico.',tag:'Procesamiento fijo'},
+  {id:2,cat:'hw',icon:'monitor',name:'Monitor',desc:'Dispositivo de salida visual que muestra la información procesada. Los modelos actuales son LCD o LED. El tamaño se mide en pulgadas diagonales. La resolución más común es Full HD (1920×1080).',tag:'Salida visual'},
+  {id:3,cat:'hw',icon:'keyboard',name:'Teclado',desc:'Dispositivo de entrada para ingresar texto, comandos y datos mediante teclas. Puede ser USB o inalámbrico. El diseño más común en Argentina es el layout QWERTY en español latinoamericano.',tag:'Entrada · QWERTY'},
+  {id:4,cat:'hw',icon:'mouse',name:'Mouse (ratón)',desc:'Dispositivo de entrada para mover el cursor y seleccionar elementos. Puede ser óptico, láser o trackball. Su velocidad se mide en DPI. La variante inalámbrica usa Bluetooth o receptor USB.',tag:'Entrada · DPI'},
+  {id:5,cat:'hw',icon:'cpu',name:'CPU (Unidad Central de Procesamiento)',desc:'El «cerebro» de la computadora. Ejecuta las instrucciones de los programas. Se mide en GHz y núcleos. Las marcas principales son Intel y AMD. La disipación de calor requiere cooler y pasta térmica.',tag:'GHz · núcleos'},
+  {id:6,cat:'hw',icon:'laptop',name:'Laptop / Notebook',desc:'Computadora portátil con todos los componentes integrados: pantalla, teclado, batería y trackpad. La herramienta de trabajo móvil por excelencia. Su mantenimiento incluye limpieza de ventilación y reemplazo de batería.',tag:'Portátil'},
+  {id:7,cat:'hw',icon:'ram',name:'Memoria RAM',desc:'Memoria de acceso aleatorio que almacena temporalmente los datos que usa el procesador. Se mide en GB. Los tipos más comunes son DDR4 y DDR5. A mayor RAM, más aplicaciones simultáneas.',tag:'GB · DDR4/DDR5'},
+  {id:8,cat:'hw',icon:'gpu',name:'Tarjeta de video (GPU)',desc:'Componente encargado de procesar y generar imágenes. Puede ser integrada o dedicada (discreta). Fundamental para diseño gráfico, edición de video y juegos. Marcas principales: NVIDIA y AMD.',tag:'NVIDIA · AMD'},
+  {id:9,cat:'hw',icon:'hdd',name:'Disco duro externo (HDD/SSD)',desc:'Dispositivo de almacenamiento masivo portátil. Los HDD usan platos magnéticos y los SSD memoria flash (más rápidos). Se conectan por USB. Ideales para copias de seguridad (backup).',tag:'Backup · USB'},
+  {id:10,cat:'hw',icon:'usb',name:'Pendrive (memoria USB)',desc:'Almacenamiento portátil de pequeño tamaño que se conecta por puerto USB. Capacidades comunes: 8, 16, 32 y 64 GB. Permite transportar archivos e instalar sistemas operativos (pendrive booteable).',tag:'Portátil · Booteable'},
+
+  {id:11,cat:'peri',icon:'printer',name:'Impresora',desc:'Dispositivo de salida que transfiere información digital a papel. Las de inyección de tinta usan cartuchos; las láser usan tóner y son más veloces. Las multifunción imprimen, copian y escanean.',tag:'Salida · Papel'},
+  {id:12,cat:'peri',icon:'scanner',name:'Escáner',desc:'Convierte documentos físicos (papel, fotos) en imágenes digitales. La resolución se mide en DPI. Los modelos planos son los más comunes en oficina. Los automáticos procesan varias hojas por minuto.',tag:'Digitalización · DPI'},
+  {id:13,cat:'peri',icon:'projector',name:'Proyector',desc:'Dispositivo de salida que amplía imágenes sobre una pantalla o pared. Se conecta por HDMI o VGA. La luminosidad se mide en lúmenes. Esencial en aulas y salas de presentación.',tag:'Salida · Lúmenes'},
+  {id:14,cat:'peri',icon:'headset',name:'Auriculares (headset)',desc:'Dispositivos de entrada y salida de audio. Los headset combinan auriculares con micrófono, ideales para videoconferencias. Se conectan por jack 3.5 mm, USB o Bluetooth. El ANC mejora la concentración.',tag:'Audio I/O'},
+  {id:15,cat:'peri',icon:'webcam',name:'Cámara web (Webcam)',desc:'Cámara de video digital que captura imagen en tiempo real para videoconferencias y streaming. La calidad se mide en megapíxeles y fps. La resolución estándar es Full HD (1080p). Se conecta por USB.',tag:'Video · 1080p'},
+  {id:16,cat:'peri',icon:'speaker',name:'Parlantes (altavoces)',desc:'Dispositivos de salida de audio. Pueden ser 2.0 o 2.1 (con subwoofer). La potencia se mide en vatios (W). Suelen conectarse por jack 3.5 mm o USB. En el taller se usan para pruebas de audio.',tag:'Salida · Watts'},
+  {id:17,cat:'peri',icon:'mic',name:'Micrófono',desc:'Dispositivo de entrada de audio que convierte el sonido en señal eléctrica digital. Los de condensador capturan alta calidad; los dinámicos son más resistentes. De mesa, solapa o integrado en headset.',tag:'Entrada · Audio'},
+  {id:18,cat:'peri',icon:'tablet',name:'Tablet',desc:'Dispositivo portátil con pantalla táctil que funciona como computadora liviana. Usa Android o iPadOS. Útil para consumo de contenidos, presentaciones y educación. Algunas soportan lápices ópticos.',tag:'Táctil · Android/iPadOS'},
+  {id:19,cat:'peri',icon:'phone',name:'Smartphone',desc:'Teléfono inteligente con capacidad de computación. Integra cámara, GPS, internet y cientos de apps. En el taller se usa para pruebas de conectividad WiFi, Bluetooth y aplicaciones móviles de gestión.',tag:'Móvil · Apps'},
+  {id:20,cat:'peri',icon:'hdmi',name:'Cable HDMI',desc:'Cable que transmite audio y video digital de alta definición en un solo conector. Soporta resoluciones desde HD hasta 8K según la versión. Conecta computadoras, consolas y proyectores a pantallas.',tag:'Audio+Video · 8K'},
+
+  {id:21,cat:'red',icon:'router',name:'Router / Módem',desc:'Dirige el tráfico de datos entre redes. El router conecta la red local (LAN) con internet (WAN); el módem convierte la señal del proveedor. La mayoría de los equipos actuales combinan ambas funciones.',tag:'LAN ↔ WAN'},
+  {id:22,cat:'red',icon:'switch',name:'Switch (conmutador)',desc:'Conecta múltiples computadoras dentro de una red local (LAN). A diferencia del hub, envía los datos solo al dispositivo destino (más eficiente). Los gestionados permiten configurar VLAN y prioridades.',tag:'LAN · VLAN'},
+  {id:23,cat:'red',icon:'cable',name:'Cable de red (RJ45 / UTP)',desc:'Cable de par trenzado para conexiones Ethernet. El conector RJ45 es el más común. Categorías usadas: Cat5e (hasta 1 Gbps) y Cat6 (hasta 10 Gbps). La conexión más estable y segura para redes locales.',tag:'Ethernet · Cat5e/6'},
+  {id:24,cat:'red',icon:'wifi',name:'WiFi (red inalámbrica)',desc:'Tecnología de red inalámbrica basada en el estándar IEEE 802.11. Conecta dispositivos sin cables. WiFi 5 y WiFi 6 ofrecen hasta varios Gbps. La seguridad se gestiona con WPA2 o WPA3.',tag:'802.11 · WPA2/3'},
+  {id:25,cat:'red',icon:'bluetooth',name:'Bluetooth',desc:'Comunicación inalámbrica de corto alcance (hasta ~10 m). Conecta periféricos (mouse, teclado, auriculares) sin cables. La versión Bluetooth 5.0 mejora el rango y la velocidad de transferencia.',tag:'Inalámbrico · 10m'},
+  {id:26,cat:'red',icon:'fiber',name:'Fibra óptica',desc:'Transmite datos mediante pulsos de luz a través de filamentos de vidrio o plástico. Ofrece velocidades muy superiores al cobre y no sufre interferencias electromagnéticas. Base del internet de alta velocidad.',tag:'Luz · Alta velocidad'},
+  {id:27,cat:'red',icon:'netusb',name:'Adaptador de red USB',desc:'Agrega conectividad de red a una computadora por USB. Puede ser WiFi, Ethernet o Bluetooth. Útil cuando la placa de red integrada falla o cuando se necesita una segunda interfaz para diagnóstico.',tag:'USB · Diagnóstico'},
+
+  {id:28,cat:'sw',icon:'os',name:'Sistema operativo (SO)',desc:'Software base que gestiona los recursos del hardware y permite ejecutar otras aplicaciones. Los más usados son Windows, macOS y Linux. En el taller se trabaja con instalación, configuración y recuperación.',tag:'Windows·macOS·Linux'},
+  {id:29,cat:'sw',icon:'word',name:'Procesador de texto',desc:'Software para crear, editar y dar formato a documentos. Los más conocidos son Microsoft Word y LibreOffice Writer (gratuito). Permiten insertar tablas, imágenes, numeración automática y exportar a PDF.',tag:'Word · Writer'},
+  {id:30,cat:'sw',icon:'excel',name:'Planilla de cálculo',desc:'Software para organizar datos en filas y columnas, hacer cálculos y crear gráficos. Excel y LibreOffice Calc son los más usados. Esenciales para administración, contabilidad y análisis de datos.',tag:'Excel · Calc'},
+  {id:31,cat:'sw',icon:'present',name:'Software de presentaciones',desc:'Permite crear diapositivas con texto, imágenes, videos y animaciones. PowerPoint e Impress son los más populares. Se exportan a PDF o se presentan conectando la PC a un proyector.',tag:'PowerPoint · Impress'},
+  {id:32,cat:'sw',icon:'browser',name:'Navegador web',desc:'Aplicación para acceder a sitios de internet vía HTTP/HTTPS. Los más usados: Chrome, Firefox y Edge. Admiten extensiones que amplían sus funciones. La navegación privada no guarda historial local.',tag:'HTTP/HTTPS'},
+  {id:33,cat:'sw',icon:'mail',name:'Cliente de correo electrónico',desc:'Software para enviar, recibir y organizar mensajes. Thunderbird, Outlook y Gmail (web) son los más comunes. Usa IMAP o POP3 para recibir y SMTP para enviar. Permite gestionar múltiples cuentas.',tag:'IMAP·POP3·SMTP'},
+  {id:34,cat:'sw',icon:'shield',name:'Antivirus / Antimalware',desc:'Software de seguridad que detecta, bloquea y elimina virus, troyanos, ransomware y otros programas maliciosos. Se actualiza con nuevas definiciones. Populares: Windows Defender, Avast, Malwarebytes.',tag:'Anti-malware'},
+  {id:35,cat:'sw',icon:'zip',name:'Compresor de archivos',desc:'Reduce el tamaño de archivos y carpetas agrupándolos en un paquete comprimido. Formatos comunes: ZIP, RAR y 7Z. WinRAR y 7-Zip son los más usados. Facilita el envío y almacenamiento de datos.',tag:'ZIP·RAR·7Z'},
+  {id:36,cat:'sw',icon:'cloud',name:'Almacenamiento en la nube',desc:'Servicio para guardar archivos en servidores remotos y acceder desde cualquier dispositivo con internet. Google Drive, OneDrive y Dropbox son los más populares. Incluyen sincronización y compartido.',tag:'Drive·OneDrive'},
+  {id:37,cat:'sw',icon:'database',name:'Base de datos',desc:'Sistema para almacenar, organizar y consultar grandes volúmenes de información de forma estructurada. MySQL, SQLite y Access son los más usados en educación y gestión. El lenguaje SQL realiza consultas y reportes.',tag:'SQL · MySQL'},
+
+  {id:38,cat:'mant',icon:'screwdriver',name:'Destornillador',desc:'Herramienta manual para aflojar o ajustar tornillos de los componentes. En informática se usan el Phillips (estrella) N°1 y N°2, y el de punta plana. El magnético facilita el trabajo en espacios reducidos.',tag:'Phillips · Plano'},
+  {id:39,cat:'mant',icon:'pliers',name:'Alicate de punta fina',desc:'Para sujetar, doblar o retirar piezas pequeñas dentro del gabinete. Útil para recuperar tornillos caídos, manejar cables en espacios reducidos o extraer jumpers de las placas madre.',tag:'Precisión'},
+  {id:40,cat:'mant',icon:'wristband',name:'Pulsera antiestática',desc:'Se usa en la muñeca y se conecta a tierra para evitar descargas electrostáticas (ESD) que dañan los componentes. Es obligatoria al manipular placas, RAM, tarjetas de video o procesadores.',tag:'ESD · Seguridad'},
+  {id:41,cat:'mant',icon:'thermal',name:'Pasta térmica',desc:'Compuesto que se aplica entre el procesador (CPU/GPU) y el disipador para mejorar la transferencia térmica y evitar el recalentamiento. Se reemplaza cada 2-3 años o ante temperaturas elevadas sin causa.',tag:'Disipación'},
+  {id:42,cat:'mant',icon:'multimeter',name:'Multímetro digital',desc:'Instrumento que mide tensión (voltios), corriente (amperios) y resistencia (ohmios). En informática se usa para verificar la fuente de alimentación, probar cables de red y detectar cortocircuitos.',tag:'V · A · Ω'},
+  {id:43,cat:'mant',icon:'solder',name:'Cautín (soldador)',desc:'Herramienta eléctrica para soldar componentes electrónicos. Repara conexiones en placas, cables y conectores. La temperatura de trabajo suele ser de 300 °C a 380 °C. Se usa con estaño y flux (fundente).',tag:'300-380 °C'},
+  {id:44,cat:'mant',icon:'spray',name:'Limpiador de contactos',desc:'Spray o líquido especial para limpiar contactos metálicos de tarjetas, conectores y módulos de RAM oxidados. Mejora la conductividad y soluciona problemas de conexión. Aplicar con precaución y dejar secar.',tag:'Limpieza · Spray'},
+  {id:45,cat:'mant',icon:'flashlight',name:'Linterna LED / Luz de trabajo',desc:'Fuente de iluminación portátil para trabajar dentro del gabinete o con poca luz. Las modernas usan LED de bajo consumo y alta luminosidad. Algunas incluyen lupa integrada para inspeccionar componentes.',tag:'LED · Portátil'},
+  {id:46,cat:'mant',icon:'blower',name:'Soplador de aire / Pera de goma',desc:'Sopla aire y remueve polvo de los componentes internos sin electricidad. La versión eléctrica (aire comprimido) es más potente. El polvo en ventiladores y disipadores causa recalentamiento.',tag:'Limpieza · Polvo'},
+  {id:47,cat:'mant',icon:'tape',name:'Cinta aislante',desc:'Cinta adhesiva no conductora (PVC o vinilo) para aislar cables, proteger conexiones eléctricas y marcar componentes. En el taller también sirve para identificar puertos o rotular equipos. Resiste calor y humedad.',tag:'Aislante · PVC'},
+
+  {id:48,cat:'seg',icon:'qr',name:'Código QR',desc:'Código de barras bidimensional que almacena URLs, textos, contactos o instrucciones. Se genera con apps gratuitas y se lee con la cámara de un smartphone. En el taller se usa para compartir recursos y formularios.',tag:'2D · Cámara'},
+  {id:49,cat:'seg',icon:'lock',name:'Seguridad informática',desc:'Conjunto de prácticas y herramientas para proteger los sistemas de amenazas. Incluye contraseñas seguras, autenticación en dos pasos (2FA), cifrado de datos y copias de seguridad regulares. Eje fundamental.',tag:'2FA · Cifrado'},
+  {id:50,cat:'seg',icon:'ups',name:'UPS (Alimentación ininterrumpida)',desc:'Proporciona energía de respaldo ante cortes o fluctuaciones de tensión. Protege equipos y evita pérdida de datos. La autonomía varía según la capacidad en VA (volt-amperios). Indispensable en toda instalación profesional.',tag:'Respaldo · VA'},
+];
+
+/* ---------- PROMPTS ---------- */
+const PROMPTS = [
+  {n:1,title:'Ilustración de hardware (técnico)',body:'Genera una ilustración técnica isométrica de los siguientes componentes de hardware: [nombre del componente]. Fondo blanco o transparente. Estilo: dibujo técnico limpio, líneas definidas, colores planos (azul marino, gris claro, naranja como acento). Sin texto ni etiquetas. 512×512 px. PNG.'},
+  {n:2,title:'Ícono plano para apunte',body:'Crea un ícono plano (flat design) de [nombre de la herramienta] para un apunte educativo de secundaria técnica. Diseño simple, reconocible, fondo transparente. Paleta: azul oscuro (#1A3A5C), azul medio (#2560A0) y blanco. Sin sombras ni gradientes. Minimalista. 256×256 px.'},
+  {n:3,title:'Diagrama de conexiones',body:'Genera un diagrama educativo que muestre cómo se conectan los componentes de una PC de escritorio: monitor, CPU (torre), teclado, mouse, impresora y router. Usa flechas con etiquetas del tipo de conexión (USB, HDMI, RJ45...). Infografía técnica, fondo blanco, azul y naranja. Texto en español latinoamericano.'},
+  {n:4,title:'Kit de mantenimiento',body:'Crea una infografía titulada «Kit de mantenimiento de PC» en cuadrícula ordenada: destornillador Phillips, alicate de punta fina, pulsera antiestática, pasta térmica, multímetro, soplador de aire y limpiador de contactos. Cada una con ilustración plana y su nombre en español. Fondo blanco, técnico-educativo, azul y naranja.'},
+  {n:5,title:'Diagrama de red local (LAN)',body:'Genera un diagrama de red local (LAN) para un taller escolar: router, switch, 5 computadoras por cable UTP RJ45, 2 laptops por WiFi, una impresora en red y un servidor. Iconos simples. Conexiones con líneas sólidas (cable) y punteadas (WiFi). Etiquetas en español. Fondo blanco, estilo limpio y educativo.'},
+];
+
+/* ---------- RENDER ---------- */
+const main = document.getElementById('main');
+const empty = document.getElementById('empty');
+const filtersEl = document.getElementById('filters');
+const countEl = document.getElementById('count');
+const searchEl = document.getElementById('search');
+let activeCat = 'all';
+let query = '';
+
+// Build filter chips
+const chipData = [['all','Todas','var(--orange)'], ...Object.entries(CATS).map(([k,v])=>[k,v.name,v.color])];
+chipData.forEach(([cat,label,color])=>{
+  const chip = document.createElement('div');
+  chip.className = 'chip' + (cat==='all'?' active':'');
+  chip.dataset.cat = cat;
+  chip.innerHTML = (cat!=='all'?`<span class="swatch" style="background:${color}"></span>`:'') + label;
+  chip.onclick = ()=>{
+    activeCat = cat;
+    document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active', c.dataset.cat===cat));
+    render();
+  };
+  filtersEl.appendChild(chip);
+});
+
+function render(){
+  // Remove existing category blocks
+  document.querySelectorAll('.cat-block').forEach(e=>e.remove());
+
+  const q = query.trim().toLowerCase();
+  let total = 0;
+
+  Object.entries(CATS).forEach(([catKey,cat])=>{
+    if(activeCat!=='all' && activeCat!==catKey) return;
+
+    const items = TOOLS.filter(t=>{
+      if(t.cat!==catKey) return false;
+      if(!q) return true;
+      return (t.name+' '+t.desc+' '+t.tag).toLowerCase().includes(q);
+    });
+    if(items.length===0) return;
+    total += items.length;
+
+    const block = document.createElement('div');
+    block.className = 'cat-block';
+
+    const head = document.createElement('div');
+    head.className = 'cat-header';
+    head.innerHTML = `
+      <span class="cat-index">${String(Object.keys(CATS).indexOf(catKey)+1).padStart(2,'0')}</span>
+      <h2>${cat.name}</h2>
+      <span class="rule" style="background:${cat.color}"></span>
+      <span class="pill" style="background:${cat.color}">${items.length}</span>`;
+    block.appendChild(head);
+
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+    items.forEach((t,i)=>{
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.style.setProperty('--c', cat.color);
+      card.style.animationDelay = (i*0.03)+'s';
+      card.innerHTML = `
+        <div class="card-top">
+          <div class="icon-box"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">${ICONS[t.icon]||ICONS.cpu}</svg></div>
+          <span class="id">${String(t.id).padStart(2,'0')}</span>
+        </div>
+        <h3>${t.name}</h3>
+        <p>${t.desc}</p>
+        <span class="tag">${t.tag}</span>`;
+      grid.appendChild(card);
+    });
+    block.appendChild(grid);
+    main.insertBefore(block, empty);
+  });
+
+  countEl.textContent = total;
+  empty.classList.toggle('show', total===0);
+}
+
+searchEl.addEventListener('input', e=>{ query = e.target.value; render(); });
+
+// Prompts
+const pg = document.getElementById('promptGrid');
+PROMPTS.forEach(p=>{
+  const card = document.createElement('div');
+  card.className = 'prompt-card';
+  card.innerHTML = `
+    <div class="pc-head"><span class="pc-num">${p.n}</span><h4>${p.title}</h4></div>
+    <div class="pc-body">${p.body}</div>
+    <button class="copy-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg>
+      Copiar prompt
+    </button>`;
+  const btn = card.querySelector('.copy-btn');
+  btn.onclick = ()=>{
+    navigator.clipboard.writeText(p.body).then(()=>{
+      btn.classList.add('copied');
+      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg> ¡Copiado!`;
+      setTimeout(()=>{
+        btn.classList.remove('copied');
+        btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg> Copiar prompt`;
+      },1800);
+    });
+  };
+  pg.appendChild(card);
+});
+
+// Back to top
+const topBtn = document.getElementById('topBtn');
+window.addEventListener('scroll', ()=>{
+  topBtn.classList.toggle('show', window.scrollY>500);
+});
+topBtn.onclick = ()=>window.scrollTo({top:0,behavior:'smooth'});
+
+render();
+</script>
+</body>
+</html>
