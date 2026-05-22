@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Análisis y Diseño de Aplicaciones — E.P.E.T N°7</title>
+
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-epet.png">
+<link rel="apple-touch-icon" sizes="180x180" href="favicon-epet-180.png">
+<link rel="shortcut icon" href="favicon-epet.png">
+
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -68,8 +73,10 @@
   .hero-tag::before { content:''; width:7px; height:7px; background:var(--acc); border-radius:50%; animation:blink 2.2s ease infinite; }
   @keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.3;transform:scale(.65)} }
   .hero h1 { font-weight:800; font-size:clamp(2.5rem,6.5vw,5rem); line-height:1.06; letter-spacing:-.025em; margin-bottom:1.6rem; animation:fadeUp .8s .12s ease both; }
-  .grad-acc  { background:linear-gradient(90deg,var(--acc)  0%,var(--green) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-  .grad-purp { background:linear-gradient(90deg,var(--purp) 0%,var(--pink)  100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .grad-acc  { color:var(--acc); }
+  .grad-purp { color:var(--purp); }
+  .grad-acc  .al { background:linear-gradient(90deg,var(--acc)  0%,var(--green) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; color:transparent; }
+  .grad-purp .al { background:linear-gradient(90deg,var(--purp) 0%,var(--pink)  100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; color:transparent; }
   .hero-sub { font-size:1.05rem; color:var(--muted); max-width:580px; margin:0 auto 3rem; line-height:1.75; animation:fadeUp .8s .25s ease both; }
   .hero-badges { display:flex; flex-wrap:wrap; gap:.7rem; justify-content:center; animation:fadeUp .8s .4s ease both; }
   .badge { background:var(--bg3); border:1px solid var(--border); color:var(--text); font-family:'Space Mono',monospace; font-size:.7rem; padding:.38rem .9rem; border-radius:2px; letter-spacing:.05em; }
