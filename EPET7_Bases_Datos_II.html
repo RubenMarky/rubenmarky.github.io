@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bases de Datos II — E.P.E.T N°7</title>
+
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-epet.png">
+<link rel="apple-touch-icon" sizes="180x180" href="favicon-epet-180.png">
+<link rel="shortcut icon" href="favicon-epet.png">
+
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -37,7 +42,8 @@
   .hero-tag::before{content:'';width:7px;height:7px;background:var(--acc);border-radius:50%;animation:blink 2s ease infinite}
   @keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.65)}}
   .hero h1{font-weight:800;font-size:clamp(2.4rem,6vw,4.8rem);line-height:1.06;letter-spacing:-.025em;margin-bottom:1.5rem;animation:fadeUp .8s .1s ease both}
-  .g1{background:linear-gradient(90deg,var(--acc) 0%,var(--teal) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .g1{color:var(--acc)}
+  .g1 .al{background:linear-gradient(90deg,var(--acc) 0%,var(--teal) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;color:transparent}
   .hero-sub{font-size:1rem;color:var(--muted);max-width:580px;margin:0 auto 2.8rem;line-height:1.75;animation:fadeUp .8s .22s ease both}
   .badges{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;animation:fadeUp .8s .36s ease both}
   .badge{background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:'Space Mono',monospace;font-size:.67rem;padding:.36rem .85rem;border-radius:2px;letter-spacing:.04em}
@@ -614,7 +620,7 @@ header h1, .hero-title, .header h1 { perspective: 900px; }
 <pre>
 <span class="cm">-- Insertar un cliente completo</span>
 <span class="kw">INSERT INTO</span> CLIENTES (nombre, apellido, email, telefono)
-<span class="kw">VALUES</span> (<span class="str">'Juan'</span>, <span class="str">'García'</span>, <span class="str">'jgarcia@mail.com'</span>, <span class="str">'3755001234'</span>);
+<span class="kw">VALUES</span> (<span class="str">'Juan'</span>, <span class="str">'García'</span>, <span class="str">'<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7d171a1c0f1e141c3d101c1411531e1210">[email&#160;protected]</a>'</span>, <span class="str">'3755001234'</span>);
 
 <span class="cm">-- Insertar varios registros en una sola instrucción</span>
 <span class="kw">INSERT INTO</span> PRODUCTOS (descripcion, precio, stock, categoria)
@@ -830,7 +836,7 @@ header h1, .hero-title, .header h1 { perspective: 900px; }
 </footer>
 
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 (function () {
   const h1 = document.querySelector('header h1') || document.querySelector('.hero-title') || document.querySelector('h1');
   if (!h1) return;
