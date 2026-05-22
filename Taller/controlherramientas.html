@@ -349,6 +349,18 @@ footer {
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .loading { text-align: center; padding: 2rem; color: #888; font-family: 'Space Mono', monospace; font-size: 0.8rem; }
+
+/* ── AUTH ── */
+#login { max-width: 400px; margin: 3rem auto; background: #fff; border: 2px solid var(--ink); box-shadow: var(--shadow); padding: 2rem; }
+#login h2 { font-family: 'Archivo Black', sans-serif; font-size: 1.2rem; margin-bottom: 1.5rem; }
+.user-badge { display: none; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.user-badge.visible { display: flex; }
+.user-email { font-family: 'Space Mono', monospace; font-size: 0.68rem; color: #adb8c9; }
+.role-chip { font-family: 'Space Mono', monospace; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.2rem 0.5rem; border: 1.5px solid; }
+.role-chip.admin { color: var(--orange); border-color: var(--orange); }
+.role-chip.usuario { color: #7a8ca0; border-color: #7a8ca0; }
+.admin-tab { display: none; }
+body.is-admin .admin-tab { display: block; }
 </style>
 </head>
 <body>
@@ -359,19 +371,43 @@ footer {
     <h1>&#128295; Control de Herramientas</h1>
     <small>E.P.E.T N°7 · Taller de Informática</small>
   </div>
-  <button class="btn-config" onclick="toggleSetup()">&#9881; Configurar</button>
+  <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;">
+    <div id="user-badge" class="user-badge">
+      <span id="user-email" class="user-email"></span>
+      <span id="user-role" class="role-chip"></span>
+      <button class="btn-config" onclick="logout()">Salir</button>
+    </div>
+    <button class="btn-config" id="btn-config" onclick="toggleSetup()">&#9881; Configurar</button>
+  </div>
 </header>
 
 <!-- ═══════════════════════════ TABS ════════════════════════════ -->
 <nav id="nav-tabs">
   <button class="tab active" onclick="showTab('dashboard')">Dashboard</button>
   <button class="tab" onclick="showTab('retiros')">Retiros</button>
-  <button class="tab" onclick="showTab('herramientas')">Herramientas</button>
-  <button class="tab" onclick="showTab('profesores')">Profesores</button>
-  <button class="tab" onclick="showTab('alumnos')">Alumnos</button>
+  <button class="tab admin-tab" onclick="showTab('herramientas')">Herramientas</button>
+  <button class="tab admin-tab" onclick="showTab('profesores')">Profesores</button>
+  <button class="tab admin-tab" onclick="showTab('alumnos')">Alumnos</button>
 </nav>
 
 <main>
+
+<!-- ═══════════════════════ LOGIN ═══════════════════════════════ -->
+<div id="login" class="section">
+  <h2>Iniciar sesión</h2>
+  <div class="form-group" style="margin-top:1rem;">
+    <label>Email</label>
+    <input type="email" id="l-email" placeholder="usuario@epet7.edu.ar" onkeydown="if(event.key==='Enter')doLogin()">
+  </div>
+  <div class="form-group">
+    <label>Contraseña</label>
+    <input type="password" id="l-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+  </div>
+  <div id="alert-login" class="alert"></div>
+  <div class="form-actions">
+    <button class="btn btn-orange" onclick="doLogin()">Ingresar</button>
+  </div>
+</div>
 
 <!-- ═══════════════════════ SETUP SCREEN ════════════════════════ -->
 <div id="setup" class="section active">
@@ -599,6 +635,8 @@ footer {
 <script>
 // ─── Supabase client ───────────────────────────────────────────
 let db = null;
+let currentUser = null;
+let currentRole = null;
 
 function initSupabase(url, key) {
   try {
@@ -610,6 +648,70 @@ function initSupabase(url, key) {
 }
 
 // ─── Config ────────────────────────────────────────────────────
+async function checkAuth() {
+  const { data: { session } } = await db.auth.getSession();
+  if (session?.user) {
+    currentUser = session.user;
+    await loadRole(currentUser.id);
+    applyPermissions();
+    showTab('dashboard');
+  } else {
+    showSection('login');
+  }
+}
+
+async function loadRole(uid) {
+  const { data } = await db.from('perfil').select('rol').eq('id', uid).single();
+  currentRole = data?.rol ?? 'usuario';
+}
+
+async function doLogin() {
+  const alertEl = document.getElementById('alert-login');
+  const email = document.getElementById('l-email').value.trim();
+  const pwd = document.getElementById('l-password').value;
+  if (!email || !pwd) { showAlert(alertEl, 'err', 'Completá todos los campos.'); return; }
+  const { data, error } = await db.auth.signInWithPassword({ email, password: pwd });
+  if (error) { showAlert(alertEl, 'err', error.message); return; }
+  currentUser = data.user;
+  await loadRole(data.user.id);
+  applyPermissions();
+  showTab('dashboard');
+}
+
+async function logout() {
+  await db.auth.signOut();
+  currentUser = null;
+  currentRole = null;
+  document.body.classList.remove('is-admin');
+  updateHeaderAuth();
+  showSection('login');
+}
+
+function applyPermissions() {
+  if (currentRole === 'admin') {
+    document.body.classList.add('is-admin');
+  } else {
+    document.body.classList.remove('is-admin');
+  }
+  updateHeaderAuth();
+}
+
+function updateHeaderAuth() {
+  const badge = document.getElementById('user-badge');
+  const configBtn = document.getElementById('btn-config');
+  if (currentUser) {
+    document.getElementById('user-email').textContent = currentUser.email;
+    const chip = document.getElementById('user-role');
+    chip.textContent = currentRole;
+    chip.className = 'role-chip ' + currentRole;
+    badge.classList.add('visible');
+    if (configBtn) configBtn.style.display = currentRole === 'admin' ? 'inline-block' : 'none';
+  } else {
+    badge.classList.remove('visible');
+    if (configBtn) configBtn.style.display = 'inline-block';
+  }
+}
+
 function loadConfig() {
   const url = localStorage.getItem('sb_url');
   const key = localStorage.getItem('sb_key');
@@ -617,7 +719,7 @@ function loadConfig() {
     document.getElementById('input-url').value = url;
     document.getElementById('input-key').value = key;
     if (initSupabase(url, key)) {
-      showTab('dashboard');
+      checkAuth();
       return true;
     }
   }
@@ -653,8 +755,8 @@ function saveConfig() {
       if (error) {
         showAlert(alertEl, 'err', 'Conexión fallida: ' + error.message);
       } else {
-        showAlert(alertEl, 'ok', '¡Conexión exitosa! Redirigiendo…');
-        setTimeout(() => showTab('dashboard'), 1000);
+        showAlert(alertEl, 'ok', '¡Conexión exitosa! Iniciá sesión…');
+        setTimeout(() => showSection('login'), 1000);
       }
     });
 }
@@ -684,6 +786,9 @@ function showSection(id) {
 
 function showTab(id) {
   if (!db) { showSection('setup'); return; }
+  if (!currentUser) { showSection('login'); return; }
+  const adminOnly = ['herramientas', 'profesores', 'alumnos'];
+  if (adminOnly.includes(id) && currentRole !== 'admin') return;
   showSection(id);
   const tabs = document.querySelectorAll('.tab');
   const order = ['dashboard','retiros','herramientas','profesores','alumnos'];
