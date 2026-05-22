@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABM de Contactos</title>
+<style>
+  :root{
+    --bg:#0f1729;
+    --surface:#1b2740;
+    --surface-2:#243352;
+    --border:#33446b;
+    --text:#e8edf7;
+    --muted:#94a3c4;
+    --primary:#4f86f7;
+    --primary-hover:#3b73e8;
+    --success:#22c55e;
+    --danger:#ef4444;
+    --danger-hover:#dc2626;
+    --warn:#f59e0b;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:radial-gradient(1200px 600px at 50% -10%, #1a2745 0%, var(--bg) 60%);
+    color:var(--text);
+    min-height:100vh;
+    padding:24px 16px 60px;
+  }
+  .wrap{max-width:920px;margin:0 auto}
+
+  header.app-head{text-align:center;margin-bottom:28px}
+  header.app-head h1{font-size:1.7rem;font-weight:700;letter-spacing:-.02em}
+  header.app-head p{color:var(--muted);margin-top:6px;font-size:.92rem}
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:22px;
+    margin-bottom:22px;
+    box-shadow:0 10px 30px -12px rgba(0,0,0,.5);
+  }
+  .card h2{
+    font-size:1.05rem;margin-bottom:16px;display:flex;align-items:center;gap:8px;
+  }
+  .card h2 .badge{
+    font-size:.7rem;font-weight:600;padding:3px 9px;border-radius:30px;
+    background:var(--surface-2);color:var(--muted);
+  }
+  .card h2 .badge.editing{background:rgba(245,158,11,.18);color:var(--warn)}
+
+  /* ---- FORM ---- */
+  .form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field label{font-size:.78rem;color:var(--muted);font-weight:600}
+  .field input{
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:11px 13px;
+    color:var(--text);
+    font-size:.92rem;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .field input:focus{
+    outline:none;border-color:var(--primary);
+    box-shadow:0 0 0 3px rgba(79,134,247,.2);
+  }
+  .form-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+
+  button{
+    font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;
+    border:none;border-radius:10px;padding:11px 18px;
+    display:inline-flex;align-items:center;gap:8px;
+    transition:background .15s, transform .1s, opacity .15s;
+  }
+  button:active{transform:scale(.97)}
+  button:disabled{opacity:.55;cursor:not-allowed}
+  .btn-primary{background:var(--primary);color:#fff}
+  .btn-primary:hover:not(:disabled){background:var(--primary-hover)}
+  .btn-primary.editing{background:var(--warn);color:#1b1300}
+  .btn-primary.editing:hover:not(:disabled){background:#e08e09}
+  .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+  .btn-ghost:hover:not(:disabled){background:var(--surface-2);color:var(--text)}
+
+  /* ---- TABLE ---- */
+  .table-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .table-head .count{color:var(--muted);font-size:.85rem}
+  .table-scroll{overflow-x:auto;border-radius:10px}
+  table{width:100%;border-collapse:collapse;min-width:520px}
+  thead th{
+    text-align:left;font-size:.74rem;text-transform:uppercase;letter-spacing:.05em;
+    color:var(--muted);padding:10px 14px;border-bottom:1px solid var(--border);
+  }
+  tbody td{padding:13px 14px;border-bottom:1px solid var(--border);font-size:.9rem;vertical-align:middle}
+  tbody tr{transition:background .12s}
+  tbody tr:hover{background:var(--surface-2)}
+  tbody tr:last-child td{border-bottom:none}
+  .col-actions{display:flex;gap:8px;justify-content:flex-end}
+  .icon-btn{
+    padding:7px 12px;font-size:.8rem;border-radius:8px;
+  }
+  .icon-btn.edit{background:rgba(79,134,247,.15);color:#9cc0ff}
+  .icon-btn.edit:hover{background:rgba(79,134,247,.28)}
+  .icon-btn.del{background:rgba(239,68,68,.13);color:#ffa3a3}
+  .icon-btn.del:hover{background:rgba(239,68,68,.26)}
+  .empty-row td{text-align:center;color:var(--muted);padding:34px 14px;font-style:italic}
+
+  /* ---- LOADER / TOAST ---- */
+  #overlay{
+    position:fixed;inset:0;background:rgba(8,12,24,.7);
+    display:none;align-items:center;justify-content:center;z-index:100;
+    backdrop-filter:blur(2px);
+  }
+  #overlay.show{display:flex}
+  .loader-box{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius);padding:26px 34px;
+    display:flex;flex-direction:column;align-items:center;gap:14px;
+  }
+  .spinner{
+    width:34px;height:34px;border:3px solid var(--border);
+    border-top-color:var(--primary);border-radius:50%;
+    animation:spin .7s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .loader-box span{color:var(--muted);font-size:.9rem}
+
+  #toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(140%);
+    background:var(--surface);border:1px solid var(--border);
+    border-left:4px solid var(--primary);
+    padding:14px 20px;border-radius:10px;font-size:.9rem;z-index:110;
+    box-shadow:0 12px 30px -10px rgba(0,0,0,.6);
+    transition:transform .3s cubic-bezier(.2,.8,.2,1);max-width:90vw;
+  }
+  #toast.show{transform:translateX(-50%) translateY(0)}
+  #toast.ok{border-left-color:var(--success)}
+  #toast.err{border-left-color:var(--danger)}
+
+  @media(max-width:640px){
+    .form-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="app-head">
+    <h1>📇 ABM de Contactos</h1>
+    <p>Alta · Baja · Modificación · Google Sheets + Apps Script</p>
+  </header>
+
+  <!-- ===== FORMULARIO (Crear / Editar) ===== -->
+  <section class="card">
+    <h2>
+      <span id="formTitulo">Nuevo contacto</span>
+      <span class="badge" id="formBadge">Modo: Alta</span>
+    </h2>
+
+    <div class="form-grid">
+      <div class="field">
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" placeholder="Ej: Ana Pérez" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="telefono">Teléfono</label>
+        <input type="text" id="telefono" placeholder="Ej: 3751-456789" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="Ej: ana@correo.com" autocomplete="off">
+      </div>
+    </div>
+
+    <!-- Guardamos aquí el id mientras editamos (oculto) -->
+    <input type="hidden" id="idEnEdicion" value="">
+
+    <div class="form-actions">
+      <button class="btn-primary" id="btnGuardar" onclick="guardar()">
+        <span id="btnGuardarTexto">➕ Agregar contacto</span>
+      </button>
+      <button class="btn-ghost" id="btnCancelar" onclick="cancelarEdicion()" style="display:none">
+        Cancelar edición
+      </button>
+    </div>
+  </section>
+
+  <!-- ===== TABLA ===== -->
+  <section class="card">
+    <div class="table-head">
+      <h2 style="margin:0">Contactos</h2>
+      <span class="count" id="contador">— registros</span>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Teléfono</th>
+            <th>Email</th>
+            <th style="text-align:right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaBody">
+          <tr class="empty-row"><td colspan="4">Cargando…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
+
+<!-- ===== OVERLAY DE CARGA ===== -->
+<div id="overlay">
+  <div class="loader-box">
+    <div class="spinner"></div>
+    <span id="loaderTexto">Procesando…</span>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div id="toast"></div>
+
+<script>
+/* ===================================================================
+   CONFIGURACIÓN  →  reemplazá esto con la URL /exec de tu Web App
+   =================================================================== */
+const URL_API = 'TU_URL_DE_APPS_SCRIPT_AQUI';
+
+/* ===================================================================
+   ESTADO Y REFERENCIAS
+   =================================================================== */
+let contactos = [];          // cache local de lo que devuelve el backend
+const $ = (id) => document.getElementById(id);
+
+/* ===================================================================
+   HELPERS DE UI: loader y toast
+   =================================================================== */
+function mostrarLoader(texto = 'Procesando…') {
+  $('loaderTexto').textContent = texto;
+  $('overlay').classList.add('show');
+}
+function ocultarLoader() {
+  $('overlay').classList.remove('show');
+}
+let toastTimer;
+function toast(mensaje, tipo = 'ok') {
+  const t = $('toast');
+  t.textContent = mensaje;
+  t.className = 'show ' + tipo;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = ''; }, 3200);
+}
+
+/* ===================================================================
+   LECTURA (GET) — trae todos los contactos y pinta la tabla
+   =================================================================== */
+async function cargarContactos() {
+  mostrarLoader('Cargando contactos…');
+  try {
+    const resp = await fetch(URL_API);          // GET simple, sin headers extra
+    const data = await resp.json();
+    if (!data.ok) throw new Error(data.error || 'Error al leer');
+    contactos = data.contactos || [];
+    renderTabla();
+  } catch (err) {
+    toast('No se pudo cargar: ' + err.message, 'err');
+    $('tablaBody').innerHTML =
+      '<tr class="empty-row"><td colspan="4">Error de conexión. Revisá la URL_API.</td></tr>';
+  } finally {
+    ocultarLoader();
+  }
+}
+
+/* Dibuja las filas de la tabla a partir del array `contactos` */
+function renderTabla() {
+  const tbody = $('tablaBody');
+  $('contador').textContent = contactos.length + ' registro' + (contactos.length === 1 ? '' : 's');
+
+  if (contactos.length === 0) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="4">No hay contactos todavía. ¡Agregá el primero! 👆</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = contactos.map(c => `
+    <tr>
+      <td>${escapar(c.nombre)}</td>
+      <td>${escapar(c.telefono)}</td>
+      <td>${escapar(c.email)}</td>
+      <td>
+        <div class="col-actions">
+          <button class="icon-btn edit" onclick="iniciarEdicion('${c.id}')">✏️ Editar</button>
+          <button class="icon-btn del"  onclick="eliminar('${c.id}', '${escapar(c.nombre)}')">🗑️ Eliminar</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+/* Evita inyección de HTML al renderizar valores en la tabla */
+function escapar(txt) {
+  return String(txt ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
+/* ===================================================================
+   ENVÍO (POST) — función central que habla con el backend
+   Nota CORS: enviamos text/plain para evitar el preflight OPTIONS
+   que Apps Script no puede responder.
+   =================================================================== */
+async function enviarAccion(payload, textoLoader) {
+  mostrarLoader(textoLoader);
+  try {
+    const resp = await fetch(URL_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const data = await resp.json();
+    if (!data.ok) throw new Error(data.error || 'Error en el servidor');
+    return data;
+  } finally {
+    ocultarLoader();
+  }
+}
+
+/* ===================================================================
+   GUARDAR — decide entre ALTA y MODIFICACIÓN según haya id en edición
+   =================================================================== */
+async function guardar() {
+  const nombre   = $('nombre').value.trim();
+  const telefono = $('telefono').value.trim();
+  const email    = $('email').value.trim();
+  const idEdit   = $('idEnEdicion').value;
+
+  // Validación mínima
+  if (!nombre) { toast('El nombre es obligatorio', 'err'); $('nombre').focus(); return; }
+
+  $('btnGuardar').disabled = true;
+
+  try {
+    if (idEdit) {
+      // ── MODIFICACIÓN ──
+      await enviarAccion(
+        { accion: 'modificacion', id: idEdit, nombre, telefono, email },
+        'Guardando cambios…'
+      );
+      toast('Contacto modificado ✓', 'ok');
+    } else {
+      // ── ALTA ── (generamos id único en el frontend con timestamp)
+      const nuevoId = Date.now().toString();
+      await enviarAccion(
+        { accion: 'alta', id: nuevoId, nombre, telefono, email },
+        'Agregando contacto…'
+      );
+      toast('Contacto agregado ✓', 'ok');
+    }
+    limpiarFormulario();
+    await cargarContactos();     // refrescamos la tabla con datos reales
+  } catch (err) {
+    toast('Error: ' + err.message, 'err');
+  } finally {
+    $('btnGuardar').disabled = false;
+  }
+}
+
+/* ===================================================================
+   EDITAR — carga los datos en el formulario y cambia el estado visual
+   =================================================================== */
+function iniciarEdicion(id) {
+  const c = contactos.find(x => String(x.id) === String(id));
+  if (!c) return;
+
+  $('idEnEdicion').value = c.id;
+  $('nombre').value   = c.nombre;
+  $('telefono').value = c.telefono;
+  $('email').value    = c.email;
+
+  // Cambio visual a "modo edición"
+  $('formTitulo').textContent = 'Editando contacto';
+  $('formBadge').textContent = 'Modo: Modificación';
+  $('formBadge').classList.add('editing');
+  $('btnGuardarTexto').textContent = '💾 Guardar cambios';
+  $('btnGuardar').classList.add('editing');
+  $('btnCancelar').style.display = 'inline-flex';
+
+  $('nombre').focus();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ===================================================================
+   ELIMINAR (BAJA)
+   =================================================================== */
+async function eliminar(id, nombre) {
+  if (!confirm('¿Eliminar a "' + nombre + '"? Esta acción no se puede deshacer.')) return;
+  try {
+    await enviarAccion({ accion: 'baja', id }, 'Eliminando…');
+    toast('Contacto eliminado ✓', 'ok');
+    // Si estábamos editando justo a ese, reseteamos el form
+    if ($('idEnEdicion').value === String(id)) limpiarFormulario();
+    await cargarContactos();
+  } catch (err) {
+    toast('Error: ' + err.message, 'err');
+  }
+}
+
+/* ===================================================================
+   UTILIDADES DEL FORMULARIO
+   =================================================================== */
+function cancelarEdicion() {
+  limpiarFormulario();
+}
+function limpiarFormulario() {
+  $('idEnEdicion').value = '';
+  $('nombre').value = '';
+  $('telefono').value = '';
+  $('email').value = '';
+  // Volver al estado "Alta"
+  $('formTitulo').textContent = 'Nuevo contacto';
+  $('formBadge').textContent = 'Modo: Alta';
+  $('formBadge').classList.remove('editing');
+  $('btnGuardarTexto').textContent = '➕ Agregar contacto';
+  $('btnGuardar').classList.remove('editing');
+  $('btnCancelar').style.display = 'none';
+}
+
+/* Enter en cualquier input del form = guardar */
+['nombre', 'telefono', 'email'].forEach(id => {
+  $(id).addEventListener('keydown', e => { if (e.key === 'Enter') guardar(); });
+});
+
+/* ===================================================================
+   ARRANQUE
+   =================================================================== */
+window.addEventListener('DOMContentLoaded', cargarContactos);
+</script>
+</body>
+</html>
