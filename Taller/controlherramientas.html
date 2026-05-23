@@ -364,6 +364,8 @@ footer {
 body.is-admin .admin-tab { display: block; }
 .admin-only-inline { display: none; }
 body.is-admin .admin-only-inline { display: inline-block; }
+.admin-only-block { display: none; }
+body.is-admin .admin-only-block { display: block; }
 </style>
 </head>
 <body>
@@ -501,6 +503,26 @@ body.is-admin .admin-only-inline { display: inline-block; }
       </thead>
       <tbody id="tbody-dashboard"></tbody>
     </table>
+  </div>
+
+  <div class="admin-only-block" style="margin-top:1.75rem;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-bottom:1rem;">
+      <h3 style="font-family:'Archivo Black',sans-serif;">Actividad reciente</h3>
+      <button class="btn btn-outline btn-sm" onclick="showTab('auditoria')">Ver auditoría completa →</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha y hora</th>
+            <th>Usuario</th>
+            <th>Acción</th>
+            <th>Detalle</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-actividad"><tr><td colspan="4" class="empty">–</td></tr></tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -1120,6 +1142,7 @@ async function loadDashboard() {
   document.getElementById('d-herramientas').textContent = rHerr.count ?? '?';
 
   chequearRecordatorioCopia();
+  if (currentRole === 'admin') loadActividadReciente();
 
   const { data, error } = await db.from('retiro')
     .select('id, fecha_retiro, fecha_devolucion, herramienta(nombre), alumno(nombre, curso), profesor(nombre)')
@@ -1781,6 +1804,39 @@ async function registrarAuditoria(accion, entidad, entidadId, detalle) {
   }
 }
 
+const COLOR_ACCION = {
+  INGRESO: 'badge-green', SALIDA: 'badge-green',
+  ALTA: 'badge-green', EDICION: 'badge-amber',
+  BAJA: 'badge-red', DEVOLUCION: 'badge-green',
+};
+
+async function loadActividadReciente() {
+  const tbody = document.getElementById('tbody-actividad');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="4" class="loading"><span class="spinner"></span>Cargando…</td></tr>';
+  const { data, error } = await db.from('auditoria')
+    .select('fecha, usuario_email, accion, entidad, entidad_id, detalle')
+    .order('fecha', { ascending: false })
+    .limit(8);
+  if (error) {
+    // Tabla no activada todavía: ocultar el bloque sin molestar.
+    const bloque = tbody.closest('.admin-only-block');
+    if (bloque) bloque.style.display = 'none';
+    return;
+  }
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="4" class="empty">Sin actividad registrada aún.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(r => `
+    <tr>
+      <td>${fmt(r.fecha)}</td>
+      <td>${r.usuario_email ?? '–'}</td>
+      <td><span class="badge ${COLOR_ACCION[r.accion] || ''}">${r.accion}</span></td>
+      <td>${r.detalle ?? '–'}${r.entidad_id ? ' <code>#'+r.entidad_id+'</code>' : ''}</td>
+    </tr>`).join('');
+}
+
 async function initAuditoria() {
   // Verificar que la tabla exista
   const aviso = document.getElementById('auditoria-no-table');
@@ -1845,11 +1901,7 @@ async function loadAuditoria() {
     return;
   }
 
-  const colorAccion = {
-    INGRESO: 'badge-green', SALIDA: 'badge-green',
-    ALTA: 'badge-green', EDICION: 'badge-amber',
-    BAJA: 'badge-red', DEVOLUCION: 'badge-green',
-  };
+  const colorAccion = COLOR_ACCION;
   tbody.innerHTML = data.map(r => `
     <tr>
       <td>${fmt(r.fecha)}</td>
