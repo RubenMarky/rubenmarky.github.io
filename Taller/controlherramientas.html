@@ -388,6 +388,7 @@ body.is-admin .admin-tab { display: block; }
   <button class="tab admin-tab" data-tab="herramientas" onclick="showTab('herramientas')">Herramientas</button>
   <button class="tab admin-tab" data-tab="profesores" onclick="showTab('profesores')">Profesores</button>
   <button class="tab admin-tab" data-tab="alumnos" onclick="showTab('alumnos')">Alumnos</button>
+  <button class="tab admin-tab" data-tab="usuarios" onclick="showTab('usuarios')">Usuarios</button>
 </nav>
 
 <main>
@@ -427,6 +428,10 @@ body.is-admin .admin-tab { display: block; }
   <div class="form-group">
     <label>Clave Anónima (anon public)</label>
     <input type="text" id="input-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6...">
+  </div>
+  <div class="form-group">
+    <label>Clave Service Role <small style="font-weight:normal;text-transform:none;color:#888;">(solo admin — necesaria para crear usuarios)</small></label>
+    <input type="password" id="input-service-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6... (service_role)">
   </div>
   <div id="alert-setup" class="alert"></div>
   <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem;">
@@ -627,6 +632,46 @@ body.is-admin .admin-tab { display: block; }
   </div>
 </div>
 
+<!-- ═══════════════════════ USUARIOS ════════════════════════════ -->
+<div id="usuarios" class="section">
+  <div class="section-header">
+    <h2>Usuarios</h2>
+    <button class="btn btn-orange" onclick="toggleForm('form-usuario')">+ Nuevo usuario</button>
+  </div>
+
+  <div id="form-usuario" class="card-form">
+    <h3>Crear usuario regular</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="u-email" placeholder="nombre@epet7.edu.ar">
+      </div>
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input type="password" id="u-password" placeholder="Mínimo 6 caracteres">
+      </div>
+    </div>
+    <div id="alert-usuario" class="alert"></div>
+    <div class="form-actions">
+      <button class="btn btn-orange" onclick="createUsuario()">Crear usuario</button>
+      <button class="btn btn-outline" onclick="toggleForm('form-usuario')">Cancelar</button>
+    </div>
+  </div>
+
+  <div id="usuarios-no-service-key" class="alert alert-err" style="display:none;">
+    ⚠ Para crear usuarios necesitás configurar la <strong>Service Role Key</strong> en ⚙ Configurar.
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Email</th><th>Rol</th><th>Creado</th><th>Último ingreso</th><th></th></tr>
+      </thead>
+      <tbody id="tbody-usuarios"><tr><td colspan="5" class="loading"><span class="spinner"></span>Cargando…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
 </main>
 
 <footer>E.P.E.T N°7 · Control de Herramientas · Taller de Informática</footer>
@@ -635,12 +680,24 @@ body.is-admin .admin-tab { display: block; }
 <script>
 // ─── Supabase client ───────────────────────────────────────────
 let db = null;
+let dbAdmin = null;   // cliente con service_role key para gestión de usuarios
 let currentUser = null;
 let currentRole = null;
 
 function initSupabase(url, key) {
   try {
     db = supabase.createClient(url, key);
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
+
+function initSupabaseAdmin(url, serviceKey) {
+  try {
+    dbAdmin = supabase.createClient(url, serviceKey, {
+      auth: { autoRefreshToken: false, persistSession: false }
+    });
     return true;
   } catch(e) {
     return false;
@@ -723,6 +780,11 @@ function loadConfig() {
   if (url && key) {
     document.getElementById('input-url').value = url;
     document.getElementById('input-key').value = key;
+    const serviceKey = localStorage.getItem('sb_service_key');
+    if (serviceKey) {
+      document.getElementById('input-service-key').value = serviceKey;
+      initSupabaseAdmin(url, serviceKey);
+    }
     if (initSupabase(url, key)) {
       checkAuth();
       return true;
@@ -754,6 +816,13 @@ function saveConfig() {
   localStorage.setItem('sb_url', url);
   localStorage.setItem('sb_key', key);
 
+  // Guardar service key si se proporcionó
+  const serviceKey = document.getElementById('input-service-key').value.trim();
+  if (serviceKey) {
+    localStorage.setItem('sb_service_key', serviceKey);
+    initSupabaseAdmin(url, serviceKey);
+  }
+
   // Test connection
   db.from('herramienta').select('id', { count: 'exact', head: true })
     .then(({ error }) => {
@@ -769,7 +838,9 @@ function saveConfig() {
 function clearConfig() {
   localStorage.removeItem('sb_url');
   localStorage.removeItem('sb_key');
+  localStorage.removeItem('sb_service_key');
   db = null;
+  dbAdmin = null;
   showSection('setup');
 }
 
@@ -798,7 +869,7 @@ function showTab(id) {
   document.querySelectorAll('.tab').forEach(t => {
     t.classList.toggle('active', t.dataset.tab === id);
   });
-  const loaders = { dashboard: loadDashboard, retiros: loadRetiros, herramientas: loadHerramientas, profesores: loadProfesores, alumnos: loadAlumnos };
+  const loaders = { dashboard: loadDashboard, retiros: loadRetiros, herramientas: loadHerramientas, profesores: loadProfesores, alumnos: loadAlumnos, usuarios: loadUsuarios };
   if (loaders[id]) loaders[id]();
 }
 
@@ -1156,6 +1227,98 @@ async function deleteAlumno(id) {
   const { error } = await db.from('alumno').delete().eq('id', id);
   if (error) { alert(error.message); return; }
   loadAlumnos();
+}
+
+// ─── USUARIOS ──────────────────────────────────────────────────
+async function loadUsuarios() {
+  const tbody = document.getElementById('tbody-usuarios');
+  const noKeyMsg = document.getElementById('usuarios-no-service-key');
+
+  if (!dbAdmin) {
+    noKeyMsg.style.display = 'block';
+    tbody.innerHTML = '<tr><td colspan="5" class="empty">Configurá la Service Role Key para ver los usuarios.</td></tr>';
+    return;
+  }
+  noKeyMsg.style.display = 'none';
+  tbody.innerHTML = '<tr><td colspan="5" class="loading"><span class="spinner"></span>Cargando…</td></tr>';
+
+  const { data, error } = await dbAdmin.auth.admin.listUsers();
+  if (error) {
+    tbody.innerHTML = `<tr><td colspan="5" class="empty">Error: ${error.message}</td></tr>`;
+    return;
+  }
+
+  const users = data.users || [];
+  if (!users.length) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty">Sin usuarios registrados</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = users.map(u => {
+    const role = u.app_metadata?.role ?? u.user_metadata?.role ?? 'usuario';
+    const badgeClass = role === 'admin' ? 'badge-amber' : 'badge-green';
+    const creado = u.created_at ? new Date(u.created_at).toLocaleDateString('es-AR') : '–';
+    const ultimo = u.last_sign_in_at ? fmt(u.last_sign_in_at) : 'Nunca';
+    const esSelf = u.id === currentUser?.id;
+    const deleteBtn = esSelf ? '' : `<button class="btn btn-red btn-sm" onclick="deleteUsuario('${u.id}','${u.email}')">✕</button>`;
+    const roleBtn = esSelf ? '' :
+      role === 'admin'
+        ? `<button class="btn btn-outline btn-sm" onclick="setRoleUsuario('${u.id}','usuario')">→ usuario</button>`
+        : `<button class="btn btn-amber btn-sm" onclick="setRoleUsuario('${u.id}','admin')">→ admin</button>`;
+    return `<tr>
+      <td>${u.email}${esSelf ? ' <span class="badge badge-amber">vos</span>' : ''}</td>
+      <td><span class="badge ${badgeClass}">${role}</span></td>
+      <td>${creado}</td>
+      <td>${ultimo}</td>
+      <td class="td-actions">${roleBtn}${deleteBtn}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function createUsuario() {
+  const alertEl = document.getElementById('alert-usuario');
+  const email    = document.getElementById('u-email').value.trim();
+  const password = document.getElementById('u-password').value;
+
+  if (!email || !password) { showAlert(alertEl, 'err', 'Completá email y contraseña.'); return; }
+  if (password.length < 6)  { showAlert(alertEl, 'err', 'La contraseña debe tener al menos 6 caracteres.'); return; }
+
+  if (!dbAdmin) {
+    showAlert(alertEl, 'err', 'Necesitás configurar la Service Role Key para crear usuarios.');
+    return;
+  }
+
+  const { data, error } = await dbAdmin.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+    app_metadata: { role: 'usuario' }
+  });
+
+  if (error) { showAlert(alertEl, 'err', error.message); return; }
+
+  showAlert(alertEl, 'ok', `Usuario ${data.user.email} creado correctamente.`);
+  document.getElementById('u-email').value = '';
+  document.getElementById('u-password').value = '';
+  document.getElementById('form-usuario').classList.remove('open');
+  loadUsuarios();
+}
+
+async function setRoleUsuario(uid, nuevoRol) {
+  if (!dbAdmin) return;
+  const { error } = await dbAdmin.auth.admin.updateUserById(uid, {
+    app_metadata: { role: nuevoRol }
+  });
+  if (error) { alert(error.message); return; }
+  loadUsuarios();
+}
+
+async function deleteUsuario(uid, email) {
+  if (!confirm(`¿Eliminar el usuario ${email}? Esta acción no se puede deshacer.`)) return;
+  if (!dbAdmin) return;
+  const { error } = await dbAdmin.auth.admin.deleteUser(uid);
+  if (error) { alert(error.message); return; }
+  loadUsuarios();
 }
 
 // ─── Init ──────────────────────────────────────────────────────
