@@ -636,7 +636,7 @@ body.is-admin .admin-tab { display: block; }
 <div id="usuarios" class="section">
   <div class="section-header">
     <h2>Usuarios</h2>
-    <button class="btn btn-orange" onclick="toggleForm('form-usuario')">+ Nuevo usuario</button>
+    <button class="btn btn-orange" onclick="abrirFormUsuario()">+ Nuevo usuario</button>
   </div>
 
   <div id="form-usuario" class="card-form">
@@ -1230,9 +1230,32 @@ async function deleteAlumno(id) {
 }
 
 // ─── USUARIOS ──────────────────────────────────────────────────
+function abrirFormUsuario() {
+  // Reintentar dbAdmin desde localStorage
+  if (!dbAdmin) {
+    const url = localStorage.getItem('sb_url');
+    const sk  = localStorage.getItem('sb_service_key');
+    if (url && sk) initSupabaseAdmin(url, sk);
+  }
+  if (!dbAdmin) {
+    const noKeyMsg = document.getElementById('usuarios-no-service-key');
+    noKeyMsg.style.display = 'block';
+    noKeyMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  toggleForm('form-usuario');
+}
+
 async function loadUsuarios() {
   const tbody = document.getElementById('tbody-usuarios');
   const noKeyMsg = document.getElementById('usuarios-no-service-key');
+
+  // Intentar inicializar dbAdmin desde localStorage si todavía no está listo
+  if (!dbAdmin) {
+    const url = localStorage.getItem('sb_url');
+    const sk  = localStorage.getItem('sb_service_key');
+    if (url && sk) initSupabaseAdmin(url, sk);
+  }
 
   if (!dbAdmin) {
     noKeyMsg.style.display = 'block';
@@ -1283,8 +1306,15 @@ async function createUsuario() {
   if (!email || !password) { showAlert(alertEl, 'err', 'Completá email y contraseña.'); return; }
   if (password.length < 6)  { showAlert(alertEl, 'err', 'La contraseña debe tener al menos 6 caracteres.'); return; }
 
+  // Reintentar dbAdmin desde localStorage si no está listo
   if (!dbAdmin) {
-    showAlert(alertEl, 'err', 'Necesitás configurar la Service Role Key para crear usuarios.');
+    const url = localStorage.getItem('sb_url');
+    const sk  = localStorage.getItem('sb_service_key');
+    if (url && sk) initSupabaseAdmin(url, sk);
+  }
+
+  if (!dbAdmin) {
+    showAlert(alertEl, 'err', 'Necesitás configurar la Service Role Key en ⚙ Configurar.');
     return;
   }
 
