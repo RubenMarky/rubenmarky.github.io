@@ -428,7 +428,7 @@ body.is-admin .admin-only-block { display: block; }
 <nav id="nav-tabs">
   <button class="tab active" data-tab="dashboard" onclick="showTab('dashboard')">Dashboard</button>
   <button class="tab" data-tab="retiros" onclick="showTab('retiros')">Retiros</button>
-  <button class="tab admin-tab" data-tab="herramientas" onclick="showTab('herramientas')">Herramientas</button>
+  <button class="tab admin-tab" data-tab="herramientas" onclick="showTab('herramientas')"><span data-term-pc>Herramientas</span></button>
   <button class="tab admin-tab" data-tab="profesores" onclick="showTab('profesores')">Profesores</button>
   <button class="tab admin-tab" data-tab="alumnos" onclick="showTab('alumnos')">Alumnos</button>
   <button class="tab admin-tab" data-tab="usuarios" onclick="showTab('usuarios')">Usuarios</button>
@@ -524,7 +524,7 @@ body.is-admin .admin-only-block { display: block; }
     </div>
     <div class="dash-card steel">
       <div class="number" id="d-herramientas">–</div>
-      <div class="label">Herramientas</div>
+      <div class="label"><span data-term-pc>Herramientas</span></div>
     </div>
   </div>
   <h3 style="font-family:'Archivo Black',sans-serif;margin-bottom:1rem;">Préstamos activos</h3>
@@ -533,7 +533,7 @@ body.is-admin .admin-only-block { display: block; }
       <thead>
         <tr>
           <th>#</th>
-          <th>Herramienta</th>
+          <th><span data-term-sc>Herramienta</span></th>
           <th>Alumno</th>
           <th>Profesor</th>
           <th>Fecha retiro</th>
@@ -574,10 +574,10 @@ body.is-admin .admin-only-block { display: block; }
   </div>
 
   <div id="form-retiro" class="card-form">
-    <h3>Registrar retiro de herramienta</h3>
+    <h3>Registrar retiro de <span data-term-s>herramienta</span></h3>
     <div class="form-row">
       <div class="form-group">
-        <label>Herramienta</label>
+        <label><span data-term-sc>Herramienta</span></label>
         <select id="r-herramienta"><option value="">Seleccionar…</option></select>
       </div>
       <div class="form-group">
@@ -605,7 +605,7 @@ body.is-admin .admin-only-block { display: block; }
       <thead>
         <tr>
           <th>#</th>
-          <th>Herramienta</th>
+          <th><span data-term-sc>Herramienta</span></th>
           <th>Alumno</th>
           <th>Curso</th>
           <th>Profesor</th>
@@ -623,7 +623,7 @@ body.is-admin .admin-only-block { display: block; }
 <!-- ═══════════════════════ HERRAMIENTAS ════════════════════════ -->
 <div id="herramientas" class="section">
   <div class="section-header">
-    <h2>Herramientas</h2>
+    <h2><span data-term-pc>Herramientas</span></h2>
     <button class="btn btn-orange" onclick="toggleForm('form-herramienta')">+ Agregar</button>
   </div>
 
@@ -775,7 +775,7 @@ body.is-admin .admin-only-block { display: block; }
   <div class="dash-grid">
     <div class="dash-card orange">
       <div class="number" id="c-herramientas">–</div>
-      <div class="label">Herramientas</div>
+      <div class="label"><span data-term-pc>Herramientas</span></div>
     </div>
     <div class="dash-card steel">
       <div class="number" id="c-alumnos">–</div>
@@ -913,10 +913,10 @@ body.is-admin .admin-only-block { display: block; }
       <select id="rep-tipo" onchange="onCambioTipoInforme()">
         <option value="activos">Préstamos activos (ahora)</option>
         <option value="retiros">Retiros por fechas</option>
-        <option value="inventario">Inventario de herramientas</option>
+        <option value="inventario" id="opt-inventario">Inventario de herramientas</option>
         <option value="listado-alumnos">Listado de alumnos</option>
         <option value="listado-profesores">Listado de profesores</option>
-        <option value="ranking-herramientas">Ranking de herramientas más usadas</option>
+        <option value="ranking-herramientas" id="opt-ranking-h">Ranking de herramientas más usadas</option>
         <option value="ranking-alumnos">Ranking de alumnos con más retiros</option>
       </select>
     </div>
@@ -970,10 +970,27 @@ body.is-admin .admin-only-block { display: block; }
       <input type="text" id="cfg-sector" placeholder="Ej: Taller de Informática" maxlength="100" oninput="previewAjustes()">
     </div>
 
+    <h3 style="font-family:'Archivo Black',sans-serif;font-size:1rem;margin:1.5rem 0 1rem;padding-bottom:0.5rem;border-bottom:2px solid var(--paper-2);">¿Qué se presta?</h3>
+    <p style="font-size:0.8rem;color:#666;line-height:1.5;margin-bottom:1rem;">
+      Cambiá la palabra “herramienta” por la que use tu institución (libro, instrumento, equipo…).
+      Se reemplaza en menús, botones, tablas e informes. Escribilo en minúscula.
+    </p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>En singular</label>
+        <input type="text" id="cfg-term-sing" placeholder="Ej: libro" maxlength="40" oninput="previewAjustes()">
+      </div>
+      <div class="form-group">
+        <label>En plural</label>
+        <input type="text" id="cfg-term-plur" placeholder="Ej: libros" maxlength="40" oninput="previewAjustes()">
+      </div>
+    </div>
+
     <div style="background:var(--paper-2);border:1px solid var(--line);padding:0.85rem 1rem;margin:0.5rem 0 1rem;font-size:0.8rem;">
       <strong style="font-family:'Space Mono',monospace;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--steel);">Vista previa</strong><br>
       <span style="font-family:'Archivo Black',sans-serif;font-size:0.95rem;" id="cfg-preview-titulo">🔧 Control de Herramientas</span><br>
-      <span style="font-family:'Space Mono',monospace;font-size:0.7rem;color:#666;" id="cfg-preview-sub">E.P.E.T N°7 · Taller de Informática</span>
+      <span style="font-family:'Space Mono',monospace;font-size:0.7rem;color:#666;" id="cfg-preview-sub">E.P.E.T N°7 · Taller de Informática</span><br>
+      <span style="font-size:0.75rem;color:#888;font-style:italic;" id="cfg-preview-term">Ejemplo: "Nuevo retiro de herramientas", "Agregar herramienta", columna "Herramienta".</span>
     </div>
 
     <div id="alert-ajustes" class="alert"></div>
@@ -1410,7 +1427,7 @@ async function loadHerramientas() {
   const { data: activos } = await db.from('retiro').select('id_herramienta').is('fecha_devolucion', null);
   const enUso = new Set((activos || []).map(r => r.id_herramienta));
 
-  if (!hs.length) { tbody.innerHTML = '<tr><td colspan="4" class="empty">Sin herramientas cargadas</td></tr>'; return; }
+  if (!hs.length) { tbody.innerHTML = `<tr><td colspan="4" class="empty">Sin ${Tp()} cargadas</td></tr>`; return; }
 
   tbody.innerHTML = hs.map(h => `<tr>
     <td><code>${h.id}</code></td>
@@ -1427,7 +1444,7 @@ function editHerramienta(id, nombre) {
   herramientaEditId = id;
   document.getElementById('h-id').value = id;
   document.getElementById('h-nombre').value = nombre;
-  document.getElementById('fh-title').textContent = 'Editar herramienta';
+  document.getElementById('fh-title').textContent = 'Editar ' + T();
   document.getElementById('form-herramienta').classList.add('open');
 }
 
@@ -1435,7 +1452,7 @@ function cancelHerramienta() {
   herramientaEditId = null;
   document.getElementById('h-id').value = '';
   document.getElementById('h-nombre').value = '';
-  document.getElementById('fh-title').textContent = 'Agregar herramienta';
+  document.getElementById('fh-title').textContent = 'Agregar ' + T();
   document.getElementById('form-herramienta').classList.remove('open');
 }
 
@@ -1462,7 +1479,7 @@ async function saveHerramienta() {
 }
 
 async function deleteHerramienta(id) {
-  if (!confirm('¿Eliminar herramienta? Se perderán los registros de retiro asociados.')) return;
+  if (!confirm(`¿Eliminar ${T()}? Se perderán los registros de retiro asociados.`)) return;
   const { error } = await db.from('herramienta').delete().eq('id', id);
   if (error) { alert(error.message); return; }
   registrarAuditoria('BAJA', 'herramienta', id, 'Herramienta eliminada');
@@ -2075,6 +2092,11 @@ function initInformes() {
     document.getElementById('rep-desde').value = primero.toISOString().slice(0,10);
     document.getElementById('rep-hasta').value = hoy.toISOString().slice(0,10);
   }
+  // Actualizar opciones que mencionan el término
+  const optInv = document.getElementById('opt-inventario');
+  if (optInv) optInv.textContent = `Inventario de ${Tp()}`;
+  const optRk = document.getElementById('opt-ranking-h');
+  if (optRk) optRk.textContent = `Ranking de ${Tp()} más usadas`;
   onCambioTipoInforme();
 }
 
@@ -2220,8 +2242,8 @@ async function repActivos() {
   const filas = (data || []).map(r => [
     r.id, r.herramienta?.nombre, r.alumno?.nombre, r.alumno?.curso, r.profesor?.nombre, fmt(r.fecha_retiro)
   ]);
-  return repCabecera('Préstamos activos', `${filas.length} herramienta(s) sin devolver`)
-    + repTabla(['#','Herramienta','Alumno','Curso','Profesor','Fecha de retiro'], filas);
+  return repCabecera('Préstamos activos', `${filas.length} ${filas.length === 1 ? T() : Tp()} sin devolver`)
+    + repTabla(['#', Tc(),'Alumno','Curso','Profesor','Fecha de retiro'], filas);
 }
 
 async function repRetiros() {
@@ -2240,7 +2262,7 @@ async function repRetiros() {
   ]);
   const fmtFecha = d => d ? new Date(d+'T00:00:00').toLocaleDateString('es-AR') : '—';
   return repCabecera('Retiros por período', `Del ${fmtFecha(desde)} al ${fmtFecha(hasta)} · ${filas.length} registro(s)`)
-    + repTabla(['#','Herramienta','Alumno','Curso','Profesor','Retiro','Devolución'], filas);
+    + repTabla(['#', Tc(),'Alumno','Curso','Profesor','Retiro','Devolución'], filas);
 }
 
 async function repInventario() {
@@ -2260,11 +2282,11 @@ async function repInventario() {
       <div class="rep-stat"><div class="n">${disp}</div><div class="l">Disponibles</div></div>
       <div class="rep-stat"><div class="n">${enUso.size}</div><div class="l">En uso</div></div>
     </div>`;
-  const cab = repCabecera('Inventario de herramientas');
+  const cab = repCabecera('Inventario de ' + Tp());
   if (informeActual) informeActual.stats = [
     ['Total', (hs||[]).length], ['Disponibles', disp], ['En uso', enUso.size]
   ];
-  return cab + stats + repTabla(['#','Herramienta','Estado'], filas);
+  return cab + stats + repTabla(['#', Tc(),'Estado'], filas);
 }
 
 async function repListado(tabla) {
@@ -2290,8 +2312,8 @@ async function repRankingHerramientas() {
   });
   const orden = Object.entries(conteo).sort((a,b) => b[1]-a[1]);
   const filas = orden.map(([nombre, n], i) => [i+1, nombre, n]);
-  return repCabecera('Ranking de herramientas más usadas', `Sobre ${(data||[]).length} retiro(s) totales`)
-    + repTabla(['Puesto','Herramienta','Veces retirada'], filas);
+  return repCabecera('Ranking de ' + Tp() + ' más usadas', `Sobre ${(data||[]).length} retiro(s) totales`)
+    + repTabla(['Puesto', Tc(),'Veces retirada'], filas);
 }
 
 async function repRankingAlumnos() {
@@ -2316,7 +2338,29 @@ let configActual = {
   nombre_institucion: 'E.P.E.T N°7',
   tipo_control: 'Control de Herramientas',
   nombre_sector: 'Taller de Informática',
+  termino_singular: 'herramienta',
+  termino_plural: 'herramientas',
 };
+
+// Devuelve la primera letra en mayúscula.
+function capitalizar(s) {
+  if (!s) return s;
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+// Helpers de término: T()=singular minúscula, Tc()=singular capitalizado,
+// Tp()=plural minúscula, Tpc()=plural capitalizado.
+function T()   { return configActual.termino_singular || 'herramienta'; }
+function Tc()  { return capitalizar(T()); }
+function Tp()  { return configActual.termino_plural || 'herramientas'; }
+function Tpc() { return capitalizar(Tp()); }
+
+// Reemplaza los textos visibles marcados con data-term-* en el DOM.
+function aplicarTerminoDOM() {
+  document.querySelectorAll('[data-term-s]').forEach(el => { el.textContent = T(); });
+  document.querySelectorAll('[data-term-sc]').forEach(el => { el.textContent = Tc(); });
+  document.querySelectorAll('[data-term-p]').forEach(el => { el.textContent = Tp(); });
+  document.querySelectorAll('[data-term-pc]').forEach(el => { el.textContent = Tpc(); });
+}
 
 // Aplica la configuración a toda la interfaz (header, footer, título de pestaña).
 function aplicarConfig(cfg) {
@@ -2331,6 +2375,7 @@ function aplicarConfig(cfg) {
   const foot = document.getElementById('hdr-footer');
   if (foot) foot.textContent = `${inst} · ${tipo} · ${sector}`;
   document.title = `${tipo} · ${inst}`;
+  aplicarTerminoDOM();
 }
 
 // Trae la configuración desde la base. Si la tabla no existe, usa los valores por defecto.
@@ -2343,6 +2388,8 @@ async function cargarConfigGlobal() {
       nombre_institucion: data.nombre_institucion,
       tipo_control: data.tipo_control,
       nombre_sector: data.nombre_sector,
+      termino_singular: data.termino_singular || 'herramienta',
+      termino_plural: data.termino_plural || 'herramientas',
     };
     aplicarConfig(configActual);
   } catch (e) {
@@ -2362,6 +2409,8 @@ async function loadAjustes() {
   document.getElementById('cfg-institucion').value = data.nombre_institucion || '';
   document.getElementById('cfg-tipo').value        = data.tipo_control || '';
   document.getElementById('cfg-sector').value      = data.nombre_sector || '';
+  document.getElementById('cfg-term-sing').value   = data.termino_singular || 'herramienta';
+  document.getElementById('cfg-term-plur').value   = data.termino_plural || 'herramientas';
   previewAjustes();
 }
 
@@ -2370,8 +2419,12 @@ function previewAjustes() {
   const inst   = document.getElementById('cfg-institucion').value.trim() || 'E.P.E.T N°7';
   const tipo   = document.getElementById('cfg-tipo').value.trim() || 'Control de Herramientas';
   const sector = document.getElementById('cfg-sector').value.trim() || 'Taller de Informática';
+  const sing   = document.getElementById('cfg-term-sing').value.trim() || 'herramienta';
+  const plur   = document.getElementById('cfg-term-plur').value.trim() || 'herramientas';
   document.getElementById('cfg-preview-titulo').textContent = '🔧 ' + tipo;
   document.getElementById('cfg-preview-sub').textContent = `${inst} · ${sector}`;
+  document.getElementById('cfg-preview-term').textContent =
+    `Ejemplo: "Nuevo retiro de ${plur}", "Agregar ${sing}", columna "${capitalizar(sing)}".`;
 }
 
 async function guardarAjustes() {
@@ -2379,9 +2432,11 @@ async function guardarAjustes() {
   const inst   = document.getElementById('cfg-institucion').value.trim();
   const tipo   = document.getElementById('cfg-tipo').value.trim();
   const sector = document.getElementById('cfg-sector').value.trim();
+  const sing   = document.getElementById('cfg-term-sing').value.trim();
+  const plur   = document.getElementById('cfg-term-plur').value.trim();
 
-  if (!inst || !tipo || !sector) {
-    showAlert(alertEl, 'err', 'Completá los tres campos.');
+  if (!inst || !tipo || !sector || !sing || !plur) {
+    showAlert(alertEl, 'err', 'Completá todos los campos.');
     return;
   }
 
@@ -2389,15 +2444,30 @@ async function guardarAjustes() {
     nombre_institucion: inst,
     tipo_control: tipo,
     nombre_sector: sector,
+    termino_singular: sing,
+    termino_plural: plur,
     actualizado: new Date().toISOString(),
   }).eq('id', 1);
 
   if (error) { showAlert(alertEl, 'err', 'No se pudo guardar: ' + error.message); return; }
 
-  configActual = { nombre_institucion: inst, tipo_control: tipo, nombre_sector: sector };
+  configActual = { nombre_institucion: inst, tipo_control: tipo, nombre_sector: sector,
+                   termino_singular: sing, termino_plural: plur };
   aplicarConfig(configActual);
+  // Refrescar pestañas y vista activa para que tomen el nuevo término.
+  refrescarTextosDinamicos();
   registrarAuditoria('EDICION', 'configuracion', null, `Datos de la institución actualizados`);
   showAlert(alertEl, 'ok', 'Cambios guardados y aplicados.');
+}
+
+// Refresca textos dinámicos: recarga la vista activa para que tablas y
+// mensajes generados por JS tomen el nuevo término.
+function refrescarTextosDinamicos() {
+  const activa = document.querySelector('.section.active');
+  if (!activa) return;
+  const id = activa.id;
+  const loaders = { dashboard: loadDashboard, retiros: loadRetiros, herramientas: loadHerramientas };
+  if (loaders[id]) loaders[id]();
 }
 
 // ─── Init ──────────────────────────────────────────────────────
