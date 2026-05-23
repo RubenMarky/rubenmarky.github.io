@@ -373,8 +373,8 @@ body.is-admin .admin-only-block { display: block; }
 <!-- ═══════════════════════════ HEADER ═══════════════════════════ -->
 <header>
   <div class="header-title">
-    <h1>&#128295; Control de Herramientas</h1>
-    <small>E.P.E.T N°7 · Taller de Informática</small>
+    <h1 id="hdr-titulo">&#128295; Control de Herramientas</h1>
+    <small id="hdr-subtitulo">E.P.E.T N°7 · Taller de Informática</small>
   </div>
   <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;">
     <div id="user-badge" class="user-badge">
@@ -396,6 +396,7 @@ body.is-admin .admin-only-block { display: block; }
   <button class="tab admin-tab" data-tab="usuarios" onclick="showTab('usuarios')">Usuarios</button>
   <button class="tab admin-tab" data-tab="copias" onclick="showTab('copias')">Copias</button>
   <button class="tab admin-tab" data-tab="auditoria" onclick="showTab('auditoria')">Auditoría</button>
+  <button class="tab admin-tab" data-tab="ajustes" onclick="showTab('ajustes')">Ajustes</button>
 </nav>
 
 <main>
@@ -855,9 +856,55 @@ body.is-admin .admin-only-block { display: block; }
   </div>
 </div>
 
+<!-- ═══════════════════════ AJUSTES ═════════════════════════════ -->
+<div id="ajustes" class="section">
+  <div class="section-header">
+    <h2>Ajustes</h2>
+  </div>
+
+  <p style="font-size:0.85rem;color:#555;line-height:1.6;margin-bottom:1.25rem;max-width:680px;">
+    Personalizá los nombres que aparecen en toda la aplicación. Útil si otra escuela,
+    organización o sector quiere reutilizar el sistema. Los cambios se aplican para todos
+    los usuarios.
+  </p>
+
+  <div id="ajustes-no-table" class="alert alert-err" style="display:none;">
+    ⚠ El módulo de ajustes todavía no está activado. Ejecutá el archivo
+    <strong>configuracion-schema.sql</strong> en Supabase (SQL Editor) y volvé a intentar.
+  </div>
+
+  <div style="background:#fff;border:2px solid var(--ink);box-shadow:var(--shadow);padding:1.5rem;max-width:600px;">
+    <h3 style="font-family:'Archivo Black',sans-serif;font-size:1rem;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:2px solid var(--paper-2);">Identidad de la institución</h3>
+    <div class="form-group">
+      <label>Nombre de la institución</label>
+      <input type="text" id="cfg-institucion" placeholder="Ej: E.P.E.T N°7" maxlength="150" oninput="previewAjustes()">
+    </div>
+    <div class="form-group">
+      <label>Tipo de control</label>
+      <input type="text" id="cfg-tipo" placeholder="Ej: Control de Herramientas" maxlength="100" oninput="previewAjustes()">
+    </div>
+    <div class="form-group">
+      <label>Sector / Área</label>
+      <input type="text" id="cfg-sector" placeholder="Ej: Taller de Informática" maxlength="100" oninput="previewAjustes()">
+    </div>
+
+    <div style="background:var(--paper-2);border:1px solid var(--line);padding:0.85rem 1rem;margin:0.5rem 0 1rem;font-size:0.8rem;">
+      <strong style="font-family:'Space Mono',monospace;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--steel);">Vista previa</strong><br>
+      <span style="font-family:'Archivo Black',sans-serif;font-size:0.95rem;" id="cfg-preview-titulo">🔧 Control de Herramientas</span><br>
+      <span style="font-family:'Space Mono',monospace;font-size:0.7rem;color:#666;" id="cfg-preview-sub">E.P.E.T N°7 · Taller de Informática</span>
+    </div>
+
+    <div id="alert-ajustes" class="alert"></div>
+    <div class="form-actions">
+      <button class="btn btn-orange" onclick="guardarAjustes()">Guardar cambios</button>
+      <button class="btn btn-outline" onclick="loadAjustes()">Restablecer</button>
+    </div>
+  </div>
+</div>
+
 </main>
 
-<footer>E.P.E.T N°7 · Control de Herramientas · Taller de Informática</footer>
+<footer id="hdr-footer">E.P.E.T N°7 · Control de Herramientas · Taller de Informática</footer>
 
 <!-- ═══════════════════════ JAVASCRIPT ══════════════════════════ -->
 <script>
@@ -894,6 +941,7 @@ async function checkAuth() {
     currentUser = session.user;
     await loadRole(currentUser.id);
     applyPermissions();
+    cargarConfigGlobal();
     showTab('dashboard');
   } else {
     showSection('login');
@@ -921,6 +969,7 @@ async function doLogin() {
   await loadRole(data.user.id);
   registrarAuditoria('INGRESO', 'sesion', null, 'Inicio de sesión');
   applyPermissions();
+  cargarConfigGlobal();
   showTab('dashboard');
 }
 
@@ -1089,14 +1138,14 @@ function showSection(id) {
 function showTab(id) {
   if (!db) { showSection('setup'); return; }
   if (!currentUser) { showSection('login'); return; }
-  const adminOnly = ['herramientas', 'profesores', 'alumnos', 'copias', 'auditoria'];
+  const adminOnly = ['herramientas', 'profesores', 'alumnos', 'copias', 'auditoria', 'ajustes'];
   if (adminOnly.includes(id) && currentRole !== 'admin') return;
   showSection(id);
   // Activar tab por data-tab (no por índice posicional, que falla con tabs ocultos)
   document.querySelectorAll('.tab').forEach(t => {
     t.classList.toggle('active', t.dataset.tab === id);
   });
-  const loaders = { dashboard: loadDashboard, retiros: loadRetiros, herramientas: loadHerramientas, profesores: loadProfesores, alumnos: loadAlumnos, usuarios: loadUsuarios, copias: loadCopias, auditoria: initAuditoria };
+  const loaders = { dashboard: loadDashboard, retiros: loadRetiros, herramientas: loadHerramientas, profesores: loadProfesores, alumnos: loadAlumnos, usuarios: loadUsuarios, copias: loadCopias, auditoria: initAuditoria, ajustes: loadAjustes };
   if (loaders[id]) loaders[id]();
 }
 
@@ -1933,6 +1982,95 @@ function exportarAuditoriaCSV() {
     detalle: r.detalle ?? '',
   }));
   descargarArchivo('\ufeff' + aCSV(filas), `auditoria_${selloFecha()}.csv`, 'text/csv;charset=utf-8');
+}
+
+// ─── AJUSTES / CONFIGURACIÓN ───────────────────────────────────
+let configActual = {
+  nombre_institucion: 'E.P.E.T N°7',
+  tipo_control: 'Control de Herramientas',
+  nombre_sector: 'Taller de Informática',
+};
+
+// Aplica la configuración a toda la interfaz (header, footer, título de pestaña).
+function aplicarConfig(cfg) {
+  const inst   = cfg.nombre_institucion || 'E.P.E.T N°7';
+  const tipo   = cfg.tipo_control || 'Control de Herramientas';
+  const sector = cfg.nombre_sector || 'Taller de Informática';
+
+  const h1 = document.getElementById('hdr-titulo');
+  if (h1) h1.innerHTML = '&#128295; ' + tipo;
+  const sub = document.getElementById('hdr-subtitulo');
+  if (sub) sub.textContent = `${inst} · ${sector}`;
+  const foot = document.getElementById('hdr-footer');
+  if (foot) foot.textContent = `${inst} · ${tipo} · ${sector}`;
+  document.title = `${tipo} · ${inst}`;
+}
+
+// Trae la configuración desde la base. Si la tabla no existe, usa los valores por defecto.
+async function cargarConfigGlobal() {
+  if (!db) return;
+  try {
+    const { data, error } = await db.from('configuracion').select('*').eq('id', 1).single();
+    if (error || !data) return;     // tabla no creada o sin fila: se mantiene el default
+    configActual = {
+      nombre_institucion: data.nombre_institucion,
+      tipo_control: data.tipo_control,
+      nombre_sector: data.nombre_sector,
+    };
+    aplicarConfig(configActual);
+  } catch (e) {
+    console.warn('Configuración no disponible:', e?.message || e);
+  }
+}
+
+// Carga los valores actuales en el formulario de Ajustes.
+async function loadAjustes() {
+  const aviso = document.getElementById('ajustes-no-table');
+  const { data, error } = await db.from('configuracion').select('*').eq('id', 1).single();
+  if (error) {
+    aviso.style.display = 'block';
+    return;
+  }
+  aviso.style.display = 'none';
+  document.getElementById('cfg-institucion').value = data.nombre_institucion || '';
+  document.getElementById('cfg-tipo').value        = data.tipo_control || '';
+  document.getElementById('cfg-sector').value      = data.nombre_sector || '';
+  previewAjustes();
+}
+
+// Actualiza la vista previa en vivo mientras se escribe.
+function previewAjustes() {
+  const inst   = document.getElementById('cfg-institucion').value.trim() || 'E.P.E.T N°7';
+  const tipo   = document.getElementById('cfg-tipo').value.trim() || 'Control de Herramientas';
+  const sector = document.getElementById('cfg-sector').value.trim() || 'Taller de Informática';
+  document.getElementById('cfg-preview-titulo').textContent = '🔧 ' + tipo;
+  document.getElementById('cfg-preview-sub').textContent = `${inst} · ${sector}`;
+}
+
+async function guardarAjustes() {
+  const alertEl = document.getElementById('alert-ajustes');
+  const inst   = document.getElementById('cfg-institucion').value.trim();
+  const tipo   = document.getElementById('cfg-tipo').value.trim();
+  const sector = document.getElementById('cfg-sector').value.trim();
+
+  if (!inst || !tipo || !sector) {
+    showAlert(alertEl, 'err', 'Completá los tres campos.');
+    return;
+  }
+
+  const { error } = await db.from('configuracion').update({
+    nombre_institucion: inst,
+    tipo_control: tipo,
+    nombre_sector: sector,
+    actualizado: new Date().toISOString(),
+  }).eq('id', 1);
+
+  if (error) { showAlert(alertEl, 'err', 'No se pudo guardar: ' + error.message); return; }
+
+  configActual = { nombre_institucion: inst, tipo_control: tipo, nombre_sector: sector };
+  aplicarConfig(configActual);
+  registrarAuditoria('EDICION', 'configuracion', null, `Datos de la institución actualizados`);
+  showAlert(alertEl, 'ok', 'Cambios guardados y aplicados.');
 }
 
 // ─── Init ──────────────────────────────────────────────────────
