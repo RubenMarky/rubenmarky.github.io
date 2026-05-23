@@ -362,6 +362,8 @@ footer {
 .role-chip.usuario { color: #7a8ca0; border-color: #7a8ca0; }
 .admin-tab { display: none; }
 body.is-admin .admin-tab { display: block; }
+.admin-only-inline { display: none; }
+body.is-admin .admin-only-inline { display: inline-block; }
 </style>
 </head>
 <body>
@@ -390,6 +392,7 @@ body.is-admin .admin-tab { display: block; }
   <button class="tab admin-tab" data-tab="profesores" onclick="showTab('profesores')">Profesores</button>
   <button class="tab admin-tab" data-tab="alumnos" onclick="showTab('alumnos')">Alumnos</button>
   <button class="tab admin-tab" data-tab="usuarios" onclick="showTab('usuarios')">Usuarios</button>
+  <button class="tab admin-tab" data-tab="copias" onclick="showTab('copias')">Copias</button>
 </nav>
 
 <main>
@@ -454,7 +457,18 @@ body.is-admin .admin-tab { display: block; }
 <div id="dashboard" class="section">
   <div class="section-header">
     <h2>Dashboard</h2>
-    <button class="btn btn-outline btn-sm" onclick="loadDashboard()">&#8635; Actualizar</button>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+      <button class="btn btn-orange btn-sm admin-only-inline" onclick="exportarJSON()" title="Descargar copia de seguridad completa">⬇ Copia rápida</button>
+      <button class="btn btn-outline btn-sm" onclick="loadDashboard()">&#8635; Actualizar</button>
+    </div>
+  </div>
+
+  <div id="backup-reminder" class="alert" style="border-color:var(--amber);background:#fdf6e3;color:var(--ink);display:none;align-items:center;justify-content:space-between;gap:0.75rem;flex-wrap:wrap;">
+    <span id="backup-reminder-text" style="flex:1;min-width:200px;"></span>
+    <span style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+      <button class="btn btn-amber btn-sm" onclick="exportarJSON()">Descargar copia</button>
+      <button class="btn btn-outline btn-sm" onclick="posponerRecordatorio()">Más tarde</button>
+    </span>
   </div>
   <div class="dash-grid">
     <div class="dash-card orange">
@@ -679,6 +693,75 @@ body.is-admin .admin-tab { display: block; }
       </thead>
       <tbody id="tbody-usuarios"><tr><td colspan="5" class="loading"><span class="spinner"></span>Cargando…</td></tr></tbody>
     </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════ COPIAS DE SEGURIDAD ═════════════════ -->
+<div id="copias" class="section">
+  <div class="section-header">
+    <h2>Copias de seguridad</h2>
+    <button class="btn btn-outline btn-sm" onclick="loadCopias()">&#8635; Actualizar</button>
+  </div>
+
+  <p style="font-size:0.85rem;color:#555;line-height:1.6;margin-bottom:1.25rem;max-width:640px;">
+    Generá una copia de todos los datos de la base (herramientas, alumnos, profesores y retiros)
+    en un archivo que podés guardar en tu computadora o pendrive. Si algún día se pierde la
+    información, podés restaurarla desde ese archivo.
+  </p>
+
+  <div class="dash-grid">
+    <div class="dash-card orange">
+      <div class="number" id="c-herramientas">–</div>
+      <div class="label">Herramientas</div>
+    </div>
+    <div class="dash-card steel">
+      <div class="number" id="c-alumnos">–</div>
+      <div class="label">Alumnos</div>
+    </div>
+    <div class="dash-card green">
+      <div class="number" id="c-profesores">–</div>
+      <div class="label">Profesores</div>
+    </div>
+    <div class="dash-card orange">
+      <div class="number" id="c-retiros">–</div>
+      <div class="label">Retiros</div>
+    </div>
+  </div>
+
+  <!-- Exportar -->
+  <div style="background:#fff;border:2px solid var(--ink);box-shadow:var(--shadow);padding:1.5rem;margin-bottom:1.5rem;">
+    <h3 style="font-family:'Archivo Black',sans-serif;font-size:1rem;margin-bottom:0.75rem;">Descargar copia</h3>
+    <p style="font-size:0.82rem;color:#555;line-height:1.5;margin-bottom:1rem;">
+      El archivo <strong>JSON</strong> es la copia completa para restaurar. Los archivos
+      <strong>CSV</strong> sirven para abrir las tablas en Excel.
+    </p>
+    <div class="form-actions">
+      <button class="btn btn-orange" onclick="exportarJSON()">⬇ Copia completa (JSON)</button>
+      <button class="btn btn-steel" onclick="exportarCSV('herramienta')">CSV Herramientas</button>
+      <button class="btn btn-steel" onclick="exportarCSV('alumno')">CSV Alumnos</button>
+      <button class="btn btn-steel" onclick="exportarCSV('profesor')">CSV Profesores</button>
+      <button class="btn btn-steel" onclick="exportarCSV('retiro')">CSV Retiros</button>
+    </div>
+    <div id="alert-export" class="alert"></div>
+  </div>
+
+  <!-- Restaurar -->
+  <div style="background:#fff;border:2px solid var(--red);box-shadow:4px 4px 0 var(--red);padding:1.5rem;">
+    <h3 style="font-family:'Archivo Black',sans-serif;font-size:1rem;margin-bottom:0.75rem;color:var(--red);">Restaurar desde una copia</h3>
+    <p style="font-size:0.82rem;color:#555;line-height:1.5;margin-bottom:1rem;">
+      Seleccioná un archivo de copia (<strong>.json</strong>) generado por esta app. Se agregarán
+      los registros que contenga. <strong>Atención:</strong> esto no borra los datos actuales, los
+      complementa. Usalo solo si entendés lo que hacés.
+    </p>
+    <div class="form-group" style="margin-bottom:1rem;">
+      <label>Archivo de copia</label>
+      <input type="file" id="restore-file" accept=".json,application/json">
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-red" onclick="restaurarJSON()">↺ Restaurar datos</button>
+    </div>
+    <div id="alert-restore" class="alert"></div>
+    <div id="restore-log" style="font-family:'Space Mono',monospace;font-size:0.72rem;margin-top:1rem;white-space:pre-wrap;color:var(--ink-soft);"></div>
   </div>
 </div>
 
@@ -914,14 +997,14 @@ function showSection(id) {
 function showTab(id) {
   if (!db) { showSection('setup'); return; }
   if (!currentUser) { showSection('login'); return; }
-  const adminOnly = ['herramientas', 'profesores', 'alumnos'];
+  const adminOnly = ['herramientas', 'profesores', 'alumnos', 'copias'];
   if (adminOnly.includes(id) && currentRole !== 'admin') return;
   showSection(id);
   // Activar tab por data-tab (no por índice posicional, que falla con tabs ocultos)
   document.querySelectorAll('.tab').forEach(t => {
     t.classList.toggle('active', t.dataset.tab === id);
   });
-  const loaders = { dashboard: loadDashboard, retiros: loadRetiros, herramientas: loadHerramientas, profesores: loadProfesores, alumnos: loadAlumnos, usuarios: loadUsuarios };
+  const loaders = { dashboard: loadDashboard, retiros: loadRetiros, herramientas: loadHerramientas, profesores: loadProfesores, alumnos: loadAlumnos, usuarios: loadUsuarios, copias: loadCopias };
   if (loaders[id]) loaders[id]();
 }
 
@@ -965,6 +1048,8 @@ async function loadDashboard() {
   document.getElementById('d-activos').textContent = rActivos.count ?? '?';
   document.getElementById('d-hoy').textContent    = rHoy.count ?? '?';
   document.getElementById('d-herramientas').textContent = rHerr.count ?? '?';
+
+  chequearRecordatorioCopia();
 
   const { data, error } = await db.from('retiro')
     .select('id, fecha_retiro, fecha_devolucion, herramienta(nombre), alumno(nombre, curso), profesor(nombre)')
@@ -1401,6 +1486,191 @@ async function deleteUsuario(uid, email) {
   const { error } = await dbAdmin.auth.admin.deleteUser(uid);
   if (error) { alert(error.message); return; }
   loadUsuarios();
+}
+
+// ─── COPIAS DE SEGURIDAD ───────────────────────────────────────
+const BACKUP_TABLES = ['herramienta', 'alumno', 'profesor', 'retiro'];
+
+async function loadCopias() {
+  const ids = {
+    herramienta: 'c-herramientas',
+    alumno:      'c-alumnos',
+    profesor:    'c-profesores',
+    retiro:      'c-retiros',
+  };
+  for (const t of BACKUP_TABLES) {
+    const el = document.getElementById(ids[t]);
+    if (el) el.textContent = '…';
+  }
+  const counts = await Promise.all(
+    BACKUP_TABLES.map(t => db.from(t).select('id', { count: 'exact', head: true }))
+  );
+  BACKUP_TABLES.forEach((t, i) => {
+    const el = document.getElementById(ids[t]);
+    if (el) el.textContent = counts[i].count ?? '?';
+  });
+}
+
+// ─── RECORDATORIO DE COPIA ─────────────────────────────────────
+const DIAS_RECORDATORIO = 7;   // avisar si pasaron más de N días sin copia
+
+function marcarCopiaHecha() {
+  localStorage.setItem('ultima_copia', new Date().toISOString());
+  const banner = document.getElementById('backup-reminder');
+  if (banner) banner.style.display = 'none';
+}
+
+function posponerRecordatorio() {
+  // Posponer 1 día sin contar como copia hecha.
+  const manana = new Date();
+  manana.setDate(manana.getDate() + 1);
+  localStorage.setItem('recordatorio_pospuesto', manana.toISOString());
+  const banner = document.getElementById('backup-reminder');
+  if (banner) banner.style.display = 'none';
+}
+
+function chequearRecordatorioCopia() {
+  const banner = document.getElementById('backup-reminder');
+  const texto = document.getElementById('backup-reminder-text');
+  if (!banner || !texto) return;
+  if (currentRole !== 'admin') { banner.style.display = 'none'; return; }
+
+  // Si fue pospuesto y todavía no llegó el momento, no mostrar.
+  const pospuesto = localStorage.getItem('recordatorio_pospuesto');
+  if (pospuesto && new Date() < new Date(pospuesto)) { banner.style.display = 'none'; return; }
+
+  const ultima = localStorage.getItem('ultima_copia');
+  let mostrar = false, mensaje = '';
+
+  if (!ultima) {
+    mostrar = true;
+    mensaje = '⚠ Todavía no descargaste ninguna copia de seguridad. Conviene guardar una en tu computadora o pendrive.';
+  } else {
+    const dias = Math.floor((Date.now() - new Date(ultima).getTime()) / 86400000);
+    if (dias >= DIAS_RECORDATORIO) {
+      mostrar = true;
+      const cuando = dias === 1 ? 'hace 1 día' : `hace ${dias} días`;
+      mensaje = `⚠ La última copia de seguridad fue ${cuando}. Conviene descargar una nueva.`;
+    }
+  }
+
+  banner.style.display = mostrar ? 'flex' : 'none';
+  if (mostrar) texto.textContent = mensaje;
+}
+
+function descargarArchivo(contenido, nombre, tipo) {
+  const blob = new Blob([contenido], { type: tipo });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = nombre;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function selloFecha() {
+  const d = new Date();
+  const p = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}`;
+}
+
+async function exportarJSON() {
+  const alertEl = document.getElementById('alert-export');
+  showAlert(alertEl, 'ok', 'Generando copia…');
+  try {
+    const backup = {
+      app: 'control-herramientas-epet7',
+      version: 1,
+      generado: new Date().toISOString(),
+      tablas: {},
+    };
+    for (const t of BACKUP_TABLES) {
+      const { data, error } = await db.from(t).select('*').order('id');
+      if (error) throw new Error(`${t}: ${error.message}`);
+      backup.tablas[t] = data || [];
+    }
+    descargarArchivo(
+      JSON.stringify(backup, null, 2),
+      `copia_herramientas_${selloFecha()}.json`,
+      'application/json'
+    );
+    const total = BACKUP_TABLES.reduce((s, t) => s + backup.tablas[t].length, 0);
+    showAlert(alertEl, 'ok', `Copia descargada (${total} registros).`);
+    marcarCopiaHecha();
+  } catch (e) {
+    showAlert(alertEl, 'err', 'Error al generar la copia: ' + e.message);
+  }
+}
+
+function aCSV(filas) {
+  if (!filas.length) return '';
+  const cols = Object.keys(filas[0]);
+  const escapar = v => {
+    if (v === null || v === undefined) return '';
+    const s = String(v);
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+  const cabecera = cols.join(',');
+  const cuerpo = filas.map(f => cols.map(c => escapar(f[c])).join(',')).join('\n');
+  return cabecera + '\n' + cuerpo;
+}
+
+async function exportarCSV(tabla) {
+  const alertEl = document.getElementById('alert-export');
+  try {
+    const { data, error } = await db.from(tabla).select('*').order('id');
+    if (error) throw new Error(error.message);
+    if (!data || !data.length) { showAlert(alertEl, 'err', `La tabla ${tabla} está vacía.`); return; }
+    // BOM para que Excel reconozca acentos
+    descargarArchivo('\ufeff' + aCSV(data), `${tabla}_${selloFecha()}.csv`, 'text/csv;charset=utf-8');
+    showAlert(alertEl, 'ok', `CSV de ${tabla} descargado (${data.length} filas).`);
+  } catch (e) {
+    showAlert(alertEl, 'err', 'Error: ' + e.message);
+  }
+}
+
+async function restaurarJSON() {
+  const alertEl = document.getElementById('alert-restore');
+  const logEl = document.getElementById('restore-log');
+  const fileInput = document.getElementById('restore-file');
+  logEl.textContent = '';
+
+  const file = fileInput.files[0];
+  if (!file) { showAlert(alertEl, 'err', 'Elegí un archivo de copia primero.'); return; }
+
+  let backup;
+  try {
+    backup = JSON.parse(await file.text());
+  } catch (e) {
+    showAlert(alertEl, 'err', 'El archivo no es un JSON válido.');
+    return;
+  }
+  if (!backup.tablas || backup.app !== 'control-herramientas-epet7') {
+    showAlert(alertEl, 'err', 'No parece una copia de esta aplicación.');
+    return;
+  }
+  if (!confirm('¿Restaurar los datos de esta copia? Se agregarán a los registros actuales.')) return;
+
+  showAlert(alertEl, 'ok', 'Restaurando…');
+  // Orden: primero tablas base, retiro al final (depende de las otras).
+  const orden = ['herramienta', 'alumno', 'profesor', 'retiro'];
+  let lineas = [];
+  for (const t of orden) {
+    const filas = backup.tablas[t];
+    if (!Array.isArray(filas) || !filas.length) { lineas.push(`${t}: sin registros`); continue; }
+    // Insertar respetando los id originales (upsert para no duplicar si ya existen).
+    const { error } = await db.from(t).upsert(filas, { onConflict: 'id' });
+    if (error) {
+      lineas.push(`${t}: ERROR — ${error.message}`);
+    } else {
+      lineas.push(`${t}: ${filas.length} registros restaurados ✓`);
+    }
+    logEl.textContent = lineas.join('\n');
+  }
+  showAlert(alertEl, 'ok', 'Restauración finalizada. Revisá el detalle abajo.');
+  loadCopias();
 }
 
 // ─── Init ──────────────────────────────────────────────────────
