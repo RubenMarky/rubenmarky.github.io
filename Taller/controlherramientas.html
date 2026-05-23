@@ -393,6 +393,7 @@ body.is-admin .admin-only-inline { display: inline-block; }
   <button class="tab admin-tab" data-tab="alumnos" onclick="showTab('alumnos')">Alumnos</button>
   <button class="tab admin-tab" data-tab="usuarios" onclick="showTab('usuarios')">Usuarios</button>
   <button class="tab admin-tab" data-tab="copias" onclick="showTab('copias')">Copias</button>
+  <button class="tab admin-tab" data-tab="auditoria" onclick="showTab('auditoria')">Auditoría</button>
 </nav>
 
 <main>
@@ -765,6 +766,73 @@ body.is-admin .admin-only-inline { display: inline-block; }
   </div>
 </div>
 
+<!-- ═══════════════════════ AUDITORÍA ═══════════════════════════ -->
+<div id="auditoria" class="section">
+  <div class="section-header">
+    <h2>Auditoría</h2>
+    <button class="btn btn-outline btn-sm" onclick="loadAuditoria()">&#8635; Buscar</button>
+  </div>
+
+  <p style="font-size:0.85rem;color:#555;line-height:1.6;margin-bottom:1.25rem;max-width:680px;">
+    Registro de actividad del sistema: ingresos, altas, ediciones y bajas. Elegí un rango de
+    fechas y, si querés, filtrá por un usuario en particular.
+  </p>
+
+  <div id="auditoria-no-table" class="alert alert-err" style="display:none;">
+    ⚠ El módulo de auditoría todavía no está activado. Ejecutá el archivo
+    <strong>auditoria-schema.sql</strong> en Supabase (SQL Editor) y volvé a intentar.
+  </div>
+
+  <div style="background:#fff;border:2px solid var(--ink);box-shadow:var(--shadow);padding:1.5rem;margin-bottom:1.5rem;">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Desde</label>
+        <input type="date" id="aud-desde">
+      </div>
+      <div class="form-group">
+        <label>Hasta</label>
+        <input type="date" id="aud-hasta">
+      </div>
+      <div class="form-group">
+        <label>Usuario</label>
+        <select id="aud-usuario"><option value="">Todos los usuarios</option></select>
+      </div>
+      <div class="form-group">
+        <label>Tipo de acción</label>
+        <select id="aud-accion">
+          <option value="">Todas</option>
+          <option value="INGRESO">Ingreso</option>
+          <option value="SALIDA">Salida</option>
+          <option value="ALTA">Alta</option>
+          <option value="EDICION">Edición</option>
+          <option value="BAJA">Baja</option>
+          <option value="DEVOLUCION">Devolución</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-orange" onclick="loadAuditoria()">Buscar</button>
+      <button class="btn btn-outline" onclick="resetFiltrosAuditoria()">Limpiar filtros</button>
+      <button class="btn btn-steel" onclick="exportarAuditoriaCSV()">Exportar resultado (CSV)</button>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha y hora</th>
+          <th>Usuario</th>
+          <th>Acción</th>
+          <th>Entidad</th>
+          <th>Detalle</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-auditoria"><tr><td colspan="5" class="empty">Elegí los filtros y tocá Buscar.</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
 </main>
 
 <footer>E.P.E.T N°7 · Control de Herramientas · Taller de Informática</footer>
@@ -829,11 +897,13 @@ async function doLogin() {
   if (error) { showAlert(alertEl, 'err', error.message); return; }
   currentUser = data.user;
   await loadRole(data.user.id);
+  registrarAuditoria('INGRESO', 'sesion', null, 'Inicio de sesión');
   applyPermissions();
   showTab('dashboard');
 }
 
 async function logout() {
+  registrarAuditoria('SALIDA', 'sesion', null, 'Cierre de sesión');
   await db.auth.signOut();
   currentUser = null;
   currentRole = null;
@@ -997,14 +1067,14 @@ function showSection(id) {
 function showTab(id) {
   if (!db) { showSection('setup'); return; }
   if (!currentUser) { showSection('login'); return; }
-  const adminOnly = ['herramientas', 'profesores', 'alumnos', 'copias'];
+  const adminOnly = ['herramientas', 'profesores', 'alumnos', 'copias', 'auditoria'];
   if (adminOnly.includes(id) && currentRole !== 'admin') return;
   showSection(id);
   // Activar tab por data-tab (no por índice posicional, que falla con tabs ocultos)
   document.querySelectorAll('.tab').forEach(t => {
     t.classList.toggle('active', t.dataset.tab === id);
   });
-  const loaders = { dashboard: loadDashboard, retiros: loadRetiros, herramientas: loadHerramientas, profesores: loadProfesores, alumnos: loadAlumnos, usuarios: loadUsuarios, copias: loadCopias };
+  const loaders = { dashboard: loadDashboard, retiros: loadRetiros, herramientas: loadHerramientas, profesores: loadProfesores, alumnos: loadAlumnos, usuarios: loadUsuarios, copias: loadCopias, auditoria: initAuditoria };
   if (loaders[id]) loaders[id]();
 }
 
@@ -1146,6 +1216,10 @@ async function addRetiro() {
 
   if (error) { showAlert(alertEl, 'err', error.message); return; }
 
+  const txtH = document.getElementById('r-herramienta').selectedOptions[0]?.text || idH;
+  const txtA = document.getElementById('r-alumno').selectedOptions[0]?.text || idA;
+  registrarAuditoria('ALTA', 'retiro', null, `Retiro de "${txtH}" por ${txtA}`);
+
   showAlert(alertEl, 'ok', 'Retiro registrado.');
   document.getElementById('form-retiro').classList.remove('open');
   loadRetiros();
@@ -1155,6 +1229,7 @@ async function registrarDevolucion(id) {
   if (!confirm('¿Confirmar devolución?')) return;
   const { error } = await db.from('retiro').update({ fecha_devolucion: new Date().toISOString() }).eq('id', id);
   if (error) { alert(error.message); return; }
+  registrarAuditoria('DEVOLUCION', 'retiro', id, 'Devolución registrada');
   loadRetiros();
   if (document.getElementById('dashboard').classList.contains('active')) loadDashboard();
 }
@@ -1163,6 +1238,7 @@ async function deleteRetiro(id) {
   if (!confirm('¿Eliminar este registro?')) return;
   const { error } = await db.from('retiro').delete().eq('id', id);
   if (error) { alert(error.message); return; }
+  registrarAuditoria('BAJA', 'retiro', id, 'Registro de retiro eliminado');
   loadRetiros();
 }
 
@@ -1224,6 +1300,8 @@ async function saveHerramienta() {
   }
 
   if (error) { showAlert(alertEl, 'err', error.message); return; }
+  registrarAuditoria(herramientaEditId ? 'EDICION' : 'ALTA', 'herramienta',
+    herramientaEditId, `Herramienta "${nombre}"`);
   showAlert(alertEl, 'ok', 'Guardado.');
   cancelHerramienta();
   loadHerramientas();
@@ -1233,6 +1311,7 @@ async function deleteHerramienta(id) {
   if (!confirm('¿Eliminar herramienta? Se perderán los registros de retiro asociados.')) return;
   const { error } = await db.from('herramienta').delete().eq('id', id);
   if (error) { alert(error.message); return; }
+  registrarAuditoria('BAJA', 'herramienta', id, 'Herramienta eliminada');
   loadHerramientas();
 }
 
@@ -1287,6 +1366,8 @@ async function saveProfesor() {
   }
 
   if (error) { showAlert(alertEl, 'err', error.message); return; }
+  registrarAuditoria(profesorEditId ? 'EDICION' : 'ALTA', 'profesor',
+    profesorEditId, `Profesor "${nombre}"`);
   showAlert(alertEl, 'ok', 'Guardado.');
   cancelProfesor();
   loadProfesores();
@@ -1296,6 +1377,7 @@ async function deleteProfesor(id) {
   if (!confirm('¿Eliminar profesor?')) return;
   const { error } = await db.from('profesor').delete().eq('id', id);
   if (error) { alert(error.message); return; }
+  registrarAuditoria('BAJA', 'profesor', id, 'Profesor eliminado');
   loadProfesores();
 }
 
@@ -1354,6 +1436,8 @@ async function saveAlumno() {
   }
 
   if (error) { showAlert(alertEl, 'err', error.message); return; }
+  registrarAuditoria(alumnoEditId ? 'EDICION' : 'ALTA', 'alumno',
+    alumnoEditId, `Alumno "${nombre}"${curso ? ' ('+curso+')' : ''}`);
   showAlert(alertEl, 'ok', 'Guardado.');
   cancelAlumno();
   loadAlumnos();
@@ -1363,6 +1447,7 @@ async function deleteAlumno(id) {
   if (!confirm('¿Eliminar alumno?')) return;
   const { error } = await db.from('alumno').delete().eq('id', id);
   if (error) { alert(error.message); return; }
+  registrarAuditoria('BAJA', 'alumno', id, 'Alumno eliminado');
   loadAlumnos();
 }
 
@@ -1464,6 +1549,7 @@ async function createUsuario() {
 
   if (error) { showAlert(alertEl, 'err', error.message); return; }
 
+  registrarAuditoria('ALTA', 'usuario', null, `Usuario creado: ${data.user.email}`);
   showAlert(alertEl, 'ok', `Usuario ${data.user.email} creado correctamente.`);
   document.getElementById('u-email').value = '';
   document.getElementById('u-password').value = '';
@@ -1477,6 +1563,7 @@ async function setRoleUsuario(uid, nuevoRol) {
     app_metadata: { role: nuevoRol }
   });
   if (error) { alert(error.message); return; }
+  registrarAuditoria('EDICION', 'usuario', uid, `Rol cambiado a "${nuevoRol}"`);
   loadUsuarios();
 }
 
@@ -1485,6 +1572,7 @@ async function deleteUsuario(uid, email) {
   if (!dbAdmin) return;
   const { error } = await dbAdmin.auth.admin.deleteUser(uid);
   if (error) { alert(error.message); return; }
+  registrarAuditoria('BAJA', 'usuario', uid, `Usuario eliminado: ${email}`);
   loadUsuarios();
 }
 
@@ -1671,6 +1759,128 @@ async function restaurarJSON() {
   }
   showAlert(alertEl, 'ok', 'Restauración finalizada. Revisá el detalle abajo.');
   loadCopias();
+}
+
+// ─── AUDITORÍA ─────────────────────────────────────────────────
+// Escribe un evento en la tabla auditoria. Nunca interrumpe la
+// acción principal: si falla (p. ej. la tabla no existe todavía),
+// solo lo informa en consola.
+async function registrarAuditoria(accion, entidad, entidadId, detalle) {
+  if (!db || !currentUser) return;
+  try {
+    await db.from('auditoria').insert({
+      usuario_id: currentUser.id,
+      usuario_email: currentUser.email,
+      accion,
+      entidad: entidad || null,
+      entidad_id: entidadId != null ? String(entidadId) : null,
+      detalle: detalle || null,
+    });
+  } catch (e) {
+    console.warn('No se pudo registrar auditoría:', e?.message || e);
+  }
+}
+
+async function initAuditoria() {
+  // Verificar que la tabla exista
+  const aviso = document.getElementById('auditoria-no-table');
+  const { error } = await db.from('auditoria').select('id', { count: 'exact', head: true });
+  if (error) {
+    aviso.style.display = 'block';
+    document.getElementById('tbody-auditoria').innerHTML =
+      '<tr><td colspan="5" class="empty">Módulo no activado.</td></tr>';
+    return;
+  }
+  aviso.style.display = 'none';
+
+  // Rango por defecto: últimos 30 días
+  if (!document.getElementById('aud-desde').value) {
+    const hoy = new Date();
+    const hace30 = new Date(hoy.getTime() - 30*86400000);
+    document.getElementById('aud-hasta').value = hoy.toISOString().slice(0,10);
+    document.getElementById('aud-desde').value = hace30.toISOString().slice(0,10);
+  }
+  await poblarUsuariosAuditoria();
+  loadAuditoria();
+}
+
+async function poblarUsuariosAuditoria() {
+  // Lista de emails distintos que aparecen en la auditoría
+  const sel = document.getElementById('aud-usuario');
+  const actual = sel.value;
+  const { data } = await db.from('auditoria').select('usuario_email').order('usuario_email');
+  const emails = [...new Set((data || []).map(r => r.usuario_email).filter(Boolean))];
+  sel.innerHTML = '<option value="">Todos los usuarios</option>' +
+    emails.map(e => `<option value="${e}">${e}</option>`).join('');
+  if (emails.includes(actual)) sel.value = actual;
+}
+
+let auditoriaUltimoResultado = [];
+
+async function loadAuditoria() {
+  const tbody = document.getElementById('tbody-auditoria');
+  tbody.innerHTML = '<tr><td colspan="5" class="loading"><span class="spinner"></span>Buscando…</td></tr>';
+
+  const desde   = document.getElementById('aud-desde').value;
+  const hasta   = document.getElementById('aud-hasta').value;
+  const usuario = document.getElementById('aud-usuario').value;
+  const accion  = document.getElementById('aud-accion').value;
+
+  let q = db.from('auditoria').select('*').order('fecha', { ascending: false }).limit(1000);
+  if (desde)   q = q.gte('fecha', new Date(desde + 'T00:00:00').toISOString());
+  if (hasta)   q = q.lte('fecha', new Date(hasta + 'T23:59:59').toISOString());
+  if (usuario) q = q.eq('usuario_email', usuario);
+  if (accion)  q = q.eq('accion', accion);
+
+  const { data, error } = await q;
+  if (error) {
+    document.getElementById('auditoria-no-table').style.display = 'block';
+    tbody.innerHTML = `<tr><td colspan="5" class="empty">Error: ${error.message}</td></tr>`;
+    return;
+  }
+
+  auditoriaUltimoResultado = data || [];
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty">Sin actividad en este período.</td></tr>';
+    return;
+  }
+
+  const colorAccion = {
+    INGRESO: 'badge-green', SALIDA: 'badge-green',
+    ALTA: 'badge-green', EDICION: 'badge-amber',
+    BAJA: 'badge-red', DEVOLUCION: 'badge-green',
+  };
+  tbody.innerHTML = data.map(r => `
+    <tr>
+      <td>${fmt(r.fecha)}</td>
+      <td>${r.usuario_email ?? '–'}</td>
+      <td><span class="badge ${colorAccion[r.accion] || ''}">${r.accion}</span></td>
+      <td>${r.entidad ?? '–'}${r.entidad_id ? ' <code>#'+r.entidad_id+'</code>' : ''}</td>
+      <td>${r.detalle ?? '–'}</td>
+    </tr>`).join('');
+}
+
+function resetFiltrosAuditoria() {
+  document.getElementById('aud-usuario').value = '';
+  document.getElementById('aud-accion').value = '';
+  const hoy = new Date();
+  const hace30 = new Date(hoy.getTime() - 30*86400000);
+  document.getElementById('aud-hasta').value = hoy.toISOString().slice(0,10);
+  document.getElementById('aud-desde').value = hace30.toISOString().slice(0,10);
+  loadAuditoria();
+}
+
+function exportarAuditoriaCSV() {
+  if (!auditoriaUltimoResultado.length) { alert('No hay resultados para exportar. Hacé una búsqueda primero.'); return; }
+  const filas = auditoriaUltimoResultado.map(r => ({
+    fecha: fmt(r.fecha),
+    usuario: r.usuario_email ?? '',
+    accion: r.accion,
+    entidad: r.entidad ?? '',
+    entidad_id: r.entidad_id ?? '',
+    detalle: r.detalle ?? '',
+  }));
+  descargarArchivo('\ufeff' + aCSV(filas), `auditoria_${selloFecha()}.csv`, 'text/csv;charset=utf-8');
 }
 
 // ─── Init ──────────────────────────────────────────────────────
