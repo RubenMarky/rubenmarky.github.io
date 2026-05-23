@@ -661,8 +661,8 @@ async function checkAuth() {
 }
 
 async function loadRole(uid) {
-  const { data } = await db.from('perfil').select('rol').eq('id', uid).single();
-  currentRole = data?.rol ?? 'usuario';
+  const { data: { user } } = await db.auth.getUser();
+  currentRole = user?.user_metadata?.rol ?? 'usuario';
 }
 
 async function doLogin() {
