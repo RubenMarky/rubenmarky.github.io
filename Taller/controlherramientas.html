@@ -383,11 +383,11 @@ body.is-admin .admin-tab { display: block; }
 
 <!-- ═══════════════════════════ TABS ════════════════════════════ -->
 <nav id="nav-tabs">
-  <button class="tab active" onclick="showTab('dashboard')">Dashboard</button>
-  <button class="tab" onclick="showTab('retiros')">Retiros</button>
-  <button class="tab admin-tab" onclick="showTab('herramientas')">Herramientas</button>
-  <button class="tab admin-tab" onclick="showTab('profesores')">Profesores</button>
-  <button class="tab admin-tab" onclick="showTab('alumnos')">Alumnos</button>
+  <button class="tab active" data-tab="dashboard" onclick="showTab('dashboard')">Dashboard</button>
+  <button class="tab" data-tab="retiros" onclick="showTab('retiros')">Retiros</button>
+  <button class="tab admin-tab" data-tab="herramientas" onclick="showTab('herramientas')">Herramientas</button>
+  <button class="tab admin-tab" data-tab="profesores" onclick="showTab('profesores')">Profesores</button>
+  <button class="tab admin-tab" data-tab="alumnos" onclick="showTab('alumnos')">Alumnos</button>
 </nav>
 
 <main>
@@ -785,7 +785,6 @@ function toggleSetup() {
 // ─── Navigation ────────────────────────────────────────────────
 function showSection(id) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
@@ -795,11 +794,10 @@ function showTab(id) {
   const adminOnly = ['herramientas', 'profesores', 'alumnos'];
   if (adminOnly.includes(id) && currentRole !== 'admin') return;
   showSection(id);
-  const tabs = document.querySelectorAll('.tab');
-  const order = ['dashboard','retiros','herramientas','profesores','alumnos'];
-  const idx = order.indexOf(id);
-  if (idx >= 0) tabs[idx].classList.add('active');
-
+  // Activar tab por data-tab (no por índice posicional, que falla con tabs ocultos)
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === id);
+  });
   const loaders = { dashboard: loadDashboard, retiros: loadRetiros, herramientas: loadHerramientas, profesores: loadProfesores, alumnos: loadAlumnos };
   if (loaders[id]) loaders[id]();
 }
