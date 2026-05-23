@@ -429,13 +429,22 @@ body.is-admin .admin-tab { display: block; }
     <label>Clave Anónima (anon public)</label>
     <input type="text" id="input-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6...">
   </div>
+
+  <hr style="border:none;border-top:2px dashed var(--line);margin:1.25rem 0;">
+
   <div class="form-group">
-    <label>Clave Service Role <small style="font-weight:normal;text-transform:none;color:#888;">(solo admin — necesaria para crear usuarios)</small></label>
-    <input type="password" id="input-service-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6... (service_role)">
+    <label>
+      Clave Service Role
+      <small style="font-weight:normal;text-transform:none;color:#888;"> — Settings → API → service_role (necesaria para gestionar usuarios)</small>
+    </label>
+    <input type="text" id="input-service-key" autocomplete="off" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6... (service_role)">
   </div>
+  <div id="service-key-status" style="font-family:'Space Mono',monospace;font-size:0.72rem;margin-bottom:1rem;display:none;"></div>
+
   <div id="alert-setup" class="alert"></div>
   <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem;">
     <button class="btn btn-orange" onclick="saveConfig()">Guardar y conectar</button>
+    <button class="btn btn-steel" onclick="saveServiceKeyOnly()">Guardar solo Service Key</button>
     <button class="btn btn-outline" onclick="clearConfig()">Borrar configuración</button>
   </div>
 </div>
@@ -791,6 +800,7 @@ function loadConfig() {
     }
   }
   showSection('setup');
+  showSetupStatus();
   return false;
 }
 
@@ -835,6 +845,46 @@ function saveConfig() {
     });
 }
 
+function saveServiceKeyOnly() {
+  const url = localStorage.getItem('sb_url');
+  const alertEl = document.getElementById('alert-setup');
+  if (!url) {
+    showAlert(alertEl, 'err', 'Primero guardá la URL y la clave anónima.');
+    return;
+  }
+  const sk = document.getElementById('input-service-key').value.trim();
+  if (!sk) {
+    showAlert(alertEl, 'err', 'Pegá la Service Role Key en el campo.');
+    return;
+  }
+  localStorage.setItem('sb_service_key', sk);
+  if (initSupabaseAdmin(url, sk)) {
+    showAlert(alertEl, 'ok', '✓ Service Role Key guardada. Ya podés gestionar usuarios.');
+    showSetupStatus();
+    // Cerrar setup y volver a usuarios si estaba en esa sección
+    setTimeout(() => {
+      if (db && currentUser) showTab('usuarios');
+    }, 1200);
+  } else {
+    showAlert(alertEl, 'err', 'No se pudo inicializar el cliente admin. Verificá la key.');
+  }
+}
+
+function showSetupStatus() {
+  const statusEl = document.getElementById('service-key-status');
+  if (!statusEl) return;
+  const sk = localStorage.getItem('sb_service_key');
+  if (sk) {
+    statusEl.style.display = 'block';
+    statusEl.style.color = 'var(--green)';
+    statusEl.textContent = '✓ Service Role Key guardada (' + sk.slice(0,20) + '…)';
+  } else {
+    statusEl.style.display = 'block';
+    statusEl.style.color = 'var(--red)';
+    statusEl.textContent = '✗ Service Role Key no configurada';
+  }
+}
+
 function clearConfig() {
   localStorage.removeItem('sb_url');
   localStorage.removeItem('sb_key');
@@ -850,6 +900,7 @@ function toggleSetup() {
     if (db) showTab('dashboard');
   } else {
     showSection('setup');
+    showSetupStatus();
   }
 }
 
