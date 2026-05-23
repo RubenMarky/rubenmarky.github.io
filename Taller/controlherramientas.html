@@ -9,6 +9,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
 <style>
 :root {
   --ink: #0c1320;
@@ -366,6 +368,42 @@ body.is-admin .admin-tab { display: block; }
 body.is-admin .admin-only-inline { display: inline-block; }
 .admin-only-block { display: none; }
 body.is-admin .admin-only-block { display: block; }
+
+/* ── INFORMES ── */
+.report-toolbar { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: flex-end; margin-bottom: 1.25rem; }
+.report-output {
+  background: #fff;
+  border: 2px solid var(--ink);
+  box-shadow: var(--shadow);
+  padding: 2rem;
+  margin-top: 1.5rem;
+  min-height: 120px;
+}
+.report-output .rep-head { border-bottom: 3px solid var(--ink); padding-bottom: 0.85rem; margin-bottom: 1.25rem; }
+.report-output .rep-inst { font-family: 'Archivo Black', sans-serif; font-size: 1.15rem; }
+.report-output .rep-sub { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: #666; text-transform: uppercase; letter-spacing: 0.5px; }
+.report-output .rep-title { font-family: 'Archivo Black', sans-serif; font-size: 1.3rem; margin-top: 0.75rem; }
+.report-output .rep-meta { font-family: 'Space Mono', monospace; font-size: 0.72rem; color: #888; margin-top: 0.25rem; }
+.report-output table { box-shadow: none; margin-top: 1rem; }
+.report-output .rep-stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 1rem; margin: 1rem 0; }
+.report-output .rep-stat { border: 2px solid var(--line); padding: 1rem; text-align: center; }
+.report-output .rep-stat .n { font-family: 'Archivo Black', sans-serif; font-size: 1.8rem; color: var(--orange); }
+.report-output .rep-stat .l { font-family: 'Space Mono', monospace; font-size: 0.65rem; text-transform: uppercase; color: #666; }
+.report-empty { color: #999; font-style: italic; padding: 2rem 0; text-align: center; }
+
+/* ── IMPRESIÓN ── */
+@media print {
+  header, nav, footer, .report-toolbar, .section-header, .no-print { display: none !important; }
+  body { background: #fff; }
+  main { padding: 0; max-width: none; }
+  .section { display: none !important; }
+  .section.active { display: block !important; }
+  .report-output { border: none; box-shadow: none; padding: 0; margin: 0; }
+  .report-output table { border: 1px solid #000; }
+  thead th { background: #000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .badge { border: 1px solid #999; padding: 1px 4px; }
+  @page { margin: 1.5cm; }
+}
 </style>
 </head>
 <body>
@@ -394,6 +432,7 @@ body.is-admin .admin-only-block { display: block; }
   <button class="tab admin-tab" data-tab="profesores" onclick="showTab('profesores')">Profesores</button>
   <button class="tab admin-tab" data-tab="alumnos" onclick="showTab('alumnos')">Alumnos</button>
   <button class="tab admin-tab" data-tab="usuarios" onclick="showTab('usuarios')">Usuarios</button>
+  <button class="tab admin-tab" data-tab="informes" onclick="showTab('informes')">Informes</button>
   <button class="tab admin-tab" data-tab="copias" onclick="showTab('copias')">Copias</button>
   <button class="tab admin-tab" data-tab="auditoria" onclick="showTab('auditoria')">Auditoría</button>
   <button class="tab admin-tab" data-tab="ajustes" onclick="showTab('ajustes')">Ajustes</button>
@@ -856,6 +895,49 @@ body.is-admin .admin-only-block { display: block; }
   </div>
 </div>
 
+<!-- ═══════════════════════ INFORMES ════════════════════════════ -->
+<div id="informes" class="section">
+  <div class="section-header">
+    <h2>Informes</h2>
+  </div>
+
+  <p style="font-size:0.85rem;color:#555;line-height:1.6;margin-bottom:1.25rem;max-width:700px;">
+    Generá informes formateados y listos para imprimir o guardar como PDF. Elegí el tipo de
+    informe, ajustá las opciones y tocá <strong>Generar</strong>. Después usá
+    <strong>Imprimir / Guardar PDF</strong> para obtener el documento limpio.
+  </p>
+
+  <div class="report-toolbar">
+    <div class="form-group" style="margin-bottom:0;min-width:240px;">
+      <label>Tipo de informe</label>
+      <select id="rep-tipo" onchange="onCambioTipoInforme()">
+        <option value="activos">Préstamos activos (ahora)</option>
+        <option value="retiros">Retiros por fechas</option>
+        <option value="inventario">Inventario de herramientas</option>
+        <option value="listado-alumnos">Listado de alumnos</option>
+        <option value="listado-profesores">Listado de profesores</option>
+        <option value="ranking-herramientas">Ranking de herramientas más usadas</option>
+        <option value="ranking-alumnos">Ranking de alumnos con más retiros</option>
+      </select>
+    </div>
+    <div class="form-group rep-rango" style="margin-bottom:0;display:none;">
+      <label>Desde</label>
+      <input type="date" id="rep-desde">
+    </div>
+    <div class="form-group rep-rango" style="margin-bottom:0;display:none;">
+      <label>Hasta</label>
+      <input type="date" id="rep-hasta">
+    </div>
+    <button class="btn btn-orange" onclick="generarInforme()">Generar</button>
+    <button class="btn btn-steel no-print" id="btn-imprimir" onclick="window.print()" style="display:none;">⎙ Imprimir</button>
+    <button class="btn btn-green no-print" id="btn-pdf" onclick="descargarInformePDF()" style="display:none;">⬇ Descargar PDF</button>
+  </div>
+
+  <div id="rep-output" class="report-output">
+    <div class="report-empty">Elegí un tipo de informe y tocá “Generar”.</div>
+  </div>
+</div>
+
 <!-- ═══════════════════════ AJUSTES ═════════════════════════════ -->
 <div id="ajustes" class="section">
   <div class="section-header">
@@ -1138,14 +1220,14 @@ function showSection(id) {
 function showTab(id) {
   if (!db) { showSection('setup'); return; }
   if (!currentUser) { showSection('login'); return; }
-  const adminOnly = ['herramientas', 'profesores', 'alumnos', 'copias', 'auditoria', 'ajustes'];
+  const adminOnly = ['herramientas', 'profesores', 'alumnos', 'copias', 'auditoria', 'ajustes', 'informes'];
   if (adminOnly.includes(id) && currentRole !== 'admin') return;
   showSection(id);
   // Activar tab por data-tab (no por índice posicional, que falla con tabs ocultos)
   document.querySelectorAll('.tab').forEach(t => {
     t.classList.toggle('active', t.dataset.tab === id);
   });
-  const loaders = { dashboard: loadDashboard, retiros: loadRetiros, herramientas: loadHerramientas, profesores: loadProfesores, alumnos: loadAlumnos, usuarios: loadUsuarios, copias: loadCopias, auditoria: initAuditoria, ajustes: loadAjustes };
+  const loaders = { dashboard: loadDashboard, retiros: loadRetiros, herramientas: loadHerramientas, profesores: loadProfesores, alumnos: loadAlumnos, usuarios: loadUsuarios, copias: loadCopias, auditoria: initAuditoria, ajustes: loadAjustes, informes: initInformes };
   if (loaders[id]) loaders[id]();
 }
 
@@ -1982,6 +2064,251 @@ function exportarAuditoriaCSV() {
     detalle: r.detalle ?? '',
   }));
   descargarArchivo('\ufeff' + aCSV(filas), `auditoria_${selloFecha()}.csv`, 'text/csv;charset=utf-8');
+}
+
+// ─── INFORMES ──────────────────────────────────────────────────
+function initInformes() {
+  // Rango por defecto: mes en curso
+  const hoy = new Date();
+  const primero = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+  if (!document.getElementById('rep-desde').value) {
+    document.getElementById('rep-desde').value = primero.toISOString().slice(0,10);
+    document.getElementById('rep-hasta').value = hoy.toISOString().slice(0,10);
+  }
+  onCambioTipoInforme();
+}
+
+function onCambioTipoInforme() {
+  const tipo = document.getElementById('rep-tipo').value;
+  const necesitaRango = (tipo === 'retiros');
+  document.querySelectorAll('.rep-rango').forEach(el => el.style.display = necesitaRango ? 'block' : 'none');
+  // Ocultar botones hasta que se genere de nuevo
+  document.getElementById('btn-imprimir').style.display = 'none';
+  document.getElementById('btn-pdf').style.display = 'none';
+  document.getElementById('rep-output').innerHTML =
+    '<div class="report-empty">Tocá “Generar” para ver el informe.</div>';
+}
+
+let informeActual = null;   // datos crudos del último informe, para el PDF
+
+function repCabecera(titulo, meta) {
+  const inst   = configActual.nombre_institucion || 'E.P.E.T N°7';
+  const sector = configActual.nombre_sector || 'Taller de Informática';
+  const tipo   = configActual.tipo_control || 'Control de Herramientas';
+  const ahora  = new Date().toLocaleString('es-AR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  informeActual = { inst, sector, tipo, titulo, meta: meta || '', ahora, cols: [], filas: [], stats: [] };
+  return `
+    <div class="rep-head">
+      <div class="rep-inst">${inst}</div>
+      <div class="rep-sub">${tipo} · ${sector}</div>
+      <div class="rep-title">${titulo}</div>
+      <div class="rep-meta">${meta ? meta + ' · ' : ''}Generado el ${ahora}</div>
+    </div>`;
+}
+
+// Quita etiquetas HTML para tener texto plano (los badges, etc.) en el PDF.
+function textoPlano(v) {
+  if (v === null || v === undefined) return '';
+  return String(v).replace(/<[^>]*>/g, '').trim();
+}
+
+function repTabla(cols, filas) {
+  if (informeActual) {
+    informeActual.cols = cols;
+    informeActual.filas = filas.map(f => f.map(textoPlano));
+  }
+  if (!filas.length) return '<div class="report-empty">Sin datos para mostrar.</div>';
+  const head = '<tr>' + cols.map(c => `<th>${c}</th>`).join('') + '</tr>';
+  const body = filas.map(f => '<tr>' + f.map(c => `<td>${c ?? '–'}</td>`).join('') + '</tr>').join('');
+  return `<div class="table-wrap"><table><thead>${head}</thead><tbody>${body}</tbody></table></div>`;
+}
+
+async function generarInforme() {
+  const tipo = document.getElementById('rep-tipo').value;
+  const out = document.getElementById('rep-output');
+  out.innerHTML = '<div class="loading"><span class="spinner"></span>Generando informe…</div>';
+
+  try {
+    let html = '';
+    if (tipo === 'activos')                  html = await repActivos();
+    else if (tipo === 'retiros')             html = await repRetiros();
+    else if (tipo === 'inventario')          html = await repInventario();
+    else if (tipo === 'listado-alumnos')     html = await repListado('alumno');
+    else if (tipo === 'listado-profesores')  html = await repListado('profesor');
+    else if (tipo === 'ranking-herramientas')html = await repRankingHerramientas();
+    else if (tipo === 'ranking-alumnos')     html = await repRankingAlumnos();
+
+    out.innerHTML = html;
+    document.getElementById('btn-imprimir').style.display = 'inline-block';
+    document.getElementById('btn-pdf').style.display = 'inline-block';
+    registrarAuditoria('INGRESO', 'informe', null, `Informe generado: ${tipo}`);
+  } catch (e) {
+    out.innerHTML = `<div class="report-empty">Error al generar el informe: ${e.message}</div>`;
+  }
+}
+
+function descargarInformePDF() {
+  if (!informeActual) { alert('Generá un informe primero.'); return; }
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    alert('No se pudo cargar el generador de PDF. Revisá tu conexión a internet o usá el botón Imprimir.');
+    return;
+  }
+  const { jsPDF } = window.jspdf;
+  const docp = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const inkRGB = [12, 19, 32];
+  const ancho = docp.internal.pageSize.getWidth();
+  const margen = 14;
+
+  // Cabecera institucional
+  docp.setFont('helvetica', 'bold'); docp.setFontSize(14); docp.setTextColor(...inkRGB);
+  docp.text(informeActual.inst, margen, 18);
+  docp.setFont('helvetica', 'normal'); docp.setFontSize(8); docp.setTextColor(100);
+  docp.text(`${informeActual.tipo} · ${informeActual.sector}`.toUpperCase(), margen, 23);
+  docp.setDrawColor(...inkRGB); docp.setLineWidth(0.6); docp.line(margen, 26, ancho - margen, 26);
+
+  // Título del informe
+  docp.setFont('helvetica', 'bold'); docp.setFontSize(15); docp.setTextColor(...inkRGB);
+  docp.text(informeActual.titulo, margen, 35);
+  docp.setFont('helvetica', 'normal'); docp.setFontSize(8); docp.setTextColor(130);
+  const metaTxt = (informeActual.meta ? informeActual.meta + ' · ' : '') + 'Generado el ' + informeActual.ahora;
+  docp.text(metaTxt, margen, 40);
+
+  let yInicio = 46;
+
+  // Estadísticas (solo inventario)
+  if (informeActual.stats && informeActual.stats.length) {
+    const resumen = informeActual.stats.map(s => `${s[0]}: ${s[1]}`).join('     ');
+    docp.setFont('helvetica', 'bold'); docp.setFontSize(10); docp.setTextColor(255, 87, 34);
+    docp.text(resumen, margen, yInicio);
+    yInicio += 8;
+  }
+
+  // Tabla
+  docp.autoTable({
+    startY: yInicio,
+    head: [informeActual.cols],
+    body: informeActual.filas.length ? informeActual.filas : [['Sin datos para mostrar']],
+    margin: { left: margen, right: margen },
+    styles: { font: 'helvetica', fontSize: 9, cellPadding: 2.5, textColor: inkRGB },
+    headStyles: { fillColor: inkRGB, textColor: [255,255,255], fontStyle: 'bold', fontSize: 8 },
+    alternateRowStyles: { fillColor: [244, 241, 234] },
+  });
+
+  // Pie con numeración de páginas
+  const totalPag = docp.internal.getNumberOfPages();
+  for (let i = 1; i <= totalPag; i++) {
+    docp.setPage(i);
+    docp.setFontSize(7); docp.setTextColor(150);
+    docp.text(`${informeActual.inst} · página ${i} de ${totalPag}`,
+      ancho / 2, docp.internal.pageSize.getHeight() - 8, { align: 'center' });
+  }
+
+  // Nombre de archivo
+  const slug = informeActual.titulo.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+  docp.save(`informe_${slug}_${selloFecha()}.pdf`);
+  registrarAuditoria('INGRESO', 'informe', null, `PDF descargado: ${informeActual.titulo}`);
+}
+
+async function repActivos() {
+  const { data, error } = await db.from('retiro')
+    .select('id, fecha_retiro, herramienta(nombre), alumno(nombre, curso), profesor(nombre)')
+    .is('fecha_devolucion', null)
+    .order('fecha_retiro', { ascending: true });
+  if (error) throw new Error(error.message);
+  const filas = (data || []).map(r => [
+    r.id, r.herramienta?.nombre, r.alumno?.nombre, r.alumno?.curso, r.profesor?.nombre, fmt(r.fecha_retiro)
+  ]);
+  return repCabecera('Préstamos activos', `${filas.length} herramienta(s) sin devolver`)
+    + repTabla(['#','Herramienta','Alumno','Curso','Profesor','Fecha de retiro'], filas);
+}
+
+async function repRetiros() {
+  const desde = document.getElementById('rep-desde').value;
+  const hasta = document.getElementById('rep-hasta').value;
+  let q = db.from('retiro')
+    .select('id, fecha_retiro, fecha_devolucion, herramienta(nombre), alumno(nombre, curso), profesor(nombre)')
+    .order('fecha_retiro', { ascending: false });
+  if (desde) q = q.gte('fecha_retiro', new Date(desde + 'T00:00:00').toISOString());
+  if (hasta) q = q.lte('fecha_retiro', new Date(hasta + 'T23:59:59').toISOString());
+  const { data, error } = await q;
+  if (error) throw new Error(error.message);
+  const filas = (data || []).map(r => [
+    r.id, r.herramienta?.nombre, r.alumno?.nombre, r.alumno?.curso, r.profesor?.nombre,
+    fmt(r.fecha_retiro), r.fecha_devolucion ? fmt(r.fecha_devolucion) : 'Sin devolver'
+  ]);
+  const fmtFecha = d => d ? new Date(d+'T00:00:00').toLocaleDateString('es-AR') : '—';
+  return repCabecera('Retiros por período', `Del ${fmtFecha(desde)} al ${fmtFecha(hasta)} · ${filas.length} registro(s)`)
+    + repTabla(['#','Herramienta','Alumno','Curso','Profesor','Retiro','Devolución'], filas);
+}
+
+async function repInventario() {
+  const { data: hs, error } = await db.from('herramienta').select('id, nombre').order('nombre');
+  if (error) throw new Error(error.message);
+  const { data: activos } = await db.from('retiro').select('id_herramienta').is('fecha_devolucion', null);
+  const enUso = new Set((activos || []).map(r => r.id_herramienta));
+  const filas = (hs || []).map(h => [
+    h.id, h.nombre, enUso.has(h.id)
+      ? '<span class="badge badge-amber">En uso</span>'
+      : '<span class="badge badge-green">Disponible</span>'
+  ]);
+  const disp = (hs || []).length - enUso.size;
+  const stats = `
+    <div class="rep-stat-grid">
+      <div class="rep-stat"><div class="n">${(hs||[]).length}</div><div class="l">Total</div></div>
+      <div class="rep-stat"><div class="n">${disp}</div><div class="l">Disponibles</div></div>
+      <div class="rep-stat"><div class="n">${enUso.size}</div><div class="l">En uso</div></div>
+    </div>`;
+  const cab = repCabecera('Inventario de herramientas');
+  if (informeActual) informeActual.stats = [
+    ['Total', (hs||[]).length], ['Disponibles', disp], ['En uso', enUso.size]
+  ];
+  return cab + stats + repTabla(['#','Herramienta','Estado'], filas);
+}
+
+async function repListado(tabla) {
+  const cols = tabla === 'alumno' ? 'id, nombre, curso' : 'id, nombre';
+  const { data, error } = await db.from(tabla).select(cols).order('nombre');
+  if (error) throw new Error(error.message);
+  const titulo = tabla === 'alumno' ? 'Listado de alumnos' : 'Listado de profesores';
+  if (tabla === 'alumno') {
+    const filas = (data || []).map(a => [a.id, a.nombre, a.curso]);
+    return repCabecera(titulo, `${filas.length} alumno(s)`) + repTabla(['#','Nombre','Curso'], filas);
+  }
+  const filas = (data || []).map(p => [p.id, p.nombre]);
+  return repCabecera(titulo, `${filas.length} profesor(es)`) + repTabla(['#','Nombre'], filas);
+}
+
+async function repRankingHerramientas() {
+  const { data, error } = await db.from('retiro').select('herramienta(nombre)');
+  if (error) throw new Error(error.message);
+  const conteo = {};
+  (data || []).forEach(r => {
+    const n = r.herramienta?.nombre;
+    if (n) conteo[n] = (conteo[n] || 0) + 1;
+  });
+  const orden = Object.entries(conteo).sort((a,b) => b[1]-a[1]);
+  const filas = orden.map(([nombre, n], i) => [i+1, nombre, n]);
+  return repCabecera('Ranking de herramientas más usadas', `Sobre ${(data||[]).length} retiro(s) totales`)
+    + repTabla(['Puesto','Herramienta','Veces retirada'], filas);
+}
+
+async function repRankingAlumnos() {
+  const { data, error } = await db.from('retiro').select('alumno(nombre, curso)');
+  if (error) throw new Error(error.message);
+  const conteo = {};
+  (data || []).forEach(r => {
+    const n = r.alumno?.nombre;
+    if (n) {
+      const clave = n + (r.alumno?.curso ? ' · ' + r.alumno.curso : '');
+      conteo[clave] = (conteo[clave] || 0) + 1;
+    }
+  });
+  const orden = Object.entries(conteo).sort((a,b) => b[1]-a[1]);
+  const filas = orden.map(([nombre, n], i) => [i+1, nombre, n]);
+  return repCabecera('Ranking de alumnos con más retiros', `Sobre ${(data||[]).length} retiro(s) totales`)
+    + repTabla(['Puesto','Alumno','Cantidad de retiros'], filas);
 }
 
 // ─── AJUSTES / CONFIGURACIÓN ───────────────────────────────────
