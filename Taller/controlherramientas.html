@@ -893,6 +893,28 @@ body.is-admin .admin-only-block { display: block; }
       <tbody id="tbody-auditoria"><tr><td colspan="5" class="empty">Elegí los filtros y tocá Buscar.</td></tr></tbody>
     </table>
   </div>
+
+  <!-- Mantenimiento de la auditoría -->
+  <div style="background:#fff;border:2px solid var(--red);box-shadow:4px 4px 0 var(--red);padding:1.5rem;margin-top:2rem;max-width:640px;">
+    <h3 style="font-family:'Archivo Black',sans-serif;font-size:1rem;margin-bottom:0.5rem;color:var(--red);">Mantenimiento del historial</h3>
+    <p style="font-size:0.82rem;color:#555;line-height:1.5;margin-bottom:1.25rem;">
+      La auditoría crece con el uso. Acá podés purgar registros antiguos o vaciarla por completo.
+      <strong>Antes de borrar, la app descarga automáticamente una copia en CSV</strong> de lo que se elimina.
+    </p>
+
+    <div id="auditoria-total" style="font-family:'Space Mono',monospace;font-size:0.75rem;color:var(--steel);margin-bottom:1rem;">Registros en total: …</div>
+
+    <!-- Vaciar todo -->
+    <p style="font-size:0.8rem;color:#555;margin-bottom:0.5rem;">
+      <strong>Vaciar todo el historial</strong> (para empezar de cero). Esta acción no se puede deshacer.
+      Antes de borrar, la app descarga una copia en CSV.
+    </p>
+    <div class="form-actions">
+      <button class="btn btn-red" onclick="vaciarAuditoria()">Vaciar toda la auditoría</button>
+    </div>
+
+    <div id="alert-aud-limpieza" class="alert"></div>
+  </div>
 </div>
 
 <!-- ═══════════════════════ INFORMES ════════════════════════════ -->
@@ -2005,6 +2027,7 @@ async function initAuditoria() {
     document.getElementById('aud-desde').value = hace30.toISOString().slice(0,10);
   }
   await poblarUsuariosAuditoria();
+  actualizarTotalAuditoria();
   loadAuditoria();
 }
 
@@ -2072,7 +2095,12 @@ function resetFiltrosAuditoria() {
 
 function exportarAuditoriaCSV() {
   if (!auditoriaUltimoResultado.length) { alert('No hay resultados para exportar. Hacé una búsqueda primero.'); return; }
-  const filas = auditoriaUltimoResultado.map(r => ({
+  descargarAuditoriaComoCSV(auditoriaUltimoResultado, 'auditoria');
+}
+
+// Convierte un conjunto de registros de auditoría a CSV y lo descarga.
+function descargarAuditoriaComoCSV(registros, prefijo) {
+  const filas = registros.map(r => ({
     fecha: fmt(r.fecha),
     usuario: r.usuario_email ?? '',
     accion: r.accion,
@@ -2080,7 +2108,54 @@ function exportarAuditoriaCSV() {
     entidad_id: r.entidad_id ?? '',
     detalle: r.detalle ?? '',
   }));
-  descargarArchivo('\ufeff' + aCSV(filas), `auditoria_${selloFecha()}.csv`, 'text/csv;charset=utf-8');
+  descargarArchivo('\ufeff' + aCSV(filas), `${prefijo}_${selloFecha()}.csv`, 'text/csv;charset=utf-8');
+}
+
+// Muestra el total de registros en el panel de mantenimiento.
+async function actualizarTotalAuditoria() {
+  const el = document.getElementById('auditoria-total');
+  if (!el) return;
+  const { count, error } = await db.from('auditoria').select('id', { count: 'exact', head: true });
+  el.textContent = error ? 'Registros en total: (no disponible)' : `Registros en total: ${count ?? 0}`;
+}
+
+// Vacía toda la auditoría, con respaldo y confirmación fuerte.
+async function vaciarAuditoria() {
+  const alertEl = document.getElementById('alert-aud-limpieza');
+
+  // Traer todo para respaldarlo
+  showAlert(alertEl, 'ok', 'Preparando respaldo…');
+  const { data: todo, error: e1 } = await db.from('auditoria').select('*').order('fecha');
+  if (e1) { showAlert(alertEl, 'err', 'Error: ' + e1.message); return; }
+
+  if (!todo.length) {
+    showAlert(alertEl, 'ok', 'La auditoría ya está vacía.');
+    return;
+  }
+
+  // Confirmación fuerte: escribir una palabra
+  const palabra = prompt(`Vas a borrar TODOS los ${todo.length} registros de la auditoría. Esta acción no se puede deshacer.\n\nPrimero se descargará una copia en CSV.\n\nPara confirmar, escribí la palabra:  VACIAR`);
+  if (palabra !== 'VACIAR') {
+    showAlert(alertEl, 'err', 'Cancelado (no se escribió "VACIAR").');
+    return;
+  }
+
+  // Respaldo automático
+  descargarAuditoriaComoCSV(todo, 'auditoria_completa_respaldo');
+
+  // Borrar todo. Se usa un filtro siempre verdadero (id >= 0) porque
+  // Supabase exige una condición en los delete.
+  const { error: e2 } = await db.from('auditoria').delete().gte('id', 0);
+  if (e2) {
+    showAlert(alertEl, 'err', 'No se pudo vaciar: ' + e2.message + ' (¿ejecutaste auditoria-limpieza.sql?)');
+    return;
+  }
+
+  // Registrar el vaciado (queda como primer registro del nuevo historial)
+  registrarAuditoria('BAJA', 'auditoria', null, `Auditoría vaciada (${todo.length} registros archivados en CSV)`);
+  showAlert(alertEl, 'ok', `Auditoría vaciada. Se archivaron ${todo.length} registro(s) en el CSV descargado.`);
+  actualizarTotalAuditoria();
+  loadAuditoria();
 }
 
 // ─── INFORMES ──────────────────────────────────────────────────
