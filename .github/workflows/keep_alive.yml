@@ -2,16 +2,38 @@ name: Mantener Supabase Activo
 
 on:
   schedule:
-    # Se ejecuta todos los días a las 12:00 PM UTC (9:00 AM hora de Argentina)
-    - cron: '0 12 * * *'
-  workflow_dispatch: # Permite que lo actives manualmente si querés probarlo ya mismo
+    # Lunes y jueves a las 12:00 UTC (09:00 AM hora de Argentina).
+    # Dos veces por semana da margen frente al límite de 7 días.
+    - cron: '0 12 * * 1,4'
+  workflow_dispatch:        # Permite ejecutarlo manualmente desde la pestaña Actions.
 
 jobs:
   ping_db:
     runs-on: ubuntu-latest
     steps:
-      - name: Hacer consulta de lectura a la base de datos
-     run: |
-          curl -i -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/configuracion?select=id&limit=1" \
-          -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
-          -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}"
+      - name: Insertar ping (escritura real en la base)
+        run: |
+          echo "Insertando ping en keep_alive..."
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST "${{ secrets.SUPABASE_URL }}/rest/v1/keep_alive" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: return=minimal" \
+            -d '{}')
+          echo "Codigo HTTP del INSERT: $HTTP_CODE"
+          if [ "$HTTP_CODE" != "201" ]; then
+            echo "ERROR: el INSERT no devolvio 201. Revisa los secrets y las politicas RLS."
+            exit 1
+          fi
+          echo "Ping insertado correctamente."
+
+      - name: Limpiar pings de mas de 30 dias
+        run: |
+          echo "Borrando pings antiguos..."
+          curl -s -o /dev/null -w "Limpieza HTTP: %{http_code}\n" \
+            -X DELETE "${{ secrets.SUPABASE_URL }}/rest/v1/keep_alive?ping=lt.$(date -u -d '30 days ago' '+%Y-%m-%dT%H:%M:%S')" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}"
+          echo "Listo."
+          
