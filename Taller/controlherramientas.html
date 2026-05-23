@@ -662,7 +662,12 @@ async function checkAuth() {
 
 async function loadRole(uid) {
   const { data: { user } } = await db.auth.getUser();
-  currentRole = user?.user_metadata?.rol ?? 'usuario';
+  // El rol viene de app_metadata.role (asignado desde el panel de Supabase).
+  // Fallbacks por compatibilidad con versiones anteriores.
+  currentRole = user?.app_metadata?.role
+             ?? user?.user_metadata?.role
+             ?? user?.user_metadata?.rol
+             ?? 'usuario';
 }
 
 async function doLogin() {
