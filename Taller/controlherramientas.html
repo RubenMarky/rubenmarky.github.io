@@ -1035,6 +1035,17 @@ let dbAdmin = null;   // cliente con service_role key para gestión de usuarios
 let currentUser = null;
 let currentRole = null;
 
+function escapeHTML(str) {
+  if (str === null || str === undefined) return '';
+  return String(str).replace(/[&<>'"]/g, tag => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    "'": '&#39;',
+    '"': '&quot;'
+  }[tag] || tag));
+}
+
 function initSupabase(url, key) {
   try {
     db = supabase.createClient(url, key);
@@ -1325,9 +1336,9 @@ async function loadDashboard() {
   tbody.innerHTML = data.map(r => `
     <tr>
       <td><code>${r.id}</code></td>
-      <td>${r.herramienta?.nombre ?? '–'}</td>
-      <td>${r.alumno?.nombre ?? '–'}</td>
-      <td>${r.profesor?.nombre ?? '–'}</td>
+      <td>${escapeHTML(r.herramienta?.nombre)}</td>
+      <td>${escapeHTML(r.alumno?.nombre)}</td>
+      <td>${escapeHTML(r.profesor?.nombre)}</td>
       <td>${fmt(r.fecha_retiro)}</td>
       <td><span class="badge badge-amber">En uso</span></td>
       <td><button class="btn btn-green btn-sm" onclick="registrarDevolucion(${r.id})">Devolver</button></td>
@@ -1356,10 +1367,10 @@ async function loadRetiros() {
     const action = devuelto ? '' : `<button class="btn btn-green btn-sm" onclick="registrarDevolucion(${r.id})">Devolver</button>`;
     return `<tr>
       <td><code>${r.id}</code></td>
-      <td>${r.herramienta?.nombre ?? '–'}</td>
-      <td>${r.alumno?.nombre ?? '–'}</td>
-      <td>${r.alumno?.curso ?? '–'}</td>
-      <td>${r.profesor?.nombre ?? '–'}</td>
+      <td>${escapeHTML(r.herramienta?.nombre)}</td>
+      <td>${escapeHTML(r.alumno?.nombre)}</td>
+      <td>${escapeHTML(r.alumno?.curso)}</td>
+      <td>${escapeHTML(r.profesor?.nombre)}</td>
       <td>${fmt(r.fecha_retiro)}</td>
       <td>${fmt(r.fecha_devolucion)}</td>
       <td>${badge}</td>
@@ -1380,7 +1391,10 @@ async function populateSelectsRetiro() {
   const fill = (id, items, label) => {
     const sel = document.getElementById(id);
     sel.innerHTML = `<option value="">Seleccionar…</option>` +
-      items.map(i => `<option value="${i.id}">${i.nombre}${label && i[label] ? ' · ' + i[label] : ''}</option>`).join('');
+      items.map(i => {
+        const text = i.nombre + (label && i[label] ? ' · ' + i[label] : '');
+        return `<option value="${i.id}">${escapeHTML(text)}</option>`;
+      }).join('');
   };
   fill('r-herramienta', hs || [], null);
   fill('r-alumno', as || [], 'curso');
@@ -1453,13 +1467,17 @@ async function loadHerramientas() {
 
   tbody.innerHTML = hs.map(h => `<tr>
     <td><code>${h.id}</code></td>
-    <td>${h.nombre}</td>
+    <td>${escapeHTML(h.nombre)}</td>
     <td>${enUso.has(h.id) ? '<span class="badge badge-amber">En uso</span>' : '<span class="badge badge-green">Disponible</span>'}</td>
     <td class="td-actions">
-      <button class="btn btn-steel btn-sm" onclick="editHerramienta(${h.id},'${h.nombre.replace(/'/g,"\\'")}')">Editar</button>
+      <button class="btn btn-steel btn-sm" data-id="${h.id}" data-nombre="${escapeHTML(h.nombre)}" onclick="onEditHerramienta(this)">Editar</button>
       <button class="btn btn-red btn-sm" onclick="deleteHerramienta(${h.id})">✕</button>
     </td>
   </tr>`).join('');
+}
+
+function onEditHerramienta(btn) {
+  editHerramienta(parseInt(btn.dataset.id), btn.dataset.nombre);
 }
 
 function editHerramienta(id, nombre) {
@@ -1521,12 +1539,16 @@ async function loadProfesores() {
 
   tbody.innerHTML = data.map(p => `<tr>
     <td><code>${p.id}</code></td>
-    <td>${p.nombre}</td>
+    <td>${escapeHTML(p.nombre)}</td>
     <td class="td-actions">
-      <button class="btn btn-steel btn-sm" onclick="editProfesor(${p.id},'${p.nombre.replace(/'/g,"\\'")}')">Editar</button>
+      <button class="btn btn-steel btn-sm" data-id="${p.id}" data-nombre="${escapeHTML(p.nombre)}" onclick="onEditProfesor(this)">Editar</button>
       <button class="btn btn-red btn-sm" onclick="deleteProfesor(${p.id})">✕</button>
     </td>
   </tr>`).join('');
+}
+
+function onEditProfesor(btn) {
+  editProfesor(parseInt(btn.dataset.id), btn.dataset.nombre);
 }
 
 function editProfesor(id, nombre) {
@@ -1587,13 +1609,17 @@ async function loadAlumnos() {
 
   tbody.innerHTML = data.map(a => `<tr>
     <td><code>${a.id}</code></td>
-    <td>${a.nombre}</td>
-    <td>${a.curso ?? '–'}</td>
+    <td>${escapeHTML(a.nombre)}</td>
+    <td>${escapeHTML(a.curso ?? '–')}</td>
     <td class="td-actions">
-      <button class="btn btn-steel btn-sm" onclick="editAlumno(${a.id},'${a.nombre.replace(/'/g,"\\'")}','${(a.curso||'').replace(/'/g,"\\'")}')">Editar</button>
+      <button class="btn btn-steel btn-sm" data-id="${a.id}" data-nombre="${escapeHTML(a.nombre)}" data-curso="${escapeHTML(a.curso || '')}" onclick="onEditAlumno(this)">Editar</button>
       <button class="btn btn-red btn-sm" onclick="deleteAlumno(${a.id})">✕</button>
     </td>
   </tr>`).join('');
+}
+
+function onEditAlumno(btn) {
+  editAlumno(parseInt(btn.dataset.id), btn.dataset.nombre, btn.dataset.curso);
 }
 
 function editAlumno(id, nombre, curso) {
@@ -1698,19 +1724,23 @@ async function loadUsuarios() {
     const creado = u.created_at ? new Date(u.created_at).toLocaleDateString('es-AR') : '–';
     const ultimo = u.last_sign_in_at ? fmt(u.last_sign_in_at) : 'Nunca';
     const esSelf = u.id === currentUser?.id;
-    const deleteBtn = esSelf ? '' : `<button class="btn btn-red btn-sm" onclick="deleteUsuario('${u.id}','${u.email}')">✕</button>`;
+    const deleteBtn = esSelf ? '' : `<button class="btn btn-red btn-sm" data-id="${u.id}" data-email="${escapeHTML(u.email)}" onclick="onDeleteUsuario(this)">✕</button>`;
     const roleBtn = esSelf ? '' :
       role === 'admin'
         ? `<button class="btn btn-outline btn-sm" onclick="setRoleUsuario('${u.id}','usuario')">→ usuario</button>`
         : `<button class="btn btn-amber btn-sm" onclick="setRoleUsuario('${u.id}','admin')">→ admin</button>`;
     return `<tr>
-      <td>${u.email}${esSelf ? ' <span class="badge badge-amber">vos</span>' : ''}</td>
-      <td><span class="badge ${badgeClass}">${role}</span></td>
+      <td>${escapeHTML(u.email)}${esSelf ? ' <span class="badge badge-amber">vos</span>' : ''}</td>
+      <td><span class="badge ${badgeClass}">${escapeHTML(role)}</span></td>
       <td>${creado}</td>
       <td>${ultimo}</td>
       <td class="td-actions">${roleBtn}${deleteBtn}</td>
     </tr>`;
   }).join('');
+}
+
+function onDeleteUsuario(btn) {
+  deleteUsuario(btn.dataset.id, btn.dataset.email);
 }
 
 async function createUsuario() {
@@ -2001,9 +2031,9 @@ async function loadActividadReciente() {
   tbody.innerHTML = data.map(r => `
     <tr>
       <td>${fmt(r.fecha)}</td>
-      <td>${r.usuario_email ?? '–'}</td>
-      <td><span class="badge ${COLOR_ACCION[r.accion] || ''}">${r.accion}</span></td>
-      <td>${r.detalle ?? '–'}${r.entidad_id ? ' <code>#'+r.entidad_id+'</code>' : ''}</td>
+      <td>${escapeHTML(r.usuario_email ?? '–')}</td>
+      <td><span class="badge ${COLOR_ACCION[r.accion] || ''}">${escapeHTML(r.accion)}</span></td>
+      <td>${escapeHTML(r.detalle ?? '–')}${r.entidad_id ? ' <code>#'+escapeHTML(r.entidad_id)+'</code>' : ''}</td>
     </tr>`).join('');
 }
 
@@ -2076,10 +2106,10 @@ async function loadAuditoria() {
   tbody.innerHTML = data.map(r => `
     <tr>
       <td>${fmt(r.fecha)}</td>
-      <td>${r.usuario_email ?? '–'}</td>
-      <td><span class="badge ${colorAccion[r.accion] || ''}">${r.accion}</span></td>
-      <td>${r.entidad ?? '–'}${r.entidad_id ? ' <code>#'+r.entidad_id+'</code>' : ''}</td>
-      <td>${r.detalle ?? '–'}</td>
+      <td>${escapeHTML(r.usuario_email ?? '–')}</td>
+      <td><span class="badge ${colorAccion[r.accion] || ''}">${escapeHTML(r.accion)}</span></td>
+      <td>${escapeHTML(r.entidad ?? '–')}${r.entidad_id ? ' <code>#'+escapeHTML(r.entidad_id)+'</code>' : ''}</td>
+      <td>${escapeHTML(r.detalle ?? '–')}</td>
     </tr>`).join('');
 }
 
@@ -2315,7 +2345,7 @@ async function repActivos() {
     .order('fecha_retiro', { ascending: true });
   if (error) throw new Error(error.message);
   const filas = (data || []).map(r => [
-    r.id, r.herramienta?.nombre, r.alumno?.nombre, r.alumno?.curso, r.profesor?.nombre, fmt(r.fecha_retiro)
+    r.id, escapeHTML(r.herramienta?.nombre), escapeHTML(r.alumno?.nombre), escapeHTML(r.alumno?.curso), escapeHTML(r.profesor?.nombre), fmt(r.fecha_retiro)
   ]);
   return repCabecera('Préstamos activos', `${filas.length} ${filas.length === 1 ? T() : Tp()} sin devolver`)
     + repTabla(['#', Tc(),'Alumno','Curso','Profesor','Fecha de retiro'], filas);
@@ -2332,7 +2362,7 @@ async function repRetiros() {
   const { data, error } = await q;
   if (error) throw new Error(error.message);
   const filas = (data || []).map(r => [
-    r.id, r.herramienta?.nombre, r.alumno?.nombre, r.alumno?.curso, r.profesor?.nombre,
+    r.id, escapeHTML(r.herramienta?.nombre), escapeHTML(r.alumno?.nombre), escapeHTML(r.alumno?.curso), escapeHTML(r.profesor?.nombre),
     fmt(r.fecha_retiro), r.fecha_devolucion ? fmt(r.fecha_devolucion) : 'Sin devolver'
   ]);
   const fmtFecha = d => d ? new Date(d+'T00:00:00').toLocaleDateString('es-AR') : '—';
@@ -2346,7 +2376,7 @@ async function repInventario() {
   const { data: activos } = await db.from('retiro').select('id_herramienta').is('fecha_devolucion', null);
   const enUso = new Set((activos || []).map(r => r.id_herramienta));
   const filas = (hs || []).map(h => [
-    h.id, h.nombre, enUso.has(h.id)
+    h.id, escapeHTML(h.nombre), enUso.has(h.id)
       ? '<span class="badge badge-amber">En uso</span>'
       : '<span class="badge badge-green">Disponible</span>'
   ]);
@@ -2370,10 +2400,10 @@ async function repListado(tabla) {
   if (error) throw new Error(error.message);
   const titulo = tabla === 'alumno' ? 'Listado de alumnos' : 'Listado de profesores';
   if (tabla === 'alumno') {
-    const filas = (data || []).map(a => [a.id, a.nombre, a.curso]);
+    const filas = (data || []).map(a => [a.id, escapeHTML(a.nombre), escapeHTML(a.curso)]);
     return repCabecera(titulo, `${filas.length} alumno(s)`) + repTabla(['#','Nombre','Curso'], filas);
   }
-  const filas = (data || []).map(p => [p.id, p.nombre]);
+  const filas = (data || []).map(p => [p.id, escapeHTML(p.nombre)]);
   return repCabecera(titulo, `${filas.length} profesor(es)`) + repTabla(['#','Nombre'], filas);
 }
 
@@ -2386,7 +2416,7 @@ async function repRankingHerramientas() {
     if (n) conteo[n] = (conteo[n] || 0) + 1;
   });
   const orden = Object.entries(conteo).sort((a,b) => b[1]-a[1]);
-  const filas = orden.map(([nombre, n], i) => [i+1, nombre, n]);
+  const filas = orden.map(([nombre, n], i) => [i+1, escapeHTML(nombre), n]);
   return repCabecera('Ranking de ' + Tp() + ' más usadas', `Sobre ${(data||[]).length} retiro(s) totales`)
     + repTabla(['Puesto', Tc(),'Veces retirada'], filas);
 }
@@ -2403,7 +2433,7 @@ async function repRankingAlumnos() {
     }
   });
   const orden = Object.entries(conteo).sort((a,b) => b[1]-a[1]);
-  const filas = orden.map(([nombre, n], i) => [i+1, nombre, n]);
+  const filas = orden.map(([nombre, n], i) => [i+1, escapeHTML(nombre), n]);
   return repCabecera('Ranking de alumnos con más retiros', `Sobre ${(data||[]).length} retiro(s) totales`)
     + repTabla(['Puesto','Alumno','Cantidad de retiros'], filas);
 }
