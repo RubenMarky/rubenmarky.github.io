@@ -1,5 +1,4 @@
 name: Mantener Supabase Activo
-
 on:
   schedule:
     # Lunes y jueves a las 12:00 UTC (09:00 AM hora de Argentina).
@@ -7,10 +6,18 @@ on:
     - cron: '0 12 * * 1,4'
   workflow_dispatch:        # Permite ejecutarlo manualmente desde la pestaña Actions.
 
+# Necesario para que el paso de auto-mantenimiento pueda commitear.
+permissions:
+  contents: write
+
 jobs:
   ping_db:
     runs-on: ubuntu-latest
     steps:
+      # Necesario para el paso final (auto-mantenimiento por commit).
+      - name: Descargar el repo
+        uses: actions/checkout@v4
+
       - name: Insertar ping (escritura real en la base)
         run: |
           echo "Insertando ping en keep_alive..."
@@ -27,7 +34,6 @@ jobs:
             exit 1
           fi
           echo "Ping insertado correctamente."
-
       - name: Limpiar pings de mas de 30 dias
         run: |
           echo "Borrando pings antiguos..."
@@ -36,4 +42,12 @@ jobs:
             -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
             -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}"
           echo "Listo."
-          
+
+      # GitHub deshabilita los workflows programados tras 60 días sin
+      # actividad en el repo. Este paso hace un commit automático (solo
+      # cada ~45 días, no en cada corrida) para que el cron no se apague.
+      - name: Evitar que GitHub deshabilite el workflow (60 días)
+        uses: gautamkrishnar/keepalive-workflow@v2
+        with:
+          use_api: false
+          time_elapsed: '45'         
