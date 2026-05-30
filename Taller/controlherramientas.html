@@ -980,6 +980,10 @@ body.is-admin .admin-only-block { display: block; }
       <label>Hasta</label>
       <input type="date" id="rep-hasta">
     </div>
+    <div class="form-group rep-cat" style="margin-bottom:0;display:none;min-width:230px;">
+      <label>Categoría</label>
+      <select id="rep-categoria"><option value="">Todas las categorías</option></select>
+    </div>
     <button class="btn btn-orange" onclick="generarInforme()">Generar</button>
     <button class="btn btn-steel no-print" id="btn-imprimir" onclick="window.print()" style="display:none;">⎙ Imprimir</button>
     <button class="btn btn-green no-print" id="btn-pdf" onclick="descargarInformePDF()" style="display:none;">⬇ Descargar PDF</button>
@@ -2296,12 +2300,28 @@ function initInformes() {
 function onCambioTipoInforme() {
   const tipo = document.getElementById('rep-tipo').value;
   const necesitaRango = (tipo === 'retiros');
+  const necesitaCat = (tipo === 'inventario' || tipo === 'ranking-herramientas');
   document.querySelectorAll('.rep-rango').forEach(el => el.style.display = necesitaRango ? 'block' : 'none');
+  document.querySelectorAll('.rep-cat').forEach(el => el.style.display = necesitaCat ? 'block' : 'none');
+  if (necesitaCat) cargarCategoriasInforme();
   // Ocultar botones hasta que se genere de nuevo
   document.getElementById('btn-imprimir').style.display = 'none';
   document.getElementById('btn-pdf').style.display = 'none';
   document.getElementById('rep-output').innerHTML =
     '<div class="report-empty">Tocá “Generar” para ver el informe.</div>';
+}
+
+async function cargarCategoriasInforme() {
+  const sel = document.getElementById('rep-categoria');
+  const previo = sel.value;
+  const { data } = await db.from('herramienta').select('categoria');
+  const cats = [...new Set((data || []).map(d => d.categoria).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b, 'es'));
+  const haySin = (data || []).some(d => !d.categoria);
+  sel.innerHTML = `<option value="">Todas las categorías</option>` +
+    cats.map(c => `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join('') +
+    (haySin ? `<option value="__SIN__">Sin categoría</option>` : '');
+  sel.value = previo;
 }
 
 let informeActual = null;   // datos crudos del último informe, para el PDF
@@ -2459,27 +2479,38 @@ async function repRetiros() {
 }
 
 async function repInventario() {
-  const { data: hs, error } = await db.from('herramienta').select('id, nombre').order('nombre');
+  const filtroCat = document.getElementById('rep-categoria').value;
+  const { data: hs, error } = await db.from('herramienta').select('id, nombre, categoria').order('categoria', { nullsFirst: false }).order('nombre');
   if (error) throw new Error(error.message);
+
+  let lista = hs || [];
+  if (filtroCat === '__SIN__')      lista = lista.filter(h => !h.categoria);
+  else if (filtroCat)               lista = lista.filter(h => h.categoria === filtroCat);
+
   const { data: activos } = await db.from('retiro').select('id_herramienta').is('fecha_devolucion', null);
   const enUso = new Set((activos || []).map(r => r.id_herramienta));
-  const filas = (hs || []).map(h => [
-    h.id, escapeHTML(h.nombre), enUso.has(h.id)
+  const filas = lista.map(h => [
+    h.id,
+    escapeHTML(h.nombre),
+    h.categoria ? escapeHTML(h.categoria) : 'Sin categoría',
+    enUso.has(h.id)
       ? '<span class="badge badge-amber">En uso</span>'
       : '<span class="badge badge-green">Disponible</span>'
   ]);
-  const disp = (hs || []).length - enUso.size;
+  const enUsoFiltrado = lista.filter(h => enUso.has(h.id)).length;
+  const disp = lista.length - enUsoFiltrado;
   const stats = `
     <div class="rep-stat-grid">
-      <div class="rep-stat"><div class="n">${(hs||[]).length}</div><div class="l">Total</div></div>
+      <div class="rep-stat"><div class="n">${lista.length}</div><div class="l">Total</div></div>
       <div class="rep-stat"><div class="n">${disp}</div><div class="l">Disponibles</div></div>
-      <div class="rep-stat"><div class="n">${enUso.size}</div><div class="l">En uso</div></div>
+      <div class="rep-stat"><div class="n">${enUsoFiltrado}</div><div class="l">En uso</div></div>
     </div>`;
-  const cab = repCabecera('Inventario de ' + Tp());
+  const metaCat = filtroCat ? 'Categoría: ' + (filtroCat === '__SIN__' ? 'Sin categoría' : filtroCat) : '';
+  const cab = repCabecera('Inventario de ' + Tp(), metaCat);
   if (informeActual) informeActual.stats = [
-    ['Total', (hs||[]).length], ['Disponibles', disp], ['En uso', enUso.size]
+    ['Total', lista.length], ['Disponibles', disp], ['En uso', enUsoFiltrado]
   ];
-  return cab + stats + repTabla(['#', Tc(),'Estado'], filas);
+  return cab + stats + repTabla(['#', Tc(), 'Categoría', 'Estado'], filas);
 }
 
 async function repListado(tabla) {
@@ -2496,17 +2527,31 @@ async function repListado(tabla) {
 }
 
 async function repRankingHerramientas() {
-  const { data, error } = await db.from('retiro').select('herramienta(nombre)');
+  const filtroCat = document.getElementById('rep-categoria').value;
+  const { data, error } = await db.from('retiro').select('herramienta(nombre, categoria)');
   if (error) throw new Error(error.message);
   const conteo = {};
   (data || []).forEach(r => {
-    const n = r.herramienta?.nombre;
-    if (n) conteo[n] = (conteo[n] || 0) + 1;
+    const h = r.herramienta;
+    if (!h?.nombre) return;
+    if (!conteo[h.nombre]) conteo[h.nombre] = { n: 0, categoria: h.categoria || null };
+    conteo[h.nombre].n++;
   });
-  const orden = Object.entries(conteo).sort((a,b) => b[1]-a[1]);
-  const filas = orden.map(([nombre, n], i) => [i+1, escapeHTML(nombre), n]);
-  return repCabecera('Ranking de ' + Tp() + ' más usadas', `Sobre ${(data||[]).length} retiro(s) totales`)
-    + repTabla(['Puesto', Tc(),'Veces retirada'], filas);
+  let entradas = Object.entries(conteo);
+  if (filtroCat === '__SIN__')      entradas = entradas.filter(([, v]) => !v.categoria);
+  else if (filtroCat)               entradas = entradas.filter(([, v]) => v.categoria === filtroCat);
+  entradas.sort((a, b) => b[1].n - a[1].n);
+  const filas = entradas.map(([nombre, v], i) => [
+    i + 1,
+    escapeHTML(nombre),
+    v.categoria ? escapeHTML(v.categoria) : 'Sin categoría',
+    v.n
+  ]);
+  const meta = filtroCat
+    ? 'Categoría: ' + (filtroCat === '__SIN__' ? 'Sin categoría' : filtroCat)
+    : `Sobre ${(data||[]).length} retiro(s) totales`;
+  return repCabecera('Ranking de ' + Tp() + ' más usadas', meta)
+    + repTabla(['Puesto', Tc(), 'Categoría', 'Veces retirada'], filas);
 }
 
 async function repRankingAlumnos() {
