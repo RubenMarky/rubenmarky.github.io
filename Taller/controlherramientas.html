@@ -271,6 +271,8 @@ td { padding: 0.65rem 0.85rem; vertical-align: middle; }
 .badge-green { color: var(--green); }
 .badge-red { color: var(--red); }
 .badge-amber { color: var(--amber); }
+.badge-cat { color: #3a6ea5; text-transform: none; letter-spacing: 0; }
+.badge-none { color: #9aa6b0; text-transform: none; letter-spacing: 0; border-style: dashed; }
 
 /* ── DASHBOARD CARDS ── */
 .dash-grid {
@@ -634,6 +636,27 @@ body.is-admin .admin-only-block { display: block; }
       <label>Nombre</label>
       <input type="text" id="h-nombre" placeholder="Ej: Destornillador Phillips N°2">
     </div>
+    <div class="form-group">
+      <label>Categoría <small style="font-weight:normal;text-transform:none;color:#888;">(opcional)</small></label>
+      <input type="text" id="h-categoria" list="cat-list" autocomplete="off" placeholder="Ej: Herramientas de Mantenimiento">
+      <datalist id="cat-list">
+        <option value="Hardware Principal"></option>
+        <option value="Periféricos"></option>
+        <option value="Red y Conectividad"></option>
+        <option value="Herramientas de Mantenimiento"></option>
+        <option value="Insumos Consumibles"></option>
+        <option value="Seguridad y Gestión"></option>
+        <option value="Copias de Seguridad y Clonación"></option>
+        <option value="Diagnóstico de Hardware y Sistema"></option>
+        <option value="Gestión de Particiones y Discos"></option>
+        <option value="Herramientas de Contraseñas y Seguridad"></option>
+        <option value="Licencias y Activación (Open-Source)"></option>
+        <option value="Optimización y Automatización (Scripts)"></option>
+        <option value="Recuperación de Datos"></option>
+        <option value="Redes y Conectividad"></option>
+        <option value="Utilidades del Sistema y Exploradores"></option>
+      </datalist>
+    </div>
     <div id="alert-herramienta" class="alert"></div>
     <div class="form-actions">
       <button class="btn btn-orange" onclick="saveHerramienta()">Guardar</button>
@@ -642,11 +665,18 @@ body.is-admin .admin-only-block { display: block; }
   </div>
 
   <div class="table-wrap">
+    <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin:0.25rem 0 0.75rem;">
+      <label for="filtro-categoria" style="font-family:'Space Mono',monospace;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.3px;color:#666;">Filtrar por categoría</label>
+      <select id="filtro-categoria" onchange="renderHerramientas()" style="max-width:340px;">
+        <option value="">Todas</option>
+      </select>
+      <span id="filtro-contador" style="font-family:'Space Mono',monospace;font-size:0.7rem;color:#888;"></span>
+    </div>
     <table>
       <thead>
-        <tr><th>#</th><th>Nombre</th><th>En uso</th><th></th></tr>
+        <tr><th>#</th><th>Nombre</th><th>Categoría</th><th>En uso</th><th></th></tr>
       </thead>
-      <tbody id="tbody-herramientas"><tr><td colspan="4" class="loading"><span class="spinner"></span>Cargando…</td></tr></tbody>
+      <tbody id="tbody-herramientas"><tr><td colspan="5" class="loading"><span class="spinner"></span>Cargando…</td></tr></tbody>
     </table>
   </div>
 </div>
@@ -1383,7 +1413,7 @@ async function loadRetiros() {
 
 async function populateSelectsRetiro() {
   const [{ data: hs }, { data: as }, { data: ps }] = await Promise.all([
-    db.from('herramienta').select('id, nombre').order('nombre'),
+    db.from('herramienta').select('id, nombre, categoria').order('categoria', { nullsFirst: false }).order('nombre'),
     db.from('alumno').select('id, nombre, curso').order('nombre'),
     db.from('profesor').select('id, nombre').order('nombre'),
   ]);
@@ -1396,7 +1426,26 @@ async function populateSelectsRetiro() {
         return `<option value="${i.id}">${escapeHTML(text)}</option>`;
       }).join('');
   };
-  fill('r-herramienta', hs || [], null);
+
+  // Herramienta: agrupada por categoría con <optgroup>
+  const selH = document.getElementById('r-herramienta');
+  const grupos = {};
+  (hs || []).forEach(h => {
+    const cat = h.categoria || 'Sin categoría';
+    (grupos[cat] = grupos[cat] || []).push(h);
+  });
+  const cats = Object.keys(grupos).sort((a, b) => {
+    if (a === 'Sin categoría') return 1;
+    if (b === 'Sin categoría') return -1;
+    return a.localeCompare(b, 'es');
+  });
+  selH.innerHTML = `<option value="">Seleccionar…</option>` +
+    cats.map(cat =>
+      `<optgroup label="${escapeHTML(cat)}">` +
+      grupos[cat].map(h => `<option value="${h.id}">${escapeHTML(h.nombre)}</option>`).join('') +
+      `</optgroup>`
+    ).join('');
+
   fill('r-alumno', as || [], 'curso');
   fill('r-profesor', ps || [], null);
 
@@ -1452,38 +1501,75 @@ async function deleteRetiro(id) {
 // ─── HERRAMIENTAS ──────────────────────────────────────────────
 let herramientaEditId = null;
 
+let herramientasCache = [];
+let enUsoCache = new Set();
+
 async function loadHerramientas() {
   const tbody = document.getElementById('tbody-herramientas');
-  tbody.innerHTML = '<tr><td colspan="4" class="loading"><span class="spinner"></span>Cargando…</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="5" class="loading"><span class="spinner"></span>Cargando…</td></tr>';
 
-  const { data: hs, error } = await db.from('herramienta').select('id, nombre').order('nombre');
-  if (error) { tbody.innerHTML = `<tr><td colspan="4" class="empty">Error: ${error.message}</td></tr>`; return; }
+  const { data: hs, error } = await db.from('herramienta').select('id, nombre, categoria').order('categoria', { nullsFirst: false }).order('nombre');
+  if (error) { tbody.innerHTML = `<tr><td colspan="5" class="empty">Error: ${error.message}</td></tr>`; return; }
 
   // Count active retiros per herramienta
   const { data: activos } = await db.from('retiro').select('id_herramienta').is('fecha_devolucion', null);
-  const enUso = new Set((activos || []).map(r => r.id_herramienta));
+  enUsoCache = new Set((activos || []).map(r => r.id_herramienta));
+  herramientasCache = hs || [];
 
-  if (!hs.length) { tbody.innerHTML = `<tr><td colspan="4" class="empty">Sin ${Tp()} cargadas</td></tr>`; return; }
+  // Poblar el filtro con las categorías presentes (conservando la selección actual)
+  const filtro = document.getElementById('filtro-categoria');
+  const seleccion = filtro.value;
+  const cats = [...new Set(herramientasCache.map(h => h.categoria).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b, 'es'));
+  const haySinCat = herramientasCache.some(h => !h.categoria);
+  filtro.innerHTML = `<option value="">Todas</option>` +
+    cats.map(c => `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join('') +
+    (haySinCat ? `<option value="__SIN__">Sin categoría</option>` : '');
+  filtro.value = seleccion; // mantiene el filtro si la categoría sigue existiendo
 
-  tbody.innerHTML = hs.map(h => `<tr>
-    <td><code>${h.id}</code></td>
-    <td>${escapeHTML(h.nombre)}</td>
-    <td>${enUso.has(h.id) ? '<span class="badge badge-amber">En uso</span>' : '<span class="badge badge-green">Disponible</span>'}</td>
-    <td class="td-actions">
-      <button class="btn btn-steel btn-sm" data-id="${h.id}" data-nombre="${escapeHTML(h.nombre)}" onclick="onEditHerramienta(this)">Editar</button>
-      <button class="btn btn-red btn-sm" onclick="deleteHerramienta(${h.id})">✕</button>
-    </td>
-  </tr>`).join('');
+  renderHerramientas();
+}
+
+function renderHerramientas() {
+  const tbody = document.getElementById('tbody-herramientas');
+  const contador = document.getElementById('filtro-contador');
+  const filtro = document.getElementById('filtro-categoria').value;
+
+  let lista = herramientasCache;
+  if (filtro === '__SIN__') lista = lista.filter(h => !h.categoria);
+  else if (filtro) lista = lista.filter(h => h.categoria === filtro);
+
+  if (!herramientasCache.length) {
+    tbody.innerHTML = `<tr><td colspan="5" class="empty">Sin ${Tp()} cargadas</td></tr>`;
+    contador.textContent = '';
+    return;
+  }
+  if (!lista.length) {
+    tbody.innerHTML = `<tr><td colspan="5" class="empty">No hay ${Tp()} en esa categoría</td></tr>`;
+  } else {
+    tbody.innerHTML = lista.map(h => `<tr>
+      <td><code>${h.id}</code></td>
+      <td>${escapeHTML(h.nombre)}</td>
+      <td>${h.categoria ? `<span class="badge badge-cat">${escapeHTML(h.categoria)}</span>` : '<span class="badge badge-none">Sin categoría</span>'}</td>
+      <td>${enUsoCache.has(h.id) ? '<span class="badge badge-amber">En uso</span>' : '<span class="badge badge-green">Disponible</span>'}</td>
+      <td class="td-actions">
+        <button class="btn btn-steel btn-sm" data-id="${h.id}" data-nombre="${escapeHTML(h.nombre)}" data-categoria="${escapeHTML(h.categoria || '')}" onclick="onEditHerramienta(this)">Editar</button>
+        <button class="btn btn-red btn-sm" onclick="deleteHerramienta(${h.id})">✕</button>
+      </td>
+    </tr>`).join('');
+  }
+  contador.textContent = filtro ? `${lista.length} de ${herramientasCache.length}` : `${herramientasCache.length} en total`;
 }
 
 function onEditHerramienta(btn) {
-  editHerramienta(parseInt(btn.dataset.id), btn.dataset.nombre);
+  editHerramienta(parseInt(btn.dataset.id), btn.dataset.nombre, btn.dataset.categoria);
 }
 
-function editHerramienta(id, nombre) {
+function editHerramienta(id, nombre, categoria) {
   herramientaEditId = id;
   document.getElementById('h-id').value = id;
   document.getElementById('h-nombre').value = nombre;
+  document.getElementById('h-categoria').value = categoria || '';
   document.getElementById('fh-title').textContent = 'Editar ' + T();
   document.getElementById('form-herramienta').classList.add('open');
 }
@@ -1492,6 +1578,7 @@ function cancelHerramienta() {
   herramientaEditId = null;
   document.getElementById('h-id').value = '';
   document.getElementById('h-nombre').value = '';
+  document.getElementById('h-categoria').value = '';
   document.getElementById('fh-title').textContent = 'Agregar ' + T();
   document.getElementById('form-herramienta').classList.remove('open');
 }
@@ -1499,9 +1586,10 @@ function cancelHerramienta() {
 async function saveHerramienta() {
   const alertEl = document.getElementById('alert-herramienta');
   const nombre = document.getElementById('h-nombre').value.trim();
+  const categoria = document.getElementById('h-categoria').value.trim();
   if (!nombre) { showAlert(alertEl, 'err', 'Ingresá un nombre.'); return; }
 
-  const payload = { nombre };
+  const payload = { nombre, categoria: categoria || null };
   let error;
 
   if (herramientaEditId) {
@@ -1512,7 +1600,7 @@ async function saveHerramienta() {
 
   if (error) { showAlert(alertEl, 'err', error.message); return; }
   registrarAuditoria(herramientaEditId ? 'EDICION' : 'ALTA', 'herramienta',
-    herramientaEditId, `Herramienta "${nombre}"`);
+    herramientaEditId, `Herramienta "${nombre}"${categoria ? ' · ' + categoria : ''}`);
   showAlert(alertEl, 'ok', 'Guardado.');
   cancelHerramienta();
   loadHerramientas();
