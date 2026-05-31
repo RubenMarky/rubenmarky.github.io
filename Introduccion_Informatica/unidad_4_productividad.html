@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unidad 4 · Productividad, Internet y ciudadanía digital · 1° E.P.J.A.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,500&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1b2430;
+    --azul:#1F4E79;
+    --azul-claro:#2E75B6;
+    --crema:#f6f1e7;
+    --crema-2:#efe7d6;
+    --terra:#c1632f;
+    --terra-suave:#e8a36a;
+    --verde:#3f6b4f;
+    --verde-claro:#5e8a6c;
+    --ambar:#fff4e0;
+    --ambar-borde:#b86e00;
+    --rojo:#b82020;
+    --rojo-bg:#ffe0e0;
+    --linea:#d9cdb6;
+    --gris:#8a8276;
+    --sombra:rgba(31,78,121,.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:80px}
+  body{
+    font-family:'Spline Sans',sans-serif;color:var(--ink);background:var(--crema);
+    line-height:1.7;-webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background-image:radial-gradient(circle at 1px 1px, rgba(31,78,121,.06) 1px, transparent 0);
+    background-size:26px 26px;
+  }
+  a{color:var(--terra);text-decoration:none;border-bottom:1px dotted var(--terra)}
+  a:hover{color:var(--azul);border-bottom-color:var(--azul)}
+
+  .topbar{
+    position:sticky;top:0;z-index:50;background:rgba(246,241,231,.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--linea);padding:.85rem clamp(1rem,4vw,2.5rem);
+    display:flex;justify-content:space-between;align-items:center;gap:1rem;
+  }
+  .crumb{font-size:.85rem;color:var(--gris)}
+  .crumb a{color:var(--azul);border-bottom-color:transparent}
+  .crumb a:hover{border-bottom:1px dotted var(--azul)}
+  .crumb .sep{margin:0 .5rem;color:var(--linea)}
+  .nav-units{display:flex;gap:.4rem}
+  .nav-units a{
+    width:30px;height:30px;display:grid;place-items:center;border-radius:50%;
+    font-family:'Fraunces',serif;font-size:.9rem;color:var(--azul);
+    border:1px solid var(--linea);background:#fff;
+  }
+  .nav-units a.active{background:var(--azul);color:var(--crema);border-color:var(--azul)}
+  .nav-units a:hover:not(.active):not(.dis){border-color:var(--azul);background:var(--crema-2)}
+  .nav-units a.dis{opacity:.4;pointer-events:none}
+  @media(max-width:560px){.nav-units{display:none}}
+
+  /* HEADER - tono verde para U4 */
+  header{
+    padding:clamp(2.5rem,6vw,4.5rem) clamp(1.2rem,5vw,4rem) clamp(2rem,5vw,3.5rem);
+    background:linear-gradient(160deg,#3f6b4f 0%,#2c4f3a 60%,#1c3826 100%);
+    color:var(--crema);position:relative;overflow:hidden;
+  }
+  header::after{
+    content:"";position:absolute;right:-12%;top:-30%;width:55vw;height:55vw;max-width:540px;max-height:540px;
+    background:radial-gradient(circle, rgba(232,163,106,.25), transparent 65%);border-radius:50%;
+  }
+  .eyebrow{font-size:.78rem;letter-spacing:.32em;text-transform:uppercase;color:var(--terra-suave);font-weight:600;margin-bottom:1rem}
+  header h1{
+    font-family:'Fraunces',serif;font-weight:800;
+    font-size:clamp(2rem,6vw,4rem);line-height:1.05;letter-spacing:-.02em;max-width:18ch;
+  }
+  header h1 em{font-style:italic;font-weight:500;color:var(--terra-suave)}
+  .lead{margin-top:1.2rem;font-size:clamp(1rem,2vw,1.15rem);max-width:54ch;color:rgba(246,241,231,.88)}
+  .head-meta{margin-top:1.6rem;font-size:.82rem;color:rgba(246,241,231,.7);display:flex;flex-wrap:wrap;gap:1.2rem}
+  .head-meta span::before{content:"●";color:var(--terra-suave);margin-right:.5rem}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 clamp(1.2rem,5vw,3rem)}
+  .grid{display:grid;grid-template-columns:240px 1fr;gap:clamp(2rem,4vw,3.5rem);padding-top:clamp(2rem,4vw,3rem);padding-bottom:5rem}
+  @media(max-width:880px){.grid{grid-template-columns:1fr}}
+
+  aside{align-self:start;position:sticky;top:80px}
+  @media(max-width:880px){aside{position:static}}
+  aside h4{
+    font-family:'Fraunces',serif;font-style:italic;font-weight:500;
+    font-size:.95rem;color:var(--terra);margin-bottom:.8rem;
+    border-bottom:1px solid var(--linea);padding-bottom:.6rem;
+  }
+  aside ol{list-style:none;counter-reset:ix}
+  aside ol li{counter-increment:ix;margin-bottom:.4rem}
+  aside ol li a{
+    display:block;padding:.4rem .2rem;font-size:.9rem;color:var(--ink);
+    border-bottom:none;border-left:2px solid transparent;padding-left:.7rem;transition:all .25s;
+  }
+  aside ol li a::before{content:counter(ix,decimal-leading-zero) " · ";color:var(--gris);font-family:'Fraunces',serif;font-style:italic}
+  aside ol li a:hover{border-left-color:var(--terra);color:var(--azul);background:var(--crema-2)}
+
+  article{max-width:62ch}
+  article section{margin-bottom:clamp(2.5rem,5vw,4rem);scroll-margin-top:80px}
+  article h2{
+    font-family:'Fraunces',serif;font-weight:600;font-size:clamp(1.5rem,4vw,2.1rem);
+    color:var(--azul);letter-spacing:-.01em;margin-bottom:1rem;line-height:1.2;
+  }
+  article h2 .n{font-family:'Fraunces',serif;font-style:italic;font-weight:500;color:var(--terra);font-size:.85em;margin-right:.4rem}
+  article h3{
+    font-family:'Fraunces',serif;font-weight:600;font-size:1.25rem;color:var(--azul-claro);
+    margin-top:1.8rem;margin-bottom:.6rem;
+  }
+  article p{margin-bottom:1rem;font-size:1.02rem}
+  article strong{color:var(--azul)}
+  article em{color:#5a5346}
+
+  ul.list,ol.list{margin:.5rem 0 1.2rem 1.4rem}
+  ul.list li,ol.list li{margin-bottom:.5rem;font-size:1.02rem}
+  ul.list li::marker{color:var(--terra)}
+  ol.list li::marker{color:var(--terra);font-weight:600;font-family:'Fraunces',serif}
+
+  .box{
+    background:#fffdf8;border:1px solid var(--linea);border-left:5px solid var(--azul);
+    border-radius:14px;padding:1.2rem 1.4rem;margin:1.5rem 0;
+  }
+  .box.amber{border-left-color:var(--ambar-borde);background:var(--ambar)}
+  .box.amber .b-title{color:var(--ambar-borde)}
+  .box.red{border-left-color:var(--rojo);background:var(--rojo-bg)}
+  .box.red .b-title{color:var(--rojo)}
+  .box .b-title{
+    font-family:'Fraunces',serif;font-weight:600;color:var(--azul);
+    font-size:1.05rem;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;
+  }
+  .box p{font-size:.96rem;margin-bottom:.6rem}
+  .box p:last-child{margin-bottom:0}
+  .box ul li{font-size:.96rem}
+
+  .tbl{overflow-x:auto;margin:1.5rem 0;border-radius:12px;border:1px solid var(--linea)}
+  table{width:100%;border-collapse:collapse;background:#fffdf8;font-size:.94rem;min-width:520px}
+  thead{background:var(--azul);color:var(--crema)}
+  th{font-family:'Fraunces',serif;font-weight:600;text-align:left;padding:.8rem 1rem;font-size:.95rem;letter-spacing:.01em}
+  td{padding:.7rem 1rem;border-top:1px solid var(--linea);vertical-align:top}
+  tbody tr:nth-child(even){background:var(--crema-2)}
+  td.feat{font-weight:600;color:var(--azul);font-family:'Fraunces',serif}
+
+  /* Tarjetas de nube */
+  .clouds{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.7rem;margin:1rem 0}
+  .cloud{background:#fffdf8;border:1px solid var(--linea);border-radius:12px;padding:.9rem 1rem;text-align:center}
+  .cloud .ico{font-size:1.6rem;margin-bottom:.3rem;display:block}
+  .cloud h5{font-family:'Fraunces',serif;color:var(--azul);font-size:1rem;margin-bottom:.2rem}
+  .cloud p{font-size:.82rem;margin:0;color:#5a5346}
+
+  /* Fórmulas de Excel destacadas */
+  code, .code{
+    font-family:'Fraunces',serif;background:var(--crema-2);color:var(--azul);
+    padding:.15rem .45rem;border-radius:5px;font-weight:600;font-size:.95em;
+  }
+  .formulas{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.6rem;margin:1rem 0}
+  .fb{background:#fffdf8;border:1px solid var(--linea);border-left:3px solid var(--verde);border-radius:10px;padding:.7rem .9rem}
+  .fb .f{font-family:'Fraunces',serif;color:var(--azul);font-weight:600;font-size:.95rem;margin-bottom:.2rem}
+  .fb .d{font-size:.85rem;color:#5a5346}
+
+  /* Mail ejemplo */
+  .mail{
+    background:#fffdf8;border:1px solid var(--linea);border-radius:14px;
+    padding:1.2rem 1.4rem;margin:1.2rem 0;font-size:.94rem;line-height:1.6;
+  }
+  .mail .mh{border-bottom:1px solid var(--linea);padding-bottom:.6rem;margin-bottom:.8rem}
+  .mail .mh-row{display:flex;gap:.5rem;font-size:.85rem;color:#5a5346;margin-bottom:.2rem}
+  .mail .mh-row strong{color:var(--azul);min-width:60px;font-family:'Fraunces',serif}
+  .mail p{margin-bottom:.7rem;font-size:.94rem}
+  .mail .firma{margin-top:1rem;color:#5a5346;font-size:.88rem;border-top:1px solid var(--linea);padding-top:.6rem}
+
+  /* Buen / mal correo */
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:1rem 0}
+  @media(max-width:560px){.vs{grid-template-columns:1fr}}
+  .vs .v{background:#fffdf8;border:1px solid var(--linea);border-radius:12px;padding:.9rem 1rem}
+  .vs .v.good{border-top:4px solid var(--verde)}
+  .vs .v.bad{border-top:4px solid var(--rojo)}
+  .vs .v h6{font-family:'Fraunces',serif;font-size:.95rem;margin-bottom:.4rem}
+  .vs .v.good h6{color:var(--verde)}
+  .vs .v.bad h6{color:var(--rojo)}
+  .vs .v ul{margin:0;padding-left:1.2rem}
+  .vs .v li{font-size:.88rem;margin-bottom:.25rem;color:#5a5346}
+
+  /* Semáforo de fuentes */
+  .traffic{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin:1rem 0}
+  @media(max-width:600px){.traffic{grid-template-columns:1fr}}
+  .light{border-radius:12px;padding:.9rem 1rem;border:1px solid}
+  .light h5{font-family:'Fraunces',serif;font-size:1rem;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+  .light p{font-size:.86rem;margin:0}
+  .light.g{background:#e8f5e9;border-color:#3f6b4f;color:#244a30}
+  .light.g h5{color:#244a30}
+  .light.y{background:var(--ambar);border-color:var(--ambar-borde);color:var(--ambar-borde)}
+  .light.y h5{color:var(--ambar-borde)}
+  .light.r{background:var(--rojo-bg);border-color:var(--rojo);color:var(--rojo)}
+  .light.r h5{color:var(--rojo)}
+
+  /* Reglas de oro contra phishing */
+  .gold{background:var(--rojo-bg);border:1px solid var(--rojo);border-left:5px solid var(--rojo);border-radius:14px;padding:1.2rem 1.4rem;margin:1.5rem 0}
+  .gold .b-title{font-family:'Fraunces',serif;font-weight:600;color:var(--rojo);font-size:1.05rem;margin-bottom:.6rem}
+  .gold ol{margin:0;padding-left:1.4rem}
+  .gold ol li{font-size:.95rem;margin-bottom:.4rem;color:#5a1818}
+  .gold ol li::marker{color:var(--rojo);font-weight:700;font-family:'Fraunces',serif}
+
+  /* Tips/consejos de contraseña */
+  .pwd-trick{
+    background:var(--crema-2);border-radius:12px;padding:1rem 1.2rem;margin:1rem 0;
+    font-family:'Fraunces',serif;text-align:center;
+  }
+  .pwd-trick .frase{font-size:.95rem;color:#5a5346;font-style:italic;margin-bottom:.5rem}
+  .pwd-trick .resultado{font-size:1.2rem;color:var(--azul);font-weight:600;letter-spacing:.05em}
+
+  .activity{background:#fffdf8;border:1px solid var(--linea);border-radius:14px;padding:1.2rem 1.4rem;margin:1.2rem 0}
+  .activity h4{font-family:'Fraunces',serif;font-weight:600;color:var(--azul);font-size:1.1rem;margin-bottom:.6rem}
+  .activity.star{border-left:5px solid var(--terra)}
+  .activity.star h4::after{content:" ⭐";font-style:normal}
+
+  .checklist{margin:1rem 0;padding:0;list-style:none}
+  .checklist li{padding:.6rem 0 .6rem 1.8rem;position:relative;font-size:.98rem;border-bottom:1px dashed var(--linea)}
+  .checklist li::before{
+    content:"✓";position:absolute;left:0;top:.5rem;
+    width:1.2rem;height:1.2rem;display:grid;place-items:center;
+    border:1px solid var(--terra);border-radius:50%;color:var(--terra);font-size:.75rem;font-weight:700;
+  }
+  .checklist li:last-child{border-bottom:none}
+
+  .pager{display:flex;justify-content:space-between;gap:1rem;margin-top:3rem;padding-top:2rem;border-top:1px solid var(--linea)}
+  .pager a{flex:1;background:#fffdf8;border:1px solid var(--linea);border-radius:14px;padding:1rem 1.2rem;transition:all .25s;color:var(--ink)}
+  .pager a:hover{border-color:var(--azul);background:var(--crema-2);transform:translateY(-2px)}
+  .pager a.disabled{opacity:.4;pointer-events:none}
+  .pager .label{font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gris);margin-bottom:.3rem}
+  .pager .title{font-family:'Fraunces',serif;font-weight:600;color:var(--azul);font-size:1rem}
+  .pager .next{text-align:right}
+
+  footer{background:#10293f;color:rgba(246,241,231,.8);padding:2.5rem 1.5rem;text-align:center;font-size:.85rem}
+  footer .f-title{font-family:'Fraunces',serif;color:var(--crema);font-size:1.2rem;margin-bottom:.4rem}
+
+  .reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="crumb">
+    <a href="portal_curso_informatica.html">Portal del curso</a>
+    <span class="sep">/</span>
+    <span>Unidad 4</span>
+  </div>
+  <nav class="nav-units" aria-label="Navegación entre unidades">
+    <a href="unidad_1_fundamentos.html" title="Unidad 1">1</a>
+    <a href="unidad_2_hardware.html" title="Unidad 2">2</a>
+    <a href="unidad_3_software.html" title="Unidad 3">3</a>
+    <a href="#" class="active" title="Unidad 4">4</a>
+    <a href="unidad_5_pensamiento.html" title="Unidad 5">5</a>
+    <a href="unidad_6_ia.html" title="Unidad 6">6</a>
+  </nav>
+</div>
+
+<header>
+  <div class="eyebrow">Unidad 4 · 2°–3° Trimestre</div>
+  <h1>Productividad, <em>Internet</em> y ciudadanía digital</h1>
+  <p class="lead">La unidad más larga del año y también la más útil para tu vida cotidiana. Acá vas a aprender lo que vas a aplicar esta semana, no «en el futuro»: CV, presupuestos, trámites, defensa contra estafas.</p>
+  <div class="head-meta">
+    <span>14 horas cátedra</span>
+    <span>10 temas + glosario</span>
+    <span>8 actividades</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="grid">
+
+    <aside>
+      <h4>En esta unidad</h4>
+      <ol>
+        <li><a href="#presentacion">Presentación</a></li>
+        <li><a href="#texto">Procesador de texto</a></li>
+        <li><a href="#planilla">Planilla de cálculo</a></li>
+        <li><a href="#present">Presentaciones</a></li>
+        <li><a href="#nube">La nube</a></li>
+        <li><a href="#internet">Internet y la Web</a></li>
+        <li><a href="#busqueda">Búsqueda eficaz</a></li>
+        <li><a href="#correo">Correo profesional</a></li>
+        <li><a href="#tramites">Trámites en línea</a></li>
+        <li><a href="#seguridad">Seguridad digital</a></li>
+        <li><a href="#identidad">Identidad y derechos</a></li>
+        <li><a href="#glosario">Glosario</a></li>
+        <li><a href="#actividades">Actividades</a></li>
+        <li><a href="#cierre">Cierre</a></li>
+      </ol>
+    </aside>
+
+    <article>
+
+      <!-- PRESENTACIÓN -->
+      <section id="presentacion" class="reveal">
+        <h2><span class="n">00</span>Presentación de la unidad</h2>
+        <p>Bienvenido y bienvenida a la unidad más larga del año, y también a la más útil para tu vida cotidiana y laboral. Hasta acá vimos fundamentos: qué es la informática, qué es el hardware, cómo funciona un sistema operativo. Ahora viene el momento de poner manos a la obra.</p>
+        <p>Vamos a aprender a escribir un currículum profesional, hacer un presupuesto en Excel, armar una presentación, trabajar en la nube, mandar correos profesionales, hacer trámites en línea sin caer en estafas, y proteger tu identidad digital.</p>
+        <p>Esta unidad tiene una particularidad: lo que aprendas acá lo vas a aplicar de inmediato. <strong>No es un saber para «el futuro»: es un saber para esta semana</strong>, para el próximo trámite, para el próximo trabajo al que te postules, para la próxima vez que alguien te quiera estafar.</p>
+        <div class="box">
+          <div class="b-title">📋 ¿Qué vas a aprender en esta unidad?</div>
+          <ul class="list">
+            <li>Manejo del procesador de texto: CV, cartas, notas.</li>
+            <li>Manejo de planilla de cálculo: fórmulas, funciones básicas, gráficos.</li>
+            <li>Cómo armar presentaciones que no aburran.</li>
+            <li>Cómo guardar y compartir archivos en la nube.</li>
+            <li>Qué es Internet, cómo funciona, y la diferencia con la Web.</li>
+            <li>Búsqueda eficaz y evaluación crítica de fuentes.</li>
+            <li>Correo electrónico profesional.</li>
+            <li>Trámites digitales en Argentina.</li>
+            <li>Seguridad digital: contraseñas, phishing, virus, copias de seguridad.</li>
+            <li>Identidad digital y derechos del ciudadano en línea.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- TEXTO -->
+      <section id="texto" class="reveal">
+        <h2><span class="n">01</span>Procesador de texto: tu herramienta para escribir bien</h2>
+        <p>Un procesador de texto es un programa para escribir documentos. Los más usados son <strong>Microsoft Word</strong>, <strong>LibreOffice Writer</strong> (libre y gratuito) y <strong>Google Docs</strong> (online). Los tres hacen prácticamente lo mismo: cambian los botones de lugar y los colores, pero los conceptos son idénticos.</p>
+        <h3>Lo que tiene que saber hacer cualquier persona</h3>
+        <ul class="list">
+          <li><strong>Escribir y editar:</strong> copiar, pegar, deshacer (<code>Ctrl+Z</code>, el botón mágico).</li>
+          <li><strong>Formato de carácter:</strong> negrita, cursiva, subrayado, color, tamaño, tipo de letra.</li>
+          <li><strong>Formato de párrafo:</strong> alineación, interlineado, sangría, listas.</li>
+          <li><strong>Estructura del documento:</strong> títulos con estilos, salto de página, numeración.</li>
+          <li><strong>Insertar:</strong> imágenes, tablas, hipervínculos.</li>
+          <li><strong>Encabezado y pie de página.</strong></li>
+          <li><strong>Guardar y exportar:</strong> .docx, .odt o .pdf.</li>
+        </ul>
+        <h3>Currículum vitae (CV)</h3>
+        <p>Tu CV es el documento más importante que vas a producir en esta materia. Va a llegar a empleadores, programas de capacitación, procesos de selección. Tiene que ser claro, prolijo y profesional.</p>
+        <p>Un CV moderno se organiza así:</p>
+        <ul class="list">
+          <li>Datos personales (nombre completo, edad, localidad, contacto).</li>
+          <li>Perfil profesional o resumen (3-4 líneas que digan quién sos y qué buscás).</li>
+          <li>Formación académica (en orden cronológico inverso: lo más reciente primero).</li>
+          <li>Experiencia laboral (cronológico inverso, con descripción breve).</li>
+          <li>Cursos y capacitaciones.</li>
+          <li>Habilidades (idiomas, herramientas, oficios).</li>
+          <li>Referencias (opcional).</li>
+        </ul>
+        <h3>Carta de presentación</h3>
+        <p>Acompaña al CV cuando te postulás. Es una carta dirigida a alguien específico, donde explicás por qué te interesa el puesto y qué podés aportar. <strong>No repite el CV: lo complementa.</strong></p>
+        <div class="box amber">
+          <div class="b-title">⚠️ Tres errores frecuentes al hacer un CV</div>
+          <ul class="list">
+            <li>Poner una dirección de correo informal (<em>mariquita_loca_94@hotmail.com</em> no es profesional). Crear un correo serio con tu nombre real es gratis.</li>
+            <li>Cargar la primera página de fotos, logos, marcos y colores estridentes. Un CV se lee en 30 segundos. Si no es claro, va a la basura.</li>
+            <li>Faltas de ortografía. Revisalo dos veces. Pedile a alguien que lo lea. Es la primera impresión y no se borra.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- PLANILLA -->
+      <section id="planilla" class="reveal">
+        <h2><span class="n">02</span>Planilla de cálculo: el superpoder de los números</h2>
+        <p>Una planilla de cálculo (<strong>Excel</strong>, <strong>LibreOffice Calc</strong>, <strong>Google Sheets</strong>) es una herramienta para trabajar con datos en filas y columnas, hacer cálculos automáticos y generar gráficos. Es probablemente la herramienta de productividad más subestimada: <em>si la dominás aunque sea a nivel básico, multiplicás tu productividad enormemente.</em></p>
+        <h3>Conceptos básicos</h3>
+        <ul class="list">
+          <li><strong>Celda:</strong> cada cuadradito. Cada una tiene una dirección: <code>A1</code>, <code>B5</code>, <code>C12</code>.</li>
+          <li><strong>Rango:</strong> un grupo de celdas. <code>A1:A10</code> significa «de la celda A1 a la A10».</li>
+          <li><strong>Fórmula:</strong> una instrucción que se ejecuta automáticamente. Toda fórmula empieza con <code>=</code>.</li>
+        </ul>
+        <h3>Operaciones básicas</h3>
+        <p>Las cuatro operaciones funcionan así:</p>
+        <div class="formulas">
+          <div class="fb"><div class="f">=A1+B1</div><div class="d">Suma</div></div>
+          <div class="fb"><div class="f">=A1-B1</div><div class="d">Resta</div></div>
+          <div class="fb"><div class="f">=A1*B1</div><div class="d">Multiplicación</div></div>
+          <div class="fb"><div class="f">=A1/B1</div><div class="d">División</div></div>
+        </div>
+        <p>Ojo: en planillas, la multiplicación es el <strong>asterisco</strong> (*), no la x. Y la división es la <strong>barra</strong> (/), no ÷.</p>
+        <h3>Funciones útiles para empezar</h3>
+        <div class="formulas">
+          <div class="fb"><div class="f">=SUMA(A1:A10)</div><div class="d">Suma todos los valores del rango.</div></div>
+          <div class="fb"><div class="f">=PROMEDIO(A1:A10)</div><div class="d">Calcula el promedio.</div></div>
+          <div class="fb"><div class="f">=MAX(A1:A10)</div><div class="d">Valor más alto.</div></div>
+          <div class="fb"><div class="f">=MIN(A1:A10)</div><div class="d">Valor más bajo.</div></div>
+          <div class="fb"><div class="f">=CONTAR(A1:A10)</div><div class="d">Cuenta celdas con números.</div></div>
+          <div class="fb"><div class="f">=SI(cond; sí; no)</div><div class="d">Para que la planilla tome decisiones.</div></div>
+        </div>
+        <div class="box">
+          <div class="b-title">🪄 El truco que cambia todo: arrastrar fórmulas</div>
+          <p>Si escribís una fórmula en una celda y querés aplicarla a 50 filas, <strong>no hace falta escribirla 50 veces.</strong> Hacé clic en la celda con la fórmula, agarrá el cuadradito chiquito de la esquina inferior derecha (el «controlador de relleno») y arrastralo hacia abajo. La fórmula se copia adaptándose a cada fila.</p>
+          <p>Cuando hayas usado esto una vez, vas a entender por qué Excel es una herramienta tan poderosa.</p>
+        </div>
+        <h3>Ejemplos prácticos para la vida real</h3>
+        <ul class="list">
+          <li><strong>Presupuesto familiar:</strong> ingresos y gastos, con una celda final que diga si te alcanza o no.</li>
+          <li><strong>Control de stock o ventas:</strong> producto, cantidad, precio unitario, total. Al final, =SUMA() del total facturado.</li>
+          <li><strong>Control de pagos de servicios:</strong> servicio, mes, importe, pagado (Sí/No). Para no olvidarse nunca.</li>
+        </ul>
+        <h3>Gráficos</h3>
+        <p>Una planilla puede generar gráficos automáticamente a partir de tus datos: de barras, de torta, de líneas. Solo tenés que seleccionar los datos y elegir «Insertar gráfico». <strong>Es la mejor manera de mostrar resultados a otras personas.</strong></p>
+      </section>
+
+      <!-- PRESENTACIONES -->
+      <section id="present" class="reveal">
+        <h2><span class="n">03</span>Presentaciones: comunicar sin aburrir</h2>
+        <p>Las presentaciones (<strong>PowerPoint</strong>, <strong>LibreOffice Impress</strong>, <strong>Google Slides</strong>) acompañan una exposición oral. Son herramientas potentes, pero también las más mal usadas: muchísima gente las llena de texto y termina <em>leyendo la pantalla</em> en lugar de hablarle al público.</p>
+        <h3>La regla más importante</h3>
+        <p>Una buena diapositiva <strong>NO contiene todo lo que vas a decir</strong>. Una diapositiva debe contener:</p>
+        <ul class="list">
+          <li>Una idea principal por slide.</li>
+          <li>Pocas palabras (un título corto, máximo 3-5 puntos breves).</li>
+          <li>Una imagen o gráfico que apoye la idea.</li>
+        </ul>
+        <p>Vos sos quien habla. La presentación es solo el apoyo visual. Si tu diapositiva tiene 200 palabras, el público no te escucha: <em>lo lee</em>.</p>
+        <h3>Estructura típica</h3>
+        <ol class="list">
+          <li>Portada (título, autor, fecha).</li>
+          <li>Introducción (de qué vamos a hablar).</li>
+          <li>Desarrollo (los puntos principales, una idea por diapositiva).</li>
+          <li>Conclusiones.</li>
+          <li>Slide final (gracias, contacto, preguntas).</li>
+        </ol>
+        <h3>Tres consejos visuales</h3>
+        <ul class="list">
+          <li>Fondo simple y consistente. No cambies de color y diseño en cada slide.</li>
+          <li>Tipografía grande (mínimo 24 puntos, títulos 36 o más).</li>
+          <li>Contraste alto. Evitá amarillo sobre blanco.</li>
+        </ul>
+      </section>
+
+      <!-- NUBE -->
+      <section id="nube" class="reveal">
+        <h2><span class="n">04</span>La nube: tus archivos en cualquier lado</h2>
+        <p>«La nube» suena mágico, pero la idea es simple: en lugar de guardar tus archivos solo en tu computadora, los guardás en servidores remotos a través de Internet. Esos servidores están literalmente en edificios llenos de computadoras enormes de Google, Microsoft, Apple, Amazon.</p>
+        <p>¿Qué ganás? Tres cosas:</p>
+        <ul class="list">
+          <li><strong>Acceso desde cualquier dispositivo:</strong> abrís el archivo desde la PC, la notebook o el celular, todo sincronizado.</li>
+          <li><strong>Respaldo automático:</strong> si se rompe tu computadora, tus archivos siguen ahí.</li>
+          <li><strong>Colaboración:</strong> compartís un archivo con otra persona y trabajan los dos al mismo tiempo, viendo cada cambio en tiempo real.</li>
+        </ul>
+        <h3>Los servicios más comunes</h3>
+        <div class="clouds">
+          <div class="cloud"><span class="ico">☁️</span><h5>Google Drive</h5><p>15 GB gratis. Incluye Docs, Sheets y Slides.</p></div>
+          <div class="cloud"><span class="ico">☁️</span><h5>OneDrive</h5><p>De Microsoft. 5 GB gratis. Integrado con Windows.</p></div>
+          <div class="cloud"><span class="ico">☁️</span><h5>iCloud</h5><p>De Apple. Pensado para iPhone, iPad y Mac.</p></div>
+          <div class="cloud"><span class="ico">☁️</span><h5>Dropbox</h5><p>Uno de los pioneros. 2 GB gratis.</p></div>
+        </div>
+        <h3>Escanear con el celular para subir a la nube</h3>
+        <p>Una herramienta súper útil: con tu celular podés «escanear» un documento físico (DNI, comprobante, certificado), guardarlo como PDF y subirlo a la nube. Apps: <strong>Google Drive</strong> (tiene escáner integrado), <strong>Adobe Scan</strong>, <strong>Microsoft Lens</strong>.</p>
+        <p>Lo que antes requería ir a un locutorio, hoy lo hacés desde tu cocina.</p>
+        <div class="box amber">
+          <div class="b-title">⚠️ La nube no es magia: precauciones</div>
+          <ul class="list">
+            <li>Si perdés la contraseña de tu cuenta de nube, perdés acceso a <strong>todos</strong> tus archivos. Usá una contraseña segura.</li>
+            <li>Si subís información sensible (DNI, datos bancarios), recordá que la estás depositando en una empresa privada. Aplicá criterio.</li>
+            <li>El espacio gratuito es limitado. Si lo llenás, vas a tener que pagar o eliminar archivos.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- INTERNET -->
+      <section id="internet" class="reveal">
+        <h2><span class="n">05</span>Internet y la Web: no son lo mismo</h2>
+        <p>Una confusión muy común: la gente usa «Internet» y «la Web» como sinónimos, pero son cosas distintas.</p>
+        <p><strong>Internet</strong> es una red mundial gigante que conecta millones de computadoras entre sí. Es la infraestructura: los cables submarinos, los satélites, los routers, los servidores.</p>
+        <p><strong>La Web</strong> (la World Wide Web) es UNO de los servicios que funcionan sobre Internet: el de las páginas web que se ven con un navegador. Pero sobre Internet también funcionan otros servicios: el correo electrónico, WhatsApp, los juegos en línea, las videollamadas.</p>
+        <p>Es decir: <em>Internet es la red. La Web es uno de los muchos servicios que viajan por esa red.</em></p>
+        <h3>¿Cómo funciona Internet?</h3>
+        <p>Cuando vos abrís una página web, pasa lo siguiente:</p>
+        <ol class="list">
+          <li>Tu computadora le pide al router de tu casa: «quiero conectarme a tal página».</li>
+          <li>El router manda el pedido al proveedor de Internet (Personal, Movistar, Claro, Telecom).</li>
+          <li>El proveedor lo manda por cables (a veces submarinos) hasta el servidor que aloja esa página.</li>
+          <li>El servidor responde mandando los datos.</li>
+          <li>Los datos vuelven por el mismo camino y los muestra tu navegador.</li>
+        </ol>
+        <p>Todo esto pasa en menos de un segundo. Y se repite cada vez que hacés clic.</p>
+        <h3>Conceptos clave</h3>
+        <ul class="list">
+          <li><strong>Dirección IP:</strong> número único que identifica a cada dispositivo conectado. Como una matrícula.</li>
+          <li><strong>URL:</strong> la «dirección» de una página, como <code>https://www.google.com</code>.</li>
+          <li><strong>Navegador:</strong> el programa que te permite ver páginas web. Chrome, Firefox, Edge, Safari.</li>
+          <li><strong>Buscador:</strong> una página web que busca por vos en el resto de la web. Google, Bing, DuckDuckGo.</li>
+          <li><strong>WiFi:</strong> conexión inalámbrica a una red local. El WiFi te conecta al router; el router a Internet.</li>
+        </ul>
+      </section>
+
+      <!-- BUSQUEDA -->
+      <section id="busqueda" class="reveal">
+        <h2><span class="n">06</span>Búsqueda eficaz: aprender a buscar bien</h2>
+        <p>Casi todos sabemos abrir Google y escribir algo. Pero <strong>buscar bien es un arte</strong>: la diferencia entre encontrar la respuesta en 5 segundos o perder media hora.</p>
+        <h3>Trucos para buscar mejor</h3>
+        <ul class="list">
+          <li><strong>Sé específico/a:</strong> en lugar de «plantas», buscá «cómo cuidar potus en interior con poca luz».</li>
+          <li><strong>Comillas para frases exactas:</strong> <code>"camino de las sierras"</code> busca esa frase tal cual.</li>
+          <li><strong>Agregá el año o el lugar:</strong> «jubilación mínima Argentina 2026» mejor que «jubilación mínima».</li>
+          <li><strong>Usá <code>site:</code>:</strong> «jubilación <code>site:anses.gob.ar</code>» busca solo dentro de ese sitio.</li>
+          <li><strong>Usá pestañas de Google:</strong> Imágenes, Videos, Noticias, Mapas. A veces lo que buscás se encuentra mejor en otra pestaña.</li>
+        </ul>
+        <h3>Evaluación crítica de fuentes</h3>
+        <p>Encontrar información es solo la mitad del trabajo. La otra mitad es evaluar si es confiable. Algunas preguntas:</p>
+        <ul class="list">
+          <li>¿Quién publicó esto? ¿Es un medio reconocido o una página anónima?</li>
+          <li>¿Cuándo fue publicado? Una información médica de hace 10 años puede estar desactualizada.</li>
+          <li>¿La página cita fuentes?</li>
+          <li>¿Otros medios confiables dicen lo mismo?</li>
+          <li>¿El tono es informativo o emocional? Si el título te genera mucha indignación o miedo, probablemente esté diseñado para eso.</li>
+        </ul>
+        <h3>La regla del semáforo</h3>
+        <div class="traffic">
+          <div class="light g">
+            <h5>🟢 Verde · confiables</h5>
+            <p>Sitios oficiales del gobierno (<code>.gob.ar</code>), universidades, medios reconocidos, OMS, ONU.</p>
+          </div>
+          <div class="light y">
+            <h5>🟡 Amarillo · con criterio</h5>
+            <p>Blogs personales, foros, redes sociales. Útil para opiniones, pero verificá antes de creer.</p>
+          </div>
+          <div class="light r">
+            <h5>🔴 Rojo · desconfiar</h5>
+            <p>Páginas anónimas, mensajes reenviados por WhatsApp, contenidos que apelan al miedo o la indignación.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CORREO -->
+      <section id="correo" class="reveal">
+        <h2><span class="n">07</span>Correo electrónico profesional</h2>
+        <p>El correo electrónico (mail) sigue siendo, en 2026, la herramienta más usada en el ámbito laboral y formal. Aunque WhatsApp domine lo personal, para trabajos y trámites importantes <strong>se usa el correo</strong>.</p>
+        <h3>Crear una cuenta profesional</h3>
+        <p>Una buena dirección incluye tu nombre y apellido reales, sin números raros ni apodos.</p>
+        <div class="vs">
+          <div class="v good">
+            <h6>✓ Bien</h6>
+            <ul>
+              <li>maria.lopez@gmail.com</li>
+              <li>mlopez1985@gmail.com</li>
+              <li>marialopezfernandez@outlook.com</li>
+            </ul>
+          </div>
+          <div class="v bad">
+            <h6>✗ Mal</h6>
+            <ul>
+              <li>tigresalvaje@hotmail.com</li>
+              <li>princesita123@yahoo.com.ar</li>
+              <li>elnico95@gmail.com</li>
+            </ul>
+          </div>
+        </div>
+        <p>Crear una cuenta nueva en Gmail u Outlook es gratis y lleva 5 minutos. Si la actual no te sirve, hacé una nueva para todo lo formal.</p>
+        <h3>Partes de un correo</h3>
+        <ul class="list">
+          <li><strong>Para (To):</strong> el destinatario principal.</li>
+          <li><strong>CC:</strong> con copia visible para todos.</li>
+          <li><strong>CCO:</strong> con copia oculta. Los otros destinatarios no se enteran. Útil cuando mandás a muchas personas que no se conocen entre sí.</li>
+          <li><strong>Asunto:</strong> una línea breve que resume. <strong>NUNCA lo dejes vacío.</strong></li>
+          <li><strong>Cuerpo:</strong> el texto del mensaje.</li>
+          <li><strong>Adjuntos:</strong> archivos que mandás junto al correo.</li>
+          <li><strong>Firma:</strong> texto que aparece automáticamente al final.</li>
+        </ul>
+        <h3>Cómo escribir un correo profesional</h3>
+        <ol class="list">
+          <li>Saludo formal (Estimado/a, Buenos días).</li>
+          <li>Presentación breve si la persona no te conoce.</li>
+          <li>Cuerpo claro y conciso. Si es largo, dividilo en párrafos cortos.</li>
+          <li>Pedido o motivo claro: ¿qué querés que la persona haga?</li>
+          <li>Despedida (Saludos cordiales, Atentamente).</li>
+          <li>Firma con nombre completo y datos de contacto.</li>
+        </ol>
+        <div class="box">
+          <div class="b-title">📧 Ejemplo de correo bien hecho</div>
+          <div class="mail">
+            <div class="mh">
+              <div class="mh-row"><strong>Para:</strong> rrhh@empresaejemplo.com.ar</div>
+              <div class="mh-row"><strong>Asunto:</strong> Postulación al puesto de auxiliar administrativo · María López</div>
+            </div>
+            <p>Estimados/as,</p>
+            <p>Mi nombre es María López, tengo 38 años y resido en Jardín América, Misiones. Le escribo en respuesta al aviso publicado en el portal X, donde solicitan personal para tareas administrativas.</p>
+            <p>Adjunto mi CV con mi formación y experiencia laboral. Cuento con conocimientos de ofimática y experiencia en atención al público. Quedo a disposición para una entrevista en el horario y modalidad que les resulte conveniente.</p>
+            <p>Saludos cordiales,</p>
+            <div class="firma">
+              María López<br>
+              Tel: 3743-XXXXXX<br>
+              marialopezfernandez@gmail.com
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TRÁMITES -->
+      <section id="tramites" class="reveal">
+        <h2><span class="n">08</span>Trámites en línea: el Estado en tu casa</h2>
+        <p>Muchísimos trámites que antes requerían ir a una oficina, hacer cola y tener fotocopias, hoy se hacen desde el celular. Conocer estos servicios <strong>te ahorra tiempo, plata y bronca</strong>.</p>
+        <h3>Plataformas principales en Argentina</h3>
+        <div class="tbl">
+          <table>
+            <thead><tr><th>Plataforma</th><th>Para qué sirve</th></tr></thead>
+            <tbody>
+              <tr><td class="feat">Mi Argentina</td><td>La aplicación oficial del Estado nacional. Credencial virtual, licencia de conducir digital, certificados, vacunas, trámites unificados.</td></tr>
+              <tr><td class="feat">ANSES</td><td>Aportes, asignaciones familiares, jubilaciones, AUH, pensiones, certificados negativos. El portal Mi ANSES centraliza todo.</td></tr>
+              <tr><td class="feat">ARCA (ex AFIP)</td><td>Constancia de CUIL, monotributo, declaraciones juradas, claves fiscales, facturación electrónica.</td></tr>
+              <tr><td class="feat">Turnos de salud</td><td>Cada obra social tiene su portal. PAMI, IOSPER, OSDE. También hospitales públicos provinciales.</td></tr>
+              <tr><td class="feat">Home banking</td><td>Consultar saldo, transferir, pagar servicios, generar QR para cobrar. Cada banco tiene su app.</td></tr>
+              <tr><td class="feat">Billeteras virtuales</td><td>Mercado Pago, Ualá, Naranja X, Cuenta DNI. Cobrar, pagar, ahorrar sin cuenta bancaria tradicional.</td></tr>
+              <tr><td class="feat">Portales judiciales</td><td>Consulta de expedientes, audiencias, oficios. Cada provincia tiene el suyo.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>Cómo abordar un trámite digital por primera vez</h3>
+        <ol class="list">
+          <li>Buscá la <strong>página oficial</strong>. Asegurate de que el dominio termine en <code>.gob.ar</code> (nacional) o el equivalente provincial. Cuidado con páginas falsas.</li>
+          <li>Registrate. Vas a necesitar DNI, CUIL y un correo activo. Te van a pedir crear una clave.</li>
+          <li>Anotá tu usuario y clave en un lugar seguro.</li>
+          <li>Seguí los pasos. Las plataformas oficiales suelen tener tutoriales.</li>
+          <li>Guardá los comprobantes. Cada trámite genera un comprobante en PDF: descargalo y guardalo.</li>
+        </ol>
+      </section>
+
+      <!-- SEGURIDAD -->
+      <section id="seguridad" class="reveal">
+        <h2><span class="n">09</span>Seguridad digital: cuidarte vos mismo/a</h2>
+        <p>Internet abrió puertas enormes, pero también trajo riesgos. La mayoría de los problemas no son por «hackers super avanzados», sino por <strong>descuidos cotidianos</strong>. Esta sección es probablemente la más importante de la unidad para la vida diaria.</p>
+        <h3>Contraseñas seguras</h3>
+        <p>La contraseña es la llave de tu vida digital. Si alguien la consigue, accede a todo: correo, banco, redes sociales.</p>
+        <ul class="list">
+          <li><strong>Largas:</strong> mínimo 12 caracteres.</li>
+          <li><strong>Combinadas:</strong> mayúsculas, minúsculas, números y símbolos.</li>
+          <li><strong>Únicas:</strong> una distinta para cada servicio importante. Si usás la misma en todos lados, cuando hackean uno, hackean todos.</li>
+          <li><strong>Nada obvio:</strong> evitá fecha de nacimiento, nombre de mascota, «123456», «contraseña».</li>
+        </ul>
+        <h3>Truco para contraseñas memorables y seguras</h3>
+        <p>Pensá en una frase larga que solo vos sepas, tomá las iniciales y los números:</p>
+        <div class="pwd-trick">
+          <div class="frase">«Mi primer perro se llamaba Cuchufleta en 2003»</div>
+          <div class="resultado">Mpps11C€2003</div>
+        </div>
+        <p>Ya tenés una contraseña larga, fuerte y memorable.</p>
+        <h3>Gestor de contraseñas</h3>
+        <p>Un programa que guarda todas tus contraseñas (cifradas) detrás de una sola contraseña maestra. Vos solo memorizás una y el gestor recuerda el resto. Recomendados gratuitos: <strong>Bitwarden</strong>, <strong>KeePass</strong>, los integrados en Chrome o Firefox.</p>
+        <h3>Autenticación en dos pasos (2FA)</h3>
+        <p>Una capa extra: aunque alguien tenga tu contraseña, no puede entrar sin un segundo factor (un código que llega a tu celular). <strong>Activala en todos los servicios importantes:</strong> correo, banco, redes sociales.</p>
+        <h3>Phishing: la estafa más común</h3>
+        <p><strong>Phishing</strong> («pescar» en inglés) es cuando alguien te manda un correo, SMS, WhatsApp o llamada haciéndose pasar por una entidad confiable (tu banco, AFIP, una empresa) para sacarte datos o plata.</p>
+        <h3>Señales clásicas de un intento de phishing</h3>
+        <ul class="list">
+          <li>El mensaje genera <strong>urgencia</strong> («su cuenta será suspendida en 24 horas»).</li>
+          <li>Te pide datos personales, contraseñas o códigos por mensaje.</li>
+          <li>Tiene errores de ortografía o redacción rara.</li>
+          <li>La dirección del remitente parece oficial pero tiene detalles raros (<code>banco.argentinos.com</code> en vez de <code>bancoargentino.com.ar</code>).</li>
+          <li>Te manda un enlace para «verificar» o «reactivar» algo.</li>
+        </ul>
+        <div class="gold">
+          <div class="b-title">🛡️ Las reglas de oro contra el phishing</div>
+          <ol>
+            <li>NINGÚN banco, AFIP, ANSES ni billetera virtual te va a pedir contraseña, clave token, ni códigos por teléfono, mail o WhatsApp.</li>
+            <li>Si recibís un mensaje urgente, <strong>no hagas clic en el enlace</strong>. Entrá vos mismo/a a la página oficial desde el navegador.</li>
+            <li>Si dudás, llamá al teléfono oficial del banco (el de la tarjeta o web oficial, NO el del mensaje sospechoso).</li>
+            <li>Nunca compartas DNI ni datos sensibles por mensajes no solicitados.</li>
+          </ol>
+        </div>
+        <h3>Virus y antivirus</h3>
+        <p>Un virus informático es un programa malicioso que se mete en tu computadora sin permiso. Cómo prevenirlos:</p>
+        <ul class="list">
+          <li>Tené un antivirus actualizado. Windows trae Windows Defender, que es muy decente y gratuito.</li>
+          <li>No descargues programas de páginas dudosas.</li>
+          <li>No abras adjuntos de correos que no esperabas.</li>
+          <li>Mantené el sistema y los programas actualizados.</li>
+        </ul>
+        <h3>Copias de seguridad (backup)</h3>
+        <p>La pregunta no es si tu disco va a fallar, sino <strong>cuándo</strong>. Todos los discos fallan eventualmente. La única manera de no perder tus archivos es tener copias en otro lado.</p>
+        <ul class="list">
+          <li><strong>Estrategia 3-2-1:</strong> tres copias, en dos medios distintos, una de ellas fuera de tu casa (en la nube).</li>
+          <li><strong>Lo mínimo:</strong> una copia en disco externo y una en la nube.</li>
+          <li>Programá un día al mes para hacer backup. Que sea costumbre.</li>
+        </ul>
+      </section>
+
+      <!-- IDENTIDAD -->
+      <section id="identidad" class="reveal">
+        <h2><span class="n">10</span>Identidad digital, privacidad y derechos</h2>
+        <p>Cada cosa que hacés en Internet deja una huella. Las páginas que visitás, las búsquedas, los «me gusta», los lugares donde activás la ubicación. La suma de todos esos rastros se llama <strong>huella digital</strong> o identidad digital.</p>
+        <h3>¿Quién tiene tu información?</h3>
+        <ul class="list">
+          <li><strong>Las plataformas que usás:</strong> Google, Meta (Facebook, Instagram, WhatsApp), TikTok, X.</li>
+          <li><strong>Los anunciantes:</strong> compran datos para mostrarte publicidad personalizada.</li>
+          <li><strong>Otros usuarios:</strong> lo que publicás puede ser visto por quien sea, según tu configuración.</li>
+        </ul>
+        <h3>Configuración de privacidad: revisala</h3>
+        <p>Todas las redes sociales tienen una sección de «Privacidad». La mayoría de la gente nunca la abre. Es la primera tarea que deberías hacer en cada plataforma nueva.</p>
+        <h3>Lo que publicás queda</h3>
+        <p>Una foto subida puede ser descargada por cualquiera. Aunque la borres después, puede seguir circulando. Antes de publicar algo, preguntate: <em>«¿me incomoda si mi jefa, mi mamá, mi futuro/a empleador/a o un desconocido lo ven?»</em></p>
+        <h3>Tus derechos como ciudadano digital</h3>
+        <p>En Argentina, la <strong>Ley 25.326 de Protección de Datos Personales</strong> te otorga derechos:</p>
+        <ul class="list">
+          <li>Saber qué datos tuyos tiene una empresa o institución.</li>
+          <li>Corregir datos incorrectos.</li>
+          <li>Pedir que los borren si ya no son necesarios.</li>
+          <li>Que tus datos no se usen para cosas distintas a las autorizadas.</li>
+        </ul>
+        <h3>Derecho de autor en Internet</h3>
+        <p>Que algo esté en Internet no significa que sea «gratis» o «libre». Las imágenes, videos, textos y música suelen tener derechos de autor. Usarlos sin permiso, sobre todo con fines comerciales, puede ser ilegal.</p>
+        <p>Si necesitás imágenes para un trabajo:</p>
+        <ul class="list">
+          <li>Buscá imágenes con licencia <strong>Creative Commons</strong> (Google Imágenes tiene un filtro).</li>
+          <li>Usá bancos de imágenes libres: <strong>Pexels</strong>, <strong>Unsplash</strong>, <strong>Pixabay</strong>.</li>
+          <li>Citá siempre la fuente.</li>
+        </ul>
+      </section>
+
+      <!-- GLOSARIO -->
+      <section id="glosario" class="reveal">
+        <h2><span class="n">11</span>Glosario de la unidad</h2>
+        <ul class="list">
+          <li><strong>Procesador de texto:</strong> programa para crear y editar documentos.</li>
+          <li><strong>Planilla de cálculo:</strong> programa con grilla de celdas y fórmulas.</li>
+          <li><strong>Celda:</strong> cada cuadradito de una planilla (A1, B5).</li>
+          <li><strong>Fórmula:</strong> instrucción que empieza con = y produce un resultado.</li>
+          <li><strong>Nube:</strong> almacenamiento en servidores remotos accesibles por Internet.</li>
+          <li><strong>Internet:</strong> red mundial que conecta millones de computadoras.</li>
+          <li><strong>Web:</strong> conjunto de páginas. Es UN servicio dentro de Internet.</li>
+          <li><strong>URL:</strong> dirección de una página web.</li>
+          <li><strong>Navegador:</strong> programa para ver páginas web.</li>
+          <li><strong>Buscador:</strong> página web que busca otras páginas.</li>
+          <li><strong>Correo electrónico:</strong> sistema de envío y recepción de mensajes digitales.</li>
+          <li><strong>CCO:</strong> con copia oculta.</li>
+          <li><strong>Phishing:</strong> intento de estafa por suplantación.</li>
+          <li><strong>2FA:</strong> autenticación en dos pasos.</li>
+          <li><strong>Backup:</strong> copia de seguridad.</li>
+          <li><strong>Huella digital:</strong> rastro de información que dejás en Internet.</li>
+          <li><strong>Creative Commons:</strong> licencias que permiten compartir obras.</li>
+        </ul>
+      </section>
+
+      <!-- ACTIVIDADES -->
+      <section id="actividades" class="reveal">
+        <h2><span class="n">12</span>Actividades</h2>
+
+        <div class="activity star">
+          <h4>Actividad 1 · Tu CV profesional</h4>
+          <p>Actividad estrella, va al portafolio. Armá tu propio CV siguiendo la estructura vista en clase. Requisitos:</p>
+          <ul class="list">
+            <li>Máximo 2 páginas.</li>
+            <li>Tipografía profesional (Calibri, Arial, tamaño 11).</li>
+            <li>Sin colores estridentes ni imágenes innecesarias.</li>
+            <li>Sin faltas de ortografía.</li>
+            <li>Guardalo como .docx y también exportalo como .pdf.</li>
+            <li>Subilo a tu carpeta de Google Drive.</li>
+          </ul>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 2 · Carta de presentación</h4>
+          <p>Buscá un aviso de trabajo real (en Bumeran, ZonaJobs, Computrabajo o LinkedIn) que se ajuste a tu perfil. Escribí una carta de presentación dirigida a esa búsqueda específica.</p>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 3 · Presupuesto familiar</h4>
+          <p>En una planilla de cálculo, armá un presupuesto mensual con dos secciones: ingresos y gastos. Como mínimo:</p>
+          <ul class="list">
+            <li>8 conceptos de gastos con sus importes.</li>
+            <li>Al menos 2 conceptos de ingresos.</li>
+            <li>Una celda con la fórmula <code>=SUMA()</code> de ingresos.</li>
+            <li>Una celda con la fórmula <code>=SUMA()</code> de gastos.</li>
+            <li>Una celda con el resultado (ingresos - gastos).</li>
+            <li>Un gráfico de torta de la distribución de gastos.</li>
+          </ul>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 4 · Búsqueda eficaz</h4>
+          <p>Encontrá usando los trucos de búsqueda la información para responder:</p>
+          <ol class="list">
+            <li>¿Cuál es el monto vigente de la Asignación Universal por Hijo este mes? (Cita la fuente oficial.)</li>
+            <li>¿Cómo se solicita una constancia de CUIL en línea?</li>
+            <li>¿Hay alguna línea de crédito vigente para emprendedores en Misiones?</li>
+            <li>¿Cuál es la diferencia entre el monotributo categoría A y B?</li>
+          </ol>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 5 · Detectar phishing</h4>
+          <p>Para cada mensaje hipotético, indicá si te parece phishing y explicá por qué:</p>
+          <ol class="list">
+            <li>«Banco Nación: detectamos un movimiento sospechoso en su cuenta. Haga clic aquí para verificar su identidad: bnanacional-seguridad.com.ar»</li>
+            <li>«Hola, soy María de Recursos Humanos de la empresa X. Vimos su CV y nos gustaría coordinar una entrevista. ¿Cuándo tiene disponibilidad?»</li>
+            <li>«AFIP: usted ha sido beneficiario de un reintegro. Confirme sus datos bancarios respondiendo este correo para acreditar el dinero.»</li>
+            <li>«Notificación de Mercado Pago: usted ganó $500.000 en nuestro sorteo. Reclámelo aquí: mp-premios.online.»</li>
+          </ol>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 6 · Auditá tu vida digital</h4>
+          <p>Autodiagnóstico:</p>
+          <ol class="list">
+            <li>¿Usás la misma contraseña en varios servicios? (Sí/No)</li>
+            <li>¿Tenés activada la autenticación en dos pasos en tu correo principal? (Sí/No)</li>
+            <li>¿Hace cuánto que no hacés copia de seguridad de tus fotos o documentos?</li>
+            <li>¿Tu correo principal tiene un nombre profesional?</li>
+            <li>Mirá tu última publicación en redes. ¿La mostrarías sin problemas a un/a empleador/a?</li>
+          </ol>
+          <p>Identificá al menos UN cambio concreto que vas a hacer esta semana.</p>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 7 · Trámite digital simulado</h4>
+          <p>Entrá a la página de Mi Argentina (<code>argentina.gob.ar/miargentina</code>) y explorá los trámites disponibles. Identificá tres trámites que podrías hacer vos personalmente y describí brevemente para qué sirven.</p>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 8 · Cuestionario de cierre</h4>
+          <ol class="list">
+            <li>Mencioná tres errores frecuentes al armar un CV.</li>
+            <li>Escribí la fórmula para sumar las celdas de A1 a A20 en una planilla.</li>
+            <li>Explicá con tus palabras la diferencia entre Internet y la Web.</li>
+            <li>Mencioná tres características de una contraseña segura.</li>
+            <li>¿Qué es el phishing y cómo lo identificás?</li>
+            <li>¿Por qué conviene tener autenticación en dos pasos en el correo?</li>
+            <li>¿Qué te garantiza la Ley 25.326 de Protección de Datos Personales en Argentina?</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- CIERRE -->
+      <section id="cierre" class="reveal">
+        <h2><span class="n">13</span>Cierre de la unidad</h2>
+        <p>Esta unidad cubrió muchísimo terreno. Si llegaste hasta acá habiendo hecho todas las actividades, <strong>ya tenés en tus manos casi todo lo que se necesita para moverse con autonomía en el mundo digital de hoy</strong>: producir documentos, manejar dinero con una planilla, comunicarte profesionalmente, hacer trámites, defenderte de estafas y proteger tu identidad.</p>
+        <p>Antes de avanzar, asegurate de que podés:</p>
+        <ul class="checklist">
+          <li>Armar un CV y una carta de presentación profesionales.</li>
+          <li>Usar fórmulas básicas en una planilla de cálculo.</li>
+          <li>Guardar y compartir archivos en la nube.</li>
+          <li>Diferenciar Internet de la Web.</li>
+          <li>Buscar información de manera eficaz y evaluar fuentes críticamente.</li>
+          <li>Redactar un correo electrónico profesional.</li>
+          <li>Reconocer un intento de phishing.</li>
+          <li>Crear contraseñas seguras y entender qué es la 2FA.</li>
+          <li>Identificar derechos y deberes como ciudadano/a digital.</li>
+        </ul>
+        <p><em>En la próxima unidad vamos a hacer un giro: dejamos un poco lo operativo y nos metemos en algo que va a parecer extraño al principio, pero que es la base de todo lo que viene en 2° y 3° año. Vamos a aprender a pensar como una computadora. ¡Nos vemos!</em></p>
+      </section>
+
+      <nav class="pager" aria-label="Navegación entre unidades">
+        <a href="unidad_3_software.html">
+          <div class="label">← Unidad anterior</div>
+          <div class="title">Unidad 3 · Software y SO</div>
+        </a>
+        <a href="unidad_5_pensamiento.html" class="next">
+          <div class="label">Siguiente →</div>
+          <div class="title">Unidad 5 · Pensamiento computacional</div>
+        </a>
+      </nav>
+
+    </article>
+
+  </div>
+</div>
+
+<footer>
+  <div class="f-title">Introducción a la Informática</div>
+  <div>1° Año · E.P.J.A. · EPET N°7 · Ciclo lectivo 2026</div>
+</footer>
+
+<script>
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); obs.unobserve(e.target);} });
+  },{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+  const links = document.querySelectorAll('aside ol li a');
+  const sections = document.querySelectorAll('article section[id]');
+  const sObs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const id = e.target.id;
+        links.forEach(l=>{
+          if(l.getAttribute('href')==='#'+id){
+            l.style.color='var(--azul)';l.style.fontWeight='600';
+            l.style.borderLeftColor='var(--terra)';l.style.background='var(--crema-2)';
+          } else {
+            l.style.color='';l.style.fontWeight='';
+            l.style.borderLeftColor='transparent';l.style.background='';
+          }
+        });
+      }
+    });
+  },{rootMargin:'-30% 0px -60% 0px'});
+  sections.forEach(s=>sObs.observe(s));
+</script>
+
+</body>
+</html>

@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unidad 6 · Inteligencia artificial, ética y futuro del trabajo · 1° E.P.J.A.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,500&family=Spline+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1b2430;
+    --azul:#1F4E79;
+    --azul-claro:#2E75B6;
+    --crema:#f6f1e7;
+    --crema-2:#efe7d6;
+    --terra:#c1632f;
+    --terra-suave:#e8a36a;
+    --ambar:#fff4e0;
+    --ambar-borde:#b86e00;
+    --ambar-fuerte:#b8852a;
+    --rojo:#b82020;
+    --rojo-bg:#ffe0e0;
+    --verde:#3f6b4f;
+    --linea:#d9cdb6;
+    --gris:#8a8276;
+    --sombra:rgba(31,78,121,.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:80px}
+  body{
+    font-family:'Spline Sans',sans-serif;color:var(--ink);background:var(--crema);
+    line-height:1.7;-webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background-image:radial-gradient(circle at 1px 1px, rgba(31,78,121,.06) 1px, transparent 0);
+    background-size:26px 26px;
+  }
+  a{color:var(--terra);text-decoration:none;border-bottom:1px dotted var(--terra)}
+  a:hover{color:var(--azul);border-bottom-color:var(--azul)}
+
+  .topbar{
+    position:sticky;top:0;z-index:50;background:rgba(246,241,231,.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--linea);padding:.85rem clamp(1rem,4vw,2.5rem);
+    display:flex;justify-content:space-between;align-items:center;gap:1rem;
+  }
+  .crumb{font-size:.85rem;color:var(--gris)}
+  .crumb a{color:var(--azul);border-bottom-color:transparent}
+  .crumb a:hover{border-bottom:1px dotted var(--azul)}
+  .crumb .sep{margin:0 .5rem;color:var(--linea)}
+  .nav-units{display:flex;gap:.4rem}
+  .nav-units a{
+    width:30px;height:30px;display:grid;place-items:center;border-radius:50%;
+    font-family:'Fraunces',serif;font-size:.9rem;color:var(--azul);
+    border:1px solid var(--linea);background:#fff;
+  }
+  .nav-units a.active{background:var(--azul);color:var(--crema);border-color:var(--azul)}
+  .nav-units a:hover:not(.active):not(.dis){border-color:var(--azul);background:var(--crema-2)}
+  .nav-units a.dis{opacity:.4;pointer-events:none}
+  @media(max-width:560px){.nav-units{display:none}}
+
+  /* HEADER · tono ámbar/dorado para U6 */
+  header{
+    padding:clamp(2.5rem,6vw,4.5rem) clamp(1.2rem,5vw,4rem) clamp(2rem,5vw,3.5rem);
+    background:linear-gradient(160deg,#b8852a 0%,#7d5a18 60%,#4d370d 100%);
+    color:var(--crema);position:relative;overflow:hidden;
+  }
+  header::after{
+    content:"";position:absolute;right:-12%;top:-30%;width:55vw;height:55vw;max-width:540px;max-height:540px;
+    background:radial-gradient(circle, rgba(255,225,180,.28), transparent 65%);border-radius:50%;
+  }
+  .eyebrow{font-size:.78rem;letter-spacing:.32em;text-transform:uppercase;color:#ffe1b4;font-weight:600;margin-bottom:1rem}
+  header h1{
+    font-family:'Fraunces',serif;font-weight:800;
+    font-size:clamp(2rem,6vw,4rem);line-height:1.05;letter-spacing:-.02em;max-width:18ch;
+  }
+  header h1 em{font-style:italic;font-weight:500;color:#ffe1b4}
+  .lead{margin-top:1.2rem;font-size:clamp(1rem,2vw,1.15rem);max-width:54ch;color:rgba(246,241,231,.9)}
+  .head-meta{margin-top:1.6rem;font-size:.82rem;color:rgba(246,241,231,.75);display:flex;flex-wrap:wrap;gap:1.2rem}
+  .head-meta span::before{content:"●";color:#ffe1b4;margin-right:.5rem}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 clamp(1.2rem,5vw,3rem)}
+  .grid{display:grid;grid-template-columns:240px 1fr;gap:clamp(2rem,4vw,3.5rem);padding-top:clamp(2rem,4vw,3rem);padding-bottom:5rem}
+  @media(max-width:880px){.grid{grid-template-columns:1fr}}
+
+  aside{align-self:start;position:sticky;top:80px}
+  @media(max-width:880px){aside{position:static}}
+  aside h4{
+    font-family:'Fraunces',serif;font-style:italic;font-weight:500;
+    font-size:.95rem;color:var(--terra);margin-bottom:.8rem;
+    border-bottom:1px solid var(--linea);padding-bottom:.6rem;
+  }
+  aside ol{list-style:none;counter-reset:ix}
+  aside ol li{counter-increment:ix;margin-bottom:.4rem}
+  aside ol li a{
+    display:block;padding:.4rem .2rem;font-size:.9rem;color:var(--ink);
+    border-bottom:none;border-left:2px solid transparent;padding-left:.7rem;transition:all .25s;
+  }
+  aside ol li a::before{content:counter(ix,decimal-leading-zero) " · ";color:var(--gris);font-family:'Fraunces',serif;font-style:italic}
+  aside ol li a:hover{border-left-color:var(--terra);color:var(--azul);background:var(--crema-2)}
+
+  article{max-width:62ch}
+  article section{margin-bottom:clamp(2.5rem,5vw,4rem);scroll-margin-top:80px}
+  article h2{
+    font-family:'Fraunces',serif;font-weight:600;font-size:clamp(1.5rem,4vw,2.1rem);
+    color:var(--azul);letter-spacing:-.01em;margin-bottom:1rem;line-height:1.2;
+  }
+  article h2 .n{font-family:'Fraunces',serif;font-style:italic;font-weight:500;color:var(--terra);font-size:.85em;margin-right:.4rem}
+  article h3{
+    font-family:'Fraunces',serif;font-weight:600;font-size:1.25rem;color:var(--azul-claro);
+    margin-top:1.8rem;margin-bottom:.6rem;
+  }
+  article p{margin-bottom:1rem;font-size:1.02rem}
+  article strong{color:var(--azul)}
+  article em{color:#5a5346}
+
+  ul.list,ol.list{margin:.5rem 0 1.2rem 1.4rem}
+  ul.list li,ol.list li{margin-bottom:.5rem;font-size:1.02rem}
+  ul.list li::marker{color:var(--terra)}
+  ol.list li::marker{color:var(--terra);font-weight:600;font-family:'Fraunces',serif}
+
+  code.inline{font-family:'JetBrains Mono',monospace;background:var(--crema-2);color:var(--azul);padding:.1rem .4rem;border-radius:4px;font-size:.9em}
+
+  .box{
+    background:#fffdf8;border:1px solid var(--linea);border-left:5px solid var(--azul);
+    border-radius:14px;padding:1.2rem 1.4rem;margin:1.5rem 0;
+  }
+  .box.amber{border-left-color:var(--ambar-borde);background:var(--ambar)}
+  .box.amber .b-title{color:var(--ambar-borde)}
+  .box.red{border-left-color:var(--rojo);background:var(--rojo-bg)}
+  .box.red .b-title{color:var(--rojo)}
+  .box .b-title{
+    font-family:'Fraunces',serif;font-weight:600;color:var(--azul);
+    font-size:1.05rem;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;
+  }
+  .box p{font-size:.96rem;margin-bottom:.6rem}
+  .box p:last-child{margin-bottom:0}
+  .box ul li{font-size:.96rem}
+
+  .tbl{overflow-x:auto;margin:1.5rem 0;border-radius:12px;border:1px solid var(--linea)}
+  table{width:100%;border-collapse:collapse;background:#fffdf8;font-size:.94rem;min-width:520px}
+  thead{background:var(--azul);color:var(--crema)}
+  th{font-family:'Fraunces',serif;font-weight:600;text-align:left;padding:.8rem 1rem;font-size:.95rem;letter-spacing:.01em}
+  td{padding:.7rem 1rem;border-top:1px solid var(--linea);vertical-align:top}
+  tbody tr:nth-child(even){background:var(--crema-2)}
+  td.feat{font-weight:600;color:var(--azul);font-family:'Fraunces',serif}
+
+  /* Tarjetas de asistentes */
+  .ai-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:.7rem;margin:1rem 0}
+  .ai-card{background:#fffdf8;border:1px solid var(--linea);border-top:4px solid var(--ambar-fuerte);border-radius:12px;padding:.9rem 1rem}
+  .ai-card h5{font-family:'Fraunces',serif;color:var(--azul);font-size:1.05rem;margin-bottom:.15rem}
+  .ai-card .empresa{font-size:.78rem;color:var(--gris);font-style:italic;margin-bottom:.4rem}
+  .ai-card p{font-size:.85rem;margin:0;color:#5a5346}
+
+  /* Prompts MAL vs BIEN */
+  .prompts{display:grid;grid-template-columns:1fr;gap:.7rem;margin:1rem 0}
+  .prompt{border:1px solid var(--linea);border-radius:12px;padding:.9rem 1.1rem;background:#fffdf8}
+  .prompt.bad{border-left:4px solid var(--rojo)}
+  .prompt.good{border-left:4px solid var(--verde)}
+  .prompt .label{font-family:'Fraunces',serif;font-size:.85rem;font-weight:600;margin-bottom:.4rem;letter-spacing:.02em}
+  .prompt.bad .label{color:var(--rojo)}
+  .prompt.good .label{color:var(--verde)}
+  .prompt p{font-size:.92rem;margin:0;font-style:italic;color:#5a5346}
+
+  /* Usos buenos / malos */
+  .uses{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:1rem 0}
+  @media(max-width:560px){.uses{grid-template-columns:1fr}}
+  .uses .col{background:#fffdf8;border:1px solid var(--linea);border-radius:12px;padding:1rem 1.1rem}
+  .uses .col.good{border-top:4px solid var(--verde)}
+  .uses .col.bad{border-top:4px solid var(--rojo)}
+  .uses .col h5{font-family:'Fraunces',serif;font-size:1rem;margin-bottom:.5rem}
+  .uses .col.good h5{color:var(--verde)}
+  .uses .col.bad h5{color:var(--rojo)}
+  .uses .col ul{margin:0;padding-left:1.2rem}
+  .uses .col li{font-size:.9rem;margin-bottom:.3rem;color:#5a5346}
+
+  /* Lista de "futuro del trabajo" */
+  .future{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.7rem;margin:1rem 0}
+  .future .col{background:#fffdf8;border:1px solid var(--linea);border-radius:12px;padding:1rem 1.1rem}
+  .future .col .top{font-family:'Fraunces',serif;font-size:1rem;font-weight:600;margin-bottom:.4rem;padding-bottom:.4rem;border-bottom:1px solid var(--linea)}
+  .future .col.cambian .top{color:var(--ambar-fuerte)}
+  .future .col.aparecen .top{color:var(--azul-claro)}
+  .future .col.persisten .top{color:var(--verde)}
+  .future .col ul{margin:0;padding-left:1.1rem}
+  .future .col li{font-size:.88rem;margin-bottom:.3rem;color:#5a5346}
+
+  .activity{background:#fffdf8;border:1px solid var(--linea);border-radius:14px;padding:1.2rem 1.4rem;margin:1.2rem 0}
+  .activity h4{font-family:'Fraunces',serif;font-weight:600;color:var(--azul);font-size:1.1rem;margin-bottom:.6rem}
+  .activity.star{border-left:5px solid var(--terra)}
+  .activity.star h4::after{content:" ⭐";font-style:normal}
+
+  .checklist{margin:1rem 0;padding:0;list-style:none}
+  .checklist li{padding:.6rem 0 .6rem 1.8rem;position:relative;font-size:.98rem;border-bottom:1px dashed var(--linea)}
+  .checklist li::before{
+    content:"✓";position:absolute;left:0;top:.5rem;
+    width:1.2rem;height:1.2rem;display:grid;place-items:center;
+    border:1px solid var(--terra);border-radius:50%;color:var(--terra);font-size:.75rem;font-weight:700;
+  }
+  .checklist li:last-child{border-bottom:none}
+
+  /* Cierre del año */
+  .year-end{
+    background:linear-gradient(160deg,#1F4E79,#163a5c);
+    color:var(--crema);border-radius:18px;padding:2rem 1.8rem;margin:2rem 0;
+    position:relative;overflow:hidden;
+  }
+  .year-end::after{
+    content:"";position:absolute;right:-15%;bottom:-30%;width:50vw;height:50vw;max-width:400px;max-height:400px;
+    background:radial-gradient(circle,rgba(255,225,180,.18),transparent 65%);border-radius:50%;
+  }
+  .year-end h3{font-family:'Fraunces',serif;font-size:1.5rem;color:#ffe1b4;margin-bottom:.8rem;position:relative}
+  .year-end p{color:rgba(246,241,231,.92);font-size:1rem;position:relative}
+  .year-end .firma{font-family:'Fraunces',serif;font-style:italic;font-size:1.3rem;color:#ffe1b4;margin-top:1.2rem;text-align:right;position:relative}
+
+  .pager{display:flex;justify-content:space-between;gap:1rem;margin-top:3rem;padding-top:2rem;border-top:1px solid var(--linea)}
+  .pager a{flex:1;background:#fffdf8;border:1px solid var(--linea);border-radius:14px;padding:1rem 1.2rem;transition:all .25s;color:var(--ink)}
+  .pager a:hover{border-color:var(--azul);background:var(--crema-2);transform:translateY(-2px)}
+  .pager a.disabled{opacity:.4;pointer-events:none}
+  .pager .label{font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gris);margin-bottom:.3rem}
+  .pager .title{font-family:'Fraunces',serif;font-weight:600;color:var(--azul);font-size:1rem}
+  .pager .next{text-align:right}
+
+  footer{background:#10293f;color:rgba(246,241,231,.8);padding:2.5rem 1.5rem;text-align:center;font-size:.85rem}
+  footer .f-title{font-family:'Fraunces',serif;color:var(--crema);font-size:1.2rem;margin-bottom:.4rem}
+
+  .reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="crumb">
+    <a href="portal_curso_informatica.html">Portal del curso</a>
+    <span class="sep">/</span>
+    <span>Unidad 6</span>
+  </div>
+  <nav class="nav-units" aria-label="Navegación entre unidades">
+    <a href="unidad_1_fundamentos.html" title="Unidad 1">1</a>
+    <a href="unidad_2_hardware.html" title="Unidad 2">2</a>
+    <a href="unidad_3_software.html" title="Unidad 3">3</a>
+    <a href="unidad_4_productividad.html" title="Unidad 4">4</a>
+    <a href="unidad_5_pensamiento.html" title="Unidad 5">5</a>
+    <a href="#" class="active" title="Unidad 6">6</a>
+  </nav>
+</div>
+
+<header>
+  <div class="eyebrow">Unidad 6 · 3° Trimestre · Cierre del año</div>
+  <h1>Inteligencia <em>artificial</em>, ética y futuro del trabajo</h1>
+  <p class="lead">La última unidad del año. Vamos a hablar de una tecnología que está cambiando todo. Ni promesas mágicas ni profecías apocalípticas: solo herramientas para que vos seas quien la usa, y no al revés.</p>
+  <div class="head-meta">
+    <span>6 horas cátedra</span>
+    <span>8 temas + glosario</span>
+    <span>8 actividades</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="grid">
+
+    <aside>
+      <h4>En esta unidad</h4>
+      <ol>
+        <li><a href="#presentacion">Presentación</a></li>
+        <li><a href="#que-es-ia">¿Qué es la IA?</a></li>
+        <li><a href="#asistentes">Los asistentes más usados</a></li>
+        <li><a href="#prompts">Cómo escribir buenos prompts</a></li>
+        <li><a href="#limites">Sus límites</a></li>
+        <li><a href="#usos">Para qué sí y para qué no</a></li>
+        <li><a href="#etica">Ética: las preguntas difíciles</a></li>
+        <li><a href="#trabajo">El futuro del trabajo</a></li>
+        <li><a href="#identidad">Identidad y deepfakes</a></li>
+        <li><a href="#glosario">Glosario</a></li>
+        <li><a href="#actividades">Actividades</a></li>
+        <li><a href="#cierre">Cierre del año</a></li>
+      </ol>
+    </aside>
+
+    <article>
+
+      <!-- PRESENTACIÓN -->
+      <section id="presentacion" class="reveal">
+        <h2><span class="n">00</span>Presentación de la unidad</h2>
+        <p>Llegaste a la última unidad del año. Vamos a hablar de algo que ya cambió la forma en que estudiamos, trabajamos, escribimos, buscamos información y nos relacionamos: la <strong>inteligencia artificial</strong>.</p>
+        <p>No vamos a venderte promesas mágicas ni profecías apocalípticas. La IA no va a resolver todos tus problemas, pero tampoco va a dejarte sin trabajo de un día para el otro. Lo que sí va a hacer es <strong>transformar lo que hacés</strong>, en tu oficio, en tus estudios, en tu vida cotidiana.</p>
+        <p>Esta unidad te prepara para que vos seas quien <em>la usa</em>, y no al revés. Para que sepas cuándo te conviene apoyarte en ella, cuándo no, cómo detectar cuando te miente, y qué cuestiones éticas trae consigo.</p>
+        <div class="box">
+          <div class="b-title">📋 ¿Qué vas a aprender en esta unidad?</div>
+          <ul class="list">
+            <li>Qué es la IA y cuál es la diferencia con la IA generativa.</li>
+            <li>Cuáles son los asistentes más usados y cómo funcionan.</li>
+            <li>Cómo escribir buenas instrucciones (prompts) para sacarles el jugo.</li>
+            <li>Sus límites: alucinaciones, sesgos, información desactualizada.</li>
+            <li>Las preguntas éticas: ¿puedo usar IA para un CV? ¿Para un trabajo escolar?</li>
+            <li>Cómo cambia el mundo del trabajo y qué oficios persisten.</li>
+            <li>Qué son los deepfakes y cómo protegerte.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- QUÉ ES LA IA -->
+      <section id="que-es-ia" class="reveal">
+        <h2><span class="n">01</span>¿Qué es la inteligencia artificial?</h2>
+        <p>La <strong>inteligencia artificial</strong> es un campo de la informática que estudia cómo lograr que las computadoras realicen tareas que normalmente requerirían inteligencia humana: reconocer una cara, traducir un texto, jugar al ajedrez, conversar.</p>
+        <p>No es nueva: existe desde la década de 1950. Lo que cambió en los últimos años fue el acceso público a una variante muy poderosa: la <strong>IA generativa</strong>.</p>
+        <h3>IA tradicional vs. IA generativa</h3>
+        <ul class="list">
+          <li><strong>IA tradicional:</strong> clasifica, predice, recomienda. Por ejemplo: el filtro de spam de tu correo, el sistema que decide si te aprueban un crédito, las recomendaciones de YouTube y Netflix.</li>
+          <li><strong>IA generativa:</strong> <em>crea contenido nuevo</em>. Texto, imágenes, audio, video, código. ChatGPT, Gemini, Claude, DALL-E. Esta es la que explotó en los últimos años.</li>
+        </ul>
+        <h3>¿Cómo funciona, en términos simples?</h3>
+        <p>Una IA generativa de texto, como ChatGPT, no «piensa» ni «entiende» lo que dice. Hace algo más parecido a un <strong>autocompletado gigantesco</strong>: predice cuál es la siguiente palabra más probable, una y otra vez, hasta armar una respuesta.</p>
+        <p>El truco está en la escala: estos modelos fueron entrenados con cantidades enormes de texto (millones de libros, páginas web, conversaciones). Al ver tantos ejemplos, aprenden patrones tan sutiles que pueden generar respuestas que parecen escritas por una persona.</p>
+        <div class="box amber">
+          <div class="b-title">🔑 Por qué es importante entender esto</div>
+          <p>Si entendés que la IA <strong>predice la palabra más probable</strong>, entendés por qué a veces «alucina» (inventa cosas), por qué tiene sesgos, y por qué es buena imitando estilos pero a veces falla en hechos puntuales.</p>
+          <p><em>La IA no es un cerebro: es una máquina estadística muy sofisticada.</em></p>
+        </div>
+      </section>
+
+      <!-- ASISTENTES -->
+      <section id="asistentes" class="reveal">
+        <h2><span class="n">02</span>Los asistentes de IA más usados</h2>
+        <p>Hoy existen varios asistentes de IA gratuitos o de bajo costo. Casi todos hacen lo mismo a nivel básico: les escribís en lenguaje natural y te responden. Las diferencias entre uno y otro están en los detalles.</p>
+        <div class="ai-cards">
+          <div class="ai-card">
+            <h5>ChatGPT</h5>
+            <div class="empresa">OpenAI</div>
+            <p>El más popular y conocido. Tiene una versión gratuita. Muy usado para redacción, conversación y programación.</p>
+          </div>
+          <div class="ai-card">
+            <h5>Gemini</h5>
+            <div class="empresa">Google</div>
+            <p>Integrado con Gmail, Drive y la búsqueda de Google. Útil si ya usás el ecosistema Google.</p>
+          </div>
+          <div class="ai-card">
+            <h5>Claude</h5>
+            <div class="empresa">Anthropic</div>
+            <p>Bueno para textos largos, análisis y razonamiento. Tiene fama de ser más cuidadoso en sus respuestas.</p>
+          </div>
+          <div class="ai-card">
+            <h5>Copilot</h5>
+            <div class="empresa">Microsoft</div>
+            <p>Integrado a Windows y Microsoft 365. Aparece en Word, Excel y demás.</p>
+          </div>
+          <div class="ai-card">
+            <h5>Meta AI</h5>
+            <div class="empresa">Meta</div>
+            <p>Disponible dentro de WhatsApp e Instagram. Lo activás escribiendo «@MetaAI» en cualquier chat.</p>
+          </div>
+        </div>
+        <p>Para esta materia, lo importante no es elegir bando, sino aprender los principios generales. Si arrancás con uno (te recomendamos ChatGPT gratuito o Meta AI en WhatsApp por accesibilidad), los demás los manejás enseguida.</p>
+      </section>
+
+      <!-- PROMPTS -->
+      <section id="prompts" class="reveal">
+        <h2><span class="n">03</span>Cómo escribir buenas instrucciones (prompts)</h2>
+        <p>Un <strong>prompt</strong> es la instrucción que le das a una IA. La diferencia entre una respuesta inútil y una excelente suele estar en cómo formulaste el prompt. Acá hay un par de principios.</p>
+        <h3>Principio 1 · Dale contexto</h3>
+        <div class="prompts">
+          <div class="prompt bad">
+            <div class="label">PROMPT MAL · sin contexto</div>
+            <p>«Escribime un mail.»</p>
+          </div>
+          <div class="prompt good">
+            <div class="label">PROMPT BIEN · con contexto</div>
+            <p>«Soy auxiliar administrativo en una PyME de Misiones. Necesito escribir un mail al gerente de RRHH pidiendo una licencia médica de 5 días. Tono formal pero cercano.»</p>
+          </div>
+        </div>
+        <h3>Principio 2 · Sé específico/a sobre el formato</h3>
+        <div class="prompts">
+          <div class="prompt bad">
+            <div class="label">PROMPT MAL · sin formato</div>
+            <p>«Hablame de las plantas.»</p>
+          </div>
+          <div class="prompt good">
+            <div class="label">PROMPT BIEN · con formato</div>
+            <p>«Explicame en 5 puntos breves cómo cuidar plantas de interior con poca luz, usando lenguaje simple, sin tecnicismos.»</p>
+          </div>
+        </div>
+        <h3>Principio 3 · Dale ejemplos cuando puedas</h3>
+        <p>Si querés que la IA te dé respuestas en un estilo determinado, mostrarle un ejemplo de lo que querés funciona mucho mejor que describirlo. <em>«Quiero un texto con este estilo:»</em> y pegás un párrafo modelo.</p>
+        <h3>Principio 4 · Iterá</h3>
+        <p>Si la primera respuesta no te gustó, no empieces de cero. Pedile correcciones específicas: «hacelo más corto», «cambiá el tono a formal», «sacá la parte del medio», «agregale un ejemplo». Las respuestas se mejoran conversando.</p>
+        <h3>Principio 5 · Dividí las tareas complejas</h3>
+        <p>Si querés que te ayude con algo grande (un informe, un proyecto), no le pidas todo de una. Dividí en etapas: primero el índice, después cada sección, después el resumen.</p>
+        <div class="box">
+          <div class="b-title">🎯 La regla básica que cambia todo</div>
+          <p>Tratá a la IA como a <strong>un colaborador muy capaz pero recién llegado al puesto</strong>. No sabe nada de tu situación a menos que se lo cuentes. Si vos le contás contexto, le das ejemplos y le explicás qué necesitás, te va a sorprender. Si le tirás pedidos vagos, te va a dar respuestas vagas.</p>
+          <p><em>La gente que se queja de que «la IA no sirve» suele hacerle pedidos genéricos. La gente que le saca jugo le habla con detalle.</em></p>
+        </div>
+      </section>
+
+      <!-- LÍMITES -->
+      <section id="limites" class="reveal">
+        <h2><span class="n">04</span>Sus límites: cuando la IA falla</h2>
+        <p>La IA no es perfecta. De hecho, falla bastante seguido, y de maneras a veces sorprendentes. Conocer sus límites es <strong>tan importante como saber usarla</strong>.</p>
+        <h3>Alucinaciones</h3>
+        <p>Una <strong>alucinación</strong> es cuando una IA genera información que <em>suena plausible pero es completamente inventada</em>. Casos típicos:</p>
+        <ul class="list">
+          <li>Inventa citas de libros que no existen, o atribuye frases a autores que nunca las dijeron.</li>
+          <li>Inventa fechas, estadísticas, leyes.</li>
+          <li>Si le preguntás por un libro o sentencia judicial que no existe, te puede armar un resumen detallado como si fuera real.</li>
+          <li>Inventa funciones de programas o comandos que no existen.</li>
+        </ul>
+        <h3>Sesgos</h3>
+        <p>La IA aprende del texto que escribieron millones de personas. Si ese texto tiene prejuicios (de género, raza, edad, clase), la IA los reproduce. Por ejemplo, durante mucho tiempo, si le pedías una imagen de «un profesional exitoso», generaba mayoritariamente varones blancos en traje.</p>
+        <h3>Información desactualizada</h3>
+        <p>Algunos modelos tienen una «fecha de corte»: no saben nada de lo que pasó después de cierta fecha. Otros sí tienen acceso a Internet, pero igual conviene verificar fechas y datos recientes.</p>
+        <h3>Tareas en las que falla más</h3>
+        <ul class="list">
+          <li>Cuentas matemáticas complejas (mejor pedirle que muestre el procedimiento, o usar una calculadora).</li>
+          <li>Razonamiento lógico con muchos pasos.</li>
+          <li>Detalles geográficos muy locales (datos de tu pueblo, calles puntuales, comercios chicos).</li>
+          <li>Datos muy recientes o de coyuntura.</li>
+        </ul>
+        <div class="box red">
+          <div class="b-title">⚠️ La regla de oro</div>
+          <p>Siempre <strong>verificá los datos importantes</strong>: cifras, fechas, citas, leyes, información médica/legal/financiera. La IA es un primer borrador y un acelerador, no una fuente confiable de hechos.</p>
+          <p>Si vas a usar lo que te dijo para tomar una decisión que importa o publicar algo, <em>chequealo con una fuente confiable.</em> Vos sos la última instancia de verificación.</p>
+        </div>
+      </section>
+
+      <!-- USOS -->
+      <section id="usos" class="reveal">
+        <h2><span class="n">05</span>Para qué sí y para qué no</h2>
+        <div class="uses">
+          <div class="col good">
+            <h5>✓ Usos donde brilla</h5>
+            <ul>
+              <li>Redactar borradores de mails, cartas, descripciones.</li>
+              <li>Reformular textos (más formal, más corto, más claro).</li>
+              <li>Resumir documentos largos.</li>
+              <li>Traducir entre idiomas.</li>
+              <li>Explicar conceptos difíciles («explicámelo como si tuviera 12 años»).</li>
+              <li>Generar ideas, lluvia de ideas.</li>
+              <li>Estructurar información en cuadros, listas, esquemas.</li>
+              <li>Ayuda en programación.</li>
+              <li>Practicar idiomas conversando.</li>
+            </ul>
+          </div>
+          <div class="col bad">
+            <h5>✗ Usos donde NO</h5>
+            <ul>
+              <li>Diagnóstico médico definitivo (nunca reemplaza al médico).</li>
+              <li>Consejo legal vinculante (orienta, pero verificá con un abogado).</li>
+              <li>Decisiones críticas que afectan a otras personas.</li>
+              <li>Cargarle datos personales sensibles (DNI, contraseñas, datos bancarios).</li>
+              <li>Suplantar tu voz cuando importa la autoría (carta personal, mensaje a un familiar). <em>La gente lo nota.</em></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ÉTICA -->
+      <section id="etica" class="reveal">
+        <h2><span class="n">06</span>Ética: las preguntas difíciles</h2>
+        <p>La IA abrió un montón de preguntas que la sociedad todavía está discutiendo. No hay respuestas únicas, pero hay que tomar postura. Algunas de las más importantes:</p>
+
+        <h3>¿Se puede entregar un trabajo escolar hecho con IA?</h3>
+        <p><strong>Depende.</strong> Si el/la profesor/a lo prohíbe explícitamente, no. Si lo permite con condiciones, seguilas. Si no se mencionó, lo más honesto es preguntar.</p>
+        <p>Pero hay una distinción importante: una cosa es usar la IA <strong>como apoyo</strong> (te ayuda con un borrador, te corrige ortografía, te da ideas), y otra es <strong>entregar como propio</strong> algo que escribió la máquina. Lo segundo es engaño, lo primero no.</p>
+        <p>Hay además un costo personal: si la IA piensa por vos, <em>no aprendiste vos</em>. La pregunta ética se mezcla con una práctica: ¿estoy aprendiendo o solo cumpliendo?</p>
+
+        <h3>¿Y para un CV o una carta de presentación?</h3>
+        <p>Acá hay más permisividad: usar IA para pulir tu CV no se considera trampa. Si vos le pasás tus datos reales y la IA te ayuda a redactarlos con mejor estilo, no es deshonesto. Lo que sí es deshonesto es mentir en el CV: <em>la IA no puede inventarte títulos ni experiencias que no tenés.</em></p>
+
+        <h3>¿Y el trabajo de artistas y escritores?</h3>
+        <p>La IA fue entrenada con millones de obras humanas (libros, ilustraciones, canciones) sin siempre dar permiso ni compensación. Hay juicios abiertos en varios países. Hay un consenso emergente: pedirle a la IA que imite a un autor vivo con fines comerciales es problemático; usarla como apoyo declarando su uso es más defendible.</p>
+
+        <h3>¿La IA va a reemplazar mi trabajo?</h3>
+        <p>Probablemente no «reemplazar» del todo, pero sí «transformar». Hay tareas que se automatizan fácil (procesar texto, redactar cosas rutinarias, traducir, resumir). Hay otras que son resistentes: trabajos manuales especializados, cuidado de personas, creatividad genuina, decisiones complejas, relaciones humanas.</p>
+        <div class="box">
+          <div class="b-title">💡 Una idea para llevarse de esta unidad</div>
+          <p>La pregunta no es <em>«¿la IA me va a reemplazar?»</em>. La pregunta es <em>«¿voy a quedar atrás por no aprender a usarla?»</em>.</p>
+          <p>Aprender a usarla no requiere ser experto/a en informática. Requiere lo que estás haciendo ahora: estudiar, probar, equivocarse, mantenerse curioso/a.</p>
+        </div>
+      </section>
+
+      <!-- TRABAJO -->
+      <section id="trabajo" class="reveal">
+        <h2><span class="n">07</span>El futuro del trabajo</h2>
+        <p>Pensemos juntos qué oficios y profesiones se están transformando, cuáles aparecen y cuáles persisten más o menos igual.</p>
+        <div class="future">
+          <div class="col cambian">
+            <div class="top">Oficios que se transforman</div>
+            <ul>
+              <li>Administrativos.</li>
+              <li>Atención al cliente.</li>
+              <li>Programación.</li>
+              <li>Diseño gráfico.</li>
+              <li>Educación.</li>
+              <li>Periodismo.</li>
+              <li>Traducción.</li>
+            </ul>
+          </div>
+          <div class="col aparecen">
+            <div class="top">Oficios que aparecen</div>
+            <ul>
+              <li>Especialista en prompts.</li>
+              <li>Entrenadores de modelos.</li>
+              <li>Especialistas en ética de IA.</li>
+              <li>Verificadores de información.</li>
+              <li>Auditores de algoritmos.</li>
+            </ul>
+          </div>
+          <div class="col persisten">
+            <div class="top">Oficios resistentes</div>
+            <ul>
+              <li>Electricistas, plomeros.</li>
+              <li>Mecánicos, técnicos.</li>
+              <li>Personal de salud.</li>
+              <li>Docentes.</li>
+              <li>Constructores, carpinteros.</li>
+              <li>Cocineros, peluqueros.</li>
+              <li>Cuidadores.</li>
+            </ul>
+          </div>
+        </div>
+        <p>Muchos de los oficios resistentes se conectan directamente con lo que se enseña en la EPET (electricidad, mecánica, mantenimiento). <strong>La intersección entre saber técnico-manual y manejo digital es probablemente la combinación más sólida para los próximos años.</strong></p>
+        <p>Un electricista que sabe usar IA para sacar presupuestos, gestionar clientes y aprender técnicas nuevas tiene una ventaja enorme sobre quien solo sabe lo manual. Lo mismo vale para cualquier oficio.</p>
+      </section>
+
+      <!-- IDENTIDAD -->
+      <section id="identidad" class="reveal">
+        <h2><span class="n">08</span>Identidad digital en la era de la IA</h2>
+        <h3>Deepfakes</h3>
+        <p>Un <strong>deepfake</strong> es un video, una imagen o un audio falso donde una persona real aparece diciendo o haciendo algo que nunca hizo, generado por IA. La tecnología se volvió tan accesible que cualquiera con un celular puede armar uno.</p>
+        <h3>Riesgos cotidianos</h3>
+        <ul class="list">
+          <li><strong>Estafas con audios falsos:</strong> imitan la voz de un familiar tuyo («hola mamá, perdí el celular, mandame plata a este alias»).</li>
+          <li><strong>Videos falsos de figuras públicas:</strong> diciendo cosas que nunca dijeron, para difundir desinformación.</li>
+          <li><strong>Imágenes para difamar:</strong> fotos manipuladas con fines de hostigamiento o extorsión.</li>
+        </ul>
+        <h3>Cómo protegerte</h3>
+        <ul class="list">
+          <li>Si recibís un audio o video que parece de un familiar pidiendo algo urgente (sobre todo plata), <strong>verificá por otro canal</strong>: llamalo, mandale un WhatsApp normal, preguntá algo que solo esa persona sabría.</li>
+          <li>No publiques mucho material tuyo (especialmente audio y video) en lugares de acceso público.</li>
+          <li>Configurá la privacidad de tus redes para que tu contenido no esté a disposición de cualquiera.</li>
+          <li>Si ves un video impactante de una figura pública diciendo algo escandaloso, antes de creer o reenviar: <strong>verificá en medios serios</strong>.</li>
+        </ul>
+
+        <h3>Derechos de autor y contenido generado por IA</h3>
+        <p>Las leyes están todavía en discusión. En varios países, lo creado únicamente por una IA <em>no tiene derechos de autor</em>, porque para tenerlos «el autor» debe ser humano. Si usás una imagen generada por IA en algo público, lo más honesto es <strong>aclarar que fue generada por IA</strong>.</p>
+
+        <h3>Tu voz digital propia</h3>
+        <p>Una preocupación interesante: si todo lo que publicás suena exactamente igual a lo que escribe todo el mundo (porque todos usan el mismo ChatGPT con prompts parecidos), <strong>te volvés intercambiable</strong>. Tu voz, tu manera de decir las cosas, tu personalidad se diluye.</p>
+        <p>Por eso: usá la IA como herramienta, no como sustituto de tu pensamiento. Que te ayude a escribir más rápido, no que te reemplace al pensar.</p>
+      </section>
+
+      <!-- GLOSARIO -->
+      <section id="glosario" class="reveal">
+        <h2><span class="n">09</span>Glosario de la unidad</h2>
+        <ul class="list">
+          <li><strong>Inteligencia artificial (IA):</strong> campo que estudia tareas computacionales que requerirían inteligencia humana.</li>
+          <li><strong>IA generativa:</strong> tipo de IA que crea contenido nuevo (texto, imagen, audio, video).</li>
+          <li><strong>Modelo:</strong> el sistema de IA en sí (GPT, Gemini, Claude son modelos).</li>
+          <li><strong>Prompt:</strong> la instrucción que se le da a la IA.</li>
+          <li><strong>Alucinación:</strong> información que la IA genera que parece verdadera pero es inventada.</li>
+          <li><strong>Sesgo:</strong> prejuicio heredado del material con el que fue entrenada la IA.</li>
+          <li><strong>Fecha de corte:</strong> fecha hasta la cual el modelo tiene información.</li>
+          <li><strong>Deepfake:</strong> video, imagen o audio falso de una persona real, generado por IA.</li>
+          <li><strong>Asistente conversacional:</strong> programa con el que se habla en lenguaje natural y que responde.</li>
+        </ul>
+      </section>
+
+      <!-- ACTIVIDADES -->
+      <section id="actividades" class="reveal">
+        <h2><span class="n">10</span>Actividades</h2>
+
+        <div class="activity">
+          <h4>Actividad 1 · Tu primer prompt con propósito</h4>
+          <p>Entrá a un asistente de IA (ChatGPT, Gemini, Meta AI dentro de WhatsApp, o el que prefieras) y pedile ayuda con una tarea real tuya: redactar un mail, resumir un texto, generar ideas, explicar un concepto. Aplicá los principios vistos: dale contexto, sé específico/a sobre el formato, iterá si no te gustó la primera respuesta. <strong>Guardá la conversación</strong> y entregala como evidencia.</p>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 2 · Detectar alucinaciones</h4>
+          <p>Pedile a un asistente de IA información sobre temas locales y verificá lo que te diga con fuentes oficiales:</p>
+          <ul class="list">
+            <li>«¿Cuántos habitantes tiene Jardín América según el último censo?»</li>
+            <li>«Dame tres libros publicados sobre la historia de Misiones después de 2020.»</li>
+            <li>«¿Cuál es el monto exacto de la AUH este mes?»</li>
+          </ul>
+          <p>¿En qué se equivocó? ¿Qué inventó? Documentá los errores.</p>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 3 · Comparar dos asistentes</h4>
+          <p>Hacele la misma pregunta a dos asistentes diferentes (por ejemplo ChatGPT y Gemini, o ChatGPT y Meta AI). Pueden ser preguntas como «explicame qué es la fotosíntesis» o «recomendame un libro de novela histórica». Compará: ¿cuál fue más claro? ¿Cuál más detallado? ¿Hay contradicciones entre las respuestas? ¿Cuál te resultó más útil?</p>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 4 · Transformar un mal prompt en uno bueno</h4>
+          <p>Tomá el prompt <em>«Hacé algo sobre las plantas»</em> y transformalo en un buen prompt aplicando los principios vistos (contexto, formato, especificidad). Probá las dos versiones con la misma IA y compará los resultados.</p>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 5 · Debate ético en grupo</h4>
+          <p>En grupos de 3 o 4 personas, debatan y defiendan una postura para cada caso:</p>
+          <ul class="list">
+            <li>¿Está bien usar IA para escribir el trabajo final de una materia de E.P.J.A.?</li>
+            <li>¿Debería un/a profesor/a avisar si usa IA para corregir o preparar exámenes?</li>
+            <li>¿Debería una empresa decir explícitamente que el filtro de CVs lo hace una IA?</li>
+          </ul>
+          <p>Después de discutir, cada grupo presenta su postura al curso.</p>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 6 · Tu oficio frente a la IA</h4>
+          <p>Pensá en tu oficio actual o uno que te gustaría tener, y respondé:</p>
+          <ol class="list">
+            <li>¿Qué tareas de ese oficio podría hacer una IA hoy?</li>
+            <li>¿Qué tareas NO podrá hacer una IA en los próximos 10 años?</li>
+            <li>¿Qué podrías incorporar de la IA para mejorar tu trabajo?</li>
+            <li>¿Qué habilidades humanas se vuelven más valiosas en ese contexto?</li>
+          </ol>
+        </div>
+
+        <div class="activity star">
+          <h4>Actividad 7 · Producción asistida final</h4>
+          <p>Esta actividad va al portafolio de cierre del año. Elegí UNA de estas opciones y desarrollala CON ayuda de IA, <strong>declarando claramente qué hizo la IA y qué hiciste vos</strong>:</p>
+          <ul class="list">
+            <li>Un texto sobre tu trayectoria personal y por qué decidiste estudiar.</li>
+            <li>La descripción detallada de un emprendimiento que te gustaría iniciar.</li>
+            <li>Un instructivo sobre algo que sabés hacer (un oficio, una receta, una técnica).</li>
+          </ul>
+          <p>Entregá tres cosas:</p>
+          <ol class="list">
+            <li>La <strong>versión final</strong> del trabajo.</li>
+            <li>Una <strong>reflexión escrita</strong> (1 página) explicando: qué prompts usaste, qué editó la IA, qué editaste vos, y por qué tomaste cada decisión.</li>
+            <li>Una <strong>autoevaluación</strong> de qué aprendiste con este ejercicio.</li>
+          </ol>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 8 · Cuestionario final del año</h4>
+          <ol class="list">
+            <li>¿Cuál es la diferencia entre IA tradicional e IA generativa?</li>
+            <li>Mencioná tres características de un buen prompt.</li>
+            <li>¿Qué es una alucinación y por qué ocurre?</li>
+            <li>Dame dos usos donde la IA es útil y dos donde NO se debería usar.</li>
+            <li>Explicá la diferencia entre «usar IA como apoyo» y «hacer pasar como propio» un trabajo hecho por IA.</li>
+            <li>Nombrá dos oficios que se transformen con la IA y dos que persistan más o menos igual.</li>
+            <li>¿Qué es un deepfake y cómo podés protegerte?</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- CIERRE -->
+      <section id="cierre" class="reveal">
+        <h2><span class="n">11</span>Cierre de la unidad y del año</h2>
+        <p>Llegamos al final. Recorrimos un camino largo: empezamos preguntándonos qué es la informática, abrimos la caja de la computadora, aprendimos a movernos en un sistema operativo, dominamos las herramientas de productividad, nos protegimos de las estafas, aprendimos a pensar como una computadora, y nos asomamos al futuro con la inteligencia artificial.</p>
+        <p>Antes de cerrar, asegurate de que podés:</p>
+        <ul class="checklist">
+          <li>Diferenciar IA tradicional de IA generativa.</li>
+          <li>Escribir prompts efectivos con contexto y formato claros.</li>
+          <li>Detectar alucinaciones y verificar información.</li>
+          <li>Decidir cuándo conviene usar IA y cuándo no.</li>
+          <li>Argumentar una postura ética sobre el uso de IA.</li>
+          <li>Reconocer un deepfake y tomar precauciones.</li>
+          <li>Pensar en cómo la IA afecta tu propio oficio.</li>
+        </ul>
+
+        <div class="year-end">
+          <h3>Una palabra antes de irnos</h3>
+          <p>Quien arrancó el año con miedo a la tecnología hoy maneja conceptos que muchos profesionales todavía no manejan bien. Y tenés las bases para entender lo que viene en 2° año: Programación Lógica, Sistemas Operativos, Taller de Mantenimiento.</p>
+          <p>Una persona adulta que decide volver al estudio y elige especializarse en informática se está dando a sí misma una herramienta de transformación. No solo para conseguir un mejor trabajo. También para acompañar a tus hijos, para ayudar a tus padres con un trámite, para emprender, para entender el mundo en el que vivimos.</p>
+          <p>Gracias por el esfuerzo de este año. Esto recién empieza.</p>
+          <div class="firma">¡Hasta 2° año!</div>
+        </div>
+      </section>
+
+      <nav class="pager" aria-label="Navegación entre unidades">
+        <a href="unidad_5_pensamiento.html">
+          <div class="label">← Unidad anterior</div>
+          <div class="title">Unidad 5 · Pensamiento computacional</div>
+        </a>
+        <a href="portal_curso_informatica.html" class="next">
+          <div class="label">Volver al inicio →</div>
+          <div class="title">Portal del curso</div>
+        </a>
+      </nav>
+
+    </article>
+
+  </div>
+</div>
+
+<footer>
+  <div class="f-title">Introducción a la Informática</div>
+  <div>1° Año · E.P.J.A. · EPET N°7 · Ciclo lectivo 2026</div>
+</footer>
+
+<script>
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); obs.unobserve(e.target);} });
+  },{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+  const links = document.querySelectorAll('aside ol li a');
+  const sections = document.querySelectorAll('article section[id]');
+  const sObs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const id = e.target.id;
+        links.forEach(l=>{
+          if(l.getAttribute('href')==='#'+id){
+            l.style.color='var(--azul)';l.style.fontWeight='600';
+            l.style.borderLeftColor='var(--terra)';l.style.background='var(--crema-2)';
+          } else {
+            l.style.color='';l.style.fontWeight='';
+            l.style.borderLeftColor='transparent';l.style.background='';
+          }
+        });
+      }
+    });
+  },{rootMargin:'-30% 0px -60% 0px'});
+  sections.forEach(s=>sObs.observe(s));
+</script>
+
+</body>
+</html>

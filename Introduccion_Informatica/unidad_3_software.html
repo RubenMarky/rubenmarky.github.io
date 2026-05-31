@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unidad 3 · Software y sistemas operativos · 1° E.P.J.A.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,500&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1b2430;
+    --azul:#1F4E79;
+    --azul-claro:#2E75B6;
+    --crema:#f6f1e7;
+    --crema-2:#efe7d6;
+    --terra:#c1632f;
+    --terra-suave:#e8a36a;
+    --ambar:#fff4e0;
+    --ambar-borde:#b86e00;
+    --linea:#d9cdb6;
+    --gris:#8a8276;
+    --sombra:rgba(31,78,121,.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:80px}
+  body{
+    font-family:'Spline Sans',sans-serif;color:var(--ink);background:var(--crema);
+    line-height:1.7;-webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background-image:radial-gradient(circle at 1px 1px, rgba(31,78,121,.06) 1px, transparent 0);
+    background-size:26px 26px;
+  }
+  a{color:var(--terra);text-decoration:none;border-bottom:1px dotted var(--terra)}
+  a:hover{color:var(--azul);border-bottom-color:var(--azul)}
+
+  .topbar{
+    position:sticky;top:0;z-index:50;background:rgba(246,241,231,.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--linea);padding:.85rem clamp(1rem,4vw,2.5rem);
+    display:flex;justify-content:space-between;align-items:center;gap:1rem;
+  }
+  .crumb{font-size:.85rem;color:var(--gris)}
+  .crumb a{color:var(--azul);border-bottom-color:transparent}
+  .crumb a:hover{border-bottom:1px dotted var(--azul)}
+  .crumb .sep{margin:0 .5rem;color:var(--linea)}
+  .nav-units{display:flex;gap:.4rem}
+  .nav-units a{
+    width:30px;height:30px;display:grid;place-items:center;border-radius:50%;
+    font-family:'Fraunces',serif;font-size:.9rem;color:var(--azul);
+    border:1px solid var(--linea);background:#fff;
+  }
+  .nav-units a.active{background:var(--azul);color:var(--crema);border-color:var(--azul)}
+  .nav-units a:hover:not(.active):not(.dis){border-color:var(--azul);background:var(--crema-2)}
+  .nav-units a.dis{opacity:.4;pointer-events:none}
+  @media(max-width:560px){.nav-units{display:none}}
+
+  /* HEADER - tono terracota para U3 */
+  header{
+    padding:clamp(2.5rem,6vw,4.5rem) clamp(1.2rem,5vw,4rem) clamp(2rem,5vw,3.5rem);
+    background:linear-gradient(160deg,#8a3f1a 0%,#5f2a13 60%,#3b1a0c 100%);
+    color:var(--crema);position:relative;overflow:hidden;
+  }
+  header::after{
+    content:"";position:absolute;right:-12%;top:-30%;width:55vw;height:55vw;max-width:540px;max-height:540px;
+    background:radial-gradient(circle, rgba(255,200,140,.28), transparent 65%);border-radius:50%;
+  }
+  .eyebrow{font-size:.78rem;letter-spacing:.32em;text-transform:uppercase;color:#f3c79b;font-weight:600;margin-bottom:1rem}
+  header h1{
+    font-family:'Fraunces',serif;font-weight:800;
+    font-size:clamp(2rem,6vw,4rem);line-height:1.05;letter-spacing:-.02em;max-width:18ch;
+  }
+  header h1 em{font-style:italic;font-weight:500;color:#f3c79b}
+  .lead{margin-top:1.2rem;font-size:clamp(1rem,2vw,1.15rem);max-width:54ch;color:rgba(246,241,231,.88)}
+  .head-meta{margin-top:1.6rem;font-size:.82rem;color:rgba(246,241,231,.7);display:flex;flex-wrap:wrap;gap:1.2rem}
+  .head-meta span::before{content:"●";color:#f3c79b;margin-right:.5rem}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 clamp(1.2rem,5vw,3rem)}
+  .grid{display:grid;grid-template-columns:240px 1fr;gap:clamp(2rem,4vw,3.5rem);padding-top:clamp(2rem,4vw,3rem);padding-bottom:5rem}
+  @media(max-width:880px){.grid{grid-template-columns:1fr}}
+
+  aside{align-self:start;position:sticky;top:80px}
+  @media(max-width:880px){aside{position:static}}
+  aside h4{
+    font-family:'Fraunces',serif;font-style:italic;font-weight:500;
+    font-size:.95rem;color:var(--terra);margin-bottom:.8rem;
+    border-bottom:1px solid var(--linea);padding-bottom:.6rem;
+  }
+  aside ol{list-style:none;counter-reset:ix}
+  aside ol li{counter-increment:ix;margin-bottom:.4rem}
+  aside ol li a{
+    display:block;padding:.4rem .2rem;font-size:.9rem;color:var(--ink);
+    border-bottom:none;border-left:2px solid transparent;padding-left:.7rem;transition:all .25s;
+  }
+  aside ol li a::before{content:counter(ix,decimal-leading-zero) " · ";color:var(--gris);font-family:'Fraunces',serif;font-style:italic}
+  aside ol li a:hover{border-left-color:var(--terra);color:var(--azul);background:var(--crema-2)}
+
+  article{max-width:62ch}
+  article section{margin-bottom:clamp(2.5rem,5vw,4rem);scroll-margin-top:80px}
+  article h2{
+    font-family:'Fraunces',serif;font-weight:600;font-size:clamp(1.5rem,4vw,2.1rem);
+    color:var(--azul);letter-spacing:-.01em;margin-bottom:1rem;line-height:1.2;
+  }
+  article h2 .n{font-family:'Fraunces',serif;font-style:italic;font-weight:500;color:var(--terra);font-size:.85em;margin-right:.4rem}
+  article h3{
+    font-family:'Fraunces',serif;font-weight:600;font-size:1.25rem;color:var(--azul-claro);
+    margin-top:1.8rem;margin-bottom:.6rem;
+  }
+  article p{margin-bottom:1rem;font-size:1.02rem}
+  article strong{color:var(--azul)}
+  article em{color:#5a5346}
+
+  ul.list,ol.list{margin:.5rem 0 1.2rem 1.4rem}
+  ul.list li,ol.list li{margin-bottom:.5rem;font-size:1.02rem}
+  ul.list li::marker{color:var(--terra)}
+  ol.list li::marker{color:var(--terra);font-weight:600;font-family:'Fraunces',serif}
+
+  .box{
+    background:#fffdf8;border:1px solid var(--linea);border-left:5px solid var(--azul);
+    border-radius:14px;padding:1.2rem 1.4rem;margin:1.5rem 0;
+  }
+  .box.amber{border-left-color:var(--ambar-borde);background:var(--ambar)}
+  .box.amber .b-title{color:var(--ambar-borde)}
+  .box .b-title{
+    font-family:'Fraunces',serif;font-weight:600;color:var(--azul);
+    font-size:1.05rem;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;
+  }
+  .box p{font-size:.96rem;margin-bottom:.6rem}
+  .box p:last-child{margin-bottom:0}
+  .box ul li{font-size:.96rem}
+
+  .tbl{overflow-x:auto;margin:1.5rem 0;border-radius:12px;border:1px solid var(--linea)}
+  table{width:100%;border-collapse:collapse;background:#fffdf8;font-size:.94rem;min-width:520px}
+  thead{background:var(--azul);color:var(--crema)}
+  th{font-family:'Fraunces',serif;font-weight:600;text-align:left;padding:.8rem 1rem;font-size:.95rem;letter-spacing:.01em}
+  td{padding:.7rem 1rem;border-top:1px solid var(--linea);vertical-align:top}
+  tbody tr:nth-child(even){background:var(--crema-2)}
+  td.feat{font-weight:600;color:var(--azul);font-family:'Fraunces',serif}
+
+  /* Cuatro libertades del software libre */
+  .freedoms{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.8rem;margin:1.2rem 0}
+  .freedom{background:#fffdf8;border:1px solid var(--linea);border-top:4px solid var(--terra);border-radius:12px;padding:1rem 1.1rem;position:relative}
+  .freedom .num{font-family:'Fraunces',serif;font-style:italic;color:var(--terra);font-size:1.1rem;margin-bottom:.3rem}
+  .freedom h5{font-family:'Fraunces',serif;color:var(--azul);font-size:1rem;margin-bottom:.3rem;line-height:1.2}
+  .freedom p{font-size:.88rem;margin:0;color:#5a5346}
+
+  /* Atajos de teclado */
+  .shortcuts{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.6rem;margin:1rem 0}
+  .sc{display:flex;gap:.7rem;align-items:flex-start;background:#fffdf8;border:1px solid var(--linea);border-radius:10px;padding:.7rem .9rem}
+  .sc kbd{
+    background:var(--azul);color:var(--crema);font-family:'Fraunces',serif;
+    padding:.2rem .55rem;border-radius:5px;font-size:.8rem;font-weight:600;
+    flex-shrink:0;letter-spacing:.02em;
+  }
+  .sc span{font-size:.9rem;color:#5a5346}
+
+  /* Ruta de archivo destacada */
+  .path{
+    text-align:center;background:var(--crema-2);border-radius:14px;padding:1.2rem 1rem;margin:1.2rem 0;
+    font-family:'Fraunces',serif;color:var(--azul);font-weight:600;font-size:1.05rem;
+    overflow-x:auto;white-space:nowrap;
+  }
+
+  /* Estructura de carpetas tipo árbol */
+  .tree{
+    background:#fffdf8;border:1px solid var(--linea);border-radius:12px;padding:1.2rem 1.5rem;
+    font-family:'Fraunces',serif;font-size:.95rem;line-height:1.8;margin:1.2rem 0;
+  }
+  .tree .folder{color:var(--azul);font-weight:600}
+  .tree .child{margin-left:1.5rem;color:#5a5346;font-style:italic;font-weight:400;font-size:.88rem}
+  .tree .sub{margin-left:1.5rem}
+
+  /* Operaciones (chips) */
+  .ops{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.6rem;margin:1rem 0}
+  .op-card{background:#fffdf8;border:1px solid var(--linea);border-radius:10px;padding:.7rem .9rem;font-size:.92rem}
+  .op-card strong{display:block;color:var(--azul);font-family:'Fraunces',serif;margin-bottom:.15rem;font-size:.95rem}
+
+  /* Actividades */
+  .activity{background:#fffdf8;border:1px solid var(--linea);border-radius:14px;padding:1.2rem 1.4rem;margin:1.2rem 0}
+  .activity h4{font-family:'Fraunces',serif;font-weight:600;color:var(--azul);font-size:1.1rem;margin-bottom:.6rem}
+
+  .checklist{margin:1rem 0;padding:0;list-style:none}
+  .checklist li{padding:.6rem 0 .6rem 1.8rem;position:relative;font-size:.98rem;border-bottom:1px dashed var(--linea)}
+  .checklist li::before{
+    content:"✓";position:absolute;left:0;top:.5rem;
+    width:1.2rem;height:1.2rem;display:grid;place-items:center;
+    border:1px solid var(--terra);border-radius:50%;color:var(--terra);font-size:.75rem;font-weight:700;
+  }
+  .checklist li:last-child{border-bottom:none}
+
+  .pager{display:flex;justify-content:space-between;gap:1rem;margin-top:3rem;padding-top:2rem;border-top:1px solid var(--linea)}
+  .pager a{flex:1;background:#fffdf8;border:1px solid var(--linea);border-radius:14px;padding:1rem 1.2rem;transition:all .25s;color:var(--ink)}
+  .pager a:hover{border-color:var(--azul);background:var(--crema-2);transform:translateY(-2px)}
+  .pager a.disabled{opacity:.4;pointer-events:none}
+  .pager .label{font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gris);margin-bottom:.3rem}
+  .pager .title{font-family:'Fraunces',serif;font-weight:600;color:var(--azul);font-size:1rem}
+  .pager .next{text-align:right}
+
+  footer{background:#10293f;color:rgba(246,241,231,.8);padding:2.5rem 1.5rem;text-align:center;font-size:.85rem}
+  footer .f-title{font-family:'Fraunces',serif;color:var(--crema);font-size:1.2rem;margin-bottom:.4rem}
+
+  .reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="crumb">
+    <a href="portal_curso_informatica.html">Portal del curso</a>
+    <span class="sep">/</span>
+    <span>Unidad 3</span>
+  </div>
+  <nav class="nav-units" aria-label="Navegación entre unidades">
+    <a href="unidad_1_fundamentos.html" title="Unidad 1">1</a>
+    <a href="unidad_2_hardware.html" title="Unidad 2">2</a>
+    <a href="#" class="active" title="Unidad 3">3</a>
+    <a href="unidad_4_productividad.html" title="Unidad 4">4</a>
+    <a href="unidad_5_pensamiento.html" title="Unidad 5">5</a>
+    <a href="unidad_6_ia.html" title="Unidad 6">6</a>
+  </nav>
+</div>
+
+<header>
+  <div class="eyebrow">Unidad 3 · 2° Trimestre</div>
+  <h1>Software, <em>sistemas operativos</em> y organización digital</h1>
+  <p class="lead">Una computadora sin software es una caja inerte. En esta unidad vemos qué le da vida, cómo se organizan los archivos y cómo no perder nunca más un documento.</p>
+  <div class="head-meta">
+    <span>10 horas cátedra</span>
+    <span>9 temas + glosario</span>
+    <span>7 actividades</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="grid">
+
+    <aside>
+      <h4>En esta unidad</h4>
+      <ol>
+        <li><a href="#presentacion">Presentación</a></li>
+        <li><a href="#software">¿Qué es el software?</a></li>
+        <li><a href="#so">El sistema operativo</a></li>
+        <li><a href="#libre">Software libre vs propietario</a></li>
+        <li><a href="#escritorio">Escritorio y ventanas</a></li>
+        <li><a href="#archivos">Archivos y carpetas</a></li>
+        <li><a href="#zip">Comprimir archivos</a></li>
+        <li><a href="#instalar">Instalar programas</a></li>
+        <li><a href="#usuarios">Usuarios y permisos</a></li>
+        <li><a href="#accesibilidad">Accesibilidad</a></li>
+        <li><a href="#glosario">Glosario</a></li>
+        <li><a href="#actividades">Actividades</a></li>
+        <li><a href="#cierre">Cierre</a></li>
+      </ol>
+    </aside>
+
+    <article>
+
+      <!-- PRESENTACIÓN -->
+      <section id="presentacion" class="reveal">
+        <h2><span class="n">00</span>Presentación de la unidad</h2>
+        <p>Hasta ahora vimos los «fierros» de la computadora (Unidad 2) y los fundamentos de la información (Unidad 1). Pero una computadora con todos sus componentes físicos perfectamente armados, sin software, no sirve para nada: es una caja inerte. <strong>El software es lo que le da vida.</strong></p>
+        <p>En esta unidad vamos a ver qué es el software, cómo se clasifica, qué hace un sistema operativo, y —algo que va a cambiar tu manera de usar la computadora para siempre— cómo organizar archivos y carpetas para no perder nunca más un documento.</p>
+        <p>Es la unidad más práctica del primer cuatrimestre: vas a abrir muchas ventanas, mover archivos, instalar y desinstalar programas. Si en la Unidad 2 te sentiste con muchos conceptos abstractos, esta te va a devolver al terreno de lo concreto.</p>
+        <div class="box">
+          <div class="b-title">📋 ¿Qué vas a aprender en esta unidad?</div>
+          <ul class="list">
+            <li>Qué es el software y cómo se clasifica (de base, de aplicación, de programación).</li>
+            <li>Qué hace un sistema operativo y cuáles son los más usados.</li>
+            <li>La diferencia entre software libre y software propietario.</li>
+            <li>Cómo se mueven el escritorio, las ventanas y los menús.</li>
+            <li>Qué son los archivos, las carpetas, las rutas y las extensiones.</li>
+            <li>Cómo comprimir y descomprimir archivos (los famosos .zip).</li>
+            <li>Cómo instalar y desinstalar programas correctamente.</li>
+            <li>Qué es un usuario, qué son los permisos, y por qué importan.</li>
+            <li>Cómo configurar la accesibilidad para distintas necesidades.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SOFTWARE -->
+      <section id="software" class="reveal">
+        <h2><span class="n">01</span>¿Qué es el software?</h2>
+        <p>En la unidad anterior vimos que el hardware es todo lo físico. El <strong>software</strong> es exactamente lo opuesto: son las instrucciones que le dicen al hardware qué hacer. No tiene cuerpo. Es información pura, guardada en algún lado.</p>
+        <p>Una definición práctica: <em>el software es el conjunto de programas, instrucciones y datos que le permiten a una computadora hacer cosas útiles.</em></p>
+        <h3>Cómo se clasifica el software</h3>
+        <p>Aunque hay muchísimos tipos de programas, se agrupan en tres grandes categorías:</p>
+        <h3>a) Software de base (o de sistema)</h3>
+        <p>Es el más importante: sin él, la computadora no arranca. El <strong>sistema operativo</strong> (Windows, Linux, Android, iOS) entra acá. También los <strong>drivers</strong> o controladores, que son pequeños programas que enseñan al sistema operativo cómo hablar con un dispositivo específico (la impresora, la placa de video).</p>
+        <h3>b) Software de aplicación</h3>
+        <p>Son los programas que vos usás directamente para hacer cosas concretas. WhatsApp, Word, Excel, Chrome, Spotify, Photoshop, los videojuegos. Vienen y se van: podés instalarlos y desinstalarlos sin que la computadora deje de funcionar.</p>
+        <h3>c) Software de programación</h3>
+        <p>Son herramientas pensadas para que los programadores creen otros programas. Editores de código, compiladores, entornos de desarrollo. Los vas a ver en 2° y 3° año cuando empieces a programar.</p>
+        <div class="box">
+          <div class="b-title">🚗 Una analogía con un auto</div>
+          <ul class="list">
+            <li><strong>Motor, transmisión, frenos:</strong> software de base. Sin ellos, el auto no anda.</li>
+            <li><strong>Radio, aire, GPS:</strong> software de aplicación. Le suman utilidad, pero si los sacás, el auto sigue andando.</li>
+            <li><strong>Herramientas del mecánico:</strong> software de programación. Sirven para crear o mantener todo lo demás.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SO -->
+      <section id="so" class="reveal">
+        <h2><span class="n">02</span>El sistema operativo: el gran director de orquesta</h2>
+        <p>De todos los tipos de software, el más importante es el <strong>sistema operativo (SO)</strong>. Es el primero que se carga cuando prendés la computadora y el último que se cierra cuando la apagás. Mientras tanto, está siempre presente, aunque no lo veas.</p>
+        <h3>¿Qué hace exactamente?</h3>
+        <ul class="list">
+          <li>Decide qué programa usa el procesador en cada momento.</li>
+          <li>Reparte la memoria RAM entre todos los programas abiertos.</li>
+          <li>Gestiona los archivos y carpetas del disco.</li>
+          <li>Habla con los dispositivos conectados: teclado, mouse, impresora, pantalla.</li>
+          <li>Administra los usuarios y sus permisos.</li>
+          <li>Te ofrece una interfaz (ventanas, menús, íconos) para que interactúes.</li>
+        </ul>
+        <p>El sistema operativo es el intermediario entre vos y el hardware. Vos no le hablás directamente al procesador ni al disco. Le hablás al SO, y él se encarga de traducir tus pedidos.</p>
+        <div class="box">
+          <div class="b-title">🎼 Una metáfora útil</div>
+          <p>Pensá en un director de orquesta. La orquesta son los componentes (procesador, memoria, disco, periféricos). Cada músico sabe tocar su instrumento, pero si todos tocaran lo que quieren al mismo tiempo, sería un caos.</p>
+          <p>El director (el SO) decide quién toca cuándo, controla los tiempos, da entradas. Sin director, la orquesta no puede tocar una sinfonía. Sin sistema operativo, la computadora no puede ejecutar ni el programa más simple.</p>
+        </div>
+        <h3>Los sistemas operativos más usados</h3>
+        <div class="tbl">
+          <table>
+            <thead><tr><th>Sistema</th><th>Tipo de equipo</th><th>Características</th></tr></thead>
+            <tbody>
+              <tr><td class="feat">Windows</td><td>PC y notebook</td><td>El más usado en computadoras personales. Versiones: 10 y 11. Hecho por Microsoft. Compatible con casi todo el software comercial.</td></tr>
+              <tr><td class="feat">GNU/Linux</td><td>PC, notebook, servidor</td><td>Software libre y gratuito. Distribuciones: Ubuntu, Mint, Debian, Fedora. Dominante en servidores.</td></tr>
+              <tr><td class="feat">macOS</td><td>Computadoras Apple</td><td>Solo funciona en hardware Apple. Estable y elegante, pero cerrado.</td></tr>
+              <tr><td class="feat">Android</td><td>Celulares y tablets</td><td>El más usado del mundo en celulares. Basado en Linux. Desarrollado por Google.</td></tr>
+              <tr><td class="feat">iOS / iPadOS</td><td>iPhone, iPad</td><td>Solo en dispositivos Apple. Muy cuidado en diseño y seguridad. Cerrado.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="box">
+          <div class="b-title">🏆 ¿Cuál es el mejor sistema operativo?</div>
+          <p>Ninguno es «el mejor» en abstracto: cada uno es mejor para ciertas cosas. Windows tiene compatibilidad con todo, Linux es libre y muy estable para servidores, macOS está pulido para creatividad, Android domina la movilidad, iOS apuesta a la seguridad cerrada.</p>
+          <p><strong>El SO es una capa intercambiable.</strong> Una vez que entendiste cómo funciona uno, los demás se aprenden rápido: cambian los nombres y los colores, pero los conceptos son los mismos.</p>
+        </div>
+      </section>
+
+      <!-- LIBRE -->
+      <section id="libre" class="reveal">
+        <h2><span class="n">03</span>Software libre vs. software propietario</h2>
+        <p>Uno de los temas más interesantes del software no es técnico, sino filosófico y legal: <strong>quién es dueño del programa</strong> y qué puede hacer cada uno con él.</p>
+        <h3>Software propietario</h3>
+        <p>Es aquel que pertenece a una empresa o persona, que conserva todos los derechos. Vos lo podés usar (a veces gratis, a veces pagando una licencia), pero no podés ver cómo está hecho por dentro, no podés modificarlo, y no podés redistribuirlo libremente.</p>
+        <p><em>Ejemplos:</em> Windows, Microsoft Office, Photoshop, AutoCAD, los juegos comerciales.</p>
+        <h3>Software libre</h3>
+        <p>Es aquel que respeta las llamadas <strong>cuatro libertades del software</strong>:</p>
+        <div class="freedoms">
+          <div class="freedom">
+            <div class="num">Libertad 0</div>
+            <h5>Usar</h5>
+            <p>Usar el programa para cualquier propósito.</p>
+          </div>
+          <div class="freedom">
+            <div class="num">Libertad 1</div>
+            <h5>Estudiar</h5>
+            <p>Estudiar cómo está hecho (acceso al código fuente).</p>
+          </div>
+          <div class="freedom">
+            <div class="num">Libertad 2</div>
+            <h5>Modificar</h5>
+            <p>Modificarlo y adaptarlo a tus necesidades.</p>
+          </div>
+          <div class="freedom">
+            <div class="num">Libertad 3</div>
+            <h5>Redistribuir</h5>
+            <p>Compartirlo, con o sin modificaciones.</p>
+          </div>
+        </div>
+        <p><strong>Software libre no es lo mismo que software gratuito.</strong> Aunque casi todo el software libre es gratis, lo importante es la libertad para usar, modificar y compartir, no el precio.</p>
+        <p><em>Ejemplos:</em> GNU/Linux, LibreOffice, Firefox, GIMP (alternativa libre a Photoshop), VLC, Scratch.</p>
+        <h3>¿Por qué importa esto?</h3>
+        <ul class="list">
+          <li><strong>Económica:</strong> el software libre es gratuito. Una escuela o emprendimiento puede equiparse sin gastar fortunas en licencias.</li>
+          <li><strong>Soberanía:</strong> no depender de empresas extranjeras para algo tan básico como una computadora.</li>
+          <li><strong>Educativa:</strong> al poder ver el código, los estudiantes aprenden cómo funcionan las cosas por dentro.</li>
+          <li><strong>Ética:</strong> el conocimiento se comparte en vez de cerrarse.</li>
+        </ul>
+        <h3>Creative Commons</h3>
+        <p>La idea del software libre se extendió a textos, música, fotos, videos. Las licencias <strong>Creative Commons (CC)</strong> permiten a un autor decir: «podés usar mi obra, con tal condición». Por ejemplo: «citá mi nombre» (CC BY) o «no para fines comerciales» (CC BY-NC).</p>
+        <p>Esto es importantísimo para no robar trabajos ajenos sin querer. Wikipedia, por ejemplo, usa Creative Commons: podés copiar contenido siempre que aclares de dónde lo sacaste.</p>
+        <div class="box">
+          <div class="b-title">🎯 Una opción de doble vida</div>
+          <p>En esta materia te vamos a mostrar las herramientas en sus dos versiones cuando sea posible: las <strong>propietarias</strong> (Microsoft Word, Excel) y las <strong>libres</strong> (LibreOffice Writer, Calc). Así podés trabajar tanto en una compu del trabajo con Windows, como en una con Linux en tu casa, sin atarte a una sola tecnología.</p>
+        </div>
+      </section>
+
+      <!-- ESCRITORIO -->
+      <section id="escritorio" class="reveal">
+        <h2><span class="n">04</span>El escritorio, las ventanas y los menús</h2>
+        <p>Aunque Windows, macOS y las versiones modernas de Linux parecen distintos a primera vista, comparten una misma idea: lo que llamamos <strong>interfaz gráfica</strong>. Todo se maneja con ventanas, íconos, menús y el puntero del mouse.</p>
+        <h3>Los elementos del escritorio</h3>
+        <ul class="list">
+          <li><strong>Escritorio:</strong> la pantalla principal que ves cuando arranca el sistema. Funciona como tu mesa de trabajo.</li>
+          <li><strong>Íconos:</strong> imágenes pequeñas que representan archivos, carpetas o accesos directos.</li>
+          <li><strong>Barra de tareas</strong> (Windows) / <strong>Dock</strong> (macOS) / <strong>Panel</strong> (Linux): la franja con accesos rápidos y las ventanas abiertas.</li>
+          <li><strong>Menú de inicio:</strong> donde están listados todos los programas instalados.</li>
+          <li><strong>Área de notificaciones:</strong> muestra el reloj, el WiFi, la batería, los avisos del sistema.</li>
+        </ul>
+        <h3>Cómo se manejan las ventanas</h3>
+        <p>Cada programa que abrís corre adentro de una ventana. Esas ventanas tienen siempre tres botones en una esquina:</p>
+        <ul class="list">
+          <li><strong>Minimizar:</strong> la oculta sin cerrarla. El programa sigue funcionando.</li>
+          <li><strong>Maximizar / Restaurar:</strong> la agranda hasta ocupar toda la pantalla, o la devuelve a su tamaño anterior.</li>
+          <li><strong>Cerrar:</strong> termina el programa. Si tenías cambios sin guardar, te pregunta.</li>
+        </ul>
+        <p>Las ventanas se pueden mover, redimensionar y poner una al lado de la otra (arrastrando hacia un costado de la pantalla en Windows).</p>
+        <h3>Atajos de teclado que te van a cambiar la vida</h3>
+        <div class="shortcuts">
+          <div class="sc"><kbd>Alt + Tab</kbd><span>Cambiar entre ventanas abiertas</span></div>
+          <div class="sc"><kbd>Ctrl + C</kbd><span>Copiar</span></div>
+          <div class="sc"><kbd>Ctrl + V</kbd><span>Pegar</span></div>
+          <div class="sc"><kbd>Ctrl + Z</kbd><span>Deshacer (el botón mágico)</span></div>
+          <div class="sc"><kbd>Ctrl + S</kbd><span>Guardar</span></div>
+          <div class="sc"><kbd>Ctrl + F</kbd><span>Buscar dentro de un documento</span></div>
+          <div class="sc"><kbd>Win + D</kbd><span>Mostrar el escritorio</span></div>
+          <div class="sc"><kbd>Win + E</kbd><span>Abrir el explorador de archivos</span></div>
+        </div>
+      </section>
+
+      <!-- ARCHIVOS -->
+      <section id="archivos" class="reveal">
+        <h2><span class="n">05</span>Archivos y carpetas: organizar la información</h2>
+        <p>Esta sección es probablemente la más importante de toda la unidad. <strong>Si aprendés a organizar bien tus archivos, te ahorrás cientos de horas a lo largo de tu vida.</strong></p>
+        <h3>¿Qué es un archivo?</h3>
+        <p>Un <strong>archivo</strong> es cualquier conjunto de datos guardado en el disco con un nombre. Documento, foto, canción, video, programa: todo se guarda como archivo.</p>
+        <h3>¿Qué es una carpeta?</h3>
+        <p>Una <strong>carpeta</strong> (o directorio) es un contenedor que sirve para agrupar archivos relacionados entre sí. Las carpetas pueden contener archivos y también otras carpetas (subcarpetas), formando una estructura como un árbol.</p>
+        <div class="box">
+          <div class="b-title">🗄️ Una metáfora de toda la vida</div>
+          <p>Pensá en un archivero físico de oficina:</p>
+          <ul class="list">
+            <li>El archivero entero es tu <strong>disco</strong>.</li>
+            <li>Cada cajón es una <strong>carpeta principal</strong> (Documentos, Música, Fotos).</li>
+            <li>Cada bibliorato dentro del cajón es una <strong>subcarpeta</strong> (Trabajo, Estudio).</li>
+            <li>Cada hoja adentro del bibliorato es un <strong>archivo</strong>.</li>
+          </ul>
+          <p>Igual que en un archivero, si no organizás bien, todo termina mezclado y nunca encontrás lo que buscás.</p>
+        </div>
+        <h3>La ruta de un archivo</h3>
+        <p>La <strong>ruta</strong> es la «dirección» completa que indica dónde está guardado un archivo. Por ejemplo:</p>
+        <div class="path">C:\Usuarios\Maria\Documentos\Trabajo\CV_2026.docx</div>
+        <p>Esto se lee así: en el disco C, dentro de la carpeta Usuarios, en la subcarpeta Maria, dentro de Documentos, dentro de Trabajo, está el archivo CV_2026.docx. Cada barra ( <code>\</code> en Windows, <code>/</code> en Linux y Mac) separa un nivel.</p>
+        <h3>Extensiones de archivo</h3>
+        <p>La <strong>extensión</strong> es lo que aparece después del punto en el nombre. Le dice al sistema qué tipo de archivo es y con qué programa abrirlo.</p>
+        <div class="tbl">
+          <table>
+            <thead><tr><th>Extensión</th><th>Tipo</th><th>Se abre con…</th></tr></thead>
+            <tbody>
+              <tr><td class="feat">.docx / .odt</td><td>Documento de texto</td><td>Word, LibreOffice Writer, Google Docs</td></tr>
+              <tr><td class="feat">.xlsx / .ods</td><td>Planilla de cálculo</td><td>Excel, LibreOffice Calc, Google Sheets</td></tr>
+              <tr><td class="feat">.pdf</td><td>Documento PDF</td><td>Lector de PDF, navegador</td></tr>
+              <tr><td class="feat">.jpg / .png</td><td>Imagen</td><td>Visor de fotos, editores</td></tr>
+              <tr><td class="feat">.mp3 / .wav</td><td>Audio</td><td>VLC, Windows Media</td></tr>
+              <tr><td class="feat">.mp4 / .mkv</td><td>Video</td><td>VLC, reproductores de video</td></tr>
+              <tr><td class="feat">.txt</td><td>Texto plano</td><td>Bloc de notas, cualquier editor</td></tr>
+              <tr><td class="feat">.zip / .rar</td><td>Archivo comprimido</td><td>WinRAR, 7-Zip, gestor del sistema</td></tr>
+              <tr><td class="feat">.exe</td><td>Programa ejecutable (Windows)</td><td>Windows lo ejecuta con doble clic</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>Cómo organizar tus archivos · una propuesta concreta</h3>
+        <p>Te paso una estructura básica que funciona bien para la mayoría de los adultos:</p>
+        <div class="tree">
+          <div class="folder">📁 Documentos</div>
+          <div class="sub">
+            <div class="folder">📁 Personal <span class="child">— DNI, CUIL, partidas, documentos importantes</span></div>
+            <div class="folder">📁 Trabajo <span class="child">— CV, certificados, contratos</span></div>
+            <div class="folder">📁 Estudios <span class="child">— apuntes, TP, certificados</span></div>
+            <div class="folder">📁 Salud <span class="child">— estudios médicos, recetas</span></div>
+          </div>
+          <div class="folder">📁 Fotos</div>
+          <div class="sub">
+            <div class="folder">📁 2026</div>
+            <div class="folder">📁 Eventos especiales</div>
+          </div>
+          <div class="folder">📁 Música</div>
+          <div class="folder">📁 Videos</div>
+          <div class="folder">📁 Descargas <span class="child">— lo temporal</span></div>
+        </div>
+        <div class="box amber">
+          <div class="b-title">🏆 La regla de oro de los nombres</div>
+          <p>Poné nombres descriptivos. «Documento1.docx» no te dice nada. «CV_Maria_Lopez_2026.docx» te dice todo de un vistazo.</p>
+          <p><strong>Tip pro:</strong> si vas a tener varias versiones del mismo archivo, agregale la fecha en formato AAAA-MM-DD. Por ejemplo: «Informe_2026-03-15.docx». Así, al ordenarlos por nombre, te quedan ordenados por fecha automáticamente.</p>
+        </div>
+        <h3>Operaciones básicas con archivos y carpetas</h3>
+        <div class="ops">
+          <div class="op-card"><strong>Crear</strong>Clic derecho → Nuevo → Carpeta (o documento).</div>
+          <div class="op-card"><strong>Renombrar</strong>Clic derecho → Renombrar, o F2.</div>
+          <div class="op-card"><strong>Copiar</strong>Ctrl+C, ir al destino, Ctrl+V.</div>
+          <div class="op-card"><strong>Mover</strong>Ctrl+X, ir al destino, Ctrl+V.</div>
+          <div class="op-card"><strong>Eliminar</strong>Supr (va a la papelera).</div>
+          <div class="op-card"><strong>Buscar</strong>Buscador del sistema operativo.</div>
+        </div>
+      </section>
+
+      <!-- ZIP -->
+      <section id="zip" class="reveal">
+        <h2><span class="n">06</span>Comprimir y descomprimir archivos</h2>
+        <p>Hay un tipo especial de archivo que conviene conocer: los archivos comprimidos, identificados por las extensiones <strong>.zip</strong> o <strong>.rar</strong>.</p>
+        <h3>¿Qué es un archivo comprimido?</h3>
+        <p>Es un archivo que contiene a otros archivos adentro, pero «apretados» para ocupar menos espacio. Funciona como una valija: en lugar de mandarte cinco prendas sueltas, las pongo en una valija, las acomodo y aprieto, y te mando solo la valija.</p>
+        <h3>¿Para qué sirve?</h3>
+        <ul class="list">
+          <li>Para mandar varios archivos juntos por correo o WhatsApp en un solo envío.</li>
+          <li>Para ahorrar espacio.</li>
+          <li>Para descargar conjuntos de archivos desde Internet (los programas que te bajás suelen venir en .zip).</li>
+        </ul>
+        <h3>¿Cómo se hace?</h3>
+        <p><strong>Para comprimir:</strong> seleccionás los archivos, clic derecho, «Enviar a → Carpeta comprimida» (Windows) o «Comprimir» (otros sistemas).</p>
+        <p><strong>Para descomprimir:</strong> clic derecho sobre el .zip, «Extraer todo» o «Extraer aquí».</p>
+        <div class="box amber">
+          <div class="b-title">⚠️ Cuidado al descomprimir archivos de Internet</div>
+          <p>Muchos virus llegan disfrazados de archivos .zip o .rar bajados de páginas no confiables. Cuando descomprimís uno, ahí adentro puede haber un .exe o un .scr que es un programa malicioso. Si no estás seguro de la fuente, mejor no abras lo que extraigas, o pasalo por un antivirus antes.</p>
+        </div>
+      </section>
+
+      <!-- INSTALAR -->
+      <section id="instalar" class="reveal">
+        <h2><span class="n">07</span>Instalar y desinstalar programas</h2>
+        <p>Una vez que el sistema operativo está corriendo, vas a querer agregarle programas para tareas específicas. Eso se hace con un proceso llamado <strong>instalación</strong>.</p>
+        <h3>Cómo se instalan los programas</h3>
+        <ul class="list">
+          <li><strong>Windows:</strong> se descarga un instalador (.exe o .msi), se hace doble clic, se siguen los pasos. También se puede usar la Microsoft Store.</li>
+          <li><strong>macOS:</strong> se descarga un archivo .dmg y se arrastra la aplicación a la carpeta Aplicaciones. O App Store.</li>
+          <li><strong>Linux:</strong> se usa el gestor de paquetes (Software Center, apt, dnf). Similar a la tienda de apps del celular.</li>
+          <li><strong>Android / iOS:</strong> Play Store o App Store. Se busca la app, se toca «Instalar».</li>
+        </ul>
+        <h3>Por qué importa desinstalar lo que no usás</h3>
+        <p>Cada programa instalado ocupa espacio en el disco, y algunos quedan funcionando en segundo plano consumiendo memoria RAM y batería, aunque no los uses.</p>
+        <p>Para desinstalar en Windows: Configuración → Aplicaciones → Aplicaciones instaladas. Buscás el programa, clic en Desinstalar.</p>
+        <div class="box amber">
+          <div class="b-title">⚠️ ¡Cuidado con lo que instalás!</div>
+          <p>La mayoría de los virus llegan a las computadoras porque el usuario los instaló sin querer. Tres reglas básicas:</p>
+          <ul class="list">
+            <li>Bajá programas <strong>solo de la página oficial</strong> o de tiendas oficiales (Microsoft Store, Google Play, App Store).</li>
+            <li>Cuando un instalador te pregunte si querés también instalar barras de búsqueda, antivirus extra o programas «recomendados», <strong>desmarcalos</strong>. Suele ser basura.</li>
+            <li>Si una página te dice que necesitás «un plugin especial» o «un actualizador» para ver un video, casi seguro <strong>es un virus</strong>. No lo bajes.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- USUARIOS -->
+      <section id="usuarios" class="reveal">
+        <h2><span class="n">08</span>Usuarios y permisos</h2>
+        <p>Una computadora puede ser usada por varias personas. Para que cada una tenga su propio espacio, los sistemas operativos manejan el concepto de <strong>usuario</strong>.</p>
+        <h3>¿Qué es un usuario?</h3>
+        <p>Es una cuenta personal dentro de la computadora. Cada usuario tiene su propio escritorio, sus propios archivos, su propia configuración. Cuando arrancás la PC, te pide nombre y contraseña (o PIN o huella) para saber quién está usándola.</p>
+        <h3>Tipos de usuario</h3>
+        <ul class="list">
+          <li><strong>Administrador:</strong> puede hacer todo. Instalar y desinstalar programas, cambiar configuraciones importantes, crear y eliminar otros usuarios.</li>
+          <li><strong>Estándar:</strong> puede usar normalmente la computadora, pero no puede cambiar cosas críticas sin permiso del administrador.</li>
+        </ul>
+        <h3>Por qué importan los permisos</h3>
+        <p>Si tu cuenta es administrador, cualquier programa que se ejecute también lo hace con poderes de administrador. <strong>Eso incluye a los virus:</strong> si te metés un virus mientras estás como administrador, ese virus puede hacer todo lo que vos podés hacer.</p>
+        <p>En cambio, si trabajás como usuario estándar, los virus tienen las manos atadas: no pueden modificar archivos del sistema sin que vos confirmes con una contraseña.</p>
+        <p>Por eso es buena práctica usar la computadora con una <strong>cuenta estándar para el día a día</strong>, y reservar la cuenta de administrador para cuando necesités instalar algo o cambiar configuración.</p>
+      </section>
+
+      <!-- ACCESIBILIDAD -->
+      <section id="accesibilidad" class="reveal">
+        <h2><span class="n">09</span>Configuración de accesibilidad</h2>
+        <p>Los sistemas operativos modernos tienen muchísimas opciones para adaptar la computadora a personas con distintas necesidades. Vale la pena conocerlas, tanto si te pueden servir a vos como para ayudar a familiares o amigos.</p>
+        <h3>Para problemas de visión</h3>
+        <ul class="list">
+          <li>Aumentar el tamaño del texto y los íconos.</li>
+          <li>Activar la lupa para ampliar zonas específicas.</li>
+          <li>Modo oscuro o alto contraste para reducir el cansancio visual.</li>
+          <li>Lectores de pantalla, que leen en voz alta (Narrador en Windows, VoiceOver en Mac, Orca en Linux).</li>
+        </ul>
+        <h3>Para problemas de audición</h3>
+        <ul class="list">
+          <li>Subtítulos automáticos en videos.</li>
+          <li>Alertas visuales en lugar de sonoras.</li>
+        </ul>
+        <h3>Para dificultades motoras</h3>
+        <ul class="list">
+          <li>Teclado en pantalla, manejable con un solo dedo.</li>
+          <li>Reconocimiento de voz para dictar texto.</li>
+          <li>Ajustes en la sensibilidad y velocidad del mouse.</li>
+        </ul>
+        <h3>Para todos</h3>
+        <ul class="list">
+          <li>Brillo y temperatura de color (especialmente útil de noche).</li>
+          <li>Atajos personalizados para tareas frecuentes.</li>
+        </ul>
+        <div class="box">
+          <div class="b-title">♿ La tecnología debe adaptarse a las personas</div>
+          <p>Antes, si tenías baja visión o dificultades motoras, usar una computadora era complicado. Hoy los sistemas operativos tienen tantas opciones de accesibilidad que casi cualquier persona puede usar una computadora con la configuración adecuada. Conocer estas opciones es importante: alguna vez en tu vida te pueden hacer falta a vos o a alguien cercano.</p>
+        </div>
+      </section>
+
+      <!-- GLOSARIO -->
+      <section id="glosario" class="reveal">
+        <h2><span class="n">10</span>Glosario de la unidad</h2>
+        <ul class="list">
+          <li><strong>Software:</strong> conjunto de programas, instrucciones y datos. La parte no física.</li>
+          <li><strong>Sistema operativo (SO):</strong> software de base que controla el hardware y permite que el resto del software funcione.</li>
+          <li><strong>Driver / controlador:</strong> pequeño programa que conecta el SO con un dispositivo específico.</li>
+          <li><strong>Software libre:</strong> software que respeta las cuatro libertades (usar, estudiar, modificar, redistribuir).</li>
+          <li><strong>Software propietario:</strong> software cuyo dueño controla todos los derechos.</li>
+          <li><strong>Creative Commons:</strong> licencias para compartir obras con condiciones claras.</li>
+          <li><strong>Archivo:</strong> conjunto de datos guardado con un nombre.</li>
+          <li><strong>Carpeta / directorio:</strong> contenedor que agrupa archivos y otras carpetas.</li>
+          <li><strong>Ruta:</strong> dirección completa donde se encuentra un archivo.</li>
+          <li><strong>Extensión:</strong> las letras después del punto que indican el tipo.</li>
+          <li><strong>Archivo comprimido (.zip / .rar):</strong> archivo que contiene a otros «apretados».</li>
+          <li><strong>Instalar:</strong> agregar un programa al sistema.</li>
+          <li><strong>Usuario:</strong> cuenta personal dentro de la computadora.</li>
+          <li><strong>Administrador:</strong> usuario con permisos críticos.</li>
+          <li><strong>Accesibilidad:</strong> opciones que adaptan la computadora a personas con distintas necesidades.</li>
+        </ul>
+      </section>
+
+      <!-- ACTIVIDADES -->
+      <section id="actividades" class="reveal">
+        <h2><span class="n">11</span>Actividades</h2>
+
+        <div class="activity">
+          <h4>Actividad 1 · Clasificá el software</h4>
+          <p>Para cada programa, indicá si es <strong>de base</strong>, <strong>de aplicación</strong> o <strong>de programación</strong>:</p>
+          <ol class="list">
+            <li>Windows 11.</li>
+            <li>WhatsApp.</li>
+            <li>LibreOffice Writer.</li>
+            <li>Android.</li>
+            <li>Driver de la impresora.</li>
+            <li>Visual Studio Code (editor para programadores).</li>
+            <li>Spotify.</li>
+            <li>Google Chrome.</li>
+          </ol>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 2 · Libre o propietario</h4>
+          <p>Para cada uno, indicá si es <strong>software libre</strong> o <strong>propietario</strong>. Si no lo sabés, investigá:</p>
+          <ol class="list">
+            <li>Windows.</li>
+            <li>LibreOffice.</li>
+            <li>Microsoft Word.</li>
+            <li>Firefox.</li>
+            <li>Photoshop.</li>
+            <li>GIMP.</li>
+            <li>VLC.</li>
+            <li>WhatsApp.</li>
+          </ol>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 3 · Identificá las extensiones</h4>
+          <p>¿Qué tipo de archivo es cada uno y con qué programa lo abrirías?</p>
+          <ol class="list">
+            <li>Curriculum_Maria.docx</li>
+            <li>Vacaciones_2025.jpg</li>
+            <li>Presupuesto_marzo.xlsx</li>
+            <li>Cancion_favorita.mp3</li>
+            <li>Manual_microondas.pdf</li>
+            <li>Fotos_cumpleaños.zip</li>
+          </ol>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 4 · Organizá tu propio archivero digital</h4>
+          <p>Esta es la actividad estrella. En tu propia computadora o celular (o en una carpeta nueva de Google Drive), armá una estructura de carpetas que represente cómo querés organizar tu vida digital. Como mínimo:</p>
+          <ul class="list">
+            <li>Una carpeta «Documentos» con subcarpetas para Personal, Trabajo, Estudios y Salud.</li>
+            <li>Una carpeta «Fotos» con subcarpetas por año.</li>
+            <li>Una carpeta «Estudios EPET» con subcarpetas por materia.</li>
+          </ul>
+          <p>Una vez creada, mové los archivos que tengas dispersos a su lugar. Tomá una captura de pantalla del resultado y entregala como evidencia.</p>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 5 · Comprimir y descomprimir</h4>
+          <ol class="list">
+            <li>Creá una carpeta llamada «Prueba» en tu escritorio.</li>
+            <li>Adentro, creá 3 documentos de texto cualquiera.</li>
+            <li>Comprimí toda la carpeta en un .zip.</li>
+            <li>Compará el tamaño de la carpeta original con el del .zip. ¿Cuánto se ahorró?</li>
+            <li>Descomprimí el .zip en otra ubicación.</li>
+          </ol>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 6 · Explorá la accesibilidad</h4>
+          <p>En tu computadora o celular, abrí la configuración de accesibilidad. Identificá:</p>
+          <ol class="list">
+            <li>Una opción que podría ayudar a una persona con baja visión.</li>
+            <li>Una opción para una persona con problemas de audición.</li>
+            <li>Una opción para una persona con dificultades motoras.</li>
+            <li>Una opción que vos mismo/a podrías usar para mejorar tu experiencia.</li>
+          </ol>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 7 · Cuestionario de cierre</h4>
+          <ol class="list">
+            <li>Explicá con tus palabras qué hace un sistema operativo.</li>
+            <li>¿Cuál es la diferencia entre software libre y software gratuito?</li>
+            <li>¿Qué es una ruta de archivo? Dame un ejemplo.</li>
+            <li>¿Por qué conviene tener archivos comprimidos en algunos casos?</li>
+            <li>¿Cuál es la diferencia entre un usuario administrador y un usuario estándar? ¿Por qué importa?</li>
+            <li>Mencioná tres precauciones que tomarías antes de instalar un programa nuevo.</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- CIERRE -->
+      <section id="cierre" class="reveal">
+        <h2><span class="n">12</span>Cierre de la unidad</h2>
+        <p>Si llegaste hasta acá, ya entendés cómo se comunican el hardware y el software, sabés moverte por un sistema operativo, organizar tus archivos y proteger tu computadora de instalaciones peligrosas. <strong>Es muchísimo.</strong></p>
+        <p>Antes de pasar a la próxima unidad, asegurate de que podés:</p>
+        <ul class="checklist">
+          <li>Diferenciar software de base, de aplicación y de programación con ejemplos propios.</li>
+          <li>Explicar qué hace un sistema operativo y nombrar al menos tres distintos.</li>
+          <li>Diferenciar software libre de software propietario.</li>
+          <li>Crear, renombrar, copiar, mover y eliminar archivos y carpetas con soltura.</li>
+          <li>Leer y entender una ruta de archivo.</li>
+          <li>Comprimir y descomprimir un .zip.</li>
+          <li>Identificar prácticas seguras al instalar programas.</li>
+        </ul>
+        <p><em>En la próxima unidad —la más larga del año— vamos a entrar al mundo práctico: procesador de texto, planilla de cálculo, presentaciones, nube, Internet, correo profesional, trámites en línea y seguridad digital. Es la que más te va a servir en tu vida cotidiana y laboral. ¡Nos vemos!</em></p>
+      </section>
+
+      <nav class="pager" aria-label="Navegación entre unidades">
+        <a href="unidad_2_hardware.html">
+          <div class="label">← Unidad anterior</div>
+          <div class="title">Unidad 2 · Hardware</div>
+        </a>
+        <a href="unidad_4_productividad.html" class="next">
+          <div class="label">Siguiente →</div>
+          <div class="title">Unidad 4 · Productividad e Internet</div>
+        </a>
+      </nav>
+
+    </article>
+
+  </div>
+</div>
+
+<footer>
+  <div class="f-title">Introducción a la Informática</div>
+  <div>1° Año · E.P.J.A. · EPET N°7 · Ciclo lectivo 2026</div>
+</footer>
+
+<script>
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); obs.unobserve(e.target);} });
+  },{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+  const links = document.querySelectorAll('aside ol li a');
+  const sections = document.querySelectorAll('article section[id]');
+  const sObs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const id = e.target.id;
+        links.forEach(l=>{
+          if(l.getAttribute('href')==='#'+id){
+            l.style.color='var(--azul)';l.style.fontWeight='600';
+            l.style.borderLeftColor='var(--terra)';l.style.background='var(--crema-2)';
+          } else {
+            l.style.color='';l.style.fontWeight='';
+            l.style.borderLeftColor='transparent';l.style.background='';
+          }
+        });
+      }
+    });
+  },{rootMargin:'-30% 0px -60% 0px'});
+  sections.forEach(s=>sObs.observe(s));
+</script>
+
+</body>
+</html>

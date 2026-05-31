@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unidad 2 · Hardware · 1° E.P.J.A.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,500&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1b2430;
+    --azul:#1F4E79;
+    --azul-claro:#2E75B6;
+    --crema:#f6f1e7;
+    --crema-2:#efe7d6;
+    --terra:#c1632f;
+    --terra-suave:#e8a36a;
+    --ambar:#fff4e0;
+    --ambar-borde:#b86e00;
+    --linea:#d9cdb6;
+    --gris:#8a8276;
+    --sombra:rgba(31,78,121,.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:80px}
+  body{
+    font-family:'Spline Sans',sans-serif;
+    color:var(--ink);
+    background:var(--crema);
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background-image:radial-gradient(circle at 1px 1px, rgba(31,78,121,.06) 1px, transparent 0);
+    background-size:26px 26px;
+  }
+  a{color:var(--terra);text-decoration:none;border-bottom:1px dotted var(--terra)}
+  a:hover{color:var(--azul);border-bottom-color:var(--azul)}
+
+  /* TOPBAR */
+  .topbar{
+    position:sticky;top:0;z-index:50;
+    background:rgba(246,241,231,.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--linea);
+    padding:.85rem clamp(1rem,4vw,2.5rem);
+    display:flex;justify-content:space-between;align-items:center;gap:1rem;
+  }
+  .crumb{font-size:.85rem;color:var(--gris)}
+  .crumb a{color:var(--azul);border-bottom-color:transparent}
+  .crumb a:hover{border-bottom:1px dotted var(--azul)}
+  .crumb .sep{margin:0 .5rem;color:var(--linea)}
+  .nav-units{display:flex;gap:.4rem}
+  .nav-units a{
+    width:30px;height:30px;display:grid;place-items:center;border-radius:50%;
+    font-family:'Fraunces',serif;font-size:.9rem;color:var(--azul);
+    border:1px solid var(--linea);background:#fff;
+  }
+  .nav-units a.active{background:var(--azul);color:var(--crema);border-color:var(--azul)}
+  .nav-units a:hover:not(.active):not(.dis){border-color:var(--azul);background:var(--crema-2)}
+  .nav-units a.dis{opacity:.4;pointer-events:none}
+  @media(max-width:560px){.nav-units{display:none}}
+
+  /* HEADER */
+  header{
+    padding:clamp(2.5rem,6vw,4.5rem) clamp(1.2rem,5vw,4rem) clamp(2rem,5vw,3.5rem);
+    background:linear-gradient(160deg,#2E75B6 0%,#1F4E79 60%,#163a5c 100%);
+    color:var(--crema);position:relative;overflow:hidden;
+  }
+  header::after{
+    content:"";position:absolute;right:-12%;top:-30%;width:55vw;height:55vw;max-width:540px;max-height:540px;
+    background:radial-gradient(circle, rgba(225,163,106,.28), transparent 65%);border-radius:50%;
+  }
+  .eyebrow{font-size:.78rem;letter-spacing:.32em;text-transform:uppercase;color:var(--terra-suave);font-weight:600;margin-bottom:1rem}
+  header h1{
+    font-family:'Fraunces',serif;font-weight:800;
+    font-size:clamp(2rem,6vw,4rem);line-height:1.05;letter-spacing:-.02em;max-width:18ch;
+  }
+  header h1 em{font-style:italic;font-weight:500;color:var(--terra-suave)}
+  .lead{margin-top:1.2rem;font-size:clamp(1rem,2vw,1.15rem);max-width:54ch;color:rgba(246,241,231,.86)}
+  .head-meta{margin-top:1.6rem;font-size:.82rem;color:rgba(246,241,231,.7);display:flex;flex-wrap:wrap;gap:1.2rem}
+  .head-meta span::before{content:"●";color:var(--terra-suave);margin-right:.5rem}
+
+  /* LAYOUT */
+  .wrap{max-width:1180px;margin:0 auto;padding:0 clamp(1.2rem,5vw,3rem)}
+  .grid{display:grid;grid-template-columns:240px 1fr;gap:clamp(2rem,4vw,3.5rem);padding-top:clamp(2rem,4vw,3rem);padding-bottom:5rem}
+  @media(max-width:880px){.grid{grid-template-columns:1fr}}
+
+  /* ASIDE */
+  aside{align-self:start;position:sticky;top:80px}
+  @media(max-width:880px){aside{position:static}}
+  aside h4{
+    font-family:'Fraunces',serif;font-style:italic;font-weight:500;
+    font-size:.95rem;color:var(--terra);margin-bottom:.8rem;
+    border-bottom:1px solid var(--linea);padding-bottom:.6rem;
+  }
+  aside ol{list-style:none;counter-reset:ix}
+  aside ol li{counter-increment:ix;margin-bottom:.4rem}
+  aside ol li a{
+    display:block;padding:.4rem .2rem;font-size:.9rem;color:var(--ink);
+    border-bottom:none;border-left:2px solid transparent;padding-left:.7rem;
+    transition:all .25s;
+  }
+  aside ol li a::before{content:counter(ix,decimal-leading-zero) " · ";color:var(--gris);font-family:'Fraunces',serif;font-style:italic}
+  aside ol li a:hover{border-left-color:var(--terra);color:var(--azul);background:var(--crema-2)}
+
+  /* ARTÍCULO */
+  article{max-width:62ch}
+  article section{margin-bottom:clamp(2.5rem,5vw,4rem);scroll-margin-top:80px}
+  article h2{
+    font-family:'Fraunces',serif;font-weight:600;font-size:clamp(1.5rem,4vw,2.1rem);
+    color:var(--azul);letter-spacing:-.01em;margin-bottom:1rem;line-height:1.2;
+  }
+  article h2 .n{font-family:'Fraunces',serif;font-style:italic;font-weight:500;color:var(--terra);font-size:.85em;margin-right:.4rem}
+  article h3{
+    font-family:'Fraunces',serif;font-weight:600;font-size:1.25rem;color:var(--azul-claro);
+    margin-top:1.8rem;margin-bottom:.6rem;
+  }
+  article p{margin-bottom:1rem;font-size:1.02rem}
+  article strong{color:var(--azul)}
+  article em{color:#5a5346}
+
+  ul.list,ol.list{margin:.5rem 0 1.2rem 1.4rem}
+  ul.list li,ol.list li{margin-bottom:.5rem;font-size:1.02rem}
+  ul.list li::marker{color:var(--terra)}
+  ol.list li::marker{color:var(--terra);font-weight:600;font-family:'Fraunces',serif}
+
+  /* CAJAS */
+  .box{
+    background:#fffdf8;border:1px solid var(--linea);border-left:5px solid var(--azul);
+    border-radius:14px;padding:1.2rem 1.4rem;margin:1.5rem 0;
+  }
+  .box.amber{border-left-color:var(--ambar-borde);background:var(--ambar)}
+  .box.amber .b-title{color:var(--ambar-borde)}
+  .box .b-title{
+    font-family:'Fraunces',serif;font-weight:600;color:var(--azul);
+    font-size:1.05rem;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;
+  }
+  .box p{font-size:.96rem;margin-bottom:.6rem}
+  .box p:last-child{margin-bottom:0}
+  .box ul li{font-size:.96rem}
+
+  /* TABLAS */
+  .tbl{overflow-x:auto;margin:1.5rem 0;border-radius:12px;border:1px solid var(--linea)}
+  table{width:100%;border-collapse:collapse;background:#fffdf8;font-size:.94rem;min-width:520px}
+  thead{background:var(--azul);color:var(--crema)}
+  th{font-family:'Fraunces',serif;font-weight:600;text-align:left;padding:.8rem 1rem;font-size:.95rem;letter-spacing:.01em}
+  td{padding:.7rem 1rem;border-top:1px solid var(--linea);vertical-align:top}
+  tbody tr:nth-child(even){background:var(--crema-2)}
+  td.feat{font-weight:600;color:var(--azul);font-family:'Fraunces',serif}
+  td.center{text-align:center}
+
+  /* TARJETAS COMPARATIVAS */
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+  @media(max-width:560px){.compare{grid-template-columns:1fr}}
+  .compare .card{
+    background:#fffdf8;border:1px solid var(--linea);border-top:5px solid var(--azul);
+    border-radius:14px;padding:1.1rem 1.2rem;
+  }
+  .compare .card.ssd{border-top-color:var(--verde,#3f6b4f)}
+  .compare .card h5{font-family:'Fraunces',serif;font-weight:600;font-size:1.05rem;color:var(--azul);margin-bottom:.5rem}
+  .compare .card.ssd h5{color:#3f6b4f}
+  .compare .card p{font-size:.92rem;margin-bottom:.5rem}
+  .compare .card ul{margin:.4rem 0 0 1.2rem}
+  .compare .card ul li{font-size:.9rem;margin-bottom:.3rem}
+
+  /* FÓRMULA */
+  .formula{
+    text-align:center;background:var(--crema-2);border-radius:14px;
+    padding:1.4rem 1rem;margin:1.5rem 0;font-family:'Fraunces',serif;
+  }
+  .formula .word{color:var(--azul);font-weight:600;font-size:1.15rem;margin:0 .4rem}
+  .formula .op{color:var(--gris);margin:0 .3rem}
+  .formula small{display:block;margin-top:.6rem;font-style:italic;color:#5a5346;font-size:.85rem;font-family:'Spline Sans',sans-serif}
+
+  /* CHIPS de gama */
+  .gamas{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.8rem;margin:1rem 0}
+  .gama{background:#fffdf8;border:1px solid var(--linea);border-radius:12px;padding:.8rem 1rem}
+  .gama h5{font-family:'Fraunces',serif;color:var(--azul);font-size:1rem;margin-bottom:.2rem}
+  .gama p{font-size:.85rem;margin:0;color:#5a5346}
+
+  /* ACTIVIDADES */
+  .activity{
+    background:#fffdf8;border:1px solid var(--linea);border-radius:14px;
+    padding:1.2rem 1.4rem;margin:1.2rem 0;
+  }
+  .activity h4{font-family:'Fraunces',serif;font-weight:600;color:var(--azul);font-size:1.1rem;margin-bottom:.6rem}
+
+  /* CHECKLIST */
+  .checklist{margin:1rem 0;padding:0;list-style:none}
+  .checklist li{
+    padding:.6rem 0 .6rem 1.8rem;position:relative;font-size:.98rem;border-bottom:1px dashed var(--linea);
+  }
+  .checklist li::before{
+    content:"✓";position:absolute;left:0;top:.5rem;
+    width:1.2rem;height:1.2rem;display:grid;place-items:center;
+    border:1px solid var(--terra);border-radius:50%;color:var(--terra);
+    font-size:.75rem;font-weight:700;
+  }
+  .checklist li:last-child{border-bottom:none}
+
+  /* PAGER */
+  .pager{
+    display:flex;justify-content:space-between;gap:1rem;margin-top:3rem;
+    padding-top:2rem;border-top:1px solid var(--linea);
+  }
+  .pager a{
+    flex:1;background:#fffdf8;border:1px solid var(--linea);border-radius:14px;
+    padding:1rem 1.2rem;transition:all .25s;color:var(--ink);
+  }
+  .pager a:hover{border-color:var(--azul);background:var(--crema-2);transform:translateY(-2px)}
+  .pager a.disabled{opacity:.4;pointer-events:none}
+  .pager .label{font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gris);margin-bottom:.3rem}
+  .pager .title{font-family:'Fraunces',serif;font-weight:600;color:var(--azul);font-size:1rem}
+  .pager .next{text-align:right}
+
+  footer{background:#10293f;color:rgba(246,241,231,.8);padding:2.5rem 1.5rem;text-align:center;font-size:.85rem}
+  footer .f-title{font-family:'Fraunces',serif;color:var(--crema);font-size:1.2rem;margin-bottom:.4rem}
+
+  .reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="crumb">
+    <a href="portal_curso_informatica.html">Portal del curso</a>
+    <span class="sep">/</span>
+    <span>Unidad 2</span>
+  </div>
+  <nav class="nav-units" aria-label="Navegación entre unidades">
+    <a href="unidad_1_fundamentos.html" title="Unidad 1">1</a>
+    <a href="#" class="active" title="Unidad 2">2</a>
+    <a href="unidad_3_software.html" title="Unidad 3">3</a>
+    <a href="unidad_4_productividad.html" title="Unidad 4">4</a>
+    <a href="unidad_5_pensamiento.html" title="Unidad 5">5</a>
+    <a href="unidad_6_ia.html" title="Unidad 6">6</a>
+  </nav>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="eyebrow">Unidad 2 · 1° Trimestre</div>
+  <h1>Hardware: la <em>computadora</em> por dentro</h1>
+  <p class="lead">Ahora abrimos la «caja negra». Vamos a ver qué hay adentro de una computadora, qué hace cada componente y cómo leer una ficha técnica antes de comprar.</p>
+  <div class="head-meta">
+    <span>8 horas cátedra</span>
+    <span>11 temas + glosario</span>
+    <span>6 actividades</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="grid">
+
+    <!-- ÍNDICE -->
+    <aside>
+      <h4>En esta unidad</h4>
+      <ol>
+        <li><a href="#presentacion">Presentación</a></li>
+        <li><a href="#hw-sw">Hardware y software</a></li>
+        <li><a href="#cpu">El procesador (CPU)</a></li>
+        <li><a href="#ram">La memoria RAM</a></li>
+        <li><a href="#disco">El almacenamiento</a></li>
+        <li><a href="#ram-vs-disco">RAM vs almacenamiento</a></li>
+        <li><a href="#placa-fuente">Placa madre y fuente</a></li>
+        <li><a href="#gpu">La placa de video</a></li>
+        <li><a href="#perifericos">Periféricos</a></li>
+        <li><a href="#puertos">Puertos y conectores</a></li>
+        <li><a href="#ficha">Leer una ficha técnica</a></li>
+        <li><a href="#mantenimiento">Mantenimiento preventivo</a></li>
+        <li><a href="#glosario">Glosario</a></li>
+        <li><a href="#actividades">Actividades</a></li>
+        <li><a href="#cierre">Cierre</a></li>
+      </ol>
+    </aside>
+
+    <!-- ARTÍCULO -->
+    <article>
+
+      <!-- PRESENTACIÓN -->
+      <section id="presentacion" class="reveal">
+        <h2><span class="n">00</span>Presentación de la unidad</h2>
+        <p>En la Unidad 1 vimos qué es la informática, cómo se representan los datos y cómo se mide la información. Ahora vamos a abrir la «caja negra» y mirar qué hay adentro de una computadora.</p>
+        <p>Esta unidad es especialmente importante para vos: en 2° año tenés <strong>Taller de Mantenimiento</strong>, y necesitás llegar a ese espacio sabiendo identificar componentes, entender qué hace cada uno y manejar el vocabulario técnico básico.</p>
+        <p>Pero no se trata solo de aprender nombres. La idea es que termines la unidad pudiendo entender por qué una computadora es «rápida» o «lenta», qué fijarte cuando vayas a comprar una, y qué cuidados básicos prolongan su vida útil.</p>
+        <div class="box">
+          <div class="b-title">📋 ¿Qué vas a aprender en esta unidad?</div>
+          <ul class="list">
+            <li>La diferencia entre hardware y software.</li>
+            <li>Los componentes internos: CPU, memoria RAM, almacenamiento, placa madre, fuente, GPU.</li>
+            <li>Por qué la memoria RAM y el disco son cosas distintas (¡y esto es clave!).</li>
+            <li>Los periféricos: qué son y cómo se clasifican.</li>
+            <li>Los puertos y conectores más comunes: USB, HDMI, jack, Ethernet.</li>
+            <li>Cómo leer la ficha técnica de un equipo antes de comprarlo.</li>
+            <li>Cuidados básicos para que la computadora dure muchos años.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- HW SW -->
+      <section id="hw-sw" class="reveal">
+        <h2><span class="n">01</span>Hardware y software: la primera gran división</h2>
+        <p>Antes de meternos con los componentes, dos términos que vamos a usar todo el año:</p>
+        <p><strong>Hardware</strong> es todo lo que podés tocar de una computadora. La parte física, los «fierros». El monitor, el teclado, el procesador, los cables. Si se te puede caer al piso y romperse, es hardware.</p>
+        <p><strong>Software</strong> es todo lo que NO podés tocar: los programas, el sistema operativo, las aplicaciones, los archivos. Son instrucciones y datos. No tienen forma física, aunque estén guardados en algún hardware.</p>
+        <div class="box">
+          <div class="b-title">📖 Una analogía simple</div>
+          <p>Pensá en un libro: el papel, la tinta y la tapa son el «hardware» del libro. La historia que cuenta, las palabras que están escritas, son el «software». Sin el papel, la historia no se podría leer; sin la historia, el papel sería inútil. Necesitás las dos cosas.</p>
+          <p>Lo mismo con la computadora: sin hardware, el software no tiene dónde funcionar; sin software, el hardware es un montón de fierros sin sentido.</p>
+        </div>
+        <p>En esta unidad nos concentramos en el hardware. En la Unidad 3 nos vamos a ocupar del software.</p>
+      </section>
+
+      <!-- CPU -->
+      <section id="cpu" class="reveal">
+        <h2><span class="n">02</span>El procesador (CPU): el cerebro</h2>
+        <p>El procesador, también llamado <strong>CPU</strong> (del inglés <em>Central Processing Unit</em>), es el componente más importante de una computadora. Es el que ejecuta todas las instrucciones, hace las cuentas y decide qué hacer con la información.</p>
+        <p>Físicamente es un cuadradito muy pequeño (de pocos centímetros) que va enchufado en la placa madre, debajo de un disipador y un ventilador. No lo ves a simple vista cuando abrís un gabinete, porque está tapado por el sistema de refrigeración.</p>
+        <h3>¿Qué hace exactamente?</h3>
+        <p>Aunque suene increíble, el procesador hace básicamente tres cosas, una detrás de la otra, miles de millones de veces por segundo:</p>
+        <ol class="list">
+          <li>Lee una instrucción de la memoria.</li>
+          <li>La ejecuta (suma, compara, mueve datos, etc.).</li>
+          <li>Guarda el resultado y pasa a la siguiente instrucción.</li>
+        </ol>
+        <p>Eso es todo. La magia está en que lo hace tan rápido que parece que la computadora «piensa».</p>
+        <h3>¿Cómo se mide su potencia?</h3>
+        <ul class="list">
+          <li><strong>Velocidad de reloj (GHz):</strong> indica cuántas operaciones puede hacer por segundo. Un procesador de 3,5 GHz hace 3.500 millones de operaciones por segundo. A mayor número, más rápido.</li>
+          <li><strong>Núcleos (cores):</strong> son como «mini-procesadores» dentro del procesador. Hoy un procesador típico tiene 4, 6, 8 o más núcleos. Cuantos más núcleos, más cosas puede hacer al mismo tiempo.</li>
+        </ul>
+        <p>Marcas más conocidas: <strong>Intel</strong> (Core i3, i5, i7, i9) y <strong>AMD</strong> (Ryzen 3, 5, 7, 9). En los celulares: Qualcomm Snapdragon, MediaTek, Apple A-series.</p>
+        <div class="box">
+          <div class="b-title">🍳 Una comparación útil</div>
+          <p>Pensá el procesador como un cocinero. La <strong>velocidad de reloj (GHz)</strong> es qué tan rápido pica las verduras. Los <strong>núcleos</strong> son cuántos cocineros hay en la misma cocina.</p>
+          <p>Un solo cocinero rapidísimo sirve para preparar un plato complicado lo más rápido posible. Varios cocineros (más núcleos) sirven para preparar varios platos al mismo tiempo. Las computadoras modernas combinan las dos cosas.</p>
+        </div>
+      </section>
+
+      <!-- RAM -->
+      <section id="ram" class="reveal">
+        <h2><span class="n">03</span>La memoria RAM: el escritorio de trabajo</h2>
+        <p>Acá viene uno de los conceptos que más confusión genera: la diferencia entre <strong>memoria RAM</strong> y <strong>disco</strong>. Mucha gente los mezcla, pero son cosas completamente distintas.</p>
+        <p>La memoria RAM (<em>Random Access Memory</em>) es donde la computadora pone temporalmente las cosas que está usando en este momento. Es muy rápida, pero tiene un detalle clave: <strong>cuando apagás la computadora, se borra todo lo que había.</strong></p>
+        <h3>La analogía del escritorio</h3>
+        <p>Imaginate que sos un oficinista. Tenés un archivero grande (eso sería el disco) donde guardás todas las carpetas. Cuando vas a trabajar con algunas carpetas, las sacás del archivero y las ponés sobre tu escritorio (eso sería la memoria RAM). Mientras están en el escritorio, las podés leer y modificar rápidamente.</p>
+        <p>Cuando termina el día, devolvés las carpetas al archivero y dejás el escritorio vacío. Al día siguiente, lo que no guardaste se perdió.</p>
+        <p>Por eso, cuando estás escribiendo un documento y no lo guardás, si se corta la luz <strong>perdés todo</strong>: lo que estabas escribiendo estaba en la RAM (el escritorio), no en el disco (el archivero).</p>
+        <h3>¿Cuánta necesitás?</h3>
+        <ul class="list">
+          <li><strong>4 GB:</strong> muy justo. Solo tareas básicas. Hoy queda corto.</li>
+          <li><strong>8 GB:</strong> aceptable para uso general (oficina, navegación, videos).</li>
+          <li><strong>16 GB:</strong> cómodo para trabajar, programar, varias aplicaciones abiertas.</li>
+          <li><strong>32 GB o más:</strong> trabajos pesados (edición de video, diseño 3D, máquinas virtuales).</li>
+        </ul>
+        <div class="box">
+          <div class="b-title">🔑 La pregunta clave</div>
+          <p>Si tu computadora se pone lenta cuando abrís muchas pestañas o varios programas a la vez, lo más probable es que te falte memoria RAM. El procesador puede ser rápido, pero si no tiene «escritorio» suficiente para trabajar, se traba.</p>
+        </div>
+      </section>
+
+      <!-- DISCO -->
+      <section id="disco" class="reveal">
+        <h2><span class="n">04</span>El almacenamiento: dónde se guarda todo</h2>
+        <p>Mientras que la RAM es la memoria temporal (escritorio), el almacenamiento es la memoria permanente: el archivero. Acá se guardan el sistema operativo, los programas instalados, tus archivos personales, las fotos. Cuando apagás la computadora, todo esto sigue ahí.</p>
+        <h3>HDD vs. SSD: dos tipos muy distintos</h3>
+        <div class="compare">
+          <div class="card">
+            <h5>HDD · Disco mecánico</h5>
+            <p>Tecnología vieja (desde los años 50). Tiene platos magnéticos que giran y un brazo que lee y escribe sobre ellos, como un tocadiscos.</p>
+            <ul>
+              <li>✓ Barato, mucha capacidad</li>
+              <li>✗ Lento</li>
+              <li>✗ Frágil ante golpes</li>
+              <li>✗ Consume más energía</li>
+            </ul>
+          </div>
+          <div class="card ssd">
+            <h5>SSD · Estado sólido</h5>
+            <p>Tecnología moderna. No tiene partes móviles: usa memorias electrónicas. Muchísimo más veloz, silencioso y resistente.</p>
+            <ul>
+              <li>✓ Rapidísimo</li>
+              <li>✓ Silencioso</li>
+              <li>✓ Resistente a golpes</li>
+              <li>✗ Más caro por GB</li>
+            </ul>
+          </div>
+        </div>
+        <div class="box">
+          <div class="b-title">💡 Si tenés que elegir, elegí SSD</div>
+          <p>La diferencia de velocidad entre un HDD y un SSD es tan grande que es lo que más se nota en el uso diario. Una computadora vieja con disco mecánico se siente lentísima; la misma con un SSD nuevo parece otra. <strong>Si vas a comprar o actualizar un equipo, el SSD es la inversión más importante.</strong></p>
+        </div>
+        <h3>¿Cuánta capacidad?</h3>
+        <div class="gamas">
+          <div class="gama"><h5>256 GB</h5><p>Mínimo aceptable. Si no guardás muchas fotos o videos.</p></div>
+          <div class="gama"><h5>512 GB</h5><p>Cómodo para uso general.</p></div>
+          <div class="gama"><h5>1 TB o más</h5><p>Ideal si trabajás con archivos pesados.</p></div>
+        </div>
+        <h3>Otros tipos de almacenamiento</h3>
+        <ul class="list">
+          <li><strong>Pendrive (memoria USB):</strong> portátil, ideal para transportar archivos.</li>
+          <li><strong>Tarjeta SD / microSD:</strong> se usa en celulares, cámaras, drones.</li>
+          <li><strong>Disco externo:</strong> un HDD o SSD que se conecta por USB. Para backups o llevar muchos archivos.</li>
+          <li><strong>Almacenamiento en la nube:</strong> Google Drive, OneDrive, iCloud. Tus archivos viven en servidores remotos. Lo vamos a ver en profundidad en la Unidad 4.</li>
+        </ul>
+      </section>
+
+      <!-- RAM VS DISCO -->
+      <section id="ram-vs-disco" class="reveal">
+        <h2><span class="n">05</span>RAM vs. almacenamiento: la confusión clásica</h2>
+        <p>Como este tema confunde mucho, hagamos un resumen lado a lado:</p>
+        <div class="tbl">
+          <table>
+            <thead><tr><th>Característica</th><th>Memoria RAM</th><th>Almacenamiento</th></tr></thead>
+            <tbody>
+              <tr><td class="feat">Función</td><td>Trabajo temporal (lo que se usa ahora)</td><td>Guardar todo de forma permanente</td></tr>
+              <tr><td class="feat">Velocidad</td><td>Muy rápida</td><td>Más lenta (sobre todo HDD)</td></tr>
+              <tr><td class="feat">Capacidad típica</td><td>8 a 32 GB</td><td>256 GB a varios TB</td></tr>
+              <tr><td class="feat">Al apagar la PC…</td><td>Se borra todo</td><td>Se mantiene todo</td></tr>
+              <tr><td class="feat">Analogía</td><td>El escritorio</td><td>El archivero</td></tr>
+              <tr><td class="feat">Si te falta…</td><td>La PC se pone lenta con varias cosas abiertas</td><td>No te entra todo lo que querés guardar</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="box amber">
+          <div class="b-title">🎯 Truco para no confundir nunca más</div>
+          <p>Cuando alguien te diga «mi computadora tiene 8», preguntá: ¿8 qué? Si dice 8 GB y se refiere a RAM, es poca memoria. Si se refiere a almacenamiento, es poquísimo (no le entra casi nada). Hoy un celular gama media tiene más que eso.</p>
+          <p>Cuando vayas a comprar un equipo, vas a ver siempre dos números: la <strong>RAM</strong> (memoria de trabajo) y el <strong>almacenamiento</strong> (capacidad total). Ahora sabés diferenciarlos.</p>
+        </div>
+      </section>
+
+      <!-- PLACA + FUENTE -->
+      <section id="placa-fuente" class="reveal">
+        <h2><span class="n">06</span>Placa madre, fuente y refrigeración</h2>
+        <h3>La placa madre (motherboard)</h3>
+        <p>Es la gran tabla verde donde se conectan todos los componentes. Ahí va el procesador, la memoria RAM, las placas de video, los discos. La placa madre es la que permite que todos esos componentes se comuniquen entre sí.</p>
+        <p>Imaginate que es la «ciudad» donde viven los componentes: tiene calles (los buses de datos) que les permiten mandar información de un lado a otro.</p>
+        <h3>La fuente de alimentación</h3>
+        <p>Toma la electricidad del enchufe (220 V de corriente alterna) y la transforma en distintos voltajes más bajos (12 V, 5 V, 3,3 V) que necesitan los componentes internos. Es como un «traductor eléctrico».</p>
+        <p>Una fuente de mala calidad puede dañar todos los demás componentes si entrega corriente irregular. Por eso, cuando se arma una PC, conviene no escatimar en la fuente.</p>
+        <h3>La refrigeración</h3>
+        <p>El procesador y la placa de video generan mucho calor mientras trabajan. Si no se refrigeran, se sobrecalientan y la computadora se apaga sola para protegerse. Hay dos tipos:</p>
+        <ul class="list">
+          <li><strong>Por aire:</strong> disipadores de metal + ventiladores (coolers). La más común y económica.</li>
+          <li><strong>Líquida:</strong> un sistema cerrado con líquido refrigerante. Más eficiente, pero más cara.</li>
+        </ul>
+      </section>
+
+      <!-- GPU -->
+      <section id="gpu" class="reveal">
+        <h2><span class="n">07</span>La placa de video (GPU)</h2>
+        <p>La <strong>GPU</strong> (<em>Graphics Processing Unit</em>) es un procesador especializado en dibujar todo lo que ves en la pantalla. Hay otro procesador además del CPU, dedicado solo a los gráficos.</p>
+        <p>¿Por qué un procesador aparte para eso? Porque generar imágenes —sobre todo cuando son complejas o se mueven— requiere muchísimos cálculos en paralelo. La GPU tiene cientos o miles de núcleos pequeños trabajando al mismo tiempo.</p>
+        <h3>GPU integrada vs. dedicada</h3>
+        <ul class="list">
+          <li><strong>Integrada:</strong> viene dentro del propio procesador (CPU). Opción económica. Sirve para tareas de oficina, video, navegación. Las notebooks comunes traen GPU integrada.</li>
+          <li><strong>Dedicada:</strong> es una placa aparte. Mucho más potente. Necesaria para juegos modernos, edición de video, diseño 3D, inteligencia artificial.</li>
+        </ul>
+        <p>Marcas: <strong>NVIDIA</strong> (GeForce RTX, GTX) y <strong>AMD</strong> (Radeon).</p>
+        <div class="box">
+          <div class="b-title">🎮 Si no jugás videojuegos modernos, no necesitás GPU dedicada</div>
+          <p>Mucha gente cree que sin una placa de video «buena» la computadora no sirve. Falso. Si tu uso es oficina, navegación, videos en YouTube y videollamadas, una GPU integrada es más que suficiente. Solo necesitás GPU dedicada si vas a jugar juegos pesados, editar video, hacer diseño 3D o trabajar con IA.</p>
+        </div>
+      </section>
+
+      <!-- PERIFÉRICOS -->
+      <section id="perifericos" class="reveal">
+        <h2><span class="n">08</span>Periféricos: lo que se conecta por fuera</h2>
+        <p>Los periféricos son todos los dispositivos que se conectan a la computadora desde afuera. Se clasifican según la dirección en que viaja la información:</p>
+        <h3>Periféricos de entrada</h3>
+        <p>Llevan información desde vos hacia la computadora.</p>
+        <ul class="list">
+          <li>Teclado: para escribir.</li>
+          <li>Mouse: para señalar y hacer clic.</li>
+          <li>Micrófono: para que la compu reciba audio.</li>
+          <li>Cámara web: para que reciba imagen.</li>
+          <li>Escáner: para digitalizar documentos.</li>
+          <li>Lectores de huella, lápiz óptico, joystick.</li>
+        </ul>
+        <h3>Periféricos de salida</h3>
+        <p>Llevan información desde la computadora hacia vos.</p>
+        <ul class="list">
+          <li>Monitor o pantalla: muestra imagen.</li>
+          <li>Parlantes y auriculares: emiten audio.</li>
+          <li>Impresora: imprime documentos.</li>
+          <li>Proyector: muestra imagen en una pared o pantalla grande.</li>
+        </ul>
+        <h3>Periféricos mixtos (entrada y salida)</h3>
+        <ul class="list">
+          <li><strong>Pantalla táctil:</strong> muestra (salida) y recibe toques (entrada). Por eso un celular o tablet es todo a la vez.</li>
+          <li><strong>Impresora multifunción:</strong> imprime (salida) y escanea (entrada).</li>
+          <li><strong>Auriculares con micrófono:</strong> reciben y emiten audio.</li>
+        </ul>
+      </section>
+
+      <!-- PUERTOS -->
+      <section id="puertos" class="reveal">
+        <h2><span class="n">09</span>Puertos y conectores: dónde se enchufa qué</h2>
+        <p>Los periféricos se conectan a través de <strong>puertos</strong>. Es importante reconocer los más comunes, porque vas a usarlos toda la vida:</p>
+        <div class="tbl">
+          <table>
+            <thead><tr><th>Puerto</th><th>Para qué sirve</th><th>Detalles</th></tr></thead>
+            <tbody>
+              <tr><td class="feat">USB-A</td><td>Pendrives, mouse, teclado, impresoras.</td><td>Varias versiones (2.0, 3.0). Las nuevas son más rápidas. Azul = USB 3.</td></tr>
+              <tr><td class="feat">USB-C</td><td>Reversible, moderno. Celulares, notebooks nuevas.</td><td>Se enchufa de cualquier lado. Reemplaza al USB-A. Puede cargar, transmitir datos y video.</td></tr>
+              <tr><td class="feat">HDMI</td><td>Monitor, TV, proyector.</td><td>Estándar actual para video digital. Lleva imagen y audio.</td></tr>
+              <tr><td class="feat">VGA</td><td>Monitores antiguos.</td><td>Conector azul con tornillos. Solo imagen. Reemplazado por HDMI.</td></tr>
+              <tr><td class="feat">Jack 3.5 mm</td><td>Auriculares, micrófonos, parlantes.</td><td>El conector redondito de toda la vida.</td></tr>
+              <tr><td class="feat">Ethernet (RJ-45)</td><td>Internet por cable.</td><td>Más estable y rápido que WiFi.</td></tr>
+              <tr><td class="feat">Conector de poder</td><td>Alimentación eléctrica.</td><td>Cada notebook tiene el suyo, o carga por USB-C.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- FICHA TÉCNICA -->
+      <section id="ficha" class="reveal">
+        <h2><span class="n">10</span>Cómo leer una ficha técnica antes de comprar</h2>
+        <p>Una de las cosas más útiles que te llevás de esta unidad es saber leer una ficha técnica. Cuando vayas a comprar una computadora, una notebook o un celular, vas a ver una lista de especificaciones. Ahora vas a poder entenderlas.</p>
+        <h3>Ejemplo: ficha de una notebook</h3>
+        <div class="tbl">
+          <table>
+            <thead><tr><th>Especificación</th><th>Qué dice</th><th>Qué significa</th></tr></thead>
+            <tbody>
+              <tr><td class="feat">Procesador</td><td>Intel Core i5-1235U</td><td>Gama media, generación 12. Bueno para uso general.</td></tr>
+              <tr><td class="feat">Memoria RAM</td><td>8 GB DDR4</td><td>8 GB de memoria de trabajo. Aceptable para uso general.</td></tr>
+              <tr><td class="feat">Almacenamiento</td><td>512 GB SSD</td><td>SSD (rápido) de medio terabyte. Cómodo.</td></tr>
+              <tr><td class="feat">Pantalla</td><td>15,6" Full HD (1920×1080)</td><td>Resolución estándar actual.</td></tr>
+              <tr><td class="feat">GPU</td><td>Intel Iris Xe (integrada)</td><td>Gráficos integrados. Suficiente para oficina. No para juegos pesados.</td></tr>
+              <tr><td class="feat">Puertos</td><td>2× USB-A, 1× USB-C, 1× HDMI, 1× jack</td><td>Conectividad estándar moderna.</td></tr>
+              <tr><td class="feat">Batería</td><td>Hasta 8 horas</td><td>Autonomía estimada (en uso real suele ser menos).</td></tr>
+              <tr><td class="feat">Sistema operativo</td><td>Windows 11 Home</td><td>Viene con el SO ya instalado.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="box">
+          <div class="b-title">🛒 Consejo de comprador</div>
+          <p>Cuando compares equipos, no te quedes con la «talla» más vistosa. Mirá los cuatro datos que más importan en el uso real:</p>
+          <ul class="list">
+            <li>Procesador (modelo y generación).</li>
+            <li>Memoria RAM (mínimo 8 GB, ideal 16 GB).</li>
+            <li>Tipo y tamaño de almacenamiento (que sea SSD, mínimo 256 GB).</li>
+            <li>Si vas a usar para gaming o diseño: GPU dedicada.</li>
+          </ul>
+          <p>Con esos cuatro datos podés comparar dos equipos del mismo precio y elegir el mejor.</p>
+        </div>
+      </section>
+
+      <!-- MANTENIMIENTO -->
+      <section id="mantenimiento" class="reveal">
+        <h2><span class="n">11</span>Mantenimiento preventivo básico</h2>
+        <p>Como esta materia te prepara también para Taller de Mantenimiento de 2° año, conviene cerrar con algunos cuidados básicos que prolongan la vida útil de cualquier computadora.</p>
+        <h3>Cuidados físicos</h3>
+        <ul class="list">
+          <li>Mantenela en un lugar ventilado. No la pongas contra una pared o sobre la cama (las notebooks se sobrecalientan si tapás las rejillas).</li>
+          <li>Limpiala por fuera con un paño seco o levemente húmedo. Nunca con productos abrasivos.</li>
+          <li>Una vez por año, limpiá el polvo de los ventiladores con aire comprimido (el polvo es el principal enemigo del enfriamiento).</li>
+          <li>No comas ni tomes bebidas cerca del teclado.</li>
+          <li>Si tenés notebook, no la uses sobre superficies blandas (cama, sillón) por períodos largos.</li>
+        </ul>
+        <h3>Cuidados eléctricos</h3>
+        <ul class="list">
+          <li>Usá una zapatilla con protección contra picos de tensión, o mejor, una UPS.</li>
+          <li>Apagá correctamente la computadora desde el sistema operativo. No la apagues sacando el cable: podés corromper archivos.</li>
+        </ul>
+        <h3>Cuidados de la batería (notebooks)</h3>
+        <ul class="list">
+          <li>No la dejes enchufada al 100% por días enteros si no la vas a usar.</li>
+          <li>Tampoco la dejes descargarse al 0% completamente.</li>
+          <li>Lo ideal: mantenerla entre 20% y 80% para uso cotidiano.</li>
+        </ul>
+        <h3>Buenas prácticas digitales</h3>
+        <ul class="list">
+          <li>Hacé copias de seguridad de tus archivos importantes. Todo disco se rompe tarde o temprano.</li>
+          <li>Tené un antivirus actualizado.</li>
+          <li>No instales programas «raros» de páginas no confiables.</li>
+          <li>Mantené el sistema operativo y los drivers actualizados.</li>
+        </ul>
+        <div class="box amber">
+          <div class="b-title">⏳ Una computadora bien cuidada dura 8 a 10 años</div>
+          <p>Las computadoras se vuelven «viejas» más por descuido que por edad real. Una notebook de hace 8 años, con SSD y bien mantenida, puede funcionar perfectamente para tareas de oficina hoy. En cambio, una de un año, llena de polvo y sin actualizaciones, puede estar al borde de fallar.</p>
+          <p><strong>El mantenimiento no es un detalle: es la diferencia entre tirar la computadora a los 3 años o usarla 10.</strong></p>
+        </div>
+      </section>
+
+      <!-- GLOSARIO -->
+      <section id="glosario" class="reveal">
+        <h2><span class="n">12</span>Glosario de la unidad</h2>
+        <ul class="list">
+          <li><strong>Hardware:</strong> la parte física de la computadora, todo lo que se puede tocar.</li>
+          <li><strong>Software:</strong> los programas y datos, la parte que no se puede tocar.</li>
+          <li><strong>CPU (procesador):</strong> el cerebro de la computadora.</li>
+          <li><strong>GHz:</strong> unidad de velocidad del procesador.</li>
+          <li><strong>Núcleo (core):</strong> «mini-procesador» dentro del procesador.</li>
+          <li><strong>Memoria RAM:</strong> memoria temporal de trabajo. Se borra al apagar.</li>
+          <li><strong>Almacenamiento:</strong> memoria permanente donde se guardan archivos y programas.</li>
+          <li><strong>HDD:</strong> disco mecánico. Lento pero económico.</li>
+          <li><strong>SSD:</strong> disco de estado sólido. Rápido y resistente.</li>
+          <li><strong>Placa madre:</strong> la «ciudad» donde se conectan todos los componentes.</li>
+          <li><strong>Fuente de alimentación:</strong> transforma la electricidad para alimentar los componentes.</li>
+          <li><strong>GPU:</strong> procesador especializado en generar imágenes.</li>
+          <li><strong>Periférico:</strong> dispositivo que se conecta a la computadora por fuera.</li>
+          <li><strong>Puerto:</strong> conector físico donde se enchufan los periféricos.</li>
+        </ul>
+      </section>
+
+      <!-- ACTIVIDADES -->
+      <section id="actividades" class="reveal">
+        <h2><span class="n">13</span>Actividades</h2>
+
+        <div class="activity">
+          <h4>Actividad 1 · Hardware o software</h4>
+          <p>Para cada elemento, indicá si es hardware o software:</p>
+          <ol class="list">
+            <li>El teclado.</li>
+            <li>WhatsApp.</li>
+            <li>La pantalla del celular.</li>
+            <li>Windows 11.</li>
+            <li>Una foto guardada en tu computadora.</li>
+            <li>Un pendrive.</li>
+            <li>Word.</li>
+            <li>La batería de la notebook.</li>
+            <li>Un archivo PDF.</li>
+            <li>La cámara web.</li>
+          </ol>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 2 · Identificar la pieza</h4>
+          <p>Para cada función, indicá qué componente la cumple:</p>
+          <ol class="list">
+            <li>Ejecuta las instrucciones y hace las cuentas.</li>
+            <li>Guarda temporalmente lo que se está usando.</li>
+            <li>Guarda todo de forma permanente, incluso al apagar.</li>
+            <li>Transforma la corriente del enchufe.</li>
+            <li>Se ocupa de generar las imágenes que se ven en pantalla.</li>
+            <li>Conecta todos los componentes entre sí.</li>
+          </ol>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 3 · Investigá tu propio equipo</h4>
+          <p>Buscá en tu computadora las especificaciones técnicas (en Windows: Configuración → Sistema → Acerca de). Completá:</p>
+          <ol class="list">
+            <li>Modelo de procesador.</li>
+            <li>Cantidad de memoria RAM.</li>
+            <li>Capacidad total de almacenamiento (y cuánto te queda libre).</li>
+            <li>Sistema operativo y versión.</li>
+            <li>Con esos datos, ¿dirías que es un equipo de gama baja, media o alta? Justificá.</li>
+          </ol>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 4 · Comparador de compras</h4>
+          <p>Buscá en una tienda online (Mercado Libre, Fravega, Garbarino) dos notebooks de precio similar (con diferencia menor al 15%). Armá un cuadro comparativo con sus especificaciones (procesador, RAM, almacenamiento, GPU, pantalla, batería) y justificá cuál comprarías y por qué.</p>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 5 · Diagnóstico</h4>
+          <p>En cada situación, identificá qué componente probablemente sea el problema:</p>
+          <ol class="list">
+            <li>La computadora tarda 5 minutos en encender desde que apretás el botón hasta que aparece el escritorio.</li>
+            <li>Cuando abrís muchas pestañas del navegador, todo se pone lento y se traba.</li>
+            <li>No te entran más fotos en el celular, te dice que no hay espacio.</li>
+            <li>La computadora se apaga sola después de un rato de uso intenso.</li>
+            <li>Querés conectar una segunda pantalla pero no podés porque no hay dónde enchufarla.</li>
+          </ol>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 6 · Cuestionario de cierre</h4>
+          <ol class="list">
+            <li>Explicá con tus palabras la diferencia entre memoria RAM y almacenamiento. Dame un ejemplo nuevo.</li>
+            <li>¿Por qué un SSD es mejor que un HDD?</li>
+            <li>Nombrá 3 periféricos de entrada y 3 de salida.</li>
+            <li>¿Para qué sirve la placa madre?</li>
+            <li>¿En qué casos vale la pena comprar una computadora con GPU dedicada?</li>
+            <li>Mencioná tres cuidados básicos para que una computadora dure muchos años.</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- CIERRE -->
+      <section id="cierre" class="reveal">
+        <h2><span class="n">14</span>Cierre de la unidad</h2>
+        <p>Si llegaste hasta acá, ya sabés qué hay adentro de una computadora, qué hace cada parte y cómo elegir un equipo de manera informada. Vas a llegar a Taller de Mantenimiento de 2° año con vocabulario, conceptos y criterios.</p>
+        <p>Antes de pasar a la próxima unidad, asegurate de que podés:</p>
+        <ul class="checklist">
+          <li>Diferenciar hardware de software con ejemplos propios.</li>
+          <li>Explicar qué hacen el procesador, la RAM y el almacenamiento.</li>
+          <li>Distinguir RAM de almacenamiento sin confundirte.</li>
+          <li>Reconocer los puertos USB-A, USB-C, HDMI y jack en cualquier equipo.</li>
+          <li>Leer una ficha técnica básica y entender qué te están vendiendo.</li>
+        </ul>
+        <p><em>En la próxima unidad vamos a dar vuelta la moneda: si en esta vimos el hardware, ahora nos toca el software. ¡Nos vemos!</em></p>
+      </section>
+
+      <!-- PAGER -->
+      <nav class="pager" aria-label="Navegación entre unidades">
+        <a href="unidad_1_fundamentos.html">
+          <div class="label">← Unidad anterior</div>
+          <div class="title">Unidad 1 · Fundamentos</div>
+        </a>
+        <a href="unidad_3_software.html" class="next">
+          <div class="label">Siguiente →</div>
+          <div class="title">Unidad 3 · Software y SO</div>
+        </a>
+      </nav>
+
+    </article>
+
+  </div>
+</div>
+
+<footer>
+  <div class="f-title">Introducción a la Informática</div>
+  <div>1° Año · E.P.J.A. · EPET N°7 · Ciclo lectivo 2026</div>
+</footer>
+
+<script>
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); obs.unobserve(e.target);} });
+  },{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+  const links = document.querySelectorAll('aside ol li a');
+  const sections = document.querySelectorAll('article section[id]');
+  const sObs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const id = e.target.id;
+        links.forEach(l=>{
+          if(l.getAttribute('href')==='#'+id){
+            l.style.color='var(--azul)';l.style.fontWeight='600';
+            l.style.borderLeftColor='var(--terra)';l.style.background='var(--crema-2)';
+          } else {
+            l.style.color='';l.style.fontWeight='';
+            l.style.borderLeftColor='transparent';l.style.background='';
+          }
+        });
+      }
+    });
+  },{rootMargin:'-30% 0px -60% 0px'});
+  sections.forEach(s=>sObs.observe(s));
+</script>
+
+</body>
+</html>

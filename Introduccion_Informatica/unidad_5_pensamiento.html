@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unidad 5 · Pensamiento computacional · 1° E.P.J.A.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,500&family=Spline+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1b2430;
+    --azul:#1F4E79;
+    --azul-claro:#2E75B6;
+    --crema:#f6f1e7;
+    --crema-2:#efe7d6;
+    --terra:#c1632f;
+    --terra-suave:#e8a36a;
+    --violeta:#7a4fb0;
+    --violeta-claro:#9c7bcb;
+    --verde:#3f6b4f;
+    --naranja-scratch:#ff8c1a;
+    --azul-scratch:#4c97ff;
+    --violeta-scratch:#9966ff;
+    --amarillo-scratch:#ffbf00;
+    --ambar:#fff4e0;
+    --ambar-borde:#b86e00;
+    --linea:#d9cdb6;
+    --gris:#8a8276;
+    --sombra:rgba(31,78,121,.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:80px}
+  body{
+    font-family:'Spline Sans',sans-serif;color:var(--ink);background:var(--crema);
+    line-height:1.7;-webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background-image:radial-gradient(circle at 1px 1px, rgba(31,78,121,.06) 1px, transparent 0);
+    background-size:26px 26px;
+  }
+  a{color:var(--terra);text-decoration:none;border-bottom:1px dotted var(--terra)}
+  a:hover{color:var(--azul);border-bottom-color:var(--azul)}
+
+  .topbar{
+    position:sticky;top:0;z-index:50;background:rgba(246,241,231,.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--linea);padding:.85rem clamp(1rem,4vw,2.5rem);
+    display:flex;justify-content:space-between;align-items:center;gap:1rem;
+  }
+  .crumb{font-size:.85rem;color:var(--gris)}
+  .crumb a{color:var(--azul);border-bottom-color:transparent}
+  .crumb a:hover{border-bottom:1px dotted var(--azul)}
+  .crumb .sep{margin:0 .5rem;color:var(--linea)}
+  .nav-units{display:flex;gap:.4rem}
+  .nav-units a{
+    width:30px;height:30px;display:grid;place-items:center;border-radius:50%;
+    font-family:'Fraunces',serif;font-size:.9rem;color:var(--azul);
+    border:1px solid var(--linea);background:#fff;
+  }
+  .nav-units a.active{background:var(--azul);color:var(--crema);border-color:var(--azul)}
+  .nav-units a:hover:not(.active):not(.dis){border-color:var(--azul);background:var(--crema-2)}
+  .nav-units a.dis{opacity:.4;pointer-events:none}
+  @media(max-width:560px){.nav-units{display:none}}
+
+  /* HEADER · tono violeta para U5 */
+  header{
+    padding:clamp(2.5rem,6vw,4.5rem) clamp(1.2rem,5vw,4rem) clamp(2rem,5vw,3.5rem);
+    background:linear-gradient(160deg,#7a4fb0 0%,#5a3a8a 60%,#3a2560 100%);
+    color:var(--crema);position:relative;overflow:hidden;
+  }
+  header::after{
+    content:"";position:absolute;right:-12%;top:-30%;width:55vw;height:55vw;max-width:540px;max-height:540px;
+    background:radial-gradient(circle, rgba(255,200,140,.25), transparent 65%);border-radius:50%;
+  }
+  .eyebrow{font-size:.78rem;letter-spacing:.32em;text-transform:uppercase;color:#f3c79b;font-weight:600;margin-bottom:1rem}
+  header h1{
+    font-family:'Fraunces',serif;font-weight:800;
+    font-size:clamp(2rem,6vw,4rem);line-height:1.05;letter-spacing:-.02em;max-width:18ch;
+  }
+  header h1 em{font-style:italic;font-weight:500;color:#f3c79b}
+  .lead{margin-top:1.2rem;font-size:clamp(1rem,2vw,1.15rem);max-width:54ch;color:rgba(246,241,231,.88)}
+  .head-meta{margin-top:1.6rem;font-size:.82rem;color:rgba(246,241,231,.7);display:flex;flex-wrap:wrap;gap:1.2rem}
+  .head-meta span::before{content:"●";color:#f3c79b;margin-right:.5rem}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 clamp(1.2rem,5vw,3rem)}
+  .grid{display:grid;grid-template-columns:240px 1fr;gap:clamp(2rem,4vw,3.5rem);padding-top:clamp(2rem,4vw,3rem);padding-bottom:5rem}
+  @media(max-width:880px){.grid{grid-template-columns:1fr}}
+
+  aside{align-self:start;position:sticky;top:80px}
+  @media(max-width:880px){aside{position:static}}
+  aside h4{
+    font-family:'Fraunces',serif;font-style:italic;font-weight:500;
+    font-size:.95rem;color:var(--terra);margin-bottom:.8rem;
+    border-bottom:1px solid var(--linea);padding-bottom:.6rem;
+  }
+  aside ol{list-style:none;counter-reset:ix}
+  aside ol li{counter-increment:ix;margin-bottom:.4rem}
+  aside ol li a{
+    display:block;padding:.4rem .2rem;font-size:.9rem;color:var(--ink);
+    border-bottom:none;border-left:2px solid transparent;padding-left:.7rem;transition:all .25s;
+  }
+  aside ol li a::before{content:counter(ix,decimal-leading-zero) " · ";color:var(--gris);font-family:'Fraunces',serif;font-style:italic}
+  aside ol li a:hover{border-left-color:var(--terra);color:var(--azul);background:var(--crema-2)}
+
+  article{max-width:62ch}
+  article section{margin-bottom:clamp(2.5rem,5vw,4rem);scroll-margin-top:80px}
+  article h2{
+    font-family:'Fraunces',serif;font-weight:600;font-size:clamp(1.5rem,4vw,2.1rem);
+    color:var(--azul);letter-spacing:-.01em;margin-bottom:1rem;line-height:1.2;
+  }
+  article h2 .n{font-family:'Fraunces',serif;font-style:italic;font-weight:500;color:var(--terra);font-size:.85em;margin-right:.4rem}
+  article h3{
+    font-family:'Fraunces',serif;font-weight:600;font-size:1.25rem;color:var(--azul-claro);
+    margin-top:1.8rem;margin-bottom:.6rem;
+  }
+  article p{margin-bottom:1rem;font-size:1.02rem}
+  article strong{color:var(--azul)}
+  article em{color:#5a5346}
+
+  ul.list,ol.list{margin:.5rem 0 1.2rem 1.4rem}
+  ul.list li,ol.list li{margin-bottom:.5rem;font-size:1.02rem}
+  ul.list li::marker{color:var(--terra)}
+  ol.list li::marker{color:var(--terra);font-weight:600;font-family:'Fraunces',serif}
+
+  .box{
+    background:#fffdf8;border:1px solid var(--linea);border-left:5px solid var(--azul);
+    border-radius:14px;padding:1.2rem 1.4rem;margin:1.5rem 0;
+  }
+  .box.amber{border-left-color:var(--ambar-borde);background:var(--ambar)}
+  .box.amber .b-title{color:var(--ambar-borde)}
+  .box.violet{border-left-color:var(--violeta);background:#f5efff}
+  .box.violet .b-title{color:var(--violeta)}
+  .box .b-title{
+    font-family:'Fraunces',serif;font-weight:600;color:var(--azul);
+    font-size:1.05rem;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;
+  }
+  .box p{font-size:.96rem;margin-bottom:.6rem}
+  .box p:last-child{margin-bottom:0}
+  .box ul li{font-size:.96rem}
+
+  /* Las cuatro habilidades del pensamiento computacional */
+  .skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.8rem;margin:1.2rem 0}
+  .skill{background:#fffdf8;border:1px solid var(--linea);border-top:4px solid var(--violeta);border-radius:12px;padding:1rem 1.1rem}
+  .skill .ico{font-size:1.8rem;margin-bottom:.3rem;display:block}
+  .skill h5{font-family:'Fraunces',serif;color:var(--violeta);font-size:1.05rem;margin-bottom:.3rem;line-height:1.2}
+  .skill p{font-size:.88rem;margin:0;color:#5a5346}
+
+  /* Tarjetas de las tres estructuras de control */
+  .structures{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.8rem;margin:1.2rem 0}
+  .struct{background:#fffdf8;border:1px solid var(--linea);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+  .struct .top{padding:.9rem 1.1rem;color:#fff;font-family:'Fraunces',serif;font-weight:600;font-size:1.05rem}
+  .struct.seq .top{background:var(--azul)}
+  .struct.sel .top{background:var(--terra)}
+  .struct.it  .top{background:var(--violeta)}
+  .struct .body{padding:.9rem 1.1rem;flex:1}
+  .struct .body p{font-size:.92rem;margin-bottom:.6rem}
+  .struct .body p:last-child{margin-bottom:0}
+  .struct .icon{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:1.3rem;letter-spacing:.05em;color:var(--gris);margin-top:.4rem}
+
+  /* Pseudocódigo */
+  pre.code{
+    font-family:'JetBrains Mono',monospace;
+    background:#1b2430;color:#e8e4d8;
+    padding:1rem 1.2rem;border-radius:10px;
+    font-size:.86rem;line-height:1.55;overflow-x:auto;margin:1rem 0;
+    border-left:4px solid var(--terra-suave);
+  }
+  pre.code .kw{color:#ffbf80;font-weight:600}
+  pre.code .var{color:#9ec5ff}
+  pre.code .str{color:#a8d8a8}
+  pre.code .com{color:#7a8a96;font-style:italic}
+  code.inline{font-family:'JetBrains Mono',monospace;background:var(--crema-2);color:var(--azul);padding:.1rem .4rem;border-radius:4px;font-size:.9em}
+
+  /* SVG diagrama de flujo · contenedor */
+  .flow{
+    background:#fffdf8;border:1px solid var(--linea);border-radius:14px;
+    padding:1.2rem;margin:1.2rem 0;overflow-x:auto;
+  }
+  .flow svg{display:block;margin:0 auto;max-width:100%;height:auto}
+  .flow-caption{text-align:center;color:#5a5346;font-style:italic;font-size:.88rem;margin-top:.5rem}
+
+  /* Tabla símbolos diagrama flujo */
+  .tbl{overflow-x:auto;margin:1.5rem 0;border-radius:12px;border:1px solid var(--linea)}
+  table{width:100%;border-collapse:collapse;background:#fffdf8;font-size:.94rem;min-width:520px}
+  thead{background:var(--azul);color:var(--crema)}
+  th{font-family:'Fraunces',serif;font-weight:600;text-align:left;padding:.8rem 1rem;font-size:.95rem;letter-spacing:.01em}
+  td{padding:.7rem 1rem;border-top:1px solid var(--linea);vertical-align:middle}
+  tbody tr:nth-child(even){background:var(--crema-2)}
+  td.feat{font-weight:600;color:var(--azul);font-family:'Fraunces',serif}
+  td.sym{text-align:center;font-size:1.5rem;line-height:1}
+
+  /* Bloques tipo Scratch */
+  .scratch{margin:1.2rem 0}
+  .sblock{
+    display:inline-block;padding:.5rem .9rem;border-radius:5px;color:#fff;
+    font-family:'Spline Sans',sans-serif;font-weight:500;font-size:.92rem;
+    margin:.2rem .2rem;box-shadow:0 2px 0 rgba(0,0,0,.15);
+  }
+  .sblock.event{background:var(--amarillo-scratch);color:#5a4500}
+  .sblock.move{background:var(--azul-scratch)}
+  .sblock.look{background:var(--violeta-scratch)}
+  .sblock.control{background:var(--naranja-scratch)}
+  .sblock-stack{display:flex;flex-direction:column;gap:2px;margin:1rem 0;max-width:380px}
+  .sblock-stack .sblock{display:block;width:fit-content}
+
+  /* Reglas / características */
+  .rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.6rem;margin:1rem 0}
+  .rule{background:#fffdf8;border:1px solid var(--linea);border-radius:10px;padding:.7rem .9rem;font-size:.9rem}
+  .rule strong{display:block;color:var(--azul);font-family:'Fraunces',serif;margin-bottom:.15rem;font-size:.95rem}
+
+  .activity{background:#fffdf8;border:1px solid var(--linea);border-radius:14px;padding:1.2rem 1.4rem;margin:1.2rem 0}
+  .activity h4{font-family:'Fraunces',serif;font-weight:600;color:var(--azul);font-size:1.1rem;margin-bottom:.6rem}
+
+  .checklist{margin:1rem 0;padding:0;list-style:none}
+  .checklist li{padding:.6rem 0 .6rem 1.8rem;position:relative;font-size:.98rem;border-bottom:1px dashed var(--linea)}
+  .checklist li::before{
+    content:"✓";position:absolute;left:0;top:.5rem;
+    width:1.2rem;height:1.2rem;display:grid;place-items:center;
+    border:1px solid var(--terra);border-radius:50%;color:var(--terra);font-size:.75rem;font-weight:700;
+  }
+  .checklist li:last-child{border-bottom:none}
+
+  .pager{display:flex;justify-content:space-between;gap:1rem;margin-top:3rem;padding-top:2rem;border-top:1px solid var(--linea)}
+  .pager a{flex:1;background:#fffdf8;border:1px solid var(--linea);border-radius:14px;padding:1rem 1.2rem;transition:all .25s;color:var(--ink)}
+  .pager a:hover{border-color:var(--azul);background:var(--crema-2);transform:translateY(-2px)}
+  .pager a.disabled{opacity:.4;pointer-events:none}
+  .pager .label{font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gris);margin-bottom:.3rem}
+  .pager .title{font-family:'Fraunces',serif;font-weight:600;color:var(--azul);font-size:1rem}
+  .pager .next{text-align:right}
+
+  footer{background:#10293f;color:rgba(246,241,231,.8);padding:2.5rem 1.5rem;text-align:center;font-size:.85rem}
+  footer .f-title{font-family:'Fraunces',serif;color:var(--crema);font-size:1.2rem;margin-bottom:.4rem}
+
+  .reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="crumb">
+    <a href="portal_curso_informatica.html">Portal del curso</a>
+    <span class="sep">/</span>
+    <span>Unidad 5</span>
+  </div>
+  <nav class="nav-units" aria-label="Navegación entre unidades">
+    <a href="unidad_1_fundamentos.html" title="Unidad 1">1</a>
+    <a href="unidad_2_hardware.html" title="Unidad 2">2</a>
+    <a href="unidad_3_software.html" title="Unidad 3">3</a>
+    <a href="unidad_4_productividad.html" title="Unidad 4">4</a>
+    <a href="#" class="active" title="Unidad 5">5</a>
+    <a href="unidad_6_ia.html" title="Unidad 6">6</a>
+  </nav>
+</div>
+
+<header>
+  <div class="eyebrow">Unidad 5 · 3° Trimestre</div>
+  <h1>Pensamiento <em>computacional</em></h1>
+  <p class="lead">La unidad bisagra hacia 2° año. Acá vas a empezar a pensar como una computadora: descomponer, abstraer, diseñar algoritmos. Es el puente más importante hacia la programación.</p>
+  <div class="head-meta">
+    <span>10 horas cátedra</span>
+    <span>8 temas + glosario</span>
+    <span>8 actividades</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="grid">
+
+    <aside>
+      <h4>En esta unidad</h4>
+      <ol>
+        <li><a href="#presentacion">Presentación</a></li>
+        <li><a href="#computacional">Pensamiento computacional</a></li>
+        <li><a href="#descomposicion">Descomposición</a></li>
+        <li><a href="#algoritmos">¿Qué es un algoritmo?</a></li>
+        <li><a href="#flujo">Diagramas de flujo</a></li>
+        <li><a href="#estructuras">Las tres estructuras</a></li>
+        <li><a href="#variables">Variables</a></li>
+        <li><a href="#pseudocodigo">Pseudocódigo</a></li>
+        <li><a href="#scratch">Scratch</a></li>
+        <li><a href="#glosario">Glosario</a></li>
+        <li><a href="#actividades">Actividades</a></li>
+        <li><a href="#cierre">Cierre</a></li>
+      </ol>
+    </aside>
+
+    <article>
+
+      <!-- PRESENTACIÓN -->
+      <section id="presentacion" class="reveal">
+        <h2><span class="n">00</span>Presentación de la unidad</h2>
+        <p>Llegamos a la unidad más importante del año desde el punto de vista de tu carrera técnica. Hasta acá aprendiste a usar herramientas. Ahora vas a empezar a <strong>pensar como una computadora</strong>. No te asustes: no vas a programar nada complejo todavía. Pero vas a sentar las bases de toda la programación que viene en 2° y 3° año.</p>
+        <p>Mucha gente piensa que para programar hay que ser «un genio de la matemática». <em>Mentira.</em> Programar es, antes que nada, una manera de resolver problemas paso a paso. Si sabés explicarle a alguien cómo hacer un mate, cómo cambiar una rueda o cómo llegar a tu casa, ya estás haciendo lo más importante de la programación.</p>
+        <p>Esta unidad es deliberadamente «sin código» durante las primeras semanas. Vamos a trabajar con lápiz, papel, esquemas y conversaciones. <strong>Recién al final vamos a tocar Scratch</strong>, una herramienta visual donde se programa arrastrando bloques de colores.</p>
+        <div class="box">
+          <div class="b-title">📋 ¿Qué vas a aprender en esta unidad?</div>
+          <ul class="list">
+            <li>Qué es el pensamiento computacional y por qué sirve para muchas cosas además de programar.</li>
+            <li>Cómo descomponer un problema en partes más pequeñas.</li>
+            <li>Qué es un algoritmo y cómo se construye uno.</li>
+            <li>Cómo dibujar un algoritmo con un diagrama de flujo.</li>
+            <li>Las tres estructuras básicas de control: secuencia, selección e iteración.</li>
+            <li>Qué es una variable y para qué sirve.</li>
+            <li>Cómo escribir pseudocódigo (algoritmo en lenguaje casi natural).</li>
+            <li>Cómo construir un programa real en Scratch usando bloques visuales.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- COMPUTACIONAL -->
+      <section id="computacional" class="reveal">
+        <h2><span class="n">01</span>¿Qué es el pensamiento computacional?</h2>
+        <p>El <strong>pensamiento computacional</strong> es una forma de razonar para resolver problemas, inspirada en cómo trabajan las computadoras, pero útil mucho más allá de la informática. Tiene cuatro grandes habilidades:</p>
+        <div class="skills">
+          <div class="skill"><span class="ico">🧩</span><h5>Descomposición</h5><p>Dividir un problema grande en problemas más chicos y manejables.</p></div>
+          <div class="skill"><span class="ico">🔍</span><h5>Patrones</h5><p>Ver lo que se repite, lo que es similar, lo que tiene una estructura común.</p></div>
+          <div class="skill"><span class="ico">✨</span><h5>Abstracción</h5><p>Dejar de lado los detalles irrelevantes y quedarse con lo esencial.</p></div>
+          <div class="skill"><span class="ico">🪜</span><h5>Algoritmos</h5><p>Diseñar una secuencia precisa de pasos que resuelven el problema.</p></div>
+        </div>
+        <h3>¿Esto solo sirve para programar?</h3>
+        <p>No. El pensamiento computacional sirve para resolver problemas de cualquier tipo:</p>
+        <ul class="list">
+          <li>Organizar la mudanza de una casa.</li>
+          <li>Planificar un emprendimiento.</li>
+          <li>Armar un cronograma de estudio para un examen.</li>
+          <li>Hacer un trámite complicado paso a paso.</li>
+          <li>Cocinar para 30 personas.</li>
+          <li>Reparar un electrodoméstico siguiendo el manual.</li>
+        </ul>
+        <p>En todos esos casos, las cuatro habilidades aparecen. Por eso esta unidad te va a servir incluso si nunca más en tu vida tocás una computadora.</p>
+        <div class="box violet">
+          <div class="b-title">🧉 Una historia para arrancar</div>
+          <p>Imaginate que tu hijo de 8 años te pide que le enseñes a hacer un mate. Si le decís solamente «agarrá el mate, ponele yerba y echale agua», probablemente termine con la yerba volcada, el agua hervida quemándolo o un mate que no se puede tomar.</p>
+          <p>Si en cambio le explicás: 1) calentás el agua sin que hierva, 2) ponés yerba hasta tres cuartos del mate, 3) inclinás el mate, 4) echás un chorrito de agua tibia primero, 5) ponés la bombilla del lado de la yerba seca, 6) echás el agua caliente sobre la bombilla… ahí sí lo logra.</p>
+          <p><em>Esa lista de pasos detallados, en orden, sin ambigüedades, es un algoritmo. Y vos los hacés todos los días sin darte cuenta. Esta unidad es ponerle nombre a algo que ya hacés.</em></p>
+        </div>
+      </section>
+
+      <!-- DESCOMPOSICIÓN -->
+      <section id="descomposicion" class="reveal">
+        <h2><span class="n">02</span>Descomposición: dividir para vencer</h2>
+        <p>El primer paso para resolver cualquier problema complejo es <strong>dividirlo en problemas más pequeños</strong>. Una computadora no puede «hacer una página web» de un solo golpe. Tampoco vos podés «organizar un casamiento» de un solo golpe: tenés que descomponer.</p>
+        <h3>Ejemplo: organizar una fiesta de cumpleaños</h3>
+        <p>«Organizar una fiesta» suena imposible. Pero si lo descomponemos:</p>
+        <ul class="list">
+          <li>Definir fecha, hora y lugar.</li>
+          <li>Hacer la lista de invitados.</li>
+          <li>Mandar las invitaciones.</li>
+          <li>Planear la comida y bebida.</li>
+          <li>Conseguir la torta.</li>
+          <li>Organizar la música.</li>
+          <li>Preparar la decoración.</li>
+          <li>Limpiar antes y después.</li>
+        </ul>
+        <p>Cada uno de esos puntos se puede descomponer todavía más. «Planear la comida» se rompe en: cuántas personas son, qué les gusta, qué dietas hay, qué presupuesto tengo, dónde compro.</p>
+        <p><strong>Lo importante:</strong> cuando un problema parece imposible, casi siempre es porque no lo descompusiste lo suficiente. Cuanto más chico es cada subproblema, más manejable se vuelve.</p>
+      </section>
+
+      <!-- ALGORITMOS -->
+      <section id="algoritmos" class="reveal">
+        <h2><span class="n">03</span>¿Qué es un algoritmo?</h2>
+        <p>Un <strong>algoritmo</strong> es una secuencia ordenada y finita de pasos que resuelve un problema o realiza una tarea. La palabra suena técnica, pero los algoritmos están en todas partes de tu vida cotidiana.</p>
+        <h3>Algoritmo para preparar fideos con tuco</h3>
+        <ol class="list">
+          <li>Poner una olla con agua a fuego fuerte.</li>
+          <li>Cuando el agua hierva, agregar sal.</li>
+          <li>Echar los fideos.</li>
+          <li>Esperar el tiempo indicado en el paquete (8-10 minutos).</li>
+          <li>Mientras tanto, calentar el tuco en una sartén.</li>
+          <li>Probar un fideo: si está «al dente», apagar el fuego.</li>
+          <li>Colar los fideos.</li>
+          <li>Servir en un plato y cubrir con tuco.</li>
+          <li>Espolvorear queso rallado.</li>
+        </ol>
+        <h3>Algoritmo para sacar dinero del cajero</h3>
+        <ol class="list">
+          <li>Acercarse al cajero.</li>
+          <li>Introducir la tarjeta.</li>
+          <li>Ingresar el PIN.</li>
+          <li>Elegir «Retiro de efectivo».</li>
+          <li>Elegir el monto.</li>
+          <li>Esperar a que salga el dinero.</li>
+          <li>Retirar el dinero.</li>
+          <li>Retirar la tarjeta.</li>
+        </ol>
+        <h3>Características de un buen algoritmo</h3>
+        <div class="rules">
+          <div class="rule"><strong>Preciso</strong>Cada paso claro, sin ambigüedades. «Echar un poquito» es ambiguo; «echar una cucharadita» es preciso.</div>
+          <div class="rule"><strong>Ordenado</strong>Los pasos van en una secuencia específica. Cambiar el orden cambia el resultado.</div>
+          <div class="rule"><strong>Finito</strong>Tiene un principio y un final. Termina en algún momento.</div>
+          <div class="rule"><strong>Eficaz</strong>Resuelve el problema. Llegás al resultado esperado.</div>
+        </div>
+        <div class="box">
+          <div class="b-title">💬 Pensar en algoritmos cambia tu manera de explicar las cosas</div>
+          <p>Una vez que te acostumbrás a pensar en algoritmos, te empieza a molestar cuando alguien te explica algo mal: «andá hasta el centro y doblás por una calle». ¿Cuál calle? ¿A la derecha o a la izquierda? ¿En la segunda o en la tercera?</p>
+          <p><strong>Programar es, antes que nada, aprender a ser tan preciso/a que cualquier persona (o cualquier computadora) pueda seguir tus instrucciones sin pifiarla.</strong></p>
+        </div>
+      </section>
+
+      <!-- DIAGRAMAS DE FLUJO -->
+      <section id="flujo" class="reveal">
+        <h2><span class="n">04</span>Diagramas de flujo: dibujar el algoritmo</h2>
+        <p>Un <strong>diagrama de flujo</strong> es una manera visual de representar un algoritmo. En lugar de escribir los pasos como una lista, se dibujan usando figuras geométricas conectadas con flechas. Tiene una gran ventaja: <strong>de un vistazo se entiende toda la lógica</strong>.</p>
+        <h3>Símbolos básicos</h3>
+        <div class="tbl">
+          <table>
+            <thead><tr><th>Forma</th><th>Para qué se usa</th><th>Ejemplo</th></tr></thead>
+            <tbody>
+              <tr><td class="sym">⬭</td><td class="feat">Óvalo</td><td>Inicio o fin del algoritmo. «Inicio», «Fin».</td></tr>
+              <tr><td class="sym">▭</td><td class="feat">Rectángulo</td><td>Acción o proceso. «Sumar A + B», «Hervir el agua».</td></tr>
+              <tr><td class="sym">◇</td><td class="feat">Rombo</td><td>Decisión: se elige un camino entre dos opciones.</td></tr>
+              <tr><td class="sym">▱</td><td class="feat">Paralelogramo</td><td>Entrada o salida de datos. «Leer nombre», «Mostrar resultado».</td></tr>
+              <tr><td class="sym">→</td><td class="feat">Flecha</td><td>Conecta los pasos y muestra el sentido del flujo.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>Ejemplo: ¿llevo paraguas?</h3>
+        <p>Vamos a dibujar el diagrama de flujo de un algoritmo para decidir si saco un paraguas al salir de casa.</p>
+        <div class="flow">
+          <svg viewBox="0 0 480 540" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagrama de flujo: ¿llevar paraguas?">
+            <defs>
+              <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L0,6 L9,3 z" fill="#1F4E79"/>
+              </marker>
+            </defs>
+            <!-- INICIO -->
+            <ellipse cx="240" cy="40" rx="60" ry="22" fill="#fff" stroke="#1F4E79" stroke-width="2"/>
+            <text x="240" y="46" text-anchor="middle" font-family="Fraunces,serif" font-size="16" fill="#1F4E79" font-weight="600">Inicio</text>
+            <line x1="240" y1="62" x2="240" y2="92" stroke="#1F4E79" stroke-width="2" marker-end="url(#arrow)"/>
+            <!-- ACCIÓN -->
+            <rect x="120" y="98" width="240" height="46" rx="6" fill="#fff" stroke="#1F4E79" stroke-width="2"/>
+            <text x="240" y="125" text-anchor="middle" font-family="Spline Sans,sans-serif" font-size="13" fill="#1b2430">Mirar el cielo / ver el pronóstico</text>
+            <line x1="240" y1="144" x2="240" y2="174" stroke="#1F4E79" stroke-width="2" marker-end="url(#arrow)"/>
+            <!-- DECISIÓN -->
+            <polygon points="240,180 360,250 240,320 120,250" fill="#fff4e0" stroke="#b86e00" stroke-width="2"/>
+            <text x="240" y="245" text-anchor="middle" font-family="Spline Sans,sans-serif" font-size="13" fill="#5a4500" font-weight="600">¿Hay probabilidad</text>
+            <text x="240" y="262" text-anchor="middle" font-family="Spline Sans,sans-serif" font-size="13" fill="#5a4500" font-weight="600">de lluvia?</text>
+            <!-- Etiquetas Sí/No -->
+            <text x="358" y="246" font-family="Fraunces,serif" font-style="italic" font-size="14" fill="#c1632f" font-weight="600">Sí</text>
+            <text x="105" y="246" font-family="Fraunces,serif" font-style="italic" font-size="14" fill="#3f6b4f" font-weight="600">No</text>
+            <!-- Flechas decisión -->
+            <line x1="320" y1="265" x2="360" y2="340" stroke="#1F4E79" stroke-width="2" marker-end="url(#arrow)"/>
+            <line x1="160" y1="265" x2="120" y2="340" stroke="#1F4E79" stroke-width="2" marker-end="url(#arrow)"/>
+            <!-- Acciones de cada rama -->
+            <rect x="270" y="346" width="180" height="46" rx="6" fill="#fff" stroke="#c1632f" stroke-width="2"/>
+            <text x="360" y="373" text-anchor="middle" font-family="Spline Sans,sans-serif" font-size="13" fill="#1b2430">Llevar paraguas</text>
+            <rect x="30"  y="346" width="180" height="46" rx="6" fill="#fff" stroke="#3f6b4f" stroke-width="2"/>
+            <text x="120" y="373" text-anchor="middle" font-family="Spline Sans,sans-serif" font-size="13" fill="#1b2430">Salir sin paraguas</text>
+            <!-- Convergencia -->
+            <line x1="360" y1="392" x2="360" y2="420" stroke="#1F4E79" stroke-width="2"/>
+            <line x1="120" y1="392" x2="120" y2="420" stroke="#1F4E79" stroke-width="2"/>
+            <line x1="120" y1="420" x2="360" y2="420" stroke="#1F4E79" stroke-width="2"/>
+            <line x1="240" y1="420" x2="240" y2="460" stroke="#1F4E79" stroke-width="2" marker-end="url(#arrow)"/>
+            <!-- Acción final -->
+            <rect x="150" y="466" width="180" height="40" rx="6" fill="#fff" stroke="#1F4E79" stroke-width="2"/>
+            <text x="240" y="491" text-anchor="middle" font-family="Spline Sans,sans-serif" font-size="13" fill="#1b2430">Salir de casa</text>
+            <!-- (no Fin, se entiende) -->
+          </svg>
+          <div class="flow-caption">El rombo abre dos caminos posibles. Según la respuesta, seguimos uno u otro. Eso es una <strong>decisión</strong>.</div>
+        </div>
+        <div class="box">
+          <div class="b-title">📊 Para qué sirven los diagramas de flujo</div>
+          <ul class="list">
+            <li>Para diseñar un algoritmo antes de programarlo.</li>
+            <li>Para explicarle a otra persona cómo funciona un proceso.</li>
+            <li>Para documentar trámites o procedimientos en una empresa.</li>
+            <li>Para detectar errores en la lógica.</li>
+          </ul>
+          <p>En la industria se usan muchísimo: bancos los usan para procesos de aprobación de créditos, hospitales para protocolos de atención, fábricas para procesos de producción.</p>
+        </div>
+      </section>
+
+      <!-- ESTRUCTURAS -->
+      <section id="estructuras" class="reveal">
+        <h2><span class="n">05</span>Las tres estructuras básicas de control</h2>
+        <p>Toda la programación del mundo, por más compleja que parezca, se construye combinando solo <strong>tres estructuras básicas</strong>. Si entendés estas tres, ya tenés en la cabeza la base sobre la que se construye todo lo demás.</p>
+        <div class="structures">
+          <div class="struct seq">
+            <div class="top">1 · Secuencia</div>
+            <div class="body">
+              <p>Los pasos se ejecutan uno detrás del otro, en orden. Es la estructura por defecto.</p>
+              <div class="icon">↓ ↓ ↓</div>
+            </div>
+          </div>
+          <div class="struct sel">
+            <div class="top">2 · Selección</div>
+            <div class="body">
+              <p>Según una condición, hacer una cosa u otra. <em>SI… ENTONCES… SI NO…</em></p>
+              <div class="icon">↙ ◇ ↘</div>
+            </div>
+          </div>
+          <div class="struct it">
+            <div class="top">3 · Iteración</div>
+            <div class="body">
+              <p>Repetir una acción mientras se cumpla una condición. <em>MIENTRAS… REPETIR…</em></p>
+              <div class="icon">↻ ↻ ↻</div>
+            </div>
+          </div>
+        </div>
+
+        <h3>Estructura 1: Secuencia</h3>
+        <p>La más simple. Los pasos se ejecutan uno detrás del otro, sin saltos.</p>
+<pre class="code"><span class="kw">Paso 1</span>: Encender la pava
+<span class="kw">Paso 2</span>: Esperar a que hierva el agua
+<span class="kw">Paso 3</span>: Echar el agua en el mate
+<span class="kw">Paso 4</span>: Tomar el mate</pre>
+        <p>Listo. Eso es secuencia: hacer una cosa después de la otra.</p>
+
+        <h3>Estructura 2: Selección (decisiones)</h3>
+        <p>A veces, según una condición, hay que hacer una cosa u otra. Para eso usamos <strong>selección</strong>, también llamada estructura condicional.</p>
+<pre class="code"><span class="kw">SI</span> hace frío
+   <span class="kw">ENTONCES</span> poner una campera
+<span class="kw">SI NO</span>
+   salir con remera
+<span class="kw">FIN SI</span></pre>
+        <p>La condición («hace frío») se evalúa: si es verdadera, se ejecuta lo que está en el ENTONCES; si es falsa, lo del SI NO.</p>
+        <h3>Ejemplos cotidianos de selección</h3>
+        <ul class="list">
+          <li>SI llueve, ENTONCES llevar paraguas; SI NO, dejarlo en casa.</li>
+          <li>SI tengo plata, ENTONCES comprar mercadería; SI NO, esperar al día de pago.</li>
+          <li>SI el alumno aprobó (nota ≥ 7), ENTONCES pasa a 2° año; SI NO, va a previas.</li>
+          <li>SI la edad es mayor o igual a 18, ENTONCES puede votar.</li>
+        </ul>
+
+        <h3>Estructura 3: Iteración (repetición)</h3>
+        <p>Cuando una acción hay que repetirla muchas veces, no escribimos el mismo paso 50 veces: usamos <strong>iteración</strong>, también llamada bucle o ciclo.</p>
+<pre class="code"><span class="kw">MIENTRAS</span> el mate no esté lavado
+   echar agua caliente
+   tomar el mate
+   pasar el mate al siguiente
+<span class="kw">FIN MIENTRAS</span></pre>
+        <p>Mientras la condición «el mate no está lavado» sea verdadera, se repiten los tres pasos. Cuando se lave, salimos del ciclo.</p>
+        <h3>Ejemplos cotidianos de iteración</h3>
+        <ul class="list">
+          <li>MIENTRAS haya platos sucios, lavar uno.</li>
+          <li>MIENTRAS no llegue mi colectivo, esperar en la parada.</li>
+          <li>REPETIR «saludar al cliente» HASTA que se acabe la jornada laboral.</li>
+          <li>MIENTRAS la masa esté pegajosa, seguir amasando.</li>
+        </ul>
+        <div class="box violet">
+          <div class="b-title">🔑 Las tres estructuras juntas</div>
+          <p>Cualquier programa, por complejo que sea, está hecho combinando estas tres estructuras: <strong>secuencia, selección e iteración</strong>.</p>
+          <p>Si llegás a Programación Lógica el año que viene entendiendo estas tres bien, <em>ya tenés el 70% del trabajo hecho</em>. Por eso esta unidad importa tanto.</p>
+        </div>
+      </section>
+
+      <!-- VARIABLES -->
+      <section id="variables" class="reveal">
+        <h2><span class="n">06</span>Variables: guardar valores para usarlos después</h2>
+        <p>Una <strong>variable</strong> es un «recipiente» con nombre, donde la computadora guarda un valor que después puede leer, modificar o usar en cálculos. Pensalo como un sobre con etiqueta: <em>la etiqueta es el nombre de la variable</em>, y adentro hay un valor.</p>
+        <h3>Ejemplo simple</h3>
+        <p>Supongamos que queremos calcular el sueldo de un empleado: cantidad de horas trabajadas multiplicada por el valor por hora.</p>
+<pre class="code"><span class="var">horas</span> ← 40
+<span class="var">valor_hora</span> ← 1500
+<span class="var">sueldo</span> ← <span class="var">horas</span> * <span class="var">valor_hora</span>
+<span class="com">// sueldo guarda ahora: 60000</span></pre>
+        <p>Usamos tres variables: <code class="inline">horas</code>, <code class="inline">valor_hora</code> y <code class="inline">sueldo</code>. El símbolo <code class="inline">←</code> significa «se le asigna el valor». También se usa el signo igual.</p>
+        <h3>¿Por qué se llaman «variables»?</h3>
+        <p>Porque su valor puede cambiar a lo largo del programa.</p>
+<pre class="code"><span class="var">edad</span> ← 17
+<span class="com">// pasa un año…</span>
+<span class="var">edad</span> ← 18</pre>
+        <p>La misma variable ahora guarda un valor diferente. Eso es lo que la hace «variable» y no «constante».</p>
+        <h3>Tipos de datos más comunes</h3>
+        <div class="rules">
+          <div class="rule"><strong>Numérico</strong>Un número, entero (1, 100) o decimal (3.14, 99.99).</div>
+          <div class="rule"><strong>Texto (string)</strong>Una palabra o frase. Entre comillas: "Hola Mundo", "María".</div>
+          <div class="rule"><strong>Lógico (booleano)</strong>Solo dos valores posibles: VERDADERO o FALSO.</div>
+        </div>
+        <h3>Reglas para nombrar variables</h3>
+        <ul class="list">
+          <li>Que el nombre describa qué guarda. No le pongas «x» si está guardando una edad: ponele «edad».</li>
+          <li>Sin espacios: usá guión bajo (<code class="inline">valor_hora</code>) o juntalas (<code class="inline">valorHora</code>).</li>
+          <li>No empezar con un número (<code class="inline">15edad</code> está mal; <code class="inline">edad15</code> está bien).</li>
+          <li>Sin caracteres raros (ñ, tildes, símbolos): en programación profesional se evitan.</li>
+          <li>Sin usar palabras reservadas del lenguaje (no podés llamar a tu variable «si» o «mientras»).</li>
+        </ul>
+      </section>
+
+      <!-- PSEUDOCÓDIGO -->
+      <section id="pseudocodigo" class="reveal">
+        <h2><span class="n">07</span>Pseudocódigo: el algoritmo escrito</h2>
+        <p>El <strong>pseudocódigo</strong> es una forma intermedia entre el lenguaje natural (lo que hablamos) y un lenguaje de programación real. Usa palabras en castellano, pero con una estructura parecida a la de un programa.</p>
+        <p>Es ideal para diseñar un programa antes de escribirlo en un lenguaje real, porque te permite concentrarte en la lógica sin preocuparte por las reglas estrictas (puntos y comas, paréntesis, mayúsculas).</p>
+
+        <h3>Estructura general</h3>
+<pre class="code"><span class="kw">ALGORITMO</span> nombre_del_algoritmo
+<span class="kw">VARIABLES</span>:
+   (declarar las variables que vamos a usar)
+<span class="kw">INICIO</span>
+   (los pasos del algoritmo)
+<span class="kw">FIN</span></pre>
+
+        <h3>Ejemplo 1: calcular el área de un rectángulo</h3>
+<pre class="code"><span class="kw">ALGORITMO</span> area_rectangulo
+<span class="kw">VARIABLES</span>:
+   <span class="var">base</span>, <span class="var">altura</span>, <span class="var">area</span> : numérico
+<span class="kw">INICIO</span>
+   <span class="kw">LEER</span> <span class="var">base</span>
+   <span class="kw">LEER</span> <span class="var">altura</span>
+   <span class="var">area</span> ← <span class="var">base</span> * <span class="var">altura</span>
+   <span class="kw">MOSTRAR</span> <span class="var">area</span>
+<span class="kw">FIN</span></pre>
+
+        <h3>Ejemplo 2: decidir si una persona es mayor de edad</h3>
+<pre class="code"><span class="kw">ALGORITMO</span> mayor_de_edad
+<span class="kw">VARIABLES</span>:
+   <span class="var">edad</span> : numérico
+<span class="kw">INICIO</span>
+   <span class="kw">LEER</span> <span class="var">edad</span>
+   <span class="kw">SI</span> <span class="var">edad</span> &gt;= 18 <span class="kw">ENTONCES</span>
+      <span class="kw">MOSTRAR</span> <span class="str">"Es mayor de edad"</span>
+   <span class="kw">SI NO</span>
+      <span class="kw">MOSTRAR</span> <span class="str">"Es menor de edad"</span>
+   <span class="kw">FIN SI</span>
+<span class="kw">FIN</span></pre>
+
+        <h3>Ejemplo 3: contar del 1 al 10</h3>
+<pre class="code"><span class="kw">ALGORITMO</span> contar_del_1_al_10
+<span class="kw">VARIABLES</span>:
+   <span class="var">numero</span> : numérico
+<span class="kw">INICIO</span>
+   <span class="var">numero</span> ← 1
+   <span class="kw">MIENTRAS</span> <span class="var">numero</span> &lt;= 10
+      <span class="kw">MOSTRAR</span> <span class="var">numero</span>
+      <span class="var">numero</span> ← <span class="var">numero</span> + 1
+   <span class="kw">FIN MIENTRAS</span>
+<span class="kw">FIN</span></pre>
+        <p>Empezamos con <code class="inline">numero</code> valiendo 1; mientras sea menor o igual que 10, lo mostramos y le sumamos 1. Cuando llega a 11, la condición se vuelve falsa y salimos del ciclo.</p>
+        <div class="box">
+          <div class="b-title">🤔 ¿Por qué pseudocódigo si después vamos a aprender un lenguaje real?</div>
+          <p>Porque el pseudocódigo es <strong>universal</strong>: no importa si después programás en Python, Java, JavaScript, C o cualquier otro lenguaje, el pseudocódigo te sirve para diseñar la lógica antes de meterte con la sintaxis específica de cada uno.</p>
+          <p>Los programadores profesionales, antes de escribir código real, muchas veces escriben el algoritmo en pseudocódigo o lo dibujan como diagrama de flujo.</p>
+        </div>
+      </section>
+
+      <!-- SCRATCH -->
+      <section id="scratch" class="reveal">
+        <h2><span class="n">08</span>Scratch: programar arrastrando bloques</h2>
+        <p>Hasta acá vimos los algoritmos en abstracto. Ahora vamos a usarlos para hacer programas reales con <strong>Scratch</strong>, una herramienta gratuita desarrollada por el MIT para enseñar a programar.</p>
+        <p>Lo bueno de Scratch es que <strong>no se escribe código</strong>: se arrastran bloques de colores que encajan como piezas de Lego. Cada bloque es una instrucción. Te concentrás en la lógica sin que un punto y coma fuera de lugar te arruine el programa.</p>
+        <h3>¿Dónde está Scratch?</h3>
+        <ul class="list">
+          <li><strong>Online:</strong> en <a href="https://scratch.mit.edu" target="_blank" rel="noopener">scratch.mit.edu</a>. Funciona desde cualquier navegador, sin instalar nada.</li>
+          <li><strong>Offline:</strong> bajás Scratch Desktop e instalás. Funciona sin Internet.</li>
+        </ul>
+        <p>Para esta materia recomendamos la versión online: es más simple y trabajás desde cualquier lado.</p>
+        <h3>Las partes de la pantalla</h3>
+        <ul class="list">
+          <li><strong>Escenario:</strong> la zona donde se ejecuta el programa. Acá ves moverse a los personajes (que en Scratch se llaman «sprites» u «objetos»).</li>
+          <li><strong>Lista de objetos:</strong> los personajes del programa. Por defecto viene un gato.</li>
+          <li><strong>Área de bloques:</strong> los bloques disponibles, agrupados por categorías de colores.</li>
+          <li><strong>Área de programación:</strong> donde armás tu programa.</li>
+        </ul>
+        <h3>Los bloques principales</h3>
+        <p>Te muestro algunos bloques con sus colores reales:</p>
+        <div class="scratch">
+          <span class="sblock event">⚑ Al hacer clic en bandera verde</span>
+          <span class="sblock move">mover 10 pasos</span>
+          <span class="sblock move">girar 15 grados</span>
+          <span class="sblock look">decir «Hola» por 2 segundos</span>
+          <span class="sblock control">repetir 10 veces</span>
+          <span class="sblock control">si &lt;condición&gt; entonces</span>
+          <span class="sblock control">por siempre</span>
+        </div>
+        <h3>Tu primer programa en Scratch</h3>
+        <p>Vamos a hacer un programa simple: cuando se hace clic en la bandera verde, el gato dice «¡Hola!» durante 2 segundos, después da un pasito, y después dice su edad.</p>
+        <ol class="list">
+          <li>Abrí <code class="inline">scratch.mit.edu</code> y hacé clic en «Crear».</li>
+          <li>Verás al gato en el escenario.</li>
+          <li>Arrastrá un bloque amarillo «Al hacer clic en bandera verde» al área de programación.</li>
+          <li>Pegale debajo un bloque violeta «decir Hola por 2 segundos».</li>
+          <li>Pegale debajo un bloque azul «mover 10 pasos».</li>
+          <li>Pegale debajo otro violeta «decir [Tengo X años]» (cambiá la X por tu edad).</li>
+          <li>Hacé clic en la bandera verde y miralo correr.</li>
+        </ol>
+        <p>Tu primer programa se ve así:</p>
+        <div class="sblock-stack">
+          <div class="sblock event">⚑ Al hacer clic en bandera verde</div>
+          <div class="sblock look">decir «¡Hola!» por 2 segundos</div>
+          <div class="sblock move">mover 10 pasos</div>
+          <div class="sblock look">decir «Tengo 38 años» por 2 segundos</div>
+        </div>
+        <p><strong>Felicitaciones:</strong> ya hiciste tu primer programa. Es simple, pero usaste secuencia (bloques uno detrás de otro) y bloques de tres categorías diferentes.</p>
+        <div class="box violet">
+          <div class="b-title">🎯 La idea no es ser experto en Scratch</div>
+          <p>Scratch es una herramienta de aprendizaje. La idea no es que termines siendo experto/a, sino que entiendas cómo se traducen los algoritmos abstractos (que aprendimos en pseudocódigo y diagramas de flujo) en un programa que funciona.</p>
+          <p>Cuando llegues al año que viene a Programación Lógica con un lenguaje real, <strong>vas a darte cuenta de que ya entendés la lógica. Solo vas a estar aprendiendo una sintaxis nueva.</strong></p>
+        </div>
+      </section>
+
+      <!-- GLOSARIO -->
+      <section id="glosario" class="reveal">
+        <h2><span class="n">09</span>Glosario de la unidad</h2>
+        <ul class="list">
+          <li><strong>Pensamiento computacional:</strong> forma de razonar para resolver problemas usando descomposición, patrones, abstracción y algoritmos.</li>
+          <li><strong>Descomposición:</strong> dividir un problema grande en problemas más pequeños.</li>
+          <li><strong>Abstracción:</strong> dejar de lado los detalles irrelevantes.</li>
+          <li><strong>Algoritmo:</strong> secuencia ordenada y finita de pasos que resuelve un problema.</li>
+          <li><strong>Diagrama de flujo:</strong> representación visual de un algoritmo.</li>
+          <li><strong>Secuencia:</strong> los pasos se ejecutan uno detrás del otro.</li>
+          <li><strong>Selección (condicional):</strong> se elige entre dos o más caminos según una condición.</li>
+          <li><strong>Iteración (ciclo, bucle):</strong> una acción se repite mientras se cumple una condición.</li>
+          <li><strong>Variable:</strong> recipiente con nombre donde se guarda un valor.</li>
+          <li><strong>Tipo de dato:</strong> clase de valor (numérico, texto, lógico).</li>
+          <li><strong>Pseudocódigo:</strong> forma intermedia entre el lenguaje natural y un lenguaje de programación.</li>
+          <li><strong>Scratch:</strong> entorno de programación visual con bloques.</li>
+          <li><strong>Sprite (objeto):</strong> personaje o elemento programable dentro de Scratch.</li>
+        </ul>
+      </section>
+
+      <!-- ACTIVIDADES -->
+      <section id="actividades" class="reveal">
+        <h2><span class="n">10</span>Actividades</h2>
+        <p>Esta unidad tiene muchas actividades porque la única manera de aprender pensamiento computacional es practicándolo. No te saltees ninguna.</p>
+
+        <div class="activity">
+          <h4>Actividad 1 · Descomponer un problema</h4>
+          <p>Elegí UNO y descomponelo en al menos 6 subtareas:</p>
+          <ul class="list">
+            <li>Mudarme a una casa nueva.</li>
+            <li>Abrir un emprendimiento de comidas para vender por encargo.</li>
+            <li>Organizar mi semana de estudio para los próximos parciales.</li>
+            <li>Preparar las vacaciones familiares de fin de año.</li>
+          </ul>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 2 · Algoritmos cotidianos</h4>
+          <p>Escribí, paso a paso, el algoritmo para una de estas tareas (suponé que se lo explicás a un robot que no sabe nada del mundo):</p>
+          <ul class="list">
+            <li>Hacer un café con leche.</li>
+            <li>Cambiar la rueda pinchada de un auto.</li>
+            <li>Pagar una boleta de servicio en una billetera virtual.</li>
+            <li>Lavar la ropa en un lavarropas automático.</li>
+            <li>Una tarea de tu propio oficio (la mejor: trae al aula el algoritmo de algo que hacés vos).</li>
+          </ul>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 3 · Diagrama de flujo</h4>
+          <p>Dibujá en papel (o usando una herramienta online como <a href="https://app.diagrams.net" target="_blank" rel="noopener">draw.io</a>) el diagrama de flujo para una de estas situaciones:</p>
+          <ul class="list">
+            <li>Decidir qué hacer al recibir un mensaje en el celular.</li>
+            <li>Algoritmo para sacar un turno médico online.</li>
+            <li>Algoritmo para cocinar un huevo al gusto del comensal (frito, hervido, revuelto).</li>
+          </ul>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 4 · Identificar estructuras de control</h4>
+          <p>En cada frase, identificá qué estructura predomina: <strong>secuencia</strong>, <strong>selección</strong> o <strong>iteración</strong>.</p>
+          <ol class="list">
+            <li>«Si el semáforo está en rojo, frenar; si está en verde, seguir.»</li>
+            <li>«Mientras queden papas, seguir pelando.»</li>
+            <li>«Primero abrir la puerta, después prender la luz, después dejar las llaves.»</li>
+            <li>«Repetir 10 veces: hacer una abdominal.»</li>
+            <li>«Si la persona tiene más de 65 años, aplicar descuento del 20%.»</li>
+            <li>«Sacar las cosas del bolso, ordenarlas en la mesa, anotar lo que falta.»</li>
+          </ol>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 5 · Escribir pseudocódigo</h4>
+          <p>Escribí en pseudocódigo el algoritmo para cada problema:</p>
+          <ol class="list">
+            <li>Un algoritmo que reciba la edad de una persona y diga si es «niño/a» (menor de 13), «adolescente» (13 a 17), «adulto/a» (18 a 64) o «adulto/a mayor» (65 o más).</li>
+            <li>Un algoritmo que reciba el precio de un producto y la cantidad comprada, y calcule el total a pagar.</li>
+            <li>Un algoritmo que reciba una nota y diga si está «Aprobado» (≥ 7), «Insuficiente» (entre 4 y 6) o «Desaprobado» (menos de 4).</li>
+            <li>Un algoritmo que muestre todos los números pares del 2 al 20.</li>
+          </ol>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 6 · Primer programa en Scratch</h4>
+          <p>Entrá a <code class="inline">scratch.mit.edu</code> y armá un programa que cumpla estas condiciones:</p>
+          <ul class="list">
+            <li>Cuando se hace clic en la bandera verde, el gato saluda con tu nombre real.</li>
+            <li>Después se mueve por el escenario (10 pasos hacia un lado, 10 hacia el otro).</li>
+            <li>Después pregunta tu edad.</li>
+            <li>Si la edad es 18 o más, dice «Sos mayor de edad»; si es menor, dice «Sos menor de edad». (Usá un bloque de selección.)</li>
+            <li>Guardá el proyecto y compartí el enlace con tu docente.</li>
+          </ul>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 7 · Proyecto creativo en Scratch</h4>
+          <p>Inventá un mini-proyecto en Scratch que combine las tres estructuras de control y use al menos una variable. Algunas ideas:</p>
+          <ul class="list">
+            <li>Una calculadora simple.</li>
+            <li>Un juego donde un personaje persigue a otro.</li>
+            <li>Un cuestionario interactivo con preguntas y puntaje.</li>
+            <li>Una historia animada con diálogos y decisiones del usuario.</li>
+          </ul>
+          <p>Lo importante no es la perfección estética sino la lógica: que las tres estructuras estén usadas y que el programa funcione.</p>
+        </div>
+
+        <div class="activity">
+          <h4>Actividad 8 · Cuestionario de cierre</h4>
+          <ol class="list">
+            <li>Definí con tus palabras qué es un algoritmo.</li>
+            <li>Nombrá las cuatro habilidades del pensamiento computacional.</li>
+            <li>¿Cuáles son las tres estructuras de control? Dame un ejemplo cotidiano de cada una.</li>
+            <li>¿Qué es una variable? Dame un ejemplo.</li>
+            <li>¿Para qué se usa el rombo en un diagrama de flujo?</li>
+            <li>¿Por qué primero diseñamos en pseudocódigo o diagrama de flujo antes de programar en un lenguaje real?</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- CIERRE -->
+      <section id="cierre" class="reveal">
+        <h2><span class="n">11</span>Cierre de la unidad</h2>
+        <p>Llegaste hasta acá. Si hiciste las actividades, <strong>ya tenés en la cabeza las bases de toda la programación que viene</strong>. No te das cuenta todavía, pero esto es enorme. Mucha gente que llega a primer año de carreras de informática se traba justo en estos conceptos. Vos los estás aprendiendo en E.P.J.A., con calma, con ejemplos cotidianos, sin presión.</p>
+        <p>Antes de pasar a la última unidad, asegurate de que podés:</p>
+        <ul class="checklist">
+          <li>Explicar qué es el pensamiento computacional.</li>
+          <li>Descomponer un problema complejo en subproblemas.</li>
+          <li>Escribir un algoritmo simple para una tarea cotidiana.</li>
+          <li>Dibujar un diagrama de flujo básico.</li>
+          <li>Diferenciar secuencia, selección e iteración, y reconocerlas en ejemplos.</li>
+          <li>Usar variables con nombres descriptivos.</li>
+          <li>Escribir un algoritmo en pseudocódigo usando las tres estructuras.</li>
+          <li>Armar un proyecto simple en Scratch que funcione.</li>
+        </ul>
+        <p><em>Falta una unidad para terminar el año. Vamos a hablar de un tema que está cambiando todo a una velocidad enorme: la inteligencia artificial. ¡Nos vemos en la última!</em></p>
+      </section>
+
+      <nav class="pager" aria-label="Navegación entre unidades">
+        <a href="unidad_4_productividad.html">
+          <div class="label">← Unidad anterior</div>
+          <div class="title">Unidad 4 · Productividad e Internet</div>
+        </a>
+        <a href="unidad_6_ia.html" class="next">
+          <div class="label">Siguiente →</div>
+          <div class="title">Unidad 6 · IA y futuro del trabajo</div>
+        </a>
+      </nav>
+
+    </article>
+
+  </div>
+</div>
+
+<footer>
+  <div class="f-title">Introducción a la Informática</div>
+  <div>1° Año · E.P.J.A. · EPET N°7 · Ciclo lectivo 2026</div>
+</footer>
+
+<script>
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); obs.unobserve(e.target);} });
+  },{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+  const links = document.querySelectorAll('aside ol li a');
+  const sections = document.querySelectorAll('article section[id]');
+  const sObs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const id = e.target.id;
+        links.forEach(l=>{
+          if(l.getAttribute('href')==='#'+id){
+            l.style.color='var(--azul)';l.style.fontWeight='600';
+            l.style.borderLeftColor='var(--terra)';l.style.background='var(--crema-2)';
+          } else {
+            l.style.color='';l.style.fontWeight='';
+            l.style.borderLeftColor='transparent';l.style.background='';
+          }
+        });
+      }
+    });
+  },{rootMargin:'-30% 0px -60% 0px'});
+  sections.forEach(s=>sObs.observe(s));
+</script>
+
+</body>
+</html>
