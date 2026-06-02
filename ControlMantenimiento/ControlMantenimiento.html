@@ -218,6 +218,7 @@ tbody tr:hover{background:#fbfaf6}
       <button data-sec="imp"><span class="ic">⎙</span>Impresoras</button>
       <button data-sec="sector"><span class="ic">◈</span>Sectores</button>
       <button data-sec="usuario"><span class="ic">☺</span>Usuarios</button>
+      <button data-sec="personal"><span class="ic">⚷</span>Personal IT</button>
       <button data-sec="auditoria"><span class="ic">≡</span>Auditoría</button>
     </nav>
     <div class="spacer"></div>
@@ -332,7 +333,7 @@ $("#nav").addEventListener("click",e=>{
 function route(sec){
   document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("active",b.dataset.sec===sec));
   ({dashboard:renderDashboard,mant:renderMant,pc:renderPC,imp:renderImp,
-    sector:renderSector,usuario:renderUsuario,auditoria:renderAuditoria}[sec]||renderDashboard)();
+    sector:renderSector,usuario:renderUsuario,personal:renderPersonal,auditoria:renderAuditoria}[sec]||renderDashboard)();
 }
 
 /* ============================================================
@@ -821,6 +822,39 @@ async function saveUsuario(id){
     : await sb.from("usuario_pc").insert(row);
   if(error) return dbError(error);
   closeModal(); toast(id?"Usuario actualizado":"Usuario agregado"); renderUsuario();
+}
+
+/* ============================================================
+   PERSONAL IT  (usuarios del sistema y sus roles — solo admin)
+   ============================================================ */
+async function renderPersonal(){
+  $("#content").innerHTML=`<div class="head"><div><h2>Personal IT</h2>
+    <div class="lead">Usuarios del sistema y sus roles de acceso</div></div></div>
+    <div class="panel" style="margin-bottom:18px"><div class="mbody" style="padding:16px 18px">
+      <p style="margin:0 0 6px;font-size:13.5px;color:var(--muted)">
+        Para <b>dar de alta</b> un usuario nuevo: Supabase → Authentication → Users → <b>Add user</b>
+        (con «Auto Confirm» tildado). Se le crea el perfil con rol «tecnico» automáticamente.
+        Acá podés cambiar su rol o quitarle el acceso.</p>
+    </div></div>
+    <div class="panel"><div class="tbar"><h3>Usuarios del sistema</h3></div><div id="persBody" class="empty">Cargando…</div></div>`;
+  const {data,error}=await sb.rpc("listar_personal_it");
+  if(error){ $("#persBody").innerHTML=`<div class="empty">No tenés permiso (requiere rol admin) o falta correr el script roles_admin.sql.</div>`; return; }
+  if(!data||!data.length){ $("#persBody").innerHTML=`<div class="empty">Sin usuarios del sistema.</div>`; return; }
+  $("#persBody").innerHTML=tableHTML(["Correo","Rol",""],
+    data.map(r=>[
+      esc(r.email),
+      `<select class="mono" style="padding:5px 10px;border:1.5px solid var(--line-d);border-radius:7px"
+         onchange="cambiarRol('${r.id}',this.value)" ${r.id===currentUser.id?'disabled title="No podés cambiar tu propio rol"':''}>
+         <option value="admin"   ${r.rol==='admin'?'selected':''}>admin</option>
+         <option value="tecnico" ${r.rol==='tecnico'?'selected':''}>tecnico</option>
+       </select>`,
+      r.id===currentUser.id?'<span class="pill ok">vos</span>':''
+    ]));
+}
+async function cambiarRol(id,rol){
+  const {error}=await sb.from("perfil").update({rol}).eq("id",id);
+  if(error) return dbError(error);
+  toast("Rol actualizado a "+rol);
 }
 
 /* ============================================================
