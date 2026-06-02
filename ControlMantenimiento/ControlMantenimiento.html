@@ -139,6 +139,10 @@ tbody tr:hover{background:#fbfaf6}
 .ins-row{display:grid;grid-template-columns:1fr 90px 130px auto auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
 .ins-row:last-child{border-bottom:none}
 .ins-row input{padding:7px 9px;border:1.5px solid var(--line-d);border-radius:8px;width:100%}
+/* ocultar flechas del input numérico (cortan el valor en campos angostos) */
+.ins-row input[type=number]{text-align:center;-moz-appearance:textfield;appearance:textfield}
+.ins-row input[type=number]::-webkit-outer-spin-button,
+.ins-row input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .ins-lbl{font-size:13.5px;font-weight:600}
 .ins-sub{font-size:11.5px;color:var(--muted)}
 .iconbtn{background:none;border:1.5px solid var(--line-d);border-radius:8px;padding:6px 9px;font-size:13px;color:var(--navy)}
@@ -651,7 +655,10 @@ async function loadInsumos(){
       <input class="mono" id="cod_${c.id}" value="${esc(c.codigo||'')}" placeholder="código"/>
       <div style="display:flex;align-items:center;gap:8px">
         ${nivelBar(c.nivel_porcentaje)}
-        <input type="number" id="niv_${c.id}" value="${c.nivel_porcentaje??''}" min="0" max="100" style="width:62px"/>
+        <span style="display:inline-flex;align-items:center;gap:3px">
+          <input type="number" id="niv_${c.id}" value="${c.nivel_porcentaje??''}" min="0" max="100" style="width:50px"/>
+          <span style="color:var(--muted);font-size:13px">%</span>
+        </span>
       </div>
       <button class="iconbtn" title="Guardar" onclick="saveInsumo(${c.id})">✓</button>
       <button class="iconbtn danger" title="Eliminar" onclick="delInsumo(${c.id})">✕</button>
