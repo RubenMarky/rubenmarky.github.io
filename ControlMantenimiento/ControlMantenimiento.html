@@ -127,6 +127,26 @@ tbody tr:hover{background:#fbfaf6}
 .pill.bad{background:var(--badbg);color:var(--bad)} .pill.idle{background:var(--idlebg);color:var(--idle)}
 .tag{display:inline-block;padding:2px 9px;border-radius:6px;font-size:12px;font-weight:600;background:#eef1f5;color:var(--navy)}
 
+/* barras de nivel de insumos */
+.nivel{display:flex;align-items:center;gap:8px;min-width:120px}
+.nivel .track{flex:1;height:8px;border-radius:999px;background:#e7e2d6;overflow:hidden}
+.nivel .fill{height:100%;border-radius:999px;transition:width .3s}
+.nivel .fill.ok{background:var(--ok)} .nivel .fill.warn{background:var(--warn)} .nivel .fill.bad{background:var(--bad)}
+.nivel .pct{font-family:"IBM Plex Mono",monospace;font-size:12px;width:34px;text-align:right;color:var(--muted)}
+.cdot{display:inline-block;width:11px;height:11px;border-radius:50%;border:1px solid rgba(0,0,0,.18);vertical-align:-1px;margin-right:6px}
+.c-Negro{background:#222} .c-Cyan{background:#1aa3d6} .c-Magenta{background:#d6249f}
+.c-Amarillo{background:#f2c200} .c-Tricolor{background:linear-gradient(90deg,#1aa3d6,#d6249f,#f2c200)} .c-NA{background:#cbd2da}
+.ins-row{display:grid;grid-template-columns:1fr 90px 130px auto auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.ins-row:last-child{border-bottom:none}
+.ins-row input{padding:7px 9px;border:1.5px solid var(--line-d);border-radius:8px;width:100%}
+.ins-lbl{font-size:13.5px;font-weight:600}
+.ins-sub{font-size:11.5px;color:var(--muted)}
+.iconbtn{background:none;border:1.5px solid var(--line-d);border-radius:8px;padding:6px 9px;font-size:13px;color:var(--navy)}
+.iconbtn:hover{border-color:var(--navy)} .iconbtn.danger{color:var(--bad)} .iconbtn.danger:hover{border-color:var(--bad)}
+.btn-ins{background:#eef1f5;color:var(--navy);border:none;border-radius:7px;padding:5px 11px;font-size:12.5px;font-weight:600}
+.btn-ins:hover{background:#e2e8f0}
+@media(max-width:560px){ .ins-row{grid-template-columns:1fr 1fr;gap:8px} }
+
 /* modal */
 .overlay{position:fixed;inset:0;background:rgba(15,41,66,.45);display:none;place-items:center;padding:20px;z-index:50;backdrop-filter:blur(2px)}
 .overlay.show{display:grid}
@@ -249,6 +269,8 @@ function dbError(error){
   if(/row-level security|violates row-level/i.test(m))
     m="Tu usuario no tiene rol técnico/admin para esta acción.";
   if(/chk_activo_coherente/i.test(m)) m="El tipo de activo no coincide con el equipo seleccionado.";
+  if(/uq_consumible/i.test(m)) m="Ya existe un insumo de ese tipo y color en esta impresora.";
+  if(/duplicate key|numero_serie|etiqueta_patrimonial/i.test(m)) m="Ya existe un equipo con ese número de serie o etiqueta.";
   toast(m,true); console.error(error);
 }
 
@@ -322,9 +344,17 @@ async function renderDashboard(){
     sb.from("registro_mantenimiento").select("id",{count:"exact",head:true}),
     sb.from("inventario_pc").select("id",{count:"exact",head:true}).eq("estado","En Reparación"),
   ]);
+  // impresoras con algún insumo crítico (<20%)
+  let criticas=0;
+  const cons=await sb.from("inventario_impresora").select("id,consumible_impresora(nivel_porcentaje)");
+  if(!cons.error){
+    criticas=(cons.data||[]).filter(i=>(i.consumible_impresora||[])
+      .some(c=>c.nivel_porcentaje!=null && c.nivel_porcentaje<20)).length;
+  }
   $("#kpis").innerHTML=`
     ${kpi(pc.count,"PCs")}${kpi(imp.count,"Impresoras")}
-    ${kpi(mant.count,"Mantenimientos",true)}${kpi(rep.count,"En reparación")}`;
+    ${kpi(mant.count,"Mantenimientos",true)}${kpi(rep.count,"En reparación")}
+    ${kpi(criticas,"Insumos críticos",criticas>0)}`;
   const {data,error}=await sb.from("registro_mantenimiento")
     .select("fecha,tipo_activo,tipo_mantenimiento,descripcion_detalle,inventario_pc(numero_serie),inventario_impresora(numero_serie),categoria_tarea(nombre_categoria)")
     .order("fecha",{ascending:false}).limit(8);
@@ -511,11 +541,11 @@ async function renderImp(){
     <div class="lead">Equipos de impresión por sector</div></div></div>
     ${panel("Impresoras","Nueva impresora","formImp()","impBody")}`;
   const {data,error}=await sb.from("inventario_impresora")
-    .select("id,numero_serie,marca,modelo,tecnologia,color,conexion,contador_paginas,estado,sector(nombre_sector)")
+    .select("id,numero_serie,marca,modelo,tecnologia,color,conexion,contador_paginas,estado,sector(nombre_sector),consumible_impresora(nivel_porcentaje)")
     .order("id");
   if(error) return dbError(error);
   $("#impBody").innerHTML=tableHTML(
-    ["Serie","Equipo","Tecnología","Conexión","Páginas","Sector","Estado"],
+    ["Serie","Equipo","Tecnología","Conexión","Páginas","Sector","Estado","Insumos"],
     data.map(r=>[
       `<span class="mono">${esc(r.numero_serie)}</span>`,
       `${esc(r.marca)} ${esc(r.modelo)}`,
@@ -523,7 +553,11 @@ async function renderImp(){
       esc(r.conexion||"—"),
       `<span class="mono">${r.contador_paginas??0}</span>`,
       esc(r.sector?.nombre_sector||"—"),
-      estadoSelect("inventario_impresora",r.id,r.estado,["Activa","En Reparación","En Depósito","De Baja"])
+      estadoSelect("inventario_impresora",r.id,r.estado,["Activa","En Reparación","En Depósito","De Baja"]),
+      `<div style="display:flex;align-items:center;gap:8px">
+         ${insumoAlerta(r.consumible_impresora)}
+         <button class="btn-ins" onclick="verInsumos(${r.id},'${esc(r.marca)} ${esc(r.modelo)}')">⛁ Ver insumos</button>
+       </div>`
     ]));
 }
 async function formImp(){
@@ -570,6 +604,106 @@ async function saveImp(){
   const {error}=await sb.from("inventario_impresora").insert(row);
   if(error) return dbError(error);
   closeModal(); toast("Impresora agregada"); renderImp();
+}
+
+/* ============================================================
+   INSUMOS DE IMPRESORA  (tóner / tinta / tambor)
+   ============================================================ */
+let insImpId=null;          // impresora activa en el modal
+function nivelClass(p){ return p==null?"idle":(p>=50?"ok":(p>=20?"warn":"bad")); }
+// Indicador para la fila: muestra el nivel más bajo si hay alguno por debajo del umbral
+function insumoAlerta(lista){
+  const niveles=(lista||[]).map(c=>c.nivel_porcentaje).filter(n=>n!=null);
+  if(!niveles.length) return `<span class="pill idle" title="Sin insumos cargados">—</span>`;
+  const min=Math.min(...niveles);
+  if(min<20)  return `<span class="pill bad"  title="Insumo crítico">⚠ ${min}%</span>`;
+  if(min<50)  return `<span class="pill warn" title="Insumo bajo">${min}%</span>`;
+  return `<span class="pill ok" title="Niveles correctos">OK</span>`;
+}
+function nivelBar(p){
+  const v=p==null?0:p;
+  return `<div class="nivel"><div class="track"><div class="fill ${nivelClass(p)}" style="width:${v}%"></div></div>
+    <span class="pct">${p==null?"—":v+"%"}</span></div>`;
+}
+function colorChip(c){ const cls=(c||"NA").replace("/","").replace(/\s/g,""); return `<span class="cdot c-${cls==='N/A'?'NA':cls}"></span>`; }
+
+async function verInsumos(idImp,nombre){
+  insImpId=idImp;
+  openModal("Insumos · "+nombre, `<div id="insList" class="empty">Cargando…</div>
+    <div style="margin-top:14px;border-top:1px solid var(--line);padding-top:14px">
+      <button class="btn ghost sm" onclick="formInsumo()">＋ Agregar insumo</button>
+    </div>`);
+  await loadInsumos();
+}
+async function loadInsumos(){
+  const {data,error}=await sb.from("consumible_impresora")
+    .select("id,tipo,color,codigo,nivel_porcentaje,rendimiento_paginas")
+    .eq("id_impresora",insImpId)
+    .order("tipo").order("color");
+  if(error){ $("#insList").innerHTML=`<div class="empty">${esc(error.message)}</div>`; return; }
+  if(!data.length){ $("#insList").innerHTML=`<div class="empty">Sin insumos cargados.</div>`; return; }
+  $("#insList").innerHTML=data.map(c=>`
+    <div class="ins-row">
+      <div>
+        <div class="ins-lbl">${colorChip(c.color)}${esc(c.tipo)}${c.color&&c.color!=='N/A'?' · '+esc(c.color):''}</div>
+        <div class="ins-sub">${c.rendimiento_paginas?('Rinde '+c.rendimiento_paginas+' pág.'):'&nbsp;'}</div>
+      </div>
+      <input class="mono" id="cod_${c.id}" value="${esc(c.codigo||'')}" placeholder="código"/>
+      <div style="display:flex;align-items:center;gap:8px">
+        ${nivelBar(c.nivel_porcentaje)}
+        <input type="number" id="niv_${c.id}" value="${c.nivel_porcentaje??''}" min="0" max="100" style="width:62px"/>
+      </div>
+      <button class="iconbtn" title="Guardar" onclick="saveInsumo(${c.id})">✓</button>
+      <button class="iconbtn danger" title="Eliminar" onclick="delInsumo(${c.id})">✕</button>
+    </div>`).join("");
+}
+async function saveInsumo(id){
+  const codigo=$("#cod_"+id).value.trim()||null;
+  let niv=$("#niv_"+id).value; niv = niv===""?null:Math.max(0,Math.min(100,Number(niv)));
+  const {error}=await sb.from("consumible_impresora").update({codigo,nivel_porcentaje:niv}).eq("id",id);
+  if(error) return dbError(error);
+  toast("Insumo actualizado"); loadInsumos();
+}
+async function delInsumo(id){
+  if(!confirm("¿Eliminar este insumo?")) return;
+  const {error}=await sb.from("consumible_impresora").delete().eq("id",id);
+  if(error) return dbError(error);
+  toast("Insumo eliminado"); loadInsumos();
+}
+function formInsumo(){
+  openModal("Agregar insumo",`
+    <div class="grid2">
+      <div class="field"><label>Tipo</label>
+        <select id="ci_tipo"><option>Tóner</option><option>Tinta</option><option>Tambor</option><option>Otro</option></select></div>
+      <div class="field"><label>Color / canal</label>
+        <select id="ci_color"><option>Negro</option><option>Cyan</option><option>Magenta</option><option>Amarillo</option><option>Tricolor</option><option>N/A</option></select></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Código de parte</label><input id="ci_cod" class="mono" placeholder="ej. TN-3479"/></div>
+      <div class="field"><label>Nivel (%)</label><input id="ci_niv" type="number" min="0" max="100" placeholder="ej. 100"/></div>
+    </div>
+    <div class="field"><label>Rendimiento (páginas, opcional)</label><input id="ci_rend" type="number" placeholder="ej. 3000"/></div>
+    <div class="mfoot">
+      <button class="btn ghost" onclick="verInsumosReopen()">Volver</button>
+      <button class="btn accent" onclick="saveNuevoInsumo()">Agregar</button>
+    </div>`);
+}
+async function verInsumosReopen(){ // reabre la lista sin perder la impresora activa
+  openModal("Insumos", `<div id="insList" class="empty">Cargando…</div>
+    <div style="margin-top:14px;border-top:1px solid var(--line);padding-top:14px">
+      <button class="btn ghost sm" onclick="formInsumo()">＋ Agregar insumo</button></div>`);
+  await loadInsumos();
+}
+async function saveNuevoInsumo(){
+  let niv=$("#ci_niv").value; niv = niv===""?null:Math.max(0,Math.min(100,Number(niv)));
+  const row={
+    id_impresora:insImpId, tipo:$("#ci_tipo").value, color:$("#ci_color").value,
+    codigo:$("#ci_cod").value.trim()||null, nivel_porcentaje:niv,
+    rendimiento_paginas:Number($("#ci_rend").value)||null
+  };
+  const {error}=await sb.from("consumible_impresora").insert(row);
+  if(error) return dbError(error);   // captura el UNIQUE (mismo tipo+color repetido)
+  toast("Insumo agregado"); verInsumosReopen();
 }
 
 /* ============================================================
