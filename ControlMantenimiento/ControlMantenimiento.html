@@ -128,15 +128,18 @@ tbody tr:hover{background:#fbfaf6}
 .tag{display:inline-block;padding:2px 9px;border-radius:6px;font-size:12px;font-weight:600;background:#eef1f5;color:var(--navy)}
 
 /* barras de nivel de insumos */
-.nivel{display:flex;align-items:center;gap:8px;min-width:120px}
-.nivel .track{flex:1;height:8px;border-radius:999px;background:#e7e2d6;overflow:hidden}
+.nivel{display:flex;align-items:center;gap:7px;min-width:0}
+.nivel .track{flex:1;min-width:40px;height:8px;border-radius:999px;background:#e7e2d6;overflow:hidden}
 .nivel .fill{height:100%;border-radius:999px;transition:width .3s}
 .nivel .fill.ok{background:var(--ok)} .nivel .fill.warn{background:var(--warn)} .nivel .fill.bad{background:var(--bad)}
-.nivel .pct{font-family:"IBM Plex Mono",monospace;font-size:12px;width:34px;text-align:right;color:var(--muted)}
+.nivel input[type=number]{width:44px;padding:6px 4px}
+.pctsign{color:var(--muted);font-size:12.5px}
+.rowacts{display:flex;gap:6px;white-space:nowrap}
+.rowacts .iconbtn{padding:5px 9px;font-size:13px}
 .cdot{display:inline-block;width:11px;height:11px;border-radius:50%;border:1px solid rgba(0,0,0,.18);vertical-align:-1px;margin-right:6px}
 .c-Negro{background:#222} .c-Cyan{background:#1aa3d6} .c-Magenta{background:#d6249f}
 .c-Amarillo{background:#f2c200} .c-Tricolor{background:linear-gradient(90deg,#1aa3d6,#d6249f,#f2c200)} .c-NA{background:#cbd2da}
-.ins-row{display:grid;grid-template-columns:1fr 90px 130px auto auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.ins-row{display:grid;grid-template-columns:1fr 88px minmax(150px,1.3fr) auto auto;gap:9px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
 .ins-row:last-child{border-bottom:none}
 .ins-row input{padding:7px 9px;border:1.5px solid var(--line-d);border-radius:8px;width:100%}
 /* ocultar flechas del input numérico (cortan el valor en campos angostos) */
@@ -154,7 +157,7 @@ tbody tr:hover{background:#fbfaf6}
 /* modal */
 .overlay{position:fixed;inset:0;background:rgba(15,41,66,.45);display:none;place-items:center;padding:20px;z-index:50;backdrop-filter:blur(2px)}
 .overlay.show{display:grid}
-.modal{background:var(--surface);border-radius:16px;width:100%;max-width:520px;max-height:90vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+.modal{background:var(--surface);border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.4)}
 .modal .mhead{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--line)}
 .modal .mhead h3{font-size:18px;font-weight:800}
 .modal .mbody{padding:20px 22px}
@@ -383,6 +386,24 @@ function panel(title,btnLabel,btnFn,bodyId){
   return `<div class="panel"><div class="tbar"><h3>${title}</h3>
     <button class="btn accent sm" onclick="${btnFn}">＋ ${btnLabel}</button></div><div id="${bodyId}"></div></div>`;
 }
+/* botones editar/eliminar para la última columna de cada tabla */
+function acciones(editFn,delFn){
+  return `<div class="rowacts">
+    <button class="iconbtn" title="Editar" onclick="${editFn}">✎</button>
+    <button class="iconbtn danger" title="Eliminar" onclick="${delFn}">🗑</button></div>`;
+}
+/* borrado genérico con confirmación y mensaje amable si la base lo rechaza */
+async function borrar(tabla, id, etiqueta, recargar){
+  if(!confirm(`¿Eliminar ${etiqueta}? Esta acción no se puede deshacer.`)) return;
+  const {error}=await sb.from(tabla).delete().eq("id",id);
+  if(error){
+    if(/violates foreign key|still referenced/i.test(error.message))
+      toast("No se puede eliminar: tiene registros asociados. Cambiá el estado a «De Baja».",true);
+    else dbError(error);
+    return;
+  }
+  toast("Eliminado"); recargar();
+}
 
 /* ============================================================
    MANTENIMIENTOS
@@ -392,43 +413,47 @@ async function renderMant(){
     <div class="lead">Trabajos técnicos sobre PCs, impresoras y otras tareas</div></div></div>
     ${panel("Registros","Registrar","formMant()","mantBody")}`;
   const {data,error}=await sb.from("registro_mantenimiento")
-    .select("fecha,tipo_activo,tipo_mantenimiento,contador_paginas,descripcion_detalle,inventario_pc(numero_serie),inventario_impresora(numero_serie),categoria_tarea(nombre_categoria)")
+    .select("id,fecha,tipo_activo,tipo_mantenimiento,contador_paginas,descripcion_detalle,id_pc,id_impresora,id_categoria_tarea,inventario_pc(numero_serie),inventario_impresora(numero_serie),categoria_tarea(nombre_categoria)")
     .order("fecha",{ascending:false});
   if(error) return dbError(error);
   $("#mantBody").innerHTML=tableHTML(
-    ["Fecha","Activo","Tipo mant.","Equipo","Categoría","Detalle"],
+    ["Fecha","Activo","Tipo mant.","Equipo","Categoría","Detalle",""],
     data.map(r=>[fdate(r.fecha),`<span class="tag">${esc(r.tipo_activo)}</span>`,esc(r.tipo_mantenimiento),
       `<span class="mono">${esc(r.inventario_pc?.numero_serie||r.inventario_impresora?.numero_serie||"—")}</span>`,
-      esc(r.categoria_tarea?.nombre_categoria||"—"),esc(r.descripcion_detalle)]));
+      esc(r.categoria_tarea?.nombre_categoria||"—"),esc(r.descripcion_detalle),
+      acciones(`formMant(${r.id})`,`borrar('registro_mantenimiento',${r.id},'este mantenimiento',renderMant)`)]));
 }
-async function formMant(){
+async function formMant(id=null){
   const [pcs,imps,cats]=await Promise.all([
     sb.from("inventario_pc").select("id,numero_serie,marca,modelo").order("numero_serie"),
     sb.from("inventario_impresora").select("id,numero_serie,marca,modelo").order("numero_serie"),
     sb.from("categoria_tarea").select("id,nombre_categoria").order("nombre_categoria"),
   ]);
-  const pcOpts=(pcs.data||[]).map(p=>`<option value="${p.id}">${esc(p.numero_serie)} · ${esc(p.marca)} ${esc(p.modelo)}</option>`).join("");
-  const impOpts=(imps.data||[]).map(p=>`<option value="${p.id}">${esc(p.numero_serie)} · ${esc(p.marca)} ${esc(p.modelo)}</option>`).join("");
-  const catOpts=(cats.data||[]).map(c=>`<option value="${c.id}">${esc(c.nombre_categoria)}</option>`).join("");
-  openModal("Registrar mantenimiento",`
+  let m={tipo_activo:"PC",tipo_mantenimiento:"Correctivo",id_pc:null,id_impresora:null,id_categoria_tarea:null,contador_paginas:null,descripcion_detalle:""};
+  if(id){ const {data}=await sb.from("registro_mantenimiento").select("*").eq("id",id).single(); if(data)m=data; }
+  const sel=(v,opt)=>v===opt?'selected':'';
+  const pcOpts=(pcs.data||[]).map(p=>`<option value="${p.id}" ${sel(m.id_pc,p.id)}>${esc(p.numero_serie)} · ${esc(p.marca)} ${esc(p.modelo)}</option>`).join("");
+  const impOpts=(imps.data||[]).map(p=>`<option value="${p.id}" ${sel(m.id_impresora,p.id)}>${esc(p.numero_serie)} · ${esc(p.marca)} ${esc(p.modelo)}</option>`).join("");
+  const catOpts=(cats.data||[]).map(c=>`<option value="${c.id}" ${sel(m.id_categoria_tarea,c.id)}>${esc(c.nombre_categoria)}</option>`).join("");
+  const tmOpts=["Preventivo","Correctivo","Instalación","Baja","Otro"].map(o=>`<option ${sel(m.tipo_mantenimiento,o)}>${o}</option>`).join("");
+  const taOpts=["PC","Impresora","Otro"].map(o=>`<option value="${o}" ${sel(m.tipo_activo,o)}>${o}</option>`).join("");
+  openModal(id?"Editar mantenimiento":"Registrar mantenimiento",`
     <div class="grid2">
       <div class="field"><label>Tipo de activo</label>
-        <select id="f_tipo" onchange="mantToggle()">
-          <option value="PC">PC</option><option value="Impresora">Impresora</option><option value="Otro">Otro</option>
-        </select></div>
+        <select id="f_tipo" onchange="mantToggle()">${taOpts}</select></div>
       <div class="field"><label>Tipo de mantenimiento</label>
-        <select id="f_tm"><option>Preventivo</option><option selected>Correctivo</option>
-          <option>Instalación</option><option>Baja</option><option>Otro</option></select></div>
+        <select id="f_tm">${tmOpts}</select></div>
     </div>
     <div class="field" id="wrap_pc"><label>PC</label><select id="f_pc">${pcOpts||'<option value="">(no hay PCs)</option>'}</select></div>
-    <div class="field" id="wrap_imp" style="display:none"><label>Impresora</label><select id="f_imp">${impOpts||'<option value="">(no hay impresoras)</option>'}</select></div>
+    <div class="field" id="wrap_imp"><label>Impresora</label><select id="f_imp">${impOpts||'<option value="">(no hay impresoras)</option>'}</select></div>
     <div class="grid2">
       <div class="field"><label>Categoría de tarea</label><select id="f_cat">${catOpts}</select></div>
-      <div class="field" id="wrap_cont" style="display:none"><label>Contador de páginas</label><input id="f_cont" type="number" placeholder="ej. 12500"/></div>
+      <div class="field" id="wrap_cont"><label>Contador de páginas</label><input id="f_cont" type="number" value="${m.contador_paginas??''}" placeholder="ej. 12500"/></div>
     </div>
-    <div class="field"><label>Detalle</label><textarea id="f_det" rows="3" placeholder="Descripción del trabajo realizado"></textarea></div>
+    <div class="field"><label>Detalle</label><textarea id="f_det" rows="3" placeholder="Descripción del trabajo realizado">${esc(m.descripcion_detalle)}</textarea></div>
     <div class="mfoot"><button class="btn ghost" onclick="closeModal()">Cancelar</button>
-      <button class="btn accent" onclick="saveMant()">Guardar</button></div>`);
+      <button class="btn accent" onclick="saveMant(${id??'null'})">Guardar</button></div>`);
+  mantToggle();
 }
 function mantToggle(){
   const t=$("#f_tipo").value;
@@ -436,7 +461,7 @@ function mantToggle(){
   $("#wrap_imp").style.display = t==="Impresora"?"block":"none";
   $("#wrap_cont").style.display = t==="Impresora"?"block":"none";
 }
-async function saveMant(){
+async function saveMant(id){
   const t=$("#f_tipo").value;
   const det=$("#f_det").value.trim();
   if(!det){ toast("El detalle es obligatorio.",true); return; }
@@ -450,9 +475,11 @@ async function saveMant(){
   if(t==="Impresora"){ row.id_impresora=Number($("#f_imp").value)||null; row.contador_paginas=Number($("#f_cont").value)||null; }
   if(t==="PC" && !row.id_pc){ toast("Seleccioná una PC.",true); return; }
   if(t==="Impresora" && !row.id_impresora){ toast("Seleccioná una impresora.",true); return; }
-  const {error}=await sb.from("registro_mantenimiento").insert(row);
+  const {error}= id
+    ? await sb.from("registro_mantenimiento").update(row).eq("id",id)
+    : await sb.from("registro_mantenimiento").insert(row);
   if(error) return dbError(error);
-  closeModal(); toast("Mantenimiento registrado"); renderMant();
+  closeModal(); toast(id?"Mantenimiento actualizado":"Mantenimiento registrado"); renderMant();
 }
 
 /* ============================================================
@@ -474,7 +501,7 @@ async function renderPC(){
       `<span class="mono">${esc(r.cpu||"—")} · ${r.ram_gb||"?"}GB</span>`,
       esc(r.sector?.nombre_sector||"—"), esc(r.usuario_pc?.nombre_completo||"—"),
       estadoSelect("inventario_pc",r.id,r.estado,["Activo","En Reparación","En Depósito","De Baja"]),
-      ""
+      acciones(`formPC(${r.id})`,`borrar('inventario_pc',${r.id},'la PC ${esc(r.numero_serie)}',renderPC)`)
     ]));
 }
 function estadoSelect(table,id,val,opts){
@@ -487,40 +514,44 @@ async function cambiarEstado(table,id,estado){
   if(error) return dbError(error);
   toast("Estado actualizado");
 }
-async function formPC(){
+async function formPC(id=null){
   const sectores=await sb.from("sector").select("id,nombre_sector").order("nombre_sector");
   const usuarios=await sb.from("usuario_pc").select("id,nombre_completo").order("nombre_completo");
-  const sOpts=`<option value="">(sin sector)</option>`+(sectores.data||[]).map(s=>`<option value="${s.id}">${esc(s.nombre_sector)}</option>`).join("");
-  const uOpts=`<option value="">(sin asignar)</option>`+(usuarios.data||[]).map(u=>`<option value="${u.id}">${esc(u.nombre_completo)}</option>`).join("");
-  openModal("Nueva PC",`
+  let p={marca:"",modelo:"",numero_serie:"",etiqueta_patrimonial:"",cpu:"",ram_gb:"",disco_tipo:"",sistema_operativo:"",direccion_ip:"",id_sector:"",id_usuario_asignado:"",estado:"Activo"};
+  if(id){ const {data}=await sb.from("inventario_pc").select("*").eq("id",id).single(); if(data)p=data; }
+  const v=x=>esc(x??"");
+  const sOpts=`<option value="">(sin sector)</option>`+(sectores.data||[]).map(s=>`<option value="${s.id}" ${s.id===p.id_sector?'selected':''}>${esc(s.nombre_sector)}</option>`).join("");
+  const uOpts=`<option value="">(sin asignar)</option>`+(usuarios.data||[]).map(u=>`<option value="${u.id}" ${u.id===p.id_usuario_asignado?'selected':''}>${esc(u.nombre_completo)}</option>`).join("");
+  const eOpts=["Activo","En Reparación","En Depósito","De Baja"].map(o=>`<option ${o===p.estado?'selected':''}>${o}</option>`).join("");
+  openModal(id?"Editar PC":"Nueva PC",`
     <div class="grid2">
-      <div class="field"><label>Marca *</label><input id="p_marca"/></div>
-      <div class="field"><label>Modelo *</label><input id="p_modelo"/></div>
+      <div class="field"><label>Marca *</label><input id="p_marca" value="${v(p.marca)}"/></div>
+      <div class="field"><label>Modelo *</label><input id="p_modelo" value="${v(p.modelo)}"/></div>
     </div>
     <div class="grid2">
-      <div class="field"><label>Nº de serie *</label><input id="p_serie" class="mono"/></div>
-      <div class="field"><label>Etiqueta patrimonial</label><input id="p_etiq" class="mono"/></div>
+      <div class="field"><label>Nº de serie *</label><input id="p_serie" class="mono" value="${v(p.numero_serie)}"/></div>
+      <div class="field"><label>Etiqueta patrimonial</label><input id="p_etiq" class="mono" value="${v(p.etiqueta_patrimonial)}"/></div>
     </div>
     <div class="grid2">
-      <div class="field"><label>CPU</label><input id="p_cpu"/></div>
-      <div class="field"><label>RAM (GB)</label><input id="p_ram" type="number"/></div>
+      <div class="field"><label>CPU</label><input id="p_cpu" value="${v(p.cpu)}"/></div>
+      <div class="field"><label>RAM (GB)</label><input id="p_ram" type="number" value="${v(p.ram_gb)}"/></div>
     </div>
     <div class="grid2">
-      <div class="field"><label>Disco</label><input id="p_disco" placeholder="ej. SSD NVMe 512 GB"/></div>
-      <div class="field"><label>Sistema operativo</label><input id="p_so"/></div>
+      <div class="field"><label>Disco</label><input id="p_disco" value="${v(p.disco_tipo)}" placeholder="ej. SSD NVMe 512 GB"/></div>
+      <div class="field"><label>Sistema operativo</label><input id="p_so" value="${v(p.sistema_operativo)}"/></div>
     </div>
     <div class="grid2">
       <div class="field"><label>Sector</label><select id="p_sector">${sOpts}</select></div>
       <div class="field"><label>Usuario asignado</label><select id="p_user">${uOpts}</select></div>
     </div>
     <div class="grid2">
-      <div class="field"><label>IP</label><input id="p_ip" class="mono"/></div>
-      <div class="field"><label>Estado</label><select id="p_estado"><option>Activo</option><option>En Reparación</option><option>En Depósito</option><option>De Baja</option></select></div>
+      <div class="field"><label>IP</label><input id="p_ip" class="mono" value="${v(p.direccion_ip)}"/></div>
+      <div class="field"><label>Estado</label><select id="p_estado">${eOpts}</select></div>
     </div>
     <div class="mfoot"><button class="btn ghost" onclick="closeModal()">Cancelar</button>
-      <button class="btn accent" onclick="savePC()">Guardar</button></div>`);
+      <button class="btn accent" onclick="savePC(${id??'null'})">Guardar</button></div>`);
 }
-async function savePC(){
+async function savePC(id){
   const disco=$("#p_disco").value.trim();
   const row={
     marca:$("#p_marca").value.trim(), modelo:$("#p_modelo").value.trim(),
@@ -529,12 +560,15 @@ async function savePC(){
     disco_tipo:disco||null, sistema_operativo:$("#p_so").value.trim()||null,
     direccion_ip:$("#p_ip").value.trim()||null,
     id_sector:Number($("#p_sector").value)||null, id_usuario_asignado:Number($("#p_user").value)||null,
-    id_responsable_it:currentUser.id, estado:$("#p_estado").value
+    estado:$("#p_estado").value
   };
+  if(!id) row.id_responsable_it=currentUser.id;   // al crear, responsable = usuario actual
   if(!row.marca||!row.modelo||!row.numero_serie){ toast("Marca, modelo y nº de serie son obligatorios.",true); return; }
-  const {error}=await sb.from("inventario_pc").insert(row);
+  const {error}= id
+    ? await sb.from("inventario_pc").update(row).eq("id",id)
+    : await sb.from("inventario_pc").insert(row);
   if(error) return dbError(error);
-  closeModal(); toast("PC agregada"); renderPC();
+  closeModal(); toast(id?"PC actualizada":"PC agregada"); renderPC();
 }
 
 /* ============================================================
@@ -558,56 +592,64 @@ async function renderImp(){
       `<span class="mono">${r.contador_paginas??0}</span>`,
       esc(r.sector?.nombre_sector||"—"),
       estadoSelect("inventario_impresora",r.id,r.estado,["Activa","En Reparación","En Depósito","De Baja"]),
-      `<div style="display:flex;align-items:center;gap:8px">
+      `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
          ${insumoAlerta(r.consumible_impresora)}
-         <button class="btn-ins" onclick="verInsumos(${r.id},'${esc(r.marca)} ${esc(r.modelo)}')">⛁ Ver insumos</button>
+         <button class="btn-ins" onclick="verInsumos(${r.id},'${esc(r.marca)} ${esc(r.modelo)}')">⛁ Insumos</button>
+         ${acciones(`formImp(${r.id})`,`borrar('inventario_impresora',${r.id},'la impresora ${esc(r.numero_serie)}',renderImp)`)}
        </div>`
     ]));
 }
-async function formImp(){
+async function formImp(id=null){
   const sectores=await sb.from("sector").select("id,nombre_sector").order("nombre_sector");
-  const sOpts=`<option value="">(sin sector)</option>`+(sectores.data||[]).map(s=>`<option value="${s.id}">${esc(s.nombre_sector)}</option>`).join("");
-  openModal("Nueva impresora",`
+  let p={marca:"",modelo:"",numero_serie:"",etiqueta_patrimonial:"",tecnologia:"Láser",tipo:"Multifunción",color:"Monocromática",conexion:"Red",modelo_toner:"",direccion_ip:"",id_sector:"",estado:"Activa"};
+  if(id){ const {data}=await sb.from("inventario_impresora").select("*").eq("id",id).single(); if(data)p=data; }
+  const v=x=>esc(x??"");
+  const opt=(arr,cur)=>arr.map(o=>`<option ${o===cur?'selected':''}>${o}</option>`).join("");
+  const sOpts=`<option value="">(sin sector)</option>`+(sectores.data||[]).map(s=>`<option value="${s.id}" ${s.id===p.id_sector?'selected':''}>${esc(s.nombre_sector)}</option>`).join("");
+  openModal(id?"Editar impresora":"Nueva impresora",`
     <div class="grid2">
-      <div class="field"><label>Marca *</label><input id="i_marca"/></div>
-      <div class="field"><label>Modelo *</label><input id="i_modelo"/></div>
+      <div class="field"><label>Marca *</label><input id="i_marca" value="${v(p.marca)}"/></div>
+      <div class="field"><label>Modelo *</label><input id="i_modelo" value="${v(p.modelo)}"/></div>
     </div>
     <div class="grid2">
-      <div class="field"><label>Nº de serie *</label><input id="i_serie" class="mono"/></div>
-      <div class="field"><label>Etiqueta patrimonial</label><input id="i_etiq" class="mono"/></div>
+      <div class="field"><label>Nº de serie *</label><input id="i_serie" class="mono" value="${v(p.numero_serie)}"/></div>
+      <div class="field"><label>Etiqueta patrimonial</label><input id="i_etiq" class="mono" value="${v(p.etiqueta_patrimonial)}"/></div>
     </div>
     <div class="grid2">
-      <div class="field"><label>Tecnología</label><select id="i_tec"><option>Láser</option><option>Inyección</option><option>Térmica</option></select></div>
-      <div class="field"><label>Tipo</label><select id="i_tipo"><option>Multifunción</option><option>Monofunción</option></select></div>
+      <div class="field"><label>Tecnología</label><select id="i_tec">${opt(["Láser","Inyección","Térmica"],p.tecnologia)}</select></div>
+      <div class="field"><label>Tipo</label><select id="i_tipo">${opt(["Multifunción","Monofunción"],p.tipo)}</select></div>
     </div>
     <div class="grid2">
-      <div class="field"><label>Color</label><select id="i_color"><option>Monocromática</option><option>Color</option></select></div>
-      <div class="field"><label>Conexión</label><select id="i_con"><option>Red</option><option>Wi-Fi</option><option>USB</option></select></div>
+      <div class="field"><label>Color</label><select id="i_color">${opt(["Monocromática","Color"],p.color)}</select></div>
+      <div class="field"><label>Conexión</label><select id="i_con">${opt(["Red","Wi-Fi","USB"],p.conexion)}</select></div>
     </div>
     <div class="grid2">
-      <div class="field"><label>Modelo de tóner</label><input id="i_toner" class="mono"/></div>
-      <div class="field"><label>IP</label><input id="i_ip" class="mono"/></div>
+      <div class="field"><label>Modelo de tóner (referencia)</label><input id="i_toner" class="mono" value="${v(p.modelo_toner)}"/></div>
+      <div class="field"><label>IP</label><input id="i_ip" class="mono" value="${v(p.direccion_ip)}"/></div>
     </div>
     <div class="grid2">
       <div class="field"><label>Sector</label><select id="i_sector">${sOpts}</select></div>
-      <div class="field"><label>Estado</label><select id="i_estado"><option>Activa</option><option>En Reparación</option><option>En Depósito</option><option>De Baja</option></select></div>
+      <div class="field"><label>Estado</label><select id="i_estado">${opt(["Activa","En Reparación","En Depósito","De Baja"],p.estado)}</select></div>
     </div>
     <div class="mfoot"><button class="btn ghost" onclick="closeModal()">Cancelar</button>
-      <button class="btn accent" onclick="saveImp()">Guardar</button></div>`);
+      <button class="btn accent" onclick="saveImp(${id??'null'})">Guardar</button></div>`);
 }
-async function saveImp(){
+async function saveImp(id){
   const row={
     marca:$("#i_marca").value.trim(), modelo:$("#i_modelo").value.trim(),
     numero_serie:$("#i_serie").value.trim(), etiqueta_patrimonial:$("#i_etiq").value.trim()||null,
     tecnologia:$("#i_tec").value, tipo:$("#i_tipo").value, color:$("#i_color").value,
     conexion:$("#i_con").value, modelo_toner:$("#i_toner").value.trim()||null,
     direccion_ip:$("#i_ip").value.trim()||null, id_sector:Number($("#i_sector").value)||null,
-    id_responsable_it:currentUser.id, estado:$("#i_estado").value
+    estado:$("#i_estado").value
   };
+  if(!id) row.id_responsable_it=currentUser.id;
   if(!row.marca||!row.modelo||!row.numero_serie){ toast("Marca, modelo y nº de serie son obligatorios.",true); return; }
-  const {error}=await sb.from("inventario_impresora").insert(row);
+  const {error}= id
+    ? await sb.from("inventario_impresora").update(row).eq("id",id)
+    : await sb.from("inventario_impresora").insert(row);
   if(error) return dbError(error);
-  closeModal(); toast("Impresora agregada"); renderImp();
+  closeModal(); toast(id?"Impresora actualizada":"Impresora agregada"); renderImp();
 }
 
 /* ============================================================
@@ -626,8 +668,7 @@ function insumoAlerta(lista){
 }
 function nivelBar(p){
   const v=p==null?0:p;
-  return `<div class="nivel"><div class="track"><div class="fill ${nivelClass(p)}" style="width:${v}%"></div></div>
-    <span class="pct">${p==null?"—":v+"%"}</span></div>`;
+  return `<div class="track"><div class="fill ${nivelClass(p)}" style="width:${v}%"></div></div>`;
 }
 function colorChip(c){ const cls=(c||"NA").replace("/","").replace(/\s/g,""); return `<span class="cdot c-${cls==='N/A'?'NA':cls}"></span>`; }
 
@@ -653,12 +694,10 @@ async function loadInsumos(){
         <div class="ins-sub">${c.rendimiento_paginas?('Rinde '+c.rendimiento_paginas+' pág.'):'&nbsp;'}</div>
       </div>
       <input class="mono" id="cod_${c.id}" value="${esc(c.codigo||'')}" placeholder="código"/>
-      <div style="display:flex;align-items:center;gap:8px">
+      <div class="nivel">
         ${nivelBar(c.nivel_porcentaje)}
-        <span style="display:inline-flex;align-items:center;gap:3px">
-          <input type="number" id="niv_${c.id}" value="${c.nivel_porcentaje??''}" min="0" max="100" style="width:50px"/>
-          <span style="color:var(--muted);font-size:13px">%</span>
-        </span>
+        <input type="number" id="niv_${c.id}" value="${c.nivel_porcentaje??''}" min="0" max="100"/>
+        <span class="pctsign">%</span>
       </div>
       <button class="iconbtn" title="Guardar" onclick="saveInsumo(${c.id})">✓</button>
       <button class="iconbtn danger" title="Eliminar" onclick="delInsumo(${c.id})">✕</button>
@@ -722,21 +761,25 @@ async function renderSector(){
     ${panel("Sectores","Nuevo sector","formSector()","secBody")}`;
   const {data,error}=await sb.from("sector").select("id,nombre_sector,created_at").order("nombre_sector");
   if(error) return dbError(error);
-  $("#secBody").innerHTML=tableHTML(["Sector","Alta"],
-    data.map(r=>[esc(r.nombre_sector),fdate(r.created_at)]));
+  $("#secBody").innerHTML=tableHTML(["Sector","Alta",""],
+    data.map(r=>[esc(r.nombre_sector),fdate(r.created_at),
+      acciones(`formSector(${r.id},'${esc(r.nombre_sector)}')`,
+               `borrar('sector',${r.id},'el sector «${esc(r.nombre_sector)}»',renderSector)`)]));
 }
-function formSector(){
-  openModal("Nuevo sector",`
-    <div class="field"><label>Nombre del sector *</label><input id="s_nombre"/></div>
+function formSector(id=null,nombre=""){
+  openModal(id?"Editar sector":"Nuevo sector",`
+    <div class="field"><label>Nombre del sector *</label><input id="s_nombre" value="${esc(nombre)}"/></div>
     <div class="mfoot"><button class="btn ghost" onclick="closeModal()">Cancelar</button>
-      <button class="btn accent" onclick="saveSector()">Guardar</button></div>`);
+      <button class="btn accent" onclick="saveSector(${id??'null'})">Guardar</button></div>`);
 }
-async function saveSector(){
+async function saveSector(id){
   const nombre=$("#s_nombre").value.trim();
   if(!nombre){ toast("Ingresá un nombre.",true); return; }
-  const {error}=await sb.from("sector").insert({nombre_sector:nombre});
+  const {error}= id
+    ? await sb.from("sector").update({nombre_sector:nombre}).eq("id",id)
+    : await sb.from("sector").insert({nombre_sector:nombre});
   if(error) return dbError(error);
-  closeModal(); toast("Sector agregado"); renderSector();
+  closeModal(); toast(id?"Sector actualizado":"Sector agregado"); renderSector();
 }
 
 /* ============================================================
@@ -746,27 +789,38 @@ async function renderUsuario(){
   $("#content").innerHTML=`<div class="head"><div><h2>Usuarios</h2>
     <div class="lead">Personas que utilizan los equipos</div></div></div>
     ${panel("Usuarios","Nuevo usuario","formUsuario()","userBody")}`;
-  const {data,error}=await sb.from("usuario_pc").select("id,nombre_completo,activo,sector(nombre_sector)").order("nombre_completo");
+  const {data,error}=await sb.from("usuario_pc").select("id,nombre_completo,activo,id_sector,sector(nombre_sector)").order("nombre_completo");
   if(error) return dbError(error);
-  $("#userBody").innerHTML=tableHTML(["Nombre","Sector","Estado"],
+  $("#userBody").innerHTML=tableHTML(["Nombre","Sector","Estado",""],
     data.map(r=>[esc(r.nombre_completo),esc(r.sector?.nombre_sector||"—"),
-      r.activo?'<span class="pill ok">Activo</span>':'<span class="pill idle">Inactivo</span>']));
+      r.activo?'<span class="pill ok">Activo</span>':'<span class="pill idle">Inactivo</span>',
+      acciones(`formUsuario(${r.id})`,
+               `borrar('usuario_pc',${r.id},'el usuario «${esc(r.nombre_completo)}»',renderUsuario)`)]));
 }
-async function formUsuario(){
+async function formUsuario(id=null){
   const sectores=await sb.from("sector").select("id,nombre_sector").order("nombre_sector");
-  const sOpts=`<option value="">(sin sector)</option>`+(sectores.data||[]).map(s=>`<option value="${s.id}">${esc(s.nombre_sector)}</option>`).join("");
-  openModal("Nuevo usuario",`
-    <div class="field"><label>Nombre completo *</label><input id="u_nombre"/></div>
+  let u={nombre_completo:"",id_sector:"",activo:true};
+  if(id){ const {data}=await sb.from("usuario_pc").select("nombre_completo,id_sector,activo").eq("id",id).single(); if(data)u=data; }
+  const sOpts=`<option value="">(sin sector)</option>`+(sectores.data||[]).map(s=>`<option value="${s.id}" ${s.id===u.id_sector?'selected':''}>${esc(s.nombre_sector)}</option>`).join("");
+  openModal(id?"Editar usuario":"Nuevo usuario",`
+    <div class="field"><label>Nombre completo *</label><input id="u_nombre" value="${esc(u.nombre_completo)}"/></div>
     <div class="field"><label>Sector</label><select id="u_sector">${sOpts}</select></div>
+    ${id?`<div class="field"><label>Estado</label><select id="u_activo">
+      <option value="true" ${u.activo?'selected':''}>Activo</option>
+      <option value="false" ${!u.activo?'selected':''}>Inactivo</option></select></div>`:''}
     <div class="mfoot"><button class="btn ghost" onclick="closeModal()">Cancelar</button>
-      <button class="btn accent" onclick="saveUsuario()">Guardar</button></div>`);
+      <button class="btn accent" onclick="saveUsuario(${id??'null'})">Guardar</button></div>`);
 }
-async function saveUsuario(){
+async function saveUsuario(id){
   const nombre=$("#u_nombre").value.trim();
   if(!nombre){ toast("Ingresá un nombre.",true); return; }
-  const {error}=await sb.from("usuario_pc").insert({nombre_completo:nombre,id_sector:Number($("#u_sector").value)||null});
+  const row={nombre_completo:nombre,id_sector:Number($("#u_sector").value)||null};
+  if(id) row.activo = $("#u_activo").value==="true";
+  const {error}= id
+    ? await sb.from("usuario_pc").update(row).eq("id",id)
+    : await sb.from("usuario_pc").insert(row);
   if(error) return dbError(error);
-  closeModal(); toast("Usuario agregado"); renderUsuario();
+  closeModal(); toast(id?"Usuario actualizado":"Usuario agregado"); renderUsuario();
 }
 
 /* ============================================================
