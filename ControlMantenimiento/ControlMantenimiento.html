@@ -217,6 +217,7 @@ tbody tr:hover{background:#fbfaf6}
       <button data-sec="pc"><span class="ic">▣</span>PCs</button>
       <button data-sec="imp"><span class="ic">⎙</span>Impresoras</button>
       <button data-sec="sector"><span class="ic">◈</span>Sectores</button>
+      <button data-sec="categoria"><span class="ic">⊞</span>Categorías</button>
       <button data-sec="usuario"><span class="ic">☺</span>Usuarios</button>
       <button data-sec="personal"><span class="ic">⚷</span>Personal IT</button>
       <button data-sec="auditoria"><span class="ic">≡</span>Auditoría</button>
@@ -278,6 +279,7 @@ function dbError(error){
     m="Tu usuario no tiene rol técnico/admin para esta acción.";
   if(/chk_activo_coherente/i.test(m)) m="El tipo de activo no coincide con el equipo seleccionado.";
   if(/uq_consumible/i.test(m)) m="Ya existe un insumo de ese tipo y color en esta impresora.";
+  if(/nombre_categoria/i.test(m)) m="Ya existe una categoría con ese nombre.";
   if(/duplicate key|numero_serie|etiqueta_patrimonial/i.test(m)) m="Ya existe un equipo con ese número de serie o etiqueta.";
   toast(m,true); console.error(error);
 }
@@ -333,7 +335,7 @@ $("#nav").addEventListener("click",e=>{
 function route(sec){
   document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("active",b.dataset.sec===sec));
   ({dashboard:renderDashboard,mant:renderMant,pc:renderPC,imp:renderImp,
-    sector:renderSector,usuario:renderUsuario,personal:renderPersonal,auditoria:renderAuditoria}[sec]||renderDashboard)();
+    sector:renderSector,categoria:renderCategoria,usuario:renderUsuario,personal:renderPersonal,auditoria:renderAuditoria}[sec]||renderDashboard)();
 }
 
 /* ============================================================
@@ -751,6 +753,46 @@ async function saveNuevoInsumo(){
   const {error}=await sb.from("consumible_impresora").insert(row);
   if(error) return dbError(error);   // captura el UNIQUE (mismo tipo+color repetido)
   toast("Insumo agregado"); verInsumosReopen();
+}
+
+/* ============================================================
+   CATEGORÍAS DE TAREA
+   ============================================================ */
+async function renderCategoria(){
+  $("#content").innerHTML=`<div class="head"><div><h2>Categorías de tarea</h2>
+    <div class="lead">Tipos de trabajo que se registran en los mantenimientos</div></div></div>
+    ${panel("Categorías","Nueva categoría","formCategoria()","catBody")}`;
+  const {data,error}=await sb.from("categoria_tarea").select("id,nombre_categoria").order("nombre_categoria");
+  if(error) return dbError(error);
+  $("#catBody").innerHTML=tableHTML(["Categoría",""],
+    data.map(r=>[esc(r.nombre_categoria),
+      acciones(`formCategoria(${r.id},'${esc(r.nombre_categoria).replace(/'/g,"\\'")}')`,
+               `borrarCategoria(${r.id},'${esc(r.nombre_categoria).replace(/'/g,"\\'")}')`)]));
+}
+async function borrarCategoria(id,nombre){
+  const {count}=await sb.from("registro_mantenimiento").select("id",{count:"exact",head:true}).eq("id_categoria_tarea",id);
+  const aviso = count>0
+    ? `\n\n${count} mantenimiento(s) usan esta categoría y quedarán "sin categoría". El historial NO se borra.`
+    : "";
+  if(!confirm(`¿Eliminar la categoría «${nombre}»?${aviso}`)) return;
+  const {error}=await sb.from("categoria_tarea").delete().eq("id",id);
+  if(error) return dbError(error);
+  toast("Categoría eliminada"); renderCategoria();
+}
+function formCategoria(id=null,nombre=""){
+  openModal(id?"Editar categoría":"Nueva categoría",`
+    <div class="field"><label>Nombre de la categoría *</label><input id="ct_nombre" value="${esc(nombre)}"/></div>
+    <div class="mfoot"><button class="btn ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn accent" onclick="saveCategoria(${id??'null'})">Guardar</button></div>`);
+}
+async function saveCategoria(id){
+  const nombre=$("#ct_nombre").value.trim();
+  if(!nombre){ toast("Ingresá un nombre.",true); return; }
+  const {error}= id
+    ? await sb.from("categoria_tarea").update({nombre_categoria:nombre}).eq("id",id)
+    : await sb.from("categoria_tarea").insert({nombre_categoria:nombre});
+  if(error) return dbError(error);
+  closeModal(); toast(id?"Categoría actualizada":"Categoría agregada"); renderCategoria();
 }
 
 /* ============================================================
