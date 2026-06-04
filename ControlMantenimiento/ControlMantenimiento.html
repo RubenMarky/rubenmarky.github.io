@@ -136,6 +136,17 @@ tbody tr:hover{background:#fbfaf6}
 .pctsign{color:var(--muted);font-size:12.5px}
 .rowacts{display:flex;gap:6px;white-space:nowrap}
 .rowacts .iconbtn{padding:5px 9px;font-size:13px}
+/* secciones dentro de formularios largos */
+.formsec{font-family:"Bricolage Grotesque";font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--navy);margin:18px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--line)}
+.formsec:first-child{margin-top:0}
+/* caja de valoración en vivo */
+.valbox{background:#fbfaf6;border:1px solid var(--line);border-radius:10px;padding:13px 15px;margin-top:4px}
+.valhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.valhead .score{font-family:"Bricolage Grotesque";font-size:30px;font-weight:800;line-height:1}
+.valhead .score small{font-size:14px;color:var(--muted);font-weight:600}
+.valdesglose{display:flex;flex-wrap:wrap;gap:5px}
+.valchip{font-size:11px;padding:2px 8px;border-radius:6px;background:#eef1f5;color:var(--navy);white-space:nowrap}
+.valchip.full{background:var(--okbg);color:var(--ok)} .valchip.med{background:var(--warnbg);color:var(--warn)} .valchip.zero{background:var(--badbg);color:var(--bad)}
 .cdot{display:inline-block;width:11px;height:11px;border-radius:50%;border:1px solid rgba(0,0,0,.18);vertical-align:-1px;margin-right:6px}
 .c-Negro{background:#222} .c-Cyan{background:#1aa3d6} .c-Magenta{background:#d6249f}
 .c-Amarillo{background:#f2c200} .c-Tricolor{background:linear-gradient(90deg,#1aa3d6,#d6249f,#f2c200)} .c-NA{background:#cbd2da}
@@ -486,23 +497,51 @@ async function saveMant(id){
 }
 
 /* ============================================================
-   PCs
+   PCs  +  MOTOR DE VALORACIÓN (0-100)
    ============================================================ */
+const VAL_FULL=8.33, VAL_MED=4.16;       // puntos por criterio (12 x 8.33 ≈ 100)
+function aniosDesde(f){ if(!f) return Infinity; const d=new Date(f); return isNaN(d)?Infinity:(Date.now()-d)/(31557600000); }
+function calcValoracion(p){
+  const d=[]; const add=(c,pts)=>d.push({c,pts:Math.round(pts*100)/100});
+  add("CPU",        p.gama_cpu==="Alta"?VAL_FULL:p.gama_cpu==="Media"?VAL_MED:0);
+  const dt=(p.disco_tipo||"").toLowerCase();
+  add("Disco",      /nvme|m\.?2/.test(dt)?VAL_FULL:/ssd/.test(dt)?VAL_MED:0);
+  add("Gráfica",    p.gama_gpu==="Dedicada"?VAL_FULL:p.gama_gpu==="Integrada"?VAL_MED:0);
+  add("Fuente",     p.fuente_80plus==="Certificada"?VAL_FULL:p.fuente_80plus==="De marca"?VAL_MED:0);
+  add("Salud disco",p.salud_disco!=null&&p.salud_disco!==""?(Number(p.salud_disco)/100)*VAL_FULL:0);
+  add("RAM",        p.ram_gb>=16?VAL_FULL:p.ram_gb>=8?VAL_MED:0);
+  const so=(p.sistema_operativo||"").toLowerCase();
+  add("S.O.",       /11/.test(so)?VAL_FULL:/10/.test(so)?VAL_MED:0);
+  add("Protección", p.tipo_proteccion==="UPS"?VAL_FULL:p.tipo_proteccion==="Estabilizador"?VAL_MED:0);
+  add("Monitor",    p.monitor_pulgadas>=19?VAL_FULL:p.monitor_pulgadas>=17?VAL_MED:0);
+  const ab=aniosDesde(p.fecha_bios);     add("BIOS",     ab<=2?VAL_FULL:ab<=5?VAL_MED:0);
+  const marcas=["asrock","msi","asus","gigabyte","biostar","evga"]; const mb=(p.motherboard||"").toLowerCase();
+  add("Mother",     marcas.some(m=>mb.includes(m))?VAL_FULL:mb.trim()?VAL_MED:0);
+  const af=aniosDesde(p.fecha_ultimo_formateo); add("Formateo", af<=1?VAL_FULL:af<=3?VAL_MED:0);
+  const total=Math.round(d.reduce((s,x)=>s+x.pts,0)*10)/10;
+  return {total, nivel: total>=85?"Óptimo":total>=65?"Medio":"Crítico", desglose:d};
+}
+function nivelPill(n,pts){
+  const cls=n==="Óptimo"?"ok":n==="Medio"?"warn":n==="Crítico"?"bad":"idle";
+  return n?`<span class="pill ${cls}">${esc(n)}${pts!=null?` · ${pts}`:""}</span>`:'<span class="pill idle">—</span>';
+}
+
 async function renderPC(){
   $("#content").innerHTML=`<div class="head"><div><h2>Inventario de PCs</h2>
-    <div class="lead">Equipos por sector y usuario asignado</div></div></div>
+    <div class="lead">Equipos por sector, usuario y valoración</div></div></div>
     ${panel("Computadoras","Nueva PC","formPC()","pcBody")}`;
   const {data,error}=await sb.from("inventario_pc")
-    .select("id,numero_serie,marca,modelo,cpu,ram_gb,sistema_operativo,estado,sector(nombre_sector),usuario_pc(nombre_completo)")
+    .select("id,numero_serie,marca,modelo,cpu,ram_gb,estado,valoracion_puntos,valoracion_nivel,sector(nombre_sector),usuario_pc(nombre_completo)")
     .order("id");
   if(error) return dbError(error);
   $("#pcBody").innerHTML=tableHTML(
-    ["Serie","Equipo","Specs","Sector","Usuario","Estado",""],
+    ["Serie","Equipo","Specs","Sector","Usuario","Valoración","Estado",""],
     data.map(r=>[
       `<span class="mono">${esc(r.numero_serie)}</span>`,
       `${esc(r.marca)} ${esc(r.modelo)}`,
       `<span class="mono">${esc(r.cpu||"—")} · ${r.ram_gb||"?"}GB</span>`,
       esc(r.sector?.nombre_sector||"—"), esc(r.usuario_pc?.nombre_completo||"—"),
+      nivelPill(r.valoracion_nivel, r.valoracion_puntos),
       estadoSelect("inventario_pc",r.id,r.estado,["Activo","En Reparación","En Depósito","De Baja"]),
       acciones(`formPC(${r.id})`,`borrar('inventario_pc',${r.id},'la PC ${esc(r.numero_serie)}',renderPC)`)
     ]));
@@ -517,16 +556,46 @@ async function cambiarEstado(table,id,estado){
   if(error) return dbError(error);
   toast("Estado actualizado");
 }
+/* lee el formulario de PC en un objeto (para calcular y para guardar) */
+function leerFormPC(){
+  return {
+    marca:$("#p_marca").value.trim(), modelo:$("#p_modelo").value.trim(),
+    numero_serie:$("#p_serie").value.trim(), etiqueta_patrimonial:$("#p_etiq").value.trim()||null,
+    cpu:$("#p_cpu").value.trim()||null, gama_cpu:$("#p_gcpu").value||null,
+    ram_gb:Number($("#p_ram").value)||null,
+    disco_tipo:$("#p_disco").value.trim()||null, disco_capacidad:$("#p_discocap").value.trim()||null,
+    salud_disco: $("#p_salud").value===""?null:Number($("#p_salud").value),
+    gama_gpu:$("#p_ggpu").value||null, fuente_80plus:$("#p_fuente").value||null,
+    motherboard:$("#p_mother").value.trim()||null,
+    monitor:$("#p_monitor").value.trim()||null, monitor_pulgadas:Number($("#p_monpulg").value)||null,
+    sistema_operativo:$("#p_so").value.trim()||null,
+    direccion_ip:$("#p_ip").value.trim()||null, direccion_mac:$("#p_mac").value.trim()||null,
+    id_sector:Number($("#p_sector").value)||null, id_usuario_asignado:Number($("#p_user").value)||null,
+    tipo_proteccion:$("#p_tprot").value, proteccion_modelo:$("#p_protmod").value.trim()||null,
+    fecha_bios:$("#p_bios").value||null, fecha_ultimo_formateo:$("#p_formateo").value||null,
+    estado:$("#p_estado").value, observaciones:$("#p_obs").value.trim()||null
+  };
+}
+function actualizarValoracion(){
+  const r=calcValoracion(leerFormPC());
+  $("#p_score").innerHTML=`${r.total}<small>/100</small>`;
+  $("#p_nivel").innerHTML=nivelPill(r.nivel);
+  $("#p_desglose").innerHTML=r.desglose.map(x=>{
+    const k=x.pts>=VAL_FULL-0.01?"full":x.pts>0?"med":"zero";
+    return `<span class="valchip ${k}">${x.c} ${x.pts}</span>`;
+  }).join("");
+}
 async function formPC(id=null){
   const sectores=await sb.from("sector").select("id,nombre_sector").order("nombre_sector");
   const usuarios=await sb.from("usuario_pc").select("id,nombre_completo").order("nombre_completo");
-  let p={marca:"",modelo:"",numero_serie:"",etiqueta_patrimonial:"",cpu:"",ram_gb:"",disco_tipo:"",sistema_operativo:"",direccion_ip:"",id_sector:"",id_usuario_asignado:"",estado:"Activo"};
+  let p={tipo_proteccion:"Ninguna",estado:"Activo"};
   if(id){ const {data}=await sb.from("inventario_pc").select("*").eq("id",id).single(); if(data)p=data; }
-  const v=x=>esc(x??"");
-  const sOpts=`<option value="">(sin sector)</option>`+(sectores.data||[]).map(s=>`<option value="${s.id}" ${s.id===p.id_sector?'selected':''}>${esc(s.nombre_sector)}</option>`).join("");
-  const uOpts=`<option value="">(sin asignar)</option>`+(usuarios.data||[]).map(u=>`<option value="${u.id}" ${u.id===p.id_usuario_asignado?'selected':''}>${esc(u.nombre_completo)}</option>`).join("");
-  const eOpts=["Activo","En Reparación","En Depósito","De Baja"].map(o=>`<option ${o===p.estado?'selected':''}>${o}</option>`).join("");
+  const v=x=>esc(x??""); const sel=(a,b)=>a===b?"selected":"";
+  const opt=(arr,cur,vacio)=>(vacio?`<option value="">${vacio}</option>`:"")+arr.map(o=>`<option ${sel(cur,o)}>${o}</option>`).join("");
+  const sOpts=`<option value="">(sin sector)</option>`+(sectores.data||[]).map(s=>`<option value="${s.id}" ${sel(p.id_sector,s.id)}>${esc(s.nombre_sector)}</option>`).join("");
+  const uOpts=`<option value="">(sin asignar)</option>`+(usuarios.data||[]).map(u=>`<option value="${u.id}" ${sel(p.id_usuario_asignado,u.id)}>${esc(u.nombre_completo)}</option>`).join("");
   openModal(id?"Editar PC":"Nueva PC",`
+    <div class="formsec">Identificación</div>
     <div class="grid2">
       <div class="field"><label>Marca *</label><input id="p_marca" value="${v(p.marca)}"/></div>
       <div class="field"><label>Modelo *</label><input id="p_modelo" value="${v(p.modelo)}"/></div>
@@ -535,43 +604,79 @@ async function formPC(id=null){
       <div class="field"><label>Nº de serie *</label><input id="p_serie" class="mono" value="${v(p.numero_serie)}"/></div>
       <div class="field"><label>Etiqueta patrimonial</label><input id="p_etiq" class="mono" value="${v(p.etiqueta_patrimonial)}"/></div>
     </div>
+
+    <div class="formsec">Hardware</div>
     <div class="grid2">
-      <div class="field"><label>CPU</label><input id="p_cpu" value="${v(p.cpu)}"/></div>
-      <div class="field"><label>RAM (GB)</label><input id="p_ram" type="number" value="${v(p.ram_gb)}"/></div>
+      <div class="field"><label>CPU</label><input id="p_cpu" value="${v(p.cpu)}" placeholder="ej. Intel i5-13600K"/></div>
+      <div class="field"><label>Gama CPU</label><select id="p_gcpu" oninput="actualizarValoracion()">${opt(["Alta","Media","Baja"],p.gama_cpu,"—")}</select></div>
     </div>
     <div class="grid2">
-      <div class="field"><label>Disco</label><input id="p_disco" value="${v(p.disco_tipo)}" placeholder="ej. SSD NVMe 512 GB"/></div>
-      <div class="field"><label>Sistema operativo</label><input id="p_so" value="${v(p.sistema_operativo)}"/></div>
+      <div class="field"><label>RAM (GB)</label><input id="p_ram" type="number" value="${v(p.ram_gb)}" oninput="actualizarValoracion()"/></div>
+      <div class="field"><label>Gráfica</label><select id="p_ggpu" oninput="actualizarValoracion()">${opt(["Dedicada","Integrada","Ninguna"],p.gama_gpu,"—")}</select></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Tipo de disco</label><input id="p_disco" value="${v(p.disco_tipo)}" placeholder="SSD NVMe / SSD SATA / HDD" oninput="actualizarValoracion()"/></div>
+      <div class="field"><label>Capacidad disco</label><input id="p_discocap" value="${v(p.disco_capacidad)}" placeholder="ej. 1 TB"/></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Salud del disco (%)</label><input id="p_salud" type="number" min="0" max="100" value="${v(p.salud_disco)}" oninput="actualizarValoracion()"/></div>
+      <div class="field"><label>Fuente</label><select id="p_fuente" oninput="actualizarValoracion()">${opt(["Certificada","De marca","Genérica"],p.fuente_80plus,"—")}</select></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Motherboard</label><input id="p_mother" value="${v(p.motherboard)}" placeholder="ej. ASUS, MSI…" oninput="actualizarValoracion()"/></div>
+      <div class="field"><label>Sistema operativo</label><input id="p_so" value="${v(p.sistema_operativo)}" placeholder="ej. Windows 11 Pro" oninput="actualizarValoracion()"/></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Monitor (marca/modelo)</label><input id="p_monitor" value="${v(p.monitor)}" placeholder="ej. Samsung S19"/></div>
+      <div class="field"><label>Pulgadas</label><input id="p_monpulg" type="number" value="${v(p.monitor_pulgadas)}" oninput="actualizarValoracion()"/></div>
+    </div>
+
+    <div class="formsec">Red y asignación</div>
+    <div class="grid2">
+      <div class="field"><label>IP</label><input id="p_ip" class="mono" value="${v(p.direccion_ip)}"/></div>
+      <div class="field"><label>MAC</label><input id="p_mac" class="mono" value="${v(p.direccion_mac)}"/></div>
     </div>
     <div class="grid2">
       <div class="field"><label>Sector</label><select id="p_sector">${sOpts}</select></div>
       <div class="field"><label>Usuario asignado</label><select id="p_user">${uOpts}</select></div>
     </div>
+
+    <div class="formsec">Protección y mantenimiento</div>
     <div class="grid2">
-      <div class="field"><label>IP</label><input id="p_ip" class="mono" value="${v(p.direccion_ip)}"/></div>
-      <div class="field"><label>Estado</label><select id="p_estado">${eOpts}</select></div>
+      <div class="field"><label>Protección de corriente</label><select id="p_tprot" oninput="actualizarValoracion()">${opt(["Ninguna","Estabilizador","UPS"],p.tipo_proteccion)}</select></div>
+      <div class="field"><label>Modelo de protección</label><input id="p_protmod" value="${v(p.proteccion_modelo)}" placeholder="ej. UPS TRV Neo 800VA"/></div>
     </div>
+    <div class="grid2">
+      <div class="field"><label>Fecha BIOS</label><input id="p_bios" type="date" value="${v(p.fecha_bios)}" oninput="actualizarValoracion()"/></div>
+      <div class="field"><label>Último formateo</label><input id="p_formateo" type="date" value="${v(p.fecha_ultimo_formateo)}" oninput="actualizarValoracion()"/></div>
+    </div>
+    <div class="field"><label>Estado operativo</label><select id="p_estado">${opt(["Activo","En Reparación","En Depósito","De Baja"],p.estado)}</select></div>
+
+    <div class="formsec">Valoración del equipo</div>
+    <div class="valbox">
+      <div class="valhead">
+        <div class="score" id="p_score">0<small>/100</small></div>
+        <div id="p_nivel"></div>
+      </div>
+      <div class="valdesglose" id="p_desglose"></div>
+    </div>
+    <div class="field" style="margin-top:12px"><label>Observaciones</label><textarea id="p_obs" rows="2">${v(p.observaciones)}</textarea></div>
+
     <div class="mfoot"><button class="btn ghost" onclick="closeModal()">Cancelar</button>
       <button class="btn accent" onclick="savePC(${id??'null'})">Guardar</button></div>`);
+  actualizarValoracion();   // pinta el puntaje inicial
 }
 async function savePC(id){
-  const disco=$("#p_disco").value.trim();
-  const row={
-    marca:$("#p_marca").value.trim(), modelo:$("#p_modelo").value.trim(),
-    numero_serie:$("#p_serie").value.trim(), etiqueta_patrimonial:$("#p_etiq").value.trim()||null,
-    cpu:$("#p_cpu").value.trim()||null, ram_gb:Number($("#p_ram").value)||null,
-    disco_tipo:disco||null, sistema_operativo:$("#p_so").value.trim()||null,
-    direccion_ip:$("#p_ip").value.trim()||null,
-    id_sector:Number($("#p_sector").value)||null, id_usuario_asignado:Number($("#p_user").value)||null,
-    estado:$("#p_estado").value
-  };
-  if(!id) row.id_responsable_it=currentUser.id;   // al crear, responsable = usuario actual
+  const row=leerFormPC();
   if(!row.marca||!row.modelo||!row.numero_serie){ toast("Marca, modelo y nº de serie son obligatorios.",true); return; }
+  const val=calcValoracion(row);
+  row.valoracion_puntos=val.total; row.valoracion_nivel=val.nivel;
+  if(!id) row.id_responsable_it=currentUser.id;   // al crear, responsable = usuario actual
   const {error}= id
     ? await sb.from("inventario_pc").update(row).eq("id",id)
     : await sb.from("inventario_pc").insert(row);
   if(error) return dbError(error);
-  closeModal(); toast(id?"PC actualizada":"PC agregada"); renderPC();
+  closeModal(); toast(id?`PC actualizada · ${val.nivel} (${val.total})`:`PC agregada · ${val.nivel} (${val.total})`); renderPC();
 }
 
 /* ============================================================
