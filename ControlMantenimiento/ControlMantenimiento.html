@@ -147,6 +147,13 @@ tbody tr:hover{background:#fbfaf6}
 .valdesglose{display:flex;flex-wrap:wrap;gap:5px}
 .valchip{font-size:11px;padding:2px 8px;border-radius:6px;background:#eef1f5;color:var(--navy);white-space:nowrap}
 .valchip.full{background:var(--okbg);color:var(--ok)} .valchip.med{background:var(--warnbg);color:var(--warn)} .valchip.zero{background:var(--badbg);color:var(--bad)}
+/* informes */
+.repgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-bottom:18px}
+.repcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+.repcard h4{font-family:"Bricolage Grotesque";font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--navy);margin:0;padding:12px 16px;border-bottom:1px solid var(--line);background:#fbfaf6}
+.reprow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 16px;border-bottom:1px solid var(--line);font-size:14px}
+.reprow:last-child{border-bottom:none}
+.reprow .v{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:15px}
 .cdot{display:inline-block;width:11px;height:11px;border-radius:50%;border:1px solid rgba(0,0,0,.18);vertical-align:-1px;margin-right:6px}
 .c-Negro{background:#222} .c-Cyan{background:#1aa3d6} .c-Magenta{background:#d6249f}
 .c-Amarillo{background:#f2c200} .c-Tricolor{background:linear-gradient(90deg,#1aa3d6,#d6249f,#f2c200)} .c-NA{background:#cbd2da}
@@ -224,6 +231,7 @@ tbody tr:hover{background:#fbfaf6}
     <div class="brandmark"><span class="dot"></span><h1>Control<br>Mantenimiento</h1></div>
     <nav class="side" id="nav">
       <button data-sec="dashboard" class="active"><span class="ic">◧</span>Panel</button>
+      <button data-sec="informes"><span class="ic">▦</span>Informes</button>
       <button data-sec="mant"><span class="ic">✚</span>Mantenimientos</button>
       <button data-sec="pc"><span class="ic">▣</span>PCs</button>
       <button data-sec="imp"><span class="ic">⎙</span>Impresoras</button>
@@ -345,7 +353,7 @@ $("#nav").addEventListener("click",e=>{
 });
 function route(sec){
   document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("active",b.dataset.sec===sec));
-  ({dashboard:renderDashboard,mant:renderMant,pc:renderPC,imp:renderImp,
+  ({dashboard:renderDashboard,informes:renderInformes,mant:renderMant,pc:renderPC,imp:renderImp,
     sector:renderSector,categoria:renderCategoria,usuario:renderUsuario,personal:renderPersonal,auditoria:renderAuditoria}[sec]||renderDashboard)();
 }
 
@@ -497,27 +505,116 @@ async function saveMant(id){
 }
 
 /* ============================================================
+   INFORMES  (resumen del parque de PCs)
+   ============================================================ */
+async function renderInformes(){
+  $("#content").innerHTML=`<div class="head"><div><h2>Informes</h2>
+    <div class="lead">Resumen del parque de equipos y su valoración</div></div></div>
+    <div id="infBody" class="empty">Calculando…</div>`;
+  const {data,error}=await sb.from("inventario_pc").select("*, sector(nombre_sector)").order("id");
+  if(error) return dbError(error);
+  const pcs=data||[]; const n=pcs.length;
+  if(!n){ $("#infBody").innerHTML=`<div class="empty">Todavía no hay PCs cargadas.</div>`; return; }
+  const c=fn=>pcs.filter(fn).length;
+  const lo=s=>(s||"").toLowerCase();
+
+  // valoración (recalculada con las reglas actuales)
+  let opt=0,med=0,cri=0,suma=0; const criticos=[];
+  pcs.forEach(p=>{ const v=calcValoracion(p); suma+=v.total;
+    if(v.nivel==="Óptimo")opt++; else if(v.nivel==="Medio")med++; else {cri++; criticos.push({p,v});} });
+  const prom=(suma/n).toFixed(1);
+
+  const card=(titulo,filas)=>`<div class="repcard"><h4>${titulo}</h4>${
+    filas.map(f=>`<div class="reprow"><span>${f[0]}</span><span class="v">${f[1]}</span></div>`).join("")}</div>`;
+
+  $("#infBody").innerHTML=`
+    <div class="kpis">
+      ${kpi(n,"Total de PCs")}
+      ${kpi(prom,"Valoración promedio",true)}
+      ${kpi(opt,"Óptimos")}
+      ${kpi(med,"Medios")}
+      ${kpi(cri,"Críticos",cri>0)}
+    </div>
+
+    <div class="repgrid">
+      ${card("Sistema operativo",[
+        ["Windows 11", c(p=>/11/.test(lo(p.sistema_operativo)))],
+        ["Windows 10", c(p=>/10/.test(lo(p.sistema_operativo)))],
+        ["Otro / sin soporte", c(p=>!/1[01]/.test(lo(p.sistema_operativo)))],
+      ])}
+      ${card("Almacenamiento",[
+        ["Disco M.2 / NVMe", c(p=>discoClase(p.disco_tipo)==="M2")],
+        ["Disco SSD (SATA)", c(p=>discoClase(p.disco_tipo)==="SSD")],
+        ["Disco HDD", c(p=>discoClase(p.disco_tipo)==="HDD")],
+        ["Salud de disco ≤ 80%", c(p=>p.salud_disco!=null&&p.salud_disco<=80)],
+      ])}
+      ${card("Memoria RAM",[
+        ["Menos de 4 GB", c(p=>p.ram_gb!=null&&p.ram_gb<4)],
+        ["4 GB", c(p=>p.ram_gb===4)],
+        ["8 GB o más", c(p=>p.ram_gb!=null&&p.ram_gb>=8)],
+      ])}
+      ${card("Procesador (gama)",[
+        ["Inferiores (gama baja)", c(p=>p.gama_cpu==="Baja")],
+        ["Superiores (media/alta)", c(p=>p.gama_cpu==="Media"||p.gama_cpu==="Alta")],
+        ["Sin clasificar", c(p=>!p.gama_cpu)],
+      ])}
+      ${card("Protección de corriente",[
+        ["Con protección", c(p=>p.tipo_proteccion&&p.tipo_proteccion!=="Ninguna")],
+        ["Con UPS", c(p=>p.tipo_proteccion==="UPS")],
+        ["Con estabilizador", c(p=>p.tipo_proteccion==="Estabilizador")],
+        ["Sin protección", c(p=>!p.tipo_proteccion||p.tipo_proteccion==="Ninguna")],
+      ])}
+      ${card("Antigüedad",[
+        ["BIOS: más de 5 años", c(p=>aniosDesde(p.fecha_bios)>5 && p.fecha_bios)],
+        ["BIOS: 5 años o menos", c(p=>p.fecha_bios && aniosDesde(p.fecha_bios)<=5)],
+        ["Sin formatear hace +3 años", c(p=>aniosDesde(p.fecha_ultimo_formateo)>3)],
+        ["Formateadas hace ≤3 años", c(p=>p.fecha_ultimo_formateo && aniosDesde(p.fecha_ultimo_formateo)<=3)],
+      ])}
+    </div>
+
+    <div class="panel"><div class="tbar"><h3>Candidatos a reemplazo (nivel Crítico)</h3></div>
+      <div id="infCriticos"></div></div>`;
+
+  $("#infCriticos").innerHTML = criticos.length
+    ? tableHTML(["Serie","Equipo","Sector","Puntaje"],
+        criticos.sort((a,b)=>a.v.total-b.v.total).map(({p,v})=>[
+          `<span class="mono">${esc(p.numero_serie)}</span>`,
+          `${esc(p.marca)} ${esc(p.modelo)}`,
+          esc(p.sector?.nombre_sector||"—"),
+          nivelPill(v.nivel,v.total)]))
+    : `<div class="empty">Ningún equipo en nivel crítico. 👍</div>`;
+}
+
+/* ============================================================
    PCs  +  MOTOR DE VALORACIÓN (0-100)
    ============================================================ */
-const VAL_FULL=8.33, VAL_MED=4.16;       // puntos por criterio (12 x 8.33 ≈ 100)
+const VAL_FULL=8.33, VAL_MED=5.55, VAL_MIN=2.78;   // tercios: mín / medio / óptimo
 function aniosDesde(f){ if(!f) return Infinity; const d=new Date(f); return isNaN(d)?Infinity:(Date.now()-d)/(31557600000); }
+function discoClase(dt){ dt=(dt||"").toLowerCase();
+  if(/nvme|m\.?2/.test(dt)) return "M2";
+  if(/ssd/.test(dt)) return "SSD";
+  if(/hdd|mecan|(^|[^a-z])hd([^a-z]|$)/.test(dt)) return "HDD";
+  return "Otro";
+}
 function calcValoracion(p){
   const d=[]; const add=(c,pts)=>d.push({c,pts:Math.round(pts*100)/100});
-  add("CPU",        p.gama_cpu==="Alta"?VAL_FULL:p.gama_cpu==="Media"?VAL_MED:0);
-  const dt=(p.disco_tipo||"").toLowerCase();
-  add("Disco",      /nvme|m\.?2/.test(dt)?VAL_FULL:/ssd/.test(dt)?VAL_MED:0);
-  add("Gráfica",    p.gama_gpu==="Dedicada"?VAL_FULL:p.gama_gpu==="Integrada"?VAL_MED:0);
-  add("Fuente",     p.fuente_80plus==="Certificada"?VAL_FULL:p.fuente_80plus==="De marca"?VAL_MED:0);
-  add("Salud disco",p.salud_disco!=null&&p.salud_disco!==""?(Number(p.salud_disco)/100)*VAL_FULL:0);
-  add("RAM",        p.ram_gb>=16?VAL_FULL:p.ram_gb>=8?VAL_MED:0);
+  // En cada criterio: óptimo=8,33 · medio=5,55 · mínimo (o sin dato)=2,78
+  add("CPU",        p.gama_cpu==="Alta"?VAL_FULL:p.gama_cpu==="Media"?VAL_MED:VAL_MIN);
+  const dc=discoClase(p.disco_tipo);
+  add("Disco",      dc==="M2"?VAL_FULL:dc==="SSD"?VAL_MED:VAL_MIN);
+  add("Gráfica",    p.gama_gpu==="Dedicada"?VAL_FULL:p.gama_gpu==="Integrada"?VAL_MED:VAL_MIN);
+  add("Fuente",     p.fuente_80plus==="Certificada"?VAL_FULL:p.fuente_80plus==="De marca"?VAL_MED:VAL_MIN);
+  // Salud: proporcional con piso (0%→2,78 ; 100%→8,33). Sin dato→2,78.
+  add("Salud disco",(p.salud_disco!=null&&p.salud_disco!=="")?(VAL_MIN+(Number(p.salud_disco)/100)*(VAL_FULL-VAL_MIN)):VAL_MIN);
+  add("RAM",        p.ram_gb>=16?VAL_FULL:p.ram_gb>=8?VAL_MED:VAL_MIN);
   const so=(p.sistema_operativo||"").toLowerCase();
-  add("S.O.",       /11/.test(so)?VAL_FULL:/10/.test(so)?VAL_MED:0);
-  add("Protección", p.tipo_proteccion==="UPS"?VAL_FULL:p.tipo_proteccion==="Estabilizador"?VAL_MED:0);
-  add("Monitor",    p.monitor_pulgadas>=19?VAL_FULL:p.monitor_pulgadas>=17?VAL_MED:0);
-  const ab=aniosDesde(p.fecha_bios);     add("BIOS",     ab<=2?VAL_FULL:ab<=5?VAL_MED:0);
+  add("S.O.",       /11/.test(so)?VAL_FULL:/10/.test(so)?VAL_MED:VAL_MIN);
+  add("Protección", p.tipo_proteccion==="UPS"?VAL_FULL:p.tipo_proteccion==="Estabilizador"?VAL_MED:VAL_MIN);
+  add("Monitor",    p.monitor_pulgadas>=19?VAL_FULL:p.monitor_pulgadas>=17?VAL_MED:VAL_MIN);
+  const ab=aniosDesde(p.fecha_bios);     add("BIOS",     ab<=2?VAL_FULL:ab<=5?VAL_MED:VAL_MIN);
   const marcas=["asrock","msi","asus","gigabyte","biostar","evga"]; const mb=(p.motherboard||"").toLowerCase();
-  add("Mother",     marcas.some(m=>mb.includes(m))?VAL_FULL:mb.trim()?VAL_MED:0);
-  const af=aniosDesde(p.fecha_ultimo_formateo); add("Formateo", af<=1?VAL_FULL:af<=3?VAL_MED:0);
+  add("Mother",     marcas.some(m=>mb.includes(m))?VAL_FULL:mb.trim()?VAL_MED:VAL_MIN);
+  const af=aniosDesde(p.fecha_ultimo_formateo); add("Formateo", af<=1?VAL_FULL:af<=3?VAL_MED:VAL_MIN);
   const total=Math.round(d.reduce((s,x)=>s+x.pts,0)*10)/10;
   return {total, nivel: total>=85?"Óptimo":total>=65?"Medio":"Crítico", desglose:d};
 }
@@ -581,7 +678,8 @@ function actualizarValoracion(){
   $("#p_score").innerHTML=`${r.total}<small>/100</small>`;
   $("#p_nivel").innerHTML=nivelPill(r.nivel);
   $("#p_desglose").innerHTML=r.desglose.map(x=>{
-    const k=x.pts>=VAL_FULL-0.01?"full":x.pts>0?"med":"zero";
+    const pct=x.pts/VAL_FULL;
+    const k=pct>=0.8?"full":pct>=0.5?"med":"zero";
     return `<span class="valchip ${k}">${x.c} ${x.pts}</span>`;
   }).join("");
 }
