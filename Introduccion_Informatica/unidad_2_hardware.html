@@ -6,7 +6,7 @@
 <title>Unidad 2 · Hardware · 1° E.P.J.A.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,500&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;0,9..144,900;1,9..144,500&family=Spline+Sans:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#1b2430;
@@ -220,12 +220,142 @@
 
   .reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
   .reveal.in{opacity:1;transform:none}
+
+
+  /* ============================================================
+     REDISEÑO EPET N°7 · capa de tema (override no destructivo)
+     Mantiene los nombres de variables: las clases propias
+     de cada unidad se re-colorean solas con la nueva paleta.
+     ============================================================ */
+  :root{
+    --ink:#152433;--azul:#1B5C99;--azul-claro:#2E86C9;
+    --crema:#F7F4EC;--crema-2:#ECE5D6;--terra:#C1632F;--terra-suave:#F2933C;
+    --ambar:#FFF4E0;--ambar-borde:#B86E00;--ambar-fuerte:#D98A2B;
+    --violeta:#7A5BD0;--violeta-claro:#9C7BCB;
+    --rojo:#C0392B;--rojo-bg:#FBEAE8;--verde:#3F8E5E;
+    --linea:#E3DAC8;--gris:#8A8276;--sombra:rgba(10,37,64,.14);
+    --navy:#0A2540;--cyan:#35C2E8;
+    --accent:#1B5C99;--accent2:#35C2E8;
+  }
+  body[data-unit="1"]{--accent:#1E6BB8;--accent2:#35C2E8}
+  body[data-unit="2"]{--accent:#2E75B6;--accent2:#5BB0E6}
+  body[data-unit="3"]{--accent:#C1632F;--accent2:#E8A36A}
+  body[data-unit="4"]{--accent:#3F8E5E;--accent2:#6BC08C}
+  body[data-unit="5"]{--accent:#7A5BD0;--accent2:#A98BE8}
+  body[data-unit="6"]{--accent:#D98A2B;--accent2:#F2C264}
+  body{background:var(--crema)}
+  body::before{background-image:radial-gradient(circle at 1px 1px, rgba(10,37,64,.05) 1px, transparent 0)}
+
+  /* TOPBAR */
+  .topbar{background:rgba(247,244,236,.9);backdrop-filter:blur(10px) saturate(140%);border-bottom:1px solid rgba(10,37,64,.1);justify-content:flex-start;gap:1rem;padding:.6rem clamp(1rem,4vw,2.5rem)}
+  .topbar .brand{display:flex;align-items:center;flex-shrink:0;border-bottom:none}
+  .topbar .brand img{width:34px;height:34px;border-radius:9px;object-fit:cover;box-shadow:0 0 0 1px rgba(53,194,232,.4),0 4px 10px -4px rgba(10,37,64,.4);display:block}
+  .nav-units{margin-left:auto;gap:.4rem}
+  .nav-units a{width:32px;height:32px;border-radius:9px;font-family:'Spline Sans Mono',monospace;font-weight:600;font-size:.9rem;color:var(--azul);border:1px solid var(--linea);background:#fff;transition:all .25s}
+  .nav-units a.active{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 6px 14px -6px var(--accent)}
+  .nav-units a:hover:not(.active):not(.dis){border-color:var(--accent);color:var(--accent);background:#fff;transform:translateY(-2px)}
+
+  /* HEADER · hero tech oscuro */
+  header{background:radial-gradient(120% 100% at 15% -10%,#123a63 0%,#0A2540 48%,#06182B 100%);position:relative;overflow:hidden}
+  header::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(53,194,232,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(53,194,232,.06) 1px,transparent 1px);background-size:52px 52px;-webkit-mask-image:radial-gradient(120% 90% at 20% 0%,#000 35%,transparent 80%);mask-image:radial-gradient(120% 90% at 20% 0%,#000 35%,transparent 80%)}
+  header::after{background:radial-gradient(circle, rgba(53,194,232,.22), transparent 65%)}
+  header>*{position:relative;z-index:1}
+  .head-crest{position:absolute;top:clamp(1.4rem,4vw,2.4rem);right:clamp(1.2rem,5vw,3.2rem);width:clamp(64px,9vw,96px);aspect-ratio:1;object-fit:cover;border-radius:18px;box-shadow:0 0 0 1.5px rgba(53,194,232,.5),0 0 26px -6px rgba(53,194,232,.55),0 16px 36px -16px rgba(0,0,0,.7);z-index:2;border-bottom:none}
+  .eyebrow{font-family:'Spline Sans Mono',monospace;font-size:.74rem;letter-spacing:.26em;color:var(--cyan);font-weight:500}
+  header h1 em{color:var(--accent2);text-shadow:0 0 26px rgba(53,194,232,.35)}
+  .lead{color:rgba(231,240,248,.85)}
+  .head-meta{font-family:'Spline Sans Mono',monospace;font-size:.76rem;letter-spacing:.04em;color:rgba(207,224,238,.78);gap:.6rem}
+  .head-meta span{display:inline-flex;align-items:center;gap:.5rem;padding:.35rem .85rem;border:1px solid rgba(53,194,232,.28);border-radius:100px;background:rgba(53,194,232,.05)}
+  .head-meta span::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent2);margin:0}
+
+  /* ÍNDICE LATERAL */
+  aside h4{font-family:'Spline Sans Mono',monospace;font-style:normal;font-weight:600;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+  aside ol li a{border-radius:0 8px 8px 0}
+  aside ol li a::before{font-family:'Spline Sans Mono',monospace;font-style:normal}
+  aside ol li a:hover{border-left-color:var(--accent);color:var(--accent)}
+
+  /* TÍTULOS DE SECCIÓN */
+  article h2{color:var(--navy)}
+  article h2 .n{font-family:'Spline Sans Mono',monospace;font-style:normal;font-weight:600;color:var(--accent);font-size:.5em;margin-right:.6rem;background:rgba(10,37,64,.06);padding:.32em .6em;border-radius:7px;vertical-align:middle}
+  article strong{color:var(--azul)}
+  ul.list li::marker,ol.list li::marker{color:var(--accent)}
+
+  /* CAJAS */
+  .box{background:#fff;border-left-color:var(--accent);box-shadow:0 14px 36px -28px var(--sombra)}
+  .box .b-title{color:var(--accent)}
+  .box.amber{border-left-color:var(--ambar-borde)}
+  .box.amber .b-title{color:var(--ambar-borde)}
+  .box.violet{border-left-color:var(--violeta);background:#F3EFFF}
+  .box.violet .b-title{color:var(--violeta)}
+  .box.red{border-left-color:var(--rojo);background:var(--rojo-bg)}
+  .box.red .b-title{color:var(--rojo)}
+
+  /* TABLAS */
+  thead{background:linear-gradient(120deg,var(--navy),#103a63)}
+  td.year{font-family:'Spline Sans Mono',monospace;font-style:normal;color:var(--accent);font-size:.86rem}
+
+  /* FÓRMULA / BINARIO */
+  .formula{background:linear-gradient(135deg,#fff,var(--crema-2));border:1px solid var(--linea)}
+  .formula .word{color:var(--navy)}
+  .formula .op{color:var(--accent)}
+  .binario{font-family:'Spline Sans Mono',monospace;color:var(--accent);background:rgba(10,37,64,.05);padding:.05em .35em;border-radius:5px}
+
+  /* ACTIVIDADES */
+  .activity{position:relative;overflow:hidden;border-radius:16px}
+  .activity::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--accent),var(--accent2))}
+  .activity h4{color:var(--accent)}
+  .activity.star{border-left:none}
+  .activity.star h4::after{content:" ★";color:var(--accent)}
+
+  /* CHECKLIST */
+  .checklist li::before{background:var(--accent);border:none;color:#fff}
+
+  /* PAGER */
+  .pager a{border-radius:16px}
+  .pager a:hover{border-color:var(--accent);box-shadow:0 18px 40px -24px var(--accent)}
+  .pager .label{font-family:'Spline Sans Mono',monospace;color:var(--accent)}
+  .pager .title{color:var(--navy)}
+
+  /* FOOTER */
+  footer{position:relative;overflow:hidden;background:radial-gradient(120% 120% at 50% 0%,#0A2540,#06182B)}
+  footer .f-title{color:var(--crema)}
+  .f-crest{width:50px;height:50px;border-radius:12px;object-fit:cover;box-shadow:0 0 0 1px rgba(53,194,232,.35);margin-bottom:.7rem;display:inline-block;border-bottom:none}
+
+  /* COMPONENTES PROPIOS · recoloreado al acento de la unidad */
+  .skill{border-top-color:var(--accent)}
+  .skill h5{color:var(--accent)}
+  .ai-card{border-top-color:var(--accent)}
+  .ai-card .empresa{font-family:'Spline Sans Mono',monospace;font-style:normal;text-transform:uppercase;letter-spacing:.04em;color:var(--accent)}
+  .future .col.cambian .top{color:var(--accent)}
+  .card{border-top-color:var(--accent)}
+  .gama h5{color:var(--accent)}
+  .freedom .num{color:var(--accent)}
+  .sc kbd{border-color:var(--accent)}
+  .fb .f{color:var(--accent)}
+
+  /* CÓDIGO / PSEUDOCÓDIGO */
+  pre.code,code.inline{font-family:'Spline Sans Mono',monospace}
+  pre.code{background:#0A2540;border-left-color:var(--accent2)}
+  pre.code .kw{color:#7FD3EE}
+  pre.code .var{color:#C2A6F0}
+  pre.code .str{color:#8fd4a3}
+  pre.code .com{color:#8295a4}
+  code.inline{background:var(--crema-2);color:var(--azul);border:1px solid var(--linea)}
+
+  /* CIERRE DE AÑO (U6) */
+  .year-end{background:radial-gradient(120% 120% at 100% 0%,#123a63,#0A2540 55%,#06182B)}
+  .year-end::after{background:radial-gradient(circle,rgba(242,194,100,.2),transparent 65%)}
+  .year-end h3,.year-end .firma{color:var(--accent2)}
+
+  @media(max-width:720px){.head-crest{position:static;width:56px;margin-bottom:1rem;display:block}}
+
 </style>
 </head>
-<body>
+<body data-unit="2">
 
 <!-- TOPBAR -->
 <div class="topbar">
+  <a class="brand" href="portal_curso_informatica.html" title="Portal del curso"><img src="assets/escudo-epet7.png" alt="EPET N°7"></a>
   <div class="crumb">
     <a href="portal_curso_informatica.html">Portal del curso</a>
     <span class="sep">/</span>
@@ -243,6 +373,7 @@
 
 <!-- HEADER -->
 <header>
+  <img class="head-crest" src="assets/escudo-epet7.png" alt="Escudo EPET N°7">
   <div class="eyebrow">Unidad 2 · 1° Trimestre</div>
   <h1>Hardware: la <em>computadora</em> por dentro</h1>
   <p class="lead">Ahora abrimos la «caja negra». Vamos a ver qué hay adentro de una computadora, qué hace cada componente y cómo leer una ficha técnica antes de comprar.</p>
@@ -717,6 +848,7 @@
 </div>
 
 <footer>
+  <img class="f-crest" src="assets/escudo-epet7.png" alt="EPET N°7">
   <div class="f-title">Introducción a la Informática</div>
   <div>1° Año · E.P.J.A. · EPET N°7 · Ciclo lectivo 2026</div>
 </footer>
@@ -736,7 +868,7 @@
         links.forEach(l=>{
           if(l.getAttribute('href')==='#'+id){
             l.style.color='var(--azul)';l.style.fontWeight='600';
-            l.style.borderLeftColor='var(--terra)';l.style.background='var(--crema-2)';
+            l.style.borderLeftColor='var(--accent)';l.style.background='var(--crema-2)';
           } else {
             l.style.color='';l.style.fontWeight='';
             l.style.borderLeftColor='transparent';l.style.background='';
