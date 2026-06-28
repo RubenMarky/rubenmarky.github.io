@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Galería Institucional · Carrusel de Escudos</title>
+  <link rel="icon" type="image/png" href="icono-epet7.png" />
 
   <!-- ===== Bootstrap 5 (CDN) ===== -->
   <link
@@ -93,6 +94,38 @@
       text-align: center;
       margin-bottom: 26px;
     }
+    /* Marca: emblema + banner E.P.E.T. N°7 */
+    .marca {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .marca-icono {
+      width: 84px;
+      height: 84px;
+      object-fit: contain;
+      flex: 0 0 auto;
+      filter: drop-shadow(0 0 14px var(--neon-soft));
+      animation: flotar 4s ease-in-out infinite;
+    }
+    @keyframes flotar {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-6px); }
+    }
+    .marca-banner {
+      max-width: 480px;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      border-radius: 10px;
+      filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.5));
+    }
+    @media (max-width: 480px) {
+      .marca-icono { width: 60px; height: 60px; }
+    }
     .cab .eyebrow {
       font-family: 'Orbitron', sans-serif;
       letter-spacing: 0.42em;
@@ -112,6 +145,16 @@
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 8px var(--neon-soft)) drop-shadow(0 0 22px var(--neon-soft));
+      animation: glow-titulo 2.6s ease-in-out infinite;
+    }
+    @keyframes glow-titulo {
+      0%, 100% {
+        filter: drop-shadow(0 0 6px var(--neon-soft)) drop-shadow(0 0 16px var(--neon-soft));
+      }
+      50% {
+        filter: drop-shadow(0 0 12px var(--neon)) drop-shadow(0 0 34px var(--neon-soft));
+      }
     }
     .cab .linea {
       width: 220px;
@@ -309,6 +352,10 @@
 
     <!-- ===== Encabezado ===== -->
     <header class="cab">
+      <div class="marca">
+        <img class="marca-icono" src="icono-epet7.png" alt="Emblema E.P.E.T. N°7">
+        <img class="marca-banner" src="banner-epet7.png" alt="E.P.E.T. N°7">
+      </div>
       <div class="eyebrow">Galería Institucional</div>
       <h1>Escudos · Sistema Educativo</h1>
       <div class="linea"></div>
