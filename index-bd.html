@@ -1,306 +1,520 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trabajos Prácticos de Excel — E.P.E.T. N° 7 · EPJA</title>
-<link rel="icon" type="image/png" href="escudo_epet.png">
-<meta name="description" content="Banco de trabajos prácticos de Excel para EPJA — E.P.E.T. N° 7. Cada práctico con su planilla resuelta y su guía imprimible.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-:root{
-  --navy:#1F3864; --navy-2:#2E4B7A; --ink:#16233d; --muted:#5b6a85;
-  --paper:#f5f7fb; --card:#ffffff; --line:#e4e9f2; --grid:#eef1f7;
-  --excel:#1E7B34; --excel-d:#15662a; --word:#2B579A; --word-d:#23477f;
-  --amber:#e0a93b;
-  --radius:14px; --shadow:0 1px 2px rgba(20,35,61,.06),0 8px 24px rgba(20,35,61,.06);
-  --mono:ui-monospace,"Cascadia Code","Consolas","SFMono-Regular",monospace;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0; color:var(--ink); background:var(--paper);
-  font-family:"Inter",-apple-system,"Segoe UI",Roboto,sans-serif;
-  line-height:1.55;
-  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
-  background-size:28px 28px; background-position:-1px -1px;
-}
-.wrap{max-width:1160px;margin:0 auto;padding:0 20px}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Educativo - E.P.E.T N°7 - Prof. Rubén Markwart</title>
+  <meta name="description" content="Portal educativo del Prof. Markwart Rubén. Accede al material de Bases de Datos y Laboratorio de Software.">
 
-/* ---------- HERO ---------- */
-.hero{
-  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);
-  color:#fff; border-bottom:4px solid var(--excel); position:relative; overflow:hidden;
-}
-.hero::after{ /* faint cell grid inside hero */
-  content:""; position:absolute; inset:0; opacity:.10; pointer-events:none;
-  background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);
-  background-size:34px 34px;
-}
-.hero .wrap{position:relative;z-index:1;padding:34px 20px 30px}
-.brandline{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.crest{width:62px;height:62px;border-radius:14px;flex:none;object-fit:cover;
-  background:#fff;padding:3px;box-shadow:0 4px 14px rgba(0,0,0,.28);
-  box-shadow:0 0 0 1px rgba(255,255,255,.5),0 6px 18px rgba(0,0,0,.30)}
-.inst{font-family:var(--mono);font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:#cdd9ef}
-.epja{color:#fff;background:rgba(255,255,255,.14);padding:2px 8px;border-radius:999px;font-size:11px;letter-spacing:1.5px}
-h1{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:clamp(28px,4.4vw,46px);
-  line-height:1.05;margin:16px 0 6px;letter-spacing:-.5px}
-.cellref{font-family:var(--mono);color:#9fb6df;font-size:13px;margin-bottom:14px}
-.lead{color:#dde6f5;max-width:60ch;font-size:15.5px;margin:0 0 18px}
-.cta-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:0 0 22px}
-.cta{display:inline-flex;align-items:center;gap:9px;text-decoration:none;font-weight:700;
-  font-size:14.5px;padding:12px 20px;border-radius:11px;background:var(--excel);color:#fff;
-  box-shadow:0 6px 18px rgba(30,123,52,.35);transition:.15s}
-.cta:hover{background:#1a6e2e;transform:translateY(-1px)}
-.cta:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(255,255,255,.6)}
-.cta-note{font-size:12.5px;color:#aebfdd;font-family:var(--mono)}
-.stats{display:flex;gap:26px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.16);padding-top:16px}
-.stat .n{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:24px;line-height:1}
-.stat .l{font-size:12px;color:#b9c8e6;letter-spacing:.3px;margin-top:3px}
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-epet.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon-epet-180.png">
+  <link rel="shortcut icon" href="favicon-epet.png">
 
-/* ---------- TOOLBAR ---------- */
-.toolbar{position:sticky;top:0;z-index:20;background:rgba(245,247,251,.92);
-  backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
-.toolbar .wrap{padding:14px 20px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
-.search{flex:1 1 280px;position:relative;min-width:220px}
-.search input{width:100%;padding:11px 14px 11px 40px;border:1.5px solid var(--line);border-radius:10px;
-  font-size:15px;font-family:inherit;background:#fff;color:var(--ink)}
-.search input:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px rgba(31,56,100,.12)}
-.search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted)}
-.chips{display:flex;gap:8px;flex-wrap:wrap}
-.chip{font-family:var(--mono);font-size:12.5px;padding:7px 12px;border:1.5px solid var(--line);
-  background:#fff;border-radius:999px;cursor:pointer;color:var(--muted);transition:.15s;white-space:nowrap}
-.chip:hover{border-color:var(--navy);color:var(--navy)}
-.chip[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
-.count{font-size:13px;color:var(--muted);font-family:var(--mono);margin-left:auto}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-/* ---------- GRID ---------- */
-main{padding:26px 0 10px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(316px,1fr));gap:18px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-  padding:18px 18px 16px;box-shadow:var(--shadow);display:flex;flex-direction:column;
-  transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
-.card:hover{transform:translateY(-3px);box-shadow:0 4px 10px rgba(20,35,61,.08),0 18px 40px rgba(20,35,61,.10);border-color:#cdd8ec}
-.card.hide{display:none}
-.ctop{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px}
-.num{font-family:var(--mono);font-weight:700;color:#fff;background:var(--navy);
-  border-radius:9px;min-width:46px;height:46px;display:grid;place-items:center;font-size:15px;flex:none;
-  padding:0 6px}
-.num.alt{background:var(--excel)}
-.ttl{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:17px;line-height:1.2;color:var(--ink);margin:2px 0 0}
-.tema{font-size:12px;color:var(--muted);margin-top:3px}
-.desc{font-size:13.6px;color:#41506b;margin:4px 0 12px;flex:1}
-.tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.tag{font-family:var(--mono);font-size:11px;color:var(--navy);background:#eef2fa;
-  border:1px solid #dde5f3;border-radius:6px;padding:2px 7px}
-.actions{display:flex;gap:9px}
-.btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:7px;
-  text-decoration:none;font-weight:600;font-size:13.5px;padding:10px 10px;border-radius:9px;
-  transition:.15s;border:1.5px solid transparent}
-.btn svg{flex:none}
-.btn-x{background:var(--excel);color:#fff}
-.btn-x:hover{background:var(--excel-d)}
-.btn-w{background:#fff;color:var(--word);border-color:#cdd8ec}
-.btn-w:hover{background:#f0f4fb;border-color:var(--word)}
-.btn:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(31,56,100,.25)}
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-1: #3b82f6;
+      --accent-2: #8b5cf6;
+      --accent-3: #10b981;
+      --accent-4: #f59e0b;
+      --accent-5: #ec4899;
+      --accent-6: #ef4444;
+    }
 
-.empty{display:none;text-align:center;padding:60px 20px;color:var(--muted)}
-.empty.show{display:block}
-.empty .big{font-family:"Space Grotesk",sans-serif;font-size:20px;color:var(--ink);margin-bottom:6px}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { overflow-x: hidden; }
 
-/* ---------- INFO STRIP ---------- */
-.note{margin:22px 0 0;background:#fff;border:1px solid var(--line);border-left:4px solid var(--amber);
-  border-radius:0 10px 10px 0;padding:13px 16px;font-size:13.4px;color:#41506b}
-.note code{font-family:var(--mono);background:#f2f4f9;padding:1px 6px;border-radius:5px;color:var(--navy)}
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      background-image:
+        radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.15), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.15), transparent 25%);
+      background-attachment: fixed;
+      position: relative;
+    }
 
-/* ---------- FOOTER ---------- */
-footer{margin-top:40px;border-top:1px solid var(--line);background:#fff}
-footer .wrap{padding:24px 20px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
-  align-items:center;font-size:13px;color:var(--muted)}
-footer .who{display:flex;align-items:center;gap:12px}
-footer .flogo{width:38px;height:38px;border-radius:8px;object-fit:cover;flex:none;
-  box-shadow:0 0 0 1px var(--line)}
-footer b{color:var(--ink)}
-footer .mono{font-family:var(--mono)}
+    .stars {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,.6), transparent 50%),
+        radial-gradient(1px 1px at 70% 80%, rgba(255,255,255,.4), transparent 50%),
+        radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,.5), transparent 50%),
+        radial-gradient(1px 1px at 90% 20%, rgba(255,255,255,.5), transparent 50%),
+        radial-gradient(1px 1px at 50% 50%, rgba(255,255,255,.3), transparent 50%),
+        radial-gradient(1.5px 1.5px at 10% 90%, rgba(125,211,252,.5), transparent 50%);
+      background-size: 250px 250px;
+      animation: drift 60s linear infinite;
+      opacity: .5;
+    }
+    @keyframes drift {
+      from { background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0; }
+      to   { background-position: 250px 250px, -250px 250px, 250px -250px, -250px -250px, 125px 125px, -125px -125px; }
+    }
 
-@media (max-width:560px){
-  .grid{grid-template-columns:1fr}
-  .count{width:100%;margin-left:0}
-  .stats{gap:18px}
-}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}}
-</style>
+    header {
+      width: 100%;
+      padding: 4.5rem 2rem 2rem;
+      text-align: center;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 1.25rem;
+      position: relative; z-index: 1;
+    }
+
+    .badge {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      padding: 0.5rem 1.2rem;
+      border-radius: 999px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      animation: badge-in .7s cubic-bezier(.22,.61,.36,1) .2s forwards;
+    }
+    @keyframes badge-in {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* shield — imagen completa con marco sutil */
+    .shield-wrap {
+      position: relative;
+      width: clamp(220px, 26vw, 320px);
+      aspect-ratio: 1 / 1;
+      margin-bottom: -0.5rem;
+      opacity: 0;
+      animation:
+        shield-in 1.2s cubic-bezier(.22,.61,.36,1) 0.1s forwards,
+        shield-float 6s ease-in-out 1.2s infinite;
+    }
+    @keyframes shield-in { to { opacity: 1; } }
+    @keyframes shield-float {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-12px); }
+    }
+    .shield-img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      border-radius: 28px;
+      border: 1px solid rgba(125, 211, 252, 0.25);
+      box-shadow:
+        0 14px 40px rgba(0, 0, 0, 0.55),
+        0 0 32px rgba(59, 130, 246, 0.28),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    }
+    .shield-glow {
+      position: absolute; inset: -18%;
+      background: radial-gradient(circle at 50% 50%, rgba(59,130,246,.35), transparent 55%);
+      filter: blur(34px);
+      z-index: -1;
+      animation: glow-pulse 5s ease-in-out infinite;
+    }
+    @keyframes glow-pulse {
+      0%, 100% { opacity: .55; transform: scale(1); }
+      50%      { opacity: 1;   transform: scale(1.18); }
+    }
+
+    /* animated title (stagger) */
+    h1.animated-title {
+      font-size: clamp(2.5rem, 6.5vw, 5.25rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin: 0;
+      color: #fff;
+      perspective: 800px;
+    }
+    h1.animated-title .word {
+      display: inline-block;
+      white-space: nowrap;
+      margin-right: 0.35em;
+    }
+    h1.animated-title .word:last-child { margin-right: 0; }
+    h1.animated-title .letter {
+      display: inline-block;
+      transform-origin: 50% 80%;
+      opacity: 0;
+      transform: translateY(40px) rotateX(-40deg);
+      animation: letter-in 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+      animation-delay: calc(var(--i) * 60ms + 0.4s);
+    }
+    @keyframes letter-in {
+      to { opacity: 1; transform: translateY(0) rotateX(0); }
+    }
+
+    p.subtitle {
+      font-size: 1.125rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      line-height: 1.6;
+      opacity: 0;
+      animation: sub-in 0.9s cubic-bezier(.22,.61,.36,1) 1.6s forwards;
+    }
+    @keyframes sub-in { to { opacity: 1; transform: translateY(0); } }
+
+    .by-line {
+      font-size: .85rem;
+      color: var(--text-muted);
+      opacity: 0;
+      animation: sub-in 0.9s cubic-bezier(.22,.61,.36,1) 1.9s forwards;
+      letter-spacing: .04em;
+    }
+    .by-line strong { color: #e2e8f0; font-weight: 600; }
+
+    main {
+      width: 100%; max-width: 1100px;
+      padding: 2rem; flex: 1;
+      position: relative; z-index: 1;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 2rem;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      gap: 1.5rem;
+      backdrop-filter: blur(12px);
+      opacity: 0;
+      transform: translateY(20px);
+      animation: card-in .9s cubic-bezier(.22,.61,.36,1) forwards;
+    }
+    .card:nth-child(1) { animation-delay: 2.0s; }
+    .card:nth-child(2) { animation-delay: 2.15s; }
+    .card:nth-child(3) { animation-delay: 2.3s; }
+    @keyframes card-in {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .card:nth-child(2)::before { background: linear-gradient(90deg, var(--accent-3), var(--accent-1)); }
+    .card:nth-child(3)::before { background: linear-gradient(90deg, var(--accent-4), var(--accent-5)); }
+
+    .card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    .card:hover::before { opacity: 1; }
+
+    .card-icon {
+      width: 60px; height: 60px;
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.75rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .card:nth-child(1) .card-icon { color: var(--accent-2); box-shadow: 0 0 20px rgba(139, 92, 246, 0.2); }
+    .card:nth-child(2) .card-icon { color: var(--accent-3); box-shadow: 0 0 20px rgba(16, 185, 129, 0.2); }
+    .card:nth-child(3) .card-icon { color: var(--accent-4); box-shadow: 0 0 20px rgba(245, 158, 11, 0.2); }
+
+    .card-content h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; color: #fff; }
+    .card-content p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
+
+    .card-footer {
+      margin-top: auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .card-footer .arrow { transition: transform 0.3s ease; }
+    .card:hover .arrow { transform: translateX(5px); color: #fff; }
+
+    footer {
+      padding: 3rem 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      width: 100%;
+      opacity: 0;
+      animation: sub-in .9s cubic-bezier(.22,.61,.36,1) 2.6s forwards;
+      position: relative; z-index: 1;
+    }
+
+    @media (max-width: 600px) {
+      header { padding: 3rem 1.5rem 1.5rem; }
+      main { padding: 1.5rem; }
+      .card { padding: 1.5rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+
+    /* ───────────────────────────────────────────────
+       4ª CARD — Trabajos Prácticos (destacada, acordeón)
+    ─────────────────────────────────────────────── */
+    .card:nth-child(4) { animation-delay: 2.45s; }
+    .card:nth-child(4)::before { background: linear-gradient(90deg, var(--accent-5), var(--accent-6)); }
+    .card:nth-child(4) .card-icon { color: var(--accent-5); box-shadow: 0 0 20px rgba(236, 92, 153, 0.2); }
+
+    .card-tp { grid-column: 1 / -1; cursor: default; }
+    .card-tp:hover { transform: none; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.2); }
+
+    .card-tp summary {
+      display: flex; flex-direction: column; gap: 1.5rem;
+      cursor: pointer; list-style: none; outline: none;
+    }
+    .card-tp summary::-webkit-details-marker { display: none; }
+    .card-tp summary::marker { content: ''; }
+    .card-tp summary:focus-visible { outline: 2px solid var(--accent-1); outline-offset: 4px; border-radius: 12px; }
+
+    @media (min-width: 720px) {
+      .card-tp summary { flex-direction: row; align-items: center; gap: 1.75rem; }
+      .card-tp summary .card-content { flex: 1; }
+      .card-tp summary .card-footer {
+        margin-top: 0; padding-top: 0; border-top: none; white-space: nowrap; gap: 0.6rem;
+      }
+    }
+
+    .chevron {
+      display: inline-block; font-size: 1.2rem; line-height: 1;
+      transition: transform 0.35s cubic-bezier(.22,.61,.36,1);
+    }
+    .card-tp[open] .chevron { transform: rotate(180deg); color: #fff; }
+
+    .sublinks {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1rem;
+      animation: sublinks-in .45s cubic-bezier(.22,.61,.36,1);
+    }
+    @keyframes sublinks-in {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .sublink {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1.1rem 1.25rem; border-radius: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      text-decoration: none; color: inherit;
+      transition: all 0.3s cubic-bezier(.22,.61,.36,1);
+    }
+    .sublink:hover {
+      transform: translateY(-3px);
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(255,255,255,0.18);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.3);
+    }
+    .sublink-icon {
+      width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .sublink-1 .sublink-icon { color: var(--accent-3); box-shadow: 0 0 16px rgba(16,185,129,.18); }
+    .sublink-2 .sublink-icon { color: var(--accent-4); box-shadow: 0 0 16px rgba(245,158,11,.18); }
+    .sublink-3 .sublink-icon { color: var(--accent-1); box-shadow: 0 0 16px rgba(59,130,246,.18); }
+    .sublink-text { flex: 1; min-width: 0; }
+    .sublink-text h3 { font-size: 1.02rem; font-weight: 600; color: #fff; margin-bottom: 0.15rem; }
+    .sublink-text p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; }
+    .sublink-arrow { color: var(--text-muted); transition: transform .3s ease; flex-shrink: 0; }
+    .sublink:hover .sublink-arrow { transform: translateX(4px); color: #fff; }
+
+    .sublinks-all {
+      grid-column: 1 / -1;
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+      padding: 0.9rem; border-radius: 14px;
+      background: rgba(236, 92, 153, 0.08);
+      border: 1px solid rgba(236, 92, 153, 0.22);
+      text-decoration: none; color: var(--accent-5);
+      font-weight: 600; font-size: 0.9rem; letter-spacing: .02em;
+      transition: all .3s ease;
+    }
+    .sublinks-all:hover {
+      background: rgba(236, 92, 153, 0.15);
+      border-color: rgba(236, 92, 153, 0.4);
+    }
+    .sublinks-all .arrow { transition: transform .3s ease; }
+    .sublinks-all:hover .arrow { transform: translateX(4px); }
+
+  </style>
 </head>
 <body>
+  <div class="stars"></div>
 
-<header class="hero">
-  <div class="wrap">
-    <div class="brandline">
-      <img class="crest" src="escudo_epet.png" alt="Escudo E.P.E.T. N° 7" width="62" height="62">
-      <span class="inst">E.P.E.T. N° 7</span>
-      <span class="epja">EPJA</span>
+  <header>
+    <div class="shield-wrap">
+      <div class="shield-glow"></div>
+      <img class="shield-img" src="shield-epet.png" alt="Escudo E.P.E.T N°7">
     </div>
-    <h1>Trabajos Prácticos de Excel</h1>
-    <div class="cellref">A1 · Planilla de cálculo · Educación Permanente de Jóvenes y Adultos</div>
-    <p class="lead">Quince prácticos para aprender Excel de a poco: desde escribir en una celda hasta funciones, gráficos, fechas y planillas reales. Cada uno trae su <b style="color:#fff">planilla resuelta</b> y su <b style="color:#fff">guía imprimible</b>.</p>
-    <div class="cta-row">
-      <a class="cta" href="Practicos_Excel_EPET7_completo.zip" download>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
-        Descargar todo (ZIP)
+
+    <div class="badge">E.P.E.T N°7</div>
+
+    <h1 class="animated-title" id="animatedTitle">Portal Educativo</h1>
+
+    <p class="subtitle">Material de estudio, trabajos prácticos y recursos para las materias a cargo del Prof. Markwart Rubén.</p>
+    <p class="by-line">Prof. <strong>Markwart Rubén</strong> · Bases de Datos y Laboratorio de Software</p>
+  </header>
+
+  <main>
+    <div class="grid">
+      <a href="./EPET7_Bases_Datos_I.html" class="card">
+        <div class="card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+        </div>
+        <div class="card-content">
+          <h2>Base de Datos I</h2>
+          <p>Introducción y repaso de conceptos fundamentales, modelo relacional, SQL y SGBD para 3° Año A.</p>
+        </div>
+        <div class="card-footer">
+          <span>Ver material</span>
+          <span class="arrow">→</span>
+        </div>
       </a>
-      <span class="cta-note">32 archivos · ~0,5 MB</span>
+
+      <a href="./EPET7_Bases_Datos_II.html" class="card">
+        <div class="card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+        </div>
+        <div class="card-content">
+          <h2>Base de Datos II</h2>
+          <p>Consultas avanzadas, optimización y administración de bases de datos para 5° Año B.</p>
+        </div>
+        <div class="card-footer">
+          <span>Ver material</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+
+      <a href="./EPET7_LabSoftwareIII.html" class="card">
+        <div class="card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+        </div>
+        <div class="card-content">
+          <h2>Laboratorio de Software III</h2>
+          <p>Desarrollo práctico, programación orientada a objetos y creación de aplicaciones para 5° Año B.</p>
+        </div>
+        <div class="card-footer">
+          <span>Ver material</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+
+      <details class="card card-tp">
+        <summary>
+          <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="m9 15 2 2 4-4"></path></svg>
+          </div>
+          <div class="card-content">
+            <h2>Trabajos Prácticos · Base de Datos II</h2>
+            <p>Materiales interactivos para 5° Año B: tutoriales web con seguimiento de progreso, glosarios y consultas listas para copiar.</p>
+          </div>
+          <div class="card-footer">
+            <span>Ver los 3 TPs interactivos</span>
+            <span class="arrow chevron">⌄</span>
+          </div>
+        </summary>
+
+        <div class="sublinks">
+          <a href="./supabase_tutorial.html" class="sublink sublink-1">
+            <div class="sublink-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            </div>
+            <div class="sublink-text">
+              <h3>Supabase &amp; PostgreSQL</h3>
+              <p>Backend en la nube paso a paso</p>
+            </div>
+            <span class="sublink-arrow">→</span>
+          </a>
+
+          <a href="./modelado_eer.html" class="sublink sublink-2">
+            <div class="sublink-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+            </div>
+            <div class="sublink-text">
+              <h3>Modelado EER</h3>
+              <p>Relaciones 1:1 · 1:N · N:M en Workbench</p>
+            </div>
+            <span class="sublink-arrow">→</span>
+          </a>
+
+          <a href="./mysql_workbench.html" class="sublink sublink-3">
+            <div class="sublink-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+            </div>
+            <div class="sublink-text">
+              <h3>MySQL Workbench</h3>
+              <p>Cuadernillo de consultas SQL</p>
+            </div>
+            <span class="sublink-arrow">→</span>
+          </a>
+
+          <a href="./EPET7_Bases_Datos_II_TP.html" class="sublinks-all">
+            <span>Abrir el índice completo de Trabajos Prácticos</span>
+            <span class="arrow">→</span>
+          </a>
+        </div>
+      </details>
     </div>
-    <div class="stats">
-      <div class="stat"><div class="n">15</div><div class="l">prácticos</div></div>
-      <div class="stat"><div class="n">32</div><div class="l">archivos</div></div>
-      <div class="stat"><div class="n">12+</div><div class="l">funciones</div></div>
-      <div class="stat"><div class="n">A1→</div><div class="l">de cero a planillas reales</div></div>
-    </div>
-  </div>
-</header>
+  </main>
 
-<div class="toolbar">
-  <div class="wrap">
-    <div class="search">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-      <input id="q" type="search" placeholder="Buscar por número, tema o función (ej.: SI, gráficos, fechas)…" autocomplete="off" aria-label="Buscar prácticos">
-    </div>
-    <div class="chips" id="chips" role="group" aria-label="Filtrar por tema"></div>
-    <div class="count" id="count"></div>
-  </div>
-</div>
+  <footer>
+    <p>© 2026 Prof. Markwart Rubén · Jardín América, Misiones</p>
+  </footer>
 
-<main>
-  <div class="wrap">
-    <div class="grid" id="grid"></div>
-    <div class="empty" id="empty">
-      <div class="big">Sin resultados</div>
-      <div>Probá con otra palabra o tocá “Todos” para ver los 15 prácticos.</div>
-    </div>
-    <p class="note">📁 <b>Para que descarguen los archivos:</b> subí los <code>.xlsx</code>, <code>.docx</code>, el <code>.zip</code> y <code>escudo_epet.png</code> al mismo repositorio que este <code>index.html</code>. Si guardás las planillas y guías en una carpeta, cambiá la línea <code>const BASE = ""</code> por <code>const BASE = "archivos/"</code> al inicio del script (dejá el ZIP y el escudo en la raíz).</p>
-  </div>
-</main>
-
-<footer>
-  <div class="wrap">
-    <div class="who">
-      <img class="flogo" src="escudo_epet.png" alt="Escudo E.P.E.T. N° 7" width="38" height="38">
-      <div>Material didáctico de <b>Prof. Rubén Markwart</b><br>E.P.E.T. N° 7 — EPJA · Jardín América, Misiones</div>
-    </div>
-    <div class="mono">=BANCO_TP_EXCEL(2026)</div>
-  </div>
-</footer>
-
-<script>
-// === Cambiá esto si guardás los archivos en una subcarpeta ===
-const BASE = "";
-
-const TPS = [
- {n:"1",  t:"Introducción a Excel", tema:"Tabla con formato y resta", cat:"Inicio",
-  d:"Primera planilla: ingreso de datos, formato de moneda, bordes y la fórmula del total.",
-  tags:["formato","=B2-C2"], x:"Practico_1_Excel_RESUELTO.xlsx", w:"TP1_Excel_EPET7_EPJA.docx"},
- {n:"2",  t:"Funciones estadísticas", tema:"Exportación de yerba mate", cat:"Funciones",
-  d:"Promedio, máximo, mínimo y totales por empresa, con formato de unidad (TN).",
-  tags:["=SUMA","=PROMEDIO","=MAX","=MIN"], x:"Practico_2_Excel_RESUELTO.xlsx", w:"TP2_Excel_EPET7_EPJA.docx"},
- {n:"3",  t:"Promedios", tema:"Registro de calificaciones", cat:"Funciones",
-  d:"Primer y segundo promedio y promedio final, con colores de relleno por columna.",
-  tags:["=PROMEDIO"], x:"Practico_3_Excel_RESUELTO.xlsx", w:"TP3_Excel_EPET7_EPJA.docx"},
- {n:"4",  t:"Listado de pedidos", tema:"Compras enero–febrero", cat:"Funciones",
-  d:"Totales por mes con PRODUCTO, gran total con SUMA y cálculo del I.V.A. (21%).",
-  tags:["=PRODUCTO","=SUMA","%"], x:"Practico_4_Excel_RESUELTO.xlsx", w:"TP4_Excel_EPET7_EPJA.docx"},
- {n:"5",  t:"Gráficos", tema:"Informe de compras", cat:"Gráficos",
-  d:"Seis tipos de gráficos (columnas, circular, áreas, líneas y combinados) en hojas separadas.",
-  tags:["gráficos","%"], x:"Practico_5_Excel_RESUELTO.xlsx", w:"TP5_Excel_EPET7_EPJA.docx"},
- {n:"5a", t:"Función SI", tema:"Liquidación de sueldos", cat:"Lógica", alt:true,
-  d:"Condición con SI: bonificación del 15% para sueldos de 550 o menos.",
-  tags:["=SI"], x:"Practico_5a_Excel_RESUELTO.xlsx", w:"TP5a_Excel_EPET7_EPJA.docx"},
- {n:"6",  t:"Función SI + formato condicional", tema:"Carnet de conductor", cat:"Lógica",
-  d:"Entregar o no carnet según la edad, resaltando el resultado con formato condicional.",
-  tags:["=SI","formato cond."], x:"Practico_6_Excel_RESUELTO.xlsx", w:"TP6_Excel_EPET7_EPJA.docx"},
- {n:"7",  t:"Autofiltro", tema:"Listado de personas", cat:"Datos",
-  d:"Filtrar y contar registros por nombre y por edad con CONTAR.SI.",
-  tags:["autofiltro","=CONTAR.SI"], x:"Practico_7_Excel_RESUELTO.xlsx", w:"TP7_Excel_EPET7_EPJA.docx"},
- {n:"8",  t:"SI anidada + CONTAR.SI", tema:"Empresa de ladrillo", cat:"Lógica",
-  d:"Clima por código, días trabajados y conteos, con un gráfico de columnas de colores.",
-  tags:["=SI anidada","=CONTAR.SI","gráfico"], x:"Practico_8_Excel_RESUELTO.xlsx", w:"TP8_Excel_EPET7_EPJA.docx"},
- {n:"9",  t:"Check list", tema:"Lista de tareas", cat:"Lógica",
-  d:"Estado de tareas (completo/pendiente), porcentaje de avance y gráfico de anillo.",
-  tags:["=SI","=CONTAR.SI","%"], x:"Practico_9_Excel_RESUELTO.xlsx", w:"TP9_Excel_EPET7_EPJA.docx"},
- {n:"10", t:"Registro de asistencia", tema:"Formato condicional y validación", cat:"Datos",
-  d:"Marca de asistencia con lista desplegable, formato condicional y totales por columna.",
-  tags:["validación","formato cond.","=CONTAR.SI"], x:"Practico_10_Excel_RESUELTO.xlsx", w:"TP10_Excel_EPET7_EPJA.docx"},
- {n:"11", t:"Planificador de presupuesto", tema:"Ingresos y gastos", cat:"Funciones",
-  d:"Presupuestado vs gastado, balance y gasto por categoría con SUMAR.SI, más dos gráficos.",
-  tags:["=SUMAR.SI","gráficos"], x:"Practico_11_Excel_RESUELTO.xlsx", w:"TP11_Excel_EPET7_EPJA.docx"},
- {n:"12", t:"Calendario mensual", tema:"Noviembre 2025 + fases lunares", cat:"Diseño",
-  d:"Diseño de calendario con medidas exactas, colores por día, feriados y formas.",
-  tags:["formato","formas"], x:"Practico_12_Excel_RESUELTO.xlsx", w:"TP12_Excel_EPET7_EPJA.docx"},
- {n:"13", t:"Fechas, antigüedad y edad", tema:"Viáticos", cat:"Fechas",
-  d:"Días y horas de viaje, importe con referencia absoluta, edad con HOY() y REDONDEAR.MENOS.",
-  tags:["fechas","=HOY","=REDONDEAR.MENOS","$abs"], x:"Practico_13_Excel_RESUELTO.xlsx", w:"TP13_Excel_EPET7_EPJA.docx"},
- {n:"14", t:"Factura con BUSCARV", tema:"Alquiler para eventos", cat:"Datos",
-  d:"Elegir el producto de una lista y completar tipo y precio con BUSCARV; subtotal, IVA y total.",
-  tags:["=BUSCARV","validación"], x:"Practico_14_Excel_RESUELTO.xlsx", w:"TP14_Excel_EPET7_EPJA.docx"},
- {n:"15", t:"Calendario anual de eventos", tema:"Planificador 2026", cat:"Diseño",
-  d:"Tablero anual con los 12 meses, feriados, fechas personales y formato condicional.",
-  tags:["formato cond.","validación"], x:"Practico_15_Excel_RESUELTO.xlsx", w:"TP15_Excel_EPET7_EPJA.docx"}
-];
-
-const CATS = ["Todos","Inicio","Funciones","Lógica","Datos","Gráficos","Fechas","Diseño"];
-
-const xIcon='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3v5h5"/><path d="M19 8 14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="m9.5 12 5 5m0-5-5 5"/></svg>';
-const wIcon='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3v5h5"/><path d="M19 8 14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="m8.5 12 1.4 5 1.6-4 1.6 4 1.4-5"/></svg>';
-
-const grid=document.getElementById('grid');
-const chipsEl=document.getElementById('chips');
-const countEl=document.getElementById('count');
-const qEl=document.getElementById('q');
-const emptyEl=document.getElementById('empty');
-let activeCat="Todos", query="";
-
-// Build cards
-grid.innerHTML = TPS.map(p=>`
-  <article class="card" data-cat="${p.cat}" data-search="${(p.n+' '+p.t+' '+p.tema+' '+p.cat+' '+p.tags.join(' ')+' '+p.d).toLowerCase()}">
-    <div class="ctop">
-      <div class="num ${p.alt?'alt':''}">${p.n.toUpperCase()}</div>
-      <div><h3 class="ttl">${p.t}</h3><div class="tema">${p.tema}</div></div>
-    </div>
-    <p class="desc">${p.d}</p>
-    <div class="tags">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
-    <div class="actions">
-      <a class="btn btn-x" href="${BASE}${p.x}" download>${xIcon} Planilla resuelta</a>
-      <a class="btn btn-w" href="${BASE}${p.w}" download>${wIcon} Guía</a>
-    </div>
-  </article>`).join('');
-
-// Build chips
-chipsEl.innerHTML = CATS.map(c=>`<button class="chip" data-cat="${c}" aria-pressed="${c==='Todos'}">${c}</button>`).join('');
-
-function apply(){
-  let shown=0;
-  document.querySelectorAll('.card').forEach(card=>{
-    const okCat = activeCat==="Todos" || card.dataset.cat===activeCat;
-    const okQ = !query || card.dataset.search.includes(query);
-    const show = okCat && okQ;
-    card.classList.toggle('hide', !show);
-    if(show) shown++;
-  });
-  countEl.textContent = shown + (shown===1?" práctico":" prácticos");
-  emptyEl.classList.toggle('show', shown===0);
-}
-
-chipsEl.addEventListener('click', e=>{
-  const b=e.target.closest('.chip'); if(!b) return;
-  activeCat=b.dataset.cat;
-  document.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed', c===b));
-  apply();
-});
-qEl.addEventListener('input', e=>{ query=e.target.value.trim().toLowerCase(); apply(); });
-
-apply();
-</script>
+  <script>
+    (function () {
+      const el = document.getElementById('animatedTitle');
+      const text = el.textContent;
+      el.innerHTML = '';
+      const words = text.split(' ');
+      let i = 0;
+      words.forEach((word) => {
+        const wEl = document.createElement('span');
+        wEl.className = 'word';
+        for (const ch of word) {
+          const l = document.createElement('span');
+          l.className = 'letter';
+          l.style.setProperty('--i', i++);
+          l.textContent = ch;
+          wEl.appendChild(l);
+        }
+        el.appendChild(wEl);
+      });
+    })();
+  </script>
 </body>
 </html>
