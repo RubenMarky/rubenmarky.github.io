@@ -1,0 +1,1747 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modelado EER — Base de Datos II | E.P.E.T. N° 7</title>
+<style>
+/* ═══════════════════════════════════════════
+   TOKENS — identidad: "diagrama de entidades"
+   Fondo grafito azulado, acento amber/dorado
+   como las líneas de conexión en ERD.
+═══════════════════════════════════════════ */
+:root {
+  --bg0:      #070c14;
+  --bg1:      #0d1520;
+  --bg2:      #111d2e;
+  --bg3:      #172338;
+  --surface:  #0f1a2a;
+  --border:   #1e3048;
+  --border2:  #2a4060;
+
+  --text:     #dde6f0;
+  --muted:    #6a8aaa;
+  --dim:      #334d68;
+
+  /* Acento principal: amber / ORO de diagrama */
+  --gold:     #f59e0b;
+  --gold-dim: #451a03;
+  --gold-glo: rgba(245,158,11,.18);
+
+  /* Secundario: teal para FK */
+  --teal:     #2dd4bf;
+  --teal-dim: #042f2e;
+
+  /* TP colores */
+  --green:    #34d399;
+  --grn-dim:  #052e16;
+  --blue:     #60a5fa;
+  --blu-dim:  #1e3a5f;
+  --orange:   #fb923c;
+  --org-dim:  #431407;
+  --red:      #f87171;
+  --red-dim:  #450a0a;
+
+  --radius:   10px;
+  --font:     'Segoe UI', system-ui, -apple-system, sans-serif;
+  --mono:     'Cascadia Code','Fira Code','Consolas',monospace;
+  --sidebar-w: 248px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg0);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.72;
+  min-height: 100vh;
+}
+
+/* ═══════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════ */
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-track { background: var(--bg0); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius:3px; }
+
+/* ═══════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════ */
+.layout { display:flex; min-height:100vh; }
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--bg1);
+  border-right: 1px solid var(--border);
+  position: fixed;
+  top:0; left:0; bottom:0;
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  transition: transform .28s cubic-bezier(.4,0,.2,1);
+}
+
+.sb-brand {
+  padding: 20px 18px 16px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.sb-brand::after {
+  content:'';
+  position:absolute;
+  right:-30px; top:-30px;
+  width:100px; height:100px;
+  border-radius:50%;
+  border: 1px solid var(--gold-glo);
+  pointer-events:none;
+}
+.sb-school {
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color: var(--gold);
+  margin-bottom:4px;
+}
+.sb-subject { font-size:15px; font-weight:700; color: var(--text); }
+.sb-grade   { font-size:12px; color: var(--muted); margin-top:2px; }
+
+.sb-progress {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.sp-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:5px; }
+.sp-bar   { background:var(--bg2); border-radius:99px; height:5px; overflow:hidden; }
+.sp-fill  { height:100%; background:linear-gradient(90deg,var(--gold),var(--teal)); border-radius:99px; transition:width .5s ease; }
+.sp-text  { font-size:11px; color:var(--muted); text-align:right; margin-top:4px; }
+
+nav.sb-nav { flex:1; padding:6px 0; }
+
+.nav-group-label {
+  padding:12px 18px 4px;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--dim);
+}
+.nav-link {
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:9px 18px;
+  color:var(--muted);
+  text-decoration:none;
+  font-size:13px;
+  border-left:3px solid transparent;
+  transition:all .2s;
+}
+.nav-link:hover { color:var(--text); background:var(--bg2); }
+.nav-link.active { color:var(--gold); border-left-color:var(--gold); background:var(--gold-glo); }
+.nav-link .ni { font-size:14px; flex-shrink:0; }
+
+.nav-badge {
+  margin-left:auto;
+  font-size:9.5px;
+  font-weight:700;
+  padding:2px 7px;
+  border-radius:99px;
+  letter-spacing:.04em;
+}
+.nb-11 { background:var(--grn-dim); color:var(--green); }
+.nb-1n { background:var(--blu-dim); color:var(--blue);  }
+.nb-nm { background:var(--org-dim); color:var(--orange);}
+
+/* ─── MAIN ─── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex:1;
+  max-width: 920px;
+  padding: 52px 36px;
+}
+
+/* ─── MOBILE TOGGLE ─── */
+.nav-toggle {
+  display:none;
+  position:fixed;
+  top:12px; left:12px;
+  z-index:200;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  color:var(--text);
+  border-radius:8px;
+  width:40px; height:40px;
+  font-size:18px;
+  cursor:pointer;
+  align-items:center;
+  justify-content:center;
+}
+.sb-overlay {
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.65);
+  z-index:99;
+}
+
+/* ═══════════════════════════════════════════
+   SIGNATURE ELEMENT: ERD CONNECTOR LINE
+   Una "tabla" flotante en el hero que parece
+   un diagrama real de Workbench.
+═══════════════════════════════════════════ */
+.hero {
+  position:relative;
+  padding:48px 44px;
+  border-radius:14px;
+  border:1px solid var(--border2);
+  background:var(--bg1);
+  overflow:hidden;
+  margin-bottom:64px;
+}
+.hero::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse 55% 60% at 90% 15%, rgba(245,158,11,.09) 0%, transparent 65%),
+    radial-gradient(ellipse 35% 45% at 10% 85%, rgba(45,212,191,.07) 0%, transparent 60%);
+  pointer-events:none;
+}
+
+/* ERD mini-diagram decoration */
+.erd-deco {
+  position:absolute;
+  right:36px; top:36px;
+  display:flex;
+  gap:0;
+  align-items:center;
+  opacity:.22;
+  pointer-events:none;
+}
+.erd-table {
+  background:var(--bg3);
+  border:1px solid var(--border2);
+  border-radius:6px;
+  min-width:90px;
+  font-family:var(--mono);
+  font-size:9px;
+  overflow:hidden;
+}
+.erd-table-head {
+  background:rgba(245,158,11,.2);
+  color:var(--gold);
+  padding:4px 8px;
+  font-weight:700;
+  border-bottom:1px solid var(--border2);
+}
+.erd-table-row {
+  padding:3px 8px;
+  color:var(--muted);
+  display:flex;
+  gap:5px;
+  align-items:center;
+}
+.erd-pk { color:var(--gold); font-size:8px; }
+.erd-fk { color:var(--teal); font-size:8px; }
+.erd-connector {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:0 6px;
+  gap:2px;
+}
+.erd-line {
+  width:40px;
+  height:1px;
+  background:var(--gold);
+  position:relative;
+}
+.erd-line::before {
+  content:'1';
+  position:absolute;
+  left:-10px;
+  top:-8px;
+  font-size:9px;
+  color:var(--gold);
+}
+.erd-line::after {
+  content:'N';
+  position:absolute;
+  right:-12px;
+  top:-8px;
+  font-size:9px;
+  color:var(--gold);
+}
+.erd-anno { font-size:8px; color:var(--gold); }
+
+.hero-eyebrow {
+  font-size:10.5px;
+  font-weight:700;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:12px;
+}
+.hero h1 {
+  font-size:clamp(24px,4.5vw,40px);
+  font-weight:800;
+  line-height:1.15;
+  color:var(--text);
+  margin-bottom:6px;
+}
+.hero h1 em {
+  font-style:normal;
+  color:var(--gold);
+  -webkit-text-stroke: 0;
+}
+.hero-sub {
+  font-size:14px;
+  color:var(--muted);
+  margin-bottom:24px;
+  max-width:480px;
+}
+.hero-chips { display:flex; flex-wrap:wrap; gap:8px; }
+.chip {
+  padding:4px 13px;
+  border-radius:99px;
+  font-size:11.5px;
+  font-weight:600;
+  border:1px solid var(--border2);
+  background:var(--bg2);
+  color:var(--muted);
+}
+.chip.gold { border-color:rgba(245,158,11,.3); color:var(--gold); background:var(--gold-glo); }
+
+/* ═══════════════════════════════════════════
+   SECTION HEADERS
+═══════════════════════════════════════════ */
+.section { margin-bottom:64px; }
+
+.section-header {
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+  margin-bottom:24px;
+}
+.sh-icon {
+  width:40px; height:40px;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:19px;
+  flex-shrink:0;
+}
+.si-gold   { background:rgba(245,158,11,.15); }
+.si-teal   { background:rgba(45,212,191,.12); }
+.si-green  { background:rgba(52,211,153,.12); }
+.si-blue   { background:rgba(96,165,250,.12); }
+.si-orange { background:rgba(251,146,60,.12); }
+
+.section-header h2 { font-size:19px; font-weight:700; color:var(--text); }
+.section-header p  { font-size:12.5px; color:var(--muted); margin-top:2px; }
+
+/* ═══════════════════════════════════════════
+   CARDS
+═══════════════════════════════════════════ */
+.card {
+  background:var(--bg1);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:24px;
+  margin-bottom:16px;
+}
+.card-gold   { border-left:3px solid var(--gold);   }
+.card-teal   { border-left:3px solid var(--teal);   }
+.card-green  { border-left:3px solid var(--green);  }
+.card-blue   { border-left:3px solid var(--blue);   }
+.card-orange { border-left:3px solid var(--orange); }
+.card-red    { border-left:3px solid var(--red);    }
+
+/* ═══════════════════════════════════════════
+   TIPOS DE DATOS TABLE
+═══════════════════════════════════════════ */
+.data-table {
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+  margin:16px 0;
+}
+.data-table th {
+  background:var(--bg3);
+  color:var(--gold);
+  font-weight:700;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  padding:10px 14px;
+  text-align:left;
+  border-bottom:1px solid var(--border2);
+}
+.data-table td {
+  padding:9px 14px;
+  border-bottom:1px solid var(--border);
+  color:var(--muted);
+  vertical-align:top;
+}
+.data-table tr:hover td { background:rgba(255,255,255,.02); }
+.data-table .type-name {
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--teal);
+  font-weight:600;
+  white-space:nowrap;
+}
+.data-table .example {
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--gold);
+}
+
+/* ═══════════════════════════════════════════
+   INFO BOXES
+═══════════════════════════════════════════ */
+.info-box {
+  border-radius:var(--radius);
+  padding:18px 22px;
+  margin:18px 0;
+  border:1px solid;
+  font-size:13.5px;
+  line-height:1.7;
+}
+.ib-gold   { background:var(--gold-glo);               border-color:rgba(245,158,11,.3);   color:var(--text); }
+.ib-teal   { background:rgba(45,212,191,.06);          border-color:rgba(45,212,191,.25);   color:var(--text); }
+.ib-green  { background:rgba(52,211,153,.06);          border-color:rgba(52,211,153,.25);   color:var(--text); }
+.ib-orange { background:rgba(251,146,60,.07);          border-color:rgba(251,146,60,.3);    color:var(--text); }
+.ib-purple { background:rgba(167,139,250,.07);         border-color:rgba(167,139,250,.25);  color:var(--text); }
+
+.ib-title {
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  margin-bottom:8px;
+}
+.ib-gold   .ib-title { color:var(--gold);   }
+.ib-teal   .ib-title { color:var(--teal);   }
+.ib-green  .ib-title { color:var(--green);  }
+.ib-orange .ib-title { color:var(--orange); }
+.ib-purple .ib-title { color:#a78bfa; }
+
+/* ═══════════════════════════════════════════
+   RELATION VISUAL CARDS (1:1, 1:N, N:M)
+═══════════════════════════════════════════ */
+.relation-type-banner {
+  border-radius:var(--radius);
+  padding:4px 0;
+  margin-bottom:20px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+.rtb-item {
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:14px 16px;
+  text-align:center;
+  cursor:pointer;
+  transition:all .22s;
+  position:relative;
+  overflow:hidden;
+}
+.rtb-item:hover { border-color:var(--border2); }
+.rtb-item.active-green  { border-color:var(--green);  background:var(--grn-dim); }
+.rtb-item.active-blue   { border-color:var(--blue);   background:var(--blu-dim); }
+.rtb-item.active-orange { border-color:var(--orange); background:var(--org-dim); }
+.rtb-label { font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; margin-bottom:4px; }
+.rtb-label-green  { color:var(--green);  }
+.rtb-label-blue   { color:var(--blue);   }
+.rtb-label-orange { color:var(--orange); }
+.rtb-name  { font-size:14px; font-weight:700; color:var(--text); }
+.rtb-desc  { font-size:11.5px; color:var(--muted); margin-top:3px; }
+
+/* ─── ERD VISUAL (Diagrama ASCII visual) ─── */
+.erd-visual {
+  background:var(--bg0);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:24px;
+  margin:18px 0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:0;
+  overflow-x:auto;
+  min-height:140px;
+}
+.erd-t {
+  background:var(--bg2);
+  border:1px solid var(--border2);
+  border-radius:7px;
+  min-width:130px;
+  font-family:var(--mono);
+  font-size:12px;
+  flex-shrink:0;
+}
+.erd-t-head {
+  padding:7px 12px;
+  font-weight:700;
+  font-size:11.5px;
+  border-bottom:1px solid var(--border2);
+  border-radius:6px 6px 0 0;
+}
+.erd-t-head.gold   { background:rgba(245,158,11,.2); color:var(--gold);   }
+.erd-t-head.teal   { background:rgba(45,212,191,.15); color:var(--teal);  }
+.erd-t-head.green  { background:rgba(52,211,153,.15); color:var(--green); }
+.erd-t-head.blue   { background:rgba(96,165,250,.15); color:var(--blue);  }
+.erd-t-head.orange { background:rgba(251,146,60,.15); color:var(--orange);}
+
+.erd-t-row {
+  padding:5px 12px;
+  color:var(--muted);
+  display:flex;
+  gap:8px;
+  align-items:center;
+  font-size:11.5px;
+  border-bottom:1px solid rgba(255,255,255,.04);
+}
+.erd-t-row:last-child { border-bottom:none; }
+.erd-icon-pk  { color:var(--gold); font-size:10px; }
+.erd-icon-fk  { color:var(--teal); font-size:10px; }
+.erd-icon-col { color:var(--dim);  font-size:10px; }
+
+/* Connection line between ERD tables */
+.erd-conn {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:0 8px;
+  gap:4px;
+  flex-shrink:0;
+}
+.erd-conn-line {
+  position:relative;
+  display:flex;
+  align-items:center;
+}
+.erd-conn-line .line {
+  height:2px;
+  background:var(--gold);
+  flex:1;
+  min-width:50px;
+}
+.erd-conn-line .line-teal   { background:var(--teal);  }
+.erd-conn-line .line-green  { background:var(--green); }
+.erd-conn-label {
+  font-family:var(--mono);
+  font-size:10px;
+  font-weight:700;
+  padding:0 4px;
+  color:var(--gold);
+}
+.erd-conn-label.teal   { color:var(--teal);  }
+.erd-conn-label.green  { color:var(--green); }
+
+.erd-caption {
+  text-align:center;
+  font-size:11.5px;
+  color:var(--muted);
+  margin-top:10px;
+  font-style:italic;
+}
+
+/* ═══════════════════════════════════════════
+   CODE BLOCKS
+═══════════════════════════════════════════ */
+.code-wrap {
+  position:relative;
+  margin:14px 0;
+}
+.code-wrap pre {
+  background:#080d14;
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:18px 20px;
+  overflow-x:auto;
+  margin:0;
+}
+.code-wrap code {
+  font-family:var(--mono);
+  font-size:12.5px;
+  line-height:1.75;
+  color:#c9d1d9;
+}
+/* Syntax colors */
+.kw  { color:#79c0ff; font-weight:600; }
+.fn  { color:#d2a8ff; }
+.str { color:#a8d5a2; }
+.num { color:#ffa657; }
+.cm  { color:#4a5f75; font-style:italic; }
+.tbl { color:var(--teal); }
+.col { color:#e8c47d; }
+.con { color:var(--gold); }
+
+.copy-btn {
+  position:absolute;
+  top:8px; right:8px;
+  background:var(--bg3);
+  border:1px solid var(--border2);
+  color:var(--muted);
+  border-radius:6px;
+  padding:4px 10px;
+  font-size:11px;
+  font-weight:600;
+  font-family:var(--font);
+  cursor:pointer;
+  transition:all .2s;
+  letter-spacing:.04em;
+}
+.copy-btn:hover { background:var(--border2); color:var(--text); }
+.copy-btn.copied { color:var(--green); border-color:var(--grn-dim); }
+
+/* ═══════════════════════════════════════════
+   STEPS (numbered)
+═══════════════════════════════════════════ */
+.steps { display:flex; flex-direction:column; gap:10px; margin:16px 0; }
+.step  {
+  display:flex;
+  gap:16px;
+  align-items:flex-start;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:14px 18px;
+  transition:border-color .2s;
+}
+.step:hover { border-color:var(--border2); }
+.step-n {
+  min-width:28px; height:28px;
+  background:var(--gold-glo);
+  border:1px solid rgba(245,158,11,.3);
+  border-radius:6px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:var(--mono);
+  font-size:12px;
+  font-weight:700;
+  color:var(--gold);
+  flex-shrink:0;
+  margin-top:1px;
+}
+.step-body { font-size:13.5px; color:var(--muted); line-height:1.65; }
+.step-body strong { color:var(--text); }
+.step-body code {
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--teal);
+  background:var(--bg0);
+  padding:1px 6px;
+  border-radius:4px;
+  border:1px solid var(--border);
+}
+
+/* ═══════════════════════════════════════════
+   JOIN COMPARE
+═══════════════════════════════════════════ */
+.join-compare {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin:14px 0;
+}
+.jc-card {
+  border-radius:8px;
+  padding:16px 18px;
+  border:1px solid;
+}
+.jc-card.inner { background:rgba(96,165,250,.05); border-color:rgba(96,165,250,.2); }
+.jc-card.left  { background:rgba(52,211,153,.05); border-color:rgba(52,211,153,.2); }
+.jc-card h5 {
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  margin-bottom:8px;
+}
+.jc-card.inner h5 { color:var(--blue);  }
+.jc-card.left  h5 { color:var(--green); }
+.jc-card p { font-size:13px; color:var(--muted); line-height:1.6; }
+
+/* ═══════════════════════════════════════════
+   TP CARDS
+═══════════════════════════════════════════ */
+.tp-wrap { display:flex; flex-direction:column; gap:12px; margin-bottom:48px; }
+.tp-card {
+  background:var(--bg1);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+}
+.tp-summary {
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:18px 22px;
+  cursor:pointer;
+  list-style:none;
+  user-select:none;
+  transition:background .2s;
+}
+.tp-summary:hover { background:var(--bg2); }
+details[open] .tp-summary { background:var(--bg2); }
+.tp-summary::-webkit-details-marker { display:none; }
+
+.tp-badge {
+  padding:5px 14px;
+  border-radius:99px;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  flex-shrink:0;
+}
+.tp-b-green  { background:var(--grn-dim); color:var(--green);  border:1px solid rgba(52,211,153,.2);  }
+.tp-b-blue   { background:var(--blu-dim); color:var(--blue);   border:1px solid rgba(96,165,250,.2);  }
+.tp-b-orange { background:var(--org-dim); color:var(--orange); border:1px solid rgba(251,146,60,.2);  }
+
+.tp-title-block { flex:1; }
+.tp-title-block h3 { font-size:17px; font-weight:700; color:var(--text); }
+.tp-title-block p  { font-size:12.5px; color:var(--muted); margin-top:2px; }
+
+.tp-arrow {
+  color:var(--muted);
+  font-size:18px;
+  transition:transform .25s;
+  flex-shrink:0;
+}
+details[open] .tp-arrow { transform:rotate(90deg); }
+
+.tp-body { padding:0 22px 24px; }
+.tp-divider { height:1px; background:var(--border); margin-bottom:20px; }
+
+/* ─── Progress checklist ─── */
+.checklist { display:flex; flex-direction:column; gap:9px; margin:16px 0; }
+.check-item {
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:7px;
+  padding:12px 15px;
+  cursor:pointer;
+  transition:all .2s;
+}
+.check-item:hover { border-color:var(--border2); }
+.check-item.done  {
+  background:rgba(52,211,153,.04);
+  border-color:rgba(52,211,153,.2);
+}
+.check-box {
+  width:19px; height:19px;
+  min-width:19px;
+  border:2px solid var(--border2);
+  border-radius:5px;
+  background:var(--bg1);
+  cursor:pointer;
+  position:relative;
+  margin-top:2px;
+  transition:all .2s;
+  appearance:none;
+  -webkit-appearance:none;
+}
+.check-box:checked {
+  background:var(--green);
+  border-color:var(--green);
+}
+.check-box:checked::after {
+  content:'✓';
+  position:absolute;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  color:var(--bg0);
+  font-size:11px;
+  font-weight:800;
+}
+.check-num {
+  font-size:11px;
+  font-weight:700;
+  color:var(--dim);
+  font-family:var(--mono);
+  min-width:22px;
+  padding-top:1px;
+}
+.check-text {
+  font-size:13.5px;
+  color:var(--text);
+  line-height:1.6;
+  flex:1;
+  transition:all .2s;
+}
+.check-item.done .check-text {
+  text-decoration:line-through;
+  color:var(--dim);
+}
+
+.tp-progress-bar {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:7px;
+  padding:10px 14px;
+  margin-top:16px;
+}
+.tpb-fill { flex:1; background:var(--bg0); border-radius:99px; height:5px; overflow:hidden; }
+.tpb-inner { height:100%; border-radius:99px; background:linear-gradient(90deg,var(--green),var(--teal)); transition:width .4s ease; }
+.tpb-label { font-size:11.5px; color:var(--muted); white-space:nowrap; }
+
+/* ═══════════════════════════════════════════
+   FK RULE BOX
+═══════════════════════════════════════════ */
+.fk-rule {
+  background:var(--bg2);
+  border:1px solid var(--border2);
+  border-radius:var(--radius);
+  padding:18px 22px;
+  margin:16px 0;
+  display:flex;
+  gap:14px;
+}
+.fk-icon { font-size:26px; flex-shrink:0; margin-top:2px; }
+.fk-content h4 { font-size:14px; font-weight:700; color:var(--text); margin-bottom:6px; }
+.fk-content p  { font-size:13px; color:var(--muted); line-height:1.65; }
+.fk-content code {
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--teal);
+  background:var(--bg0);
+  padding:1px 6px;
+  border-radius:4px;
+}
+
+/* ═══════════════════════════════════════════
+   FAB (atajos)
+═══════════════════════════════════════════ */
+.fab {
+  position:fixed;
+  bottom:24px; right:24px;
+  z-index:300;
+  width:50px; height:50px;
+  border-radius:50%;
+  background:linear-gradient(135deg, var(--gold), var(--teal));
+  border:none;
+  color:var(--bg0);
+  font-size:20px;
+  cursor:pointer;
+  box-shadow:0 4px 20px rgba(245,158,11,.3);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:transform .2s, box-shadow .2s;
+}
+.fab:hover { transform:scale(1.08); box-shadow:0 6px 28px rgba(245,158,11,.45); }
+
+.modal-overlay {
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.72);
+  z-index:400;
+  align-items:flex-end;
+  justify-content:flex-end;
+  padding:24px;
+}
+.modal-overlay.open { display:flex; }
+
+.shortcuts-panel {
+  background:var(--bg1);
+  border:1px solid var(--border2);
+  border-radius:14px;
+  width:360px;
+  max-height:82vh;
+  overflow-y:auto;
+  box-shadow:0 24px 64px rgba(0,0,0,.7);
+  animation:slideUp .22s ease;
+}
+@keyframes slideUp {
+  from { opacity:0; transform:translateY(14px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.sp-header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:18px 20px 14px;
+  border-bottom:1px solid var(--border);
+}
+.sp-header h3  { font-size:15px; font-weight:700; color:var(--text); }
+.sp-header span{ font-size:12px; color:var(--muted); margin-top:2px; }
+.close-btn {
+  background:var(--bg2);
+  border:1px solid var(--border);
+  color:var(--muted);
+  border-radius:7px;
+  width:30px; height:30px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:15px;
+  transition:all .2s;
+}
+.close-btn:hover { background:var(--bg3); color:var(--text); }
+.sp-body { padding:14px 20px; }
+.sc-row {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:9px 0;
+  border-bottom:1px solid rgba(255,255,255,.04);
+}
+.sc-row:last-child { border-bottom:none; }
+.sc-desc { font-size:13px; color:var(--muted); }
+.sc-keys { display:flex; gap:3px; align-items:center; }
+.sc-keys kbd {
+  background:var(--bg0);
+  border:1px solid var(--border2);
+  border-bottom-width:2px;
+  border-radius:4px;
+  padding:2px 7px;
+  font-family:var(--mono);
+  font-size:10.5px;
+  font-weight:600;
+  color:var(--gold);
+}
+.sc-plus { color:var(--dim); font-size:10px; }
+
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+footer {
+  margin-top:80px;
+  padding:22px;
+  border-top:1px solid var(--border);
+  text-align:center;
+  font-size:11.5px;
+  color:var(--dim);
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width:780px) {
+  .sidebar { transform:translateX(-100%); }
+  .sidebar.open { transform:translateX(0); }
+  .sb-overlay.open { display:block; }
+  .nav-toggle { display:flex; }
+  .main { margin-left:0; padding:64px 16px 32px; }
+  .relation-type-banner { grid-template-columns:1fr; }
+  .join-compare { grid-template-columns:1fr; }
+  .erd-visual { flex-direction:column; gap:12px; }
+  .erd-conn { flex-direction:row; padding:0; }
+  .shortcuts-panel { width:100%; border-radius:14px 14px 0 0; }
+  .modal-overlay { padding:0; align-items:flex-end; }
+  .data-table { font-size:12px; }
+  .data-table th, .data-table td { padding:8px 10px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  * { transition-duration:.01ms !important; animation-duration:.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<button class="nav-toggle" id="navToggle" aria-label="Menú">☰</button>
+<div class="sb-overlay" id="sbOverlay"></div>
+
+<!-- ═══════════════ SIDEBAR ═══════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-brand">
+    <div class="sb-school">E.P.E.T. N° 7</div>
+    <div class="sb-subject">Material Didáctico N° 2</div>
+    <div class="sb-grade">Base de Datos II · 5° Año "B"</div>
+  </div>
+
+  <div class="sb-progress">
+    <div class="sp-label">Progreso total</div>
+    <div class="sp-bar"><div class="sp-fill" id="globalFill" style="width:0%"></div></div>
+    <div class="sp-text" id="globalText">0 / 14 objetivos</div>
+  </div>
+
+  <nav class="sb-nav">
+    <div class="nav-group-label">Introducción</div>
+    <a href="#intro"    class="nav-link active"><span class="ni">🎯</span> ¿Por qué modelar?</a>
+    <a href="#tipos"    class="nav-link"><span class="ni">📋</span> Tipos de datos</a>
+
+    <div class="nav-group-label">Relaciones</div>
+    <a href="#r11"  class="nav-link"><span class="ni">🔒</span> Relación 1:1 <span class="nav-badge nb-11">1·1</span></a>
+    <a href="#r1n"  class="nav-link"><span class="ni">📐</span> Relación 1:N <span class="nav-badge nb-1n">1·N</span></a>
+    <a href="#rnm"  class="nav-link"><span class="ni">🕸️</span> Relación N:M <span class="nav-badge nb-nm">N·M</span></a>
+
+    <div class="nav-group-label">Trabajos Prácticos</div>
+    <a href="#tp5" class="nav-link" data-tp="0"><span class="ni">✏️</span> TP N° 5 — 1:1 <span class="nav-badge nb-11">Inicial</span></a>
+    <a href="#tp6" class="nav-link" data-tp="1"><span class="ni">📊</span> TP N° 6 — 1:N <span class="nav-badge nb-1n">Medio</span></a>
+    <a href="#tp7" class="nav-link" data-tp="2"><span class="ni">🏆</span> TP N° 7 — N:M <span class="nav-badge nb-nm">Avanzado</span></a>
+  </nav>
+</aside>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<main class="main">
+
+<!-- HERO -->
+<div class="hero" id="inicio">
+  <div class="erd-deco">
+    <div class="erd-table">
+      <div class="erd-table-head">productos</div>
+      <div class="erd-table-row"><span class="erd-pk">🔑</span> id_producto</div>
+      <div class="erd-table-row"><span class="erd-icon-col">▪</span> nombre</div>
+      <div class="erd-table-row"><span class="erd-fk">🔗</span> id_categoria</div>
+    </div>
+    <div class="erd-connector">
+      <div class="erd-line"></div>
+    </div>
+    <div class="erd-table">
+      <div class="erd-table-head">categorias</div>
+      <div class="erd-table-row"><span class="erd-pk">🔑</span> id_categoria</div>
+      <div class="erd-table-row"><span class="erd-icon-col">▪</span> nombre</div>
+    </div>
+  </div>
+
+  <div class="hero-eyebrow">E.P.E.T. N° 7 · Base de Datos II · 5° Año "B"</div>
+  <h1>Modelado de Datos<br>y <em>Relaciones EER</em></h1>
+  <p class="hero-sub">Del diseño conceptual al script SQL profesional en MySQL Workbench. Material Didáctico N° 2 · Año 2025</p>
+  <div class="hero-chips">
+    <span class="chip gold">MySQL Workbench EER</span>
+    <span class="chip">Relaciones 1:1 · 1:N · N:M</span>
+    <span class="chip">Forward Engineer</span>
+    <span class="chip">TPs 5 · 6 · 7</span>
+  </div>
+</div>
+
+<!-- ─── SECCIÓN: ¿Por qué modelar? ─── -->
+<section class="section" id="intro">
+  <div class="section-header">
+    <div class="sh-icon si-gold">🎯</div>
+    <div>
+      <h2>Del Querying al Diseño</h2>
+      <p>Por qué un técnico necesita modelar, no solo consultar</p>
+    </div>
+  </div>
+  <div class="card card-gold">
+    <p style="color:var(--muted);font-size:14px;line-height:1.75;margin-bottom:14px;">
+      Ya sabés hacer <code style="font-family:var(--mono);color:var(--teal);font-size:12px;">SELECT</code>, <code style="font-family:var(--mono);color:var(--teal);font-size:12px;">JOIN</code>, <code style="font-family:var(--mono);color:var(--teal);font-size:12px;">GROUP BY</code> y subconsultas sobre la base TechPlay Store. Pero ahora la pregunta es: <strong style="color:var(--text);">¿quién diseñó esa base de datos?</strong> ¿Cómo supo qué tablas crear y cómo relacionarlas?
+    </p>
+    <div class="info-box ib-gold">
+      <div class="ib-title">Lo que distingue a un Técnico Completo</div>
+      Un operador sabe <em>consultar</em> datos. Un técnico sabe <strong>diseñarlos</strong>: analizar un negocio real, elegir las tablas, definir los campos, establecer las relaciones y garantizar que no haya información duplicada ni inconsistente.
+    </div>
+    <p style="color:var(--muted);font-size:14px;line-height:1.75;margin-top:14px;">
+      Imaginá que te contratan para el sistema de una nueva sucursal de TechPlay Store. No te dan la base hecha: te dan las <strong style="color:var(--text);">reglas del negocio</strong>. "Una venta puede tener varios productos. Un producto pertenece a una sola categoría." Tu trabajo es convertir esas reglas en tablas SQL. Ese proceso se llama <strong style="color:var(--gold);">Modelado de Datos</strong>.
+    </p>
+  </div>
+
+  <!-- Clave Primaria -->
+  <h3 style="font-size:16px;font-weight:700;color:var(--text);margin:28px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--border);">La Clave Primaria (PRIMARY KEY)</h3>
+  <div class="fk-rule">
+    <div class="fk-icon">🔑</div>
+    <div class="fk-content">
+      <h4>El "documento de identidad" de cada fila</h4>
+      <p>Identifica de forma única e irrepetible cada registro. Reglas: valores únicos, nunca NULL, estable en el tiempo. La práctica más recomendada es usar <code>id_nombre_tabla INT AUTO_INCREMENT</code>. MySQL asigna el número automáticamente al insertar.</p>
+    </div>
+  </div>
+  <div class="code-wrap">
+    <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+    <pre><code><span class="cm">-- Tabla bien diseñada: PK artificial con AUTO_INCREMENT</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">productos</span> (
+    <span class="col">id_producto</span>   <span class="kw">INT</span>           <span class="kw">AUTO_INCREMENT PRIMARY KEY</span>,
+    <span class="col">nombre</span>        <span class="kw">VARCHAR</span>(<span class="num">120</span>)  <span class="kw">NOT NULL</span>,
+    <span class="col">precio</span>        <span class="kw">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>) <span class="kw">NOT NULL</span>,
+    <span class="col">stock</span>         <span class="kw">INT</span>           <span class="kw">NOT NULL DEFAULT</span> <span class="num">0</span>
+);</code></pre>
+  </div>
+</section>
+
+<!-- ─── SECCIÓN: Tipos de datos ─── -->
+<section class="section" id="tipos">
+  <div class="section-header">
+    <div class="sh-icon si-teal">📋</div>
+    <div>
+      <h2>Tipos de Datos en MySQL</h2>
+      <p>Elegir el tipo correcto es una decisión de diseño crítica</p>
+    </div>
+  </div>
+  <div class="card">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Tipo SQL</th>
+          <th>Ejemplo Workbench</th>
+          <th>Cuándo usarlo</th>
+          <th>En TechPlay Store</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="type-name">INT</span></td><td><span class="example">INT NOT NULL</span></td><td>Enteros, IDs (PK, FK), contadores</td><td>id_producto, stock, puertos_usb</td></tr>
+        <tr><td><span class="type-name">VARCHAR(n)</span></td><td><span class="example">VARCHAR(100) NOT NULL</span></td><td>Texto corto variable; n = máx. chars</td><td>nombre, ciudad, email</td></tr>
+        <tr><td><span class="type-name">DECIMAL(p,s)</span></td><td><span class="example">DECIMAL(10,2) NOT NULL</span></td><td>Valores monetarios; p=total, s=decimales</td><td>precio → 899999.99</td></tr>
+        <tr><td><span class="type-name">DATE</span></td><td><span class="example">DATE NOT NULL</span></td><td>Fechas AAAA-MM-DD</td><td>fecha_venta, fecha_registro</td></tr>
+        <tr><td><span class="type-name">TINYINT(1)</span></td><td><span class="example">TINYINT(1) DEFAULT 1</span></td><td>Booleano: 0=falso, 1=verdadero</td><td>activo (producto disponible)</td></tr>
+        <tr><td><span class="type-name">ENUM</span></td><td><span class="example">ENUM('A','B','C')</span></td><td>Lista cerrada de opciones</td><td>estado ENUM('pendiente','completada')</td></tr>
+        <tr><td><span class="type-name">TEXT</span></td><td><span class="example">TEXT</span></td><td>Texto largo sin límite definido</td><td>descripcion larga de producto</td></tr>
+      </tbody>
+    </table>
+    <div class="info-box ib-teal" style="margin-top:14px;">
+      <div class="ib-title">⚡ Regla de Oro</div>
+      Nunca uses <code style="font-family:var(--mono);font-size:12px;color:var(--gold);">VARCHAR</code> donde debería ir <code style="font-family:var(--mono);font-size:12px;color:var(--gold);">INT</code>. Las claves primarias y foráneas siempre son <strong>INT</strong>. Guardá texto en VARCHAR solo cuando el valor tenga contenido alfanumérico real.
+    </div>
+  </div>
+</section>
+
+<!-- ─── RELACIONES: banner visual ─── -->
+<section class="section" id="relaciones">
+  <div class="section-header">
+    <div class="sh-icon si-gold">🔗</div>
+    <div>
+      <h2>Los Tres Tipos de Relaciones</h2>
+      <p>El corazón del diseño relacional — hacé clic en cada tipo para explorar</p>
+    </div>
+  </div>
+
+  <div class="relation-type-banner">
+    <div class="rtb-item active-green" onclick="scrollTo11()">
+      <div class="rtb-label rtb-label-green">Tipo 1</div>
+      <div class="rtb-name">1 : 1</div>
+      <div class="rtb-desc">Uno a Uno</div>
+    </div>
+    <div class="rtb-item active-blue" onclick="scrollTo1n()">
+      <div class="rtb-label rtb-label-blue">Tipo 2</div>
+      <div class="rtb-name">1 : N</div>
+      <div class="rtb-desc">Uno a Muchos</div>
+    </div>
+    <div class="rtb-item active-orange" onclick="scrollToNm()">
+      <div class="rtb-label rtb-label-orange">Tipo 3</div>
+      <div class="rtb-name">N : M</div>
+      <div class="rtb-desc">Muchos a Muchos</div>
+    </div>
+  </div>
+
+  <!-- ── 1:1 ── -->
+  <div id="r11">
+    <h3 style="font-size:18px;font-weight:800;color:var(--green);margin:32px 0 16px;display:flex;align-items:center;gap:10px;">
+      <span style="background:var(--grn-dim);padding:4px 12px;border-radius:99px;font-size:12px;border:1px solid rgba(52,211,153,.3);">1 : 1</span>
+      Relación Uno a Uno
+    </h3>
+    <div class="card card-green">
+      <p style="color:var(--muted);font-size:14px;line-height:1.75;margin-bottom:16px;">
+        Cada registro de la tabla A tiene <strong style="color:var(--text);">exactamente un</strong> registro en la tabla B, y viceversa. Se usa para "extender" una tabla con datos específicos de un subconjunto.
+      </p>
+      <p style="color:var(--muted);font-size:14px;line-height:1.75;margin-bottom:16px;">
+        <strong style="color:var(--text);">En TechPlay Store:</strong> La tabla <code style="font-family:var(--mono);color:var(--teal);font-size:12px;">productos</code> guarda todos los artículos. Para las consolas (solo ellas), necesitamos datos técnicos muy específicos: resolución, chip, watts. Crear una tabla separada <code style="font-family:var(--mono);color:var(--teal);font-size:12px;">datos_tecnicos_consolas</code> evita dejar cientos de campos NULL en los juegos y accesorios.
+      </p>
+
+      <!-- ERD visual 1:1 -->
+      <div class="erd-visual">
+        <div class="erd-t">
+          <div class="erd-t-head gold">productos</div>
+          <div class="erd-t-row"><span class="erd-icon-pk">🔑</span> id_producto</div>
+          <div class="erd-t-row"><span class="erd-icon-col">▪</span> nombre</div>
+          <div class="erd-t-row"><span class="erd-icon-col">▪</span> precio</div>
+          <div class="erd-t-row"><span class="erd-icon-col">▪</span> stock</div>
+        </div>
+        <div class="erd-conn">
+          <div class="erd-conn-line">
+            <span class="erd-conn-label" style="margin-right:4px;">1</span>
+            <div class="line"></div>
+            <span class="erd-conn-label" style="margin-left:4px;">1</span>
+          </div>
+          <div style="font-size:10px;color:var(--dim);margin-top:4px;">Non-Identifying</div>
+        </div>
+        <div class="erd-t">
+          <div class="erd-t-head green">datos_tecnicos_consolas</div>
+          <div class="erd-t-row"><span class="erd-icon-pk">🔑</span> id_tecnico</div>
+          <div class="erd-t-row"><span class="erd-icon-fk">🔗</span> id_producto <span style="font-size:9px;color:var(--green);margin-left:4px;">UQ</span></div>
+          <div class="erd-t-row"><span class="erd-icon-col">▪</span> resolucion_max</div>
+          <div class="erd-t-row"><span class="erd-icon-col">▪</span> chip_grafico</div>
+          <div class="erd-t-row"><span class="erd-icon-col">▪</span> consumo_watts</div>
+        </div>
+      </div>
+      <p class="erd-caption">La FK <code style="font-family:var(--mono);font-size:11px;">id_producto</code> en <code style="font-family:var(--mono);font-size:11px;">datos_tecnicos_consolas</code> tiene restricción UNIQUE → garantiza el 1:1</p>
+
+      <div class="info-box ib-green" style="margin-top:18px;">
+        <div class="ib-title">📍 ¿Dónde va la FK en 1:1?</div>
+        En la tabla que representa el "detalle" o "extensión". En nuestro caso: <code style="font-family:var(--mono);font-size:12px;color:var(--teal);">datos_tecnicos_consolas.id_producto</code> → <code style="font-family:var(--mono);font-size:12px;color:var(--teal);">productos.id_producto</code>. Además, esa FK debe ser <strong>UNIQUE</strong> para que dos fichas no apunten al mismo producto.
+      </div>
+
+      <h4 style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:20px 0 10px;">Guía de clics en Workbench</h4>
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-body">Abrí el editor EER: <strong>File → New Model</strong> → doble clic en <strong>Add Diagram</strong>.</div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-body">Creá ambas tablas con el ícono <strong>Place a New Table</strong> en la barra lateral.</div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-body">En la tabla hija, activá la opción <strong>UQ</strong> (Unique) en el campo <code>id_producto</code>. Esto es lo que garantiza el 1:1.</div></div>
+        <div class="step"><div class="step-n">4</div><div class="step-body">Seleccioná <strong>1:1 Non-Identifying Relationship</strong> en la barra lateral.</div></div>
+        <div class="step"><div class="step-n">5</div><div class="step-body">Clic en la tabla <strong>hija</strong> primero (<code>datos_tecnicos_consolas</code>), luego en la tabla <strong>padre</strong> (<code>productos</code>). Workbench dibuja la relación.</div></div>
+        <div class="step"><div class="step-n">6</div><div class="step-body">Para generar el SQL: <strong>Database → Forward Engineer</strong>.</div></div>
+      </div>
+
+      <div class="code-wrap" style="margin-top:18px;">
+        <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+        <pre><code><span class="cm">-- Relación 1:1: productos → datos_tecnicos_consolas</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">datos_tecnicos_consolas</span> (
+    <span class="col">id_tecnico</span>     <span class="kw">INT</span>          <span class="kw">AUTO_INCREMENT NOT NULL</span>,
+    <span class="col">id_producto</span>    <span class="kw">INT</span>          <span class="kw">NOT NULL</span>,
+    <span class="col">resolucion_max</span> <span class="kw">VARCHAR</span>(<span class="num">20</span>)  <span class="kw">NULL</span>,
+    <span class="col">chip_grafico</span>   <span class="kw">VARCHAR</span>(<span class="num">60</span>)  <span class="kw">NULL</span>,
+    <span class="col">consumo_watts</span>  <span class="kw">INT</span>          <span class="kw">NULL</span>,
+    <span class="col">certificacion</span>  <span class="kw">VARCHAR</span>(<span class="num">40</span>)  <span class="kw">NULL</span>,
+    <span class="col">puertos_usb</span>    <span class="kw">INT</span>          <span class="kw">NULL</span>,
+    <span class="kw">PRIMARY KEY</span> (<span class="col">id_tecnico</span>),
+    <span class="cm">-- UNIQUE garantiza el 1:1:</span>
+    <span class="kw">UNIQUE INDEX</span> <span class="con">uq_id_producto</span> (<span class="col">id_producto</span> <span class="kw">ASC</span>),
+    <span class="kw">CONSTRAINT</span> <span class="con">fk_tecnico_producto</span>
+        <span class="kw">FOREIGN KEY</span> (<span class="col">id_producto</span>)
+        <span class="kw">REFERENCES</span> <span class="tbl">productos</span> (<span class="col">id_producto</span>)
+        <span class="kw">ON DELETE CASCADE ON UPDATE CASCADE</span>
+);</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 1:N ── -->
+  <div id="r1n">
+    <h3 style="font-size:18px;font-weight:800;color:var(--blue);margin:40px 0 16px;display:flex;align-items:center;gap:10px;">
+      <span style="background:var(--blu-dim);padding:4px 12px;border-radius:99px;font-size:12px;border:1px solid rgba(96,165,250,.3);">1 : N</span>
+      Relación Uno a Muchos — La más frecuente
+    </h3>
+    <div class="card card-blue">
+      <p style="color:var(--muted);font-size:14px;line-height:1.75;margin-bottom:16px;">
+        Un registro de A puede relacionarse con <strong style="color:var(--text);">múltiples registros</strong> de B, pero cada registro de B pertenece a un único A. Es el patrón más común en cualquier BD del mundo real.
+      </p>
+      <p style="color:var(--muted);font-size:14px;line-height:1.75;margin-bottom:16px;">
+        <strong style="color:var(--text);">En TechPlay Store:</strong> 1 categoría → N productos · 1 cliente → N ventas · 1 proveedor → N productos
+      </p>
+
+      <!-- ERD visual 1:N -->
+      <div class="erd-visual">
+        <div class="erd-t">
+          <div class="erd-t-head gold">categorias <span style="font-size:9px;color:var(--muted);font-family:var(--font);"> (lado 1)</span></div>
+          <div class="erd-t-row"><span class="erd-icon-pk">🔑</span> id_categoria</div>
+          <div class="erd-t-row"><span class="erd-icon-col">▪</span> nombre</div>
+          <div class="erd-t-row"><span class="erd-icon-col">▪</span> descripcion</div>
+        </div>
+        <div class="erd-conn">
+          <div class="erd-conn-line">
+            <span class="erd-conn-label teal" style="margin-right:4px;">1</span>
+            <div class="line line-teal"></div>
+            <span class="erd-conn-label teal" style="margin-left:4px;">N</span>
+          </div>
+          <div style="font-size:10px;color:var(--dim);margin-top:4px;">Non-Identifying</div>
+        </div>
+        <div class="erd-t">
+          <div class="erd-t-head blue">productos <span style="font-size:9px;color:var(--muted);font-family:var(--font);"> (lado N)</span></div>
+          <div class="erd-t-row"><span class="erd-icon-pk">🔑</span> id_producto</div>
+          <div class="erd-t-row"><span class="erd-icon-fk">🔗</span> id_categoria <span style="font-size:9px;color:var(--teal);margin-left:4px;">FK</span></div>
+          <div class="erd-t-row"><span class="erd-icon-col">▪</span> nombre</div>
+          <div class="erd-t-row"><span class="erd-icon-col">▪</span> precio</div>
+        </div>
+      </div>
+      <p class="erd-caption">La FK siempre va en la tabla del <strong>lado N</strong>. Un producto tiene UNA categoría; una categoría tiene MUCHOS productos.</p>
+
+      <div class="info-box ib-teal" style="margin-top:18px;">
+        <div class="ib-title">📍 ¿Dónde va la FK en 1:N?</div>
+        <strong>Siempre en la tabla del lado N</strong> (la tabla "hija"). Si una categoría tiene muchos productos → <code style="font-family:var(--mono);font-size:12px;color:var(--teal);">id_categoria</code> va en <code style="font-family:var(--mono);font-size:12px;color:var(--teal);">productos</code>, nunca al revés. La tabla padre (categorias) no necesita ningún campo adicional.
+      </div>
+
+      <h4 style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:20px 0 10px;">Guía de clics en Workbench</h4>
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-body">Con ambas tablas en el diagrama, seleccioná <strong>1:N Non-Identifying Relationship</strong> en la barra lateral.</div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-body">Hacé clic primero en la tabla <strong>hija</strong> (<code>productos</code>, la que tendrá la FK), luego en la tabla <strong>padre</strong> (<code>categorias</code>). El orden es fundamental.</div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-body">Workbench genera <code>id_categorias</code> en productos. Renombralo a <code>id_categoria</code> haciendo doble clic sobre la tabla.</div></div>
+        <div class="step"><div class="step-n">4</div><div class="step-body">Verificá la relación: doble clic sobre la línea → panel de propiedades. Podés editar el nombre de la FK y las opciones <strong>On Delete / On Update</strong>.</div></div>
+      </div>
+
+      <div class="code-wrap" style="margin-top:18px;">
+        <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+        <pre><code><span class="cm">-- Relación 1:N: categorias (padre) → productos (hija)</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">productos</span> (
+    <span class="col">id_producto</span>   <span class="kw">INT</span>           <span class="kw">AUTO_INCREMENT NOT NULL</span>,
+    <span class="col">nombre</span>        <span class="kw">VARCHAR</span>(<span class="num">120</span>)  <span class="kw">NOT NULL</span>,
+    <span class="cm">-- FK al padre (lado 1): cada producto tiene UNA categoría</span>
+    <span class="col">id_categoria</span>  <span class="kw">INT</span>           <span class="kw">NOT NULL</span>,
+    <span class="col">precio</span>        <span class="kw">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>) <span class="kw">NOT NULL</span>,
+    <span class="kw">PRIMARY KEY</span> (<span class="col">id_producto</span>),
+    <span class="cm">-- Índice para optimizar el JOIN:</span>
+    <span class="kw">INDEX</span> <span class="con">idx_categoria</span> (<span class="col">id_categoria</span>),
+    <span class="kw">CONSTRAINT</span> <span class="con">fk_producto_categoria</span>
+        <span class="kw">FOREIGN KEY</span> (<span class="col">id_categoria</span>)
+        <span class="kw">REFERENCES</span> <span class="tbl">categorias</span> (<span class="col">id_categoria</span>)
+        <span class="kw">ON DELETE RESTRICT</span>   <span class="cm">-- no borrar categorías con productos</span>
+        <span class="kw">ON UPDATE CASCADE</span>
+);</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── N:M ── -->
+  <div id="rnm">
+    <h3 style="font-size:18px;font-weight:800;color:var(--orange);margin:40px 0 16px;display:flex;align-items:center;gap:10px;">
+      <span style="background:var(--org-dim);padding:4px 12px;border-radius:99px;font-size:12px;border:1px solid rgba(251,146,60,.3);">N : M</span>
+      Relación Muchos a Muchos — La más poderosa
+    </h3>
+    <div class="card card-orange">
+      <p style="color:var(--muted);font-size:14px;line-height:1.75;margin-bottom:16px;">
+        Muchos registros de A se relacionan con muchos de B, y viceversa. <strong style="color:var(--text);">En TechPlay Store:</strong> una venta incluye muchos productos, y un producto aparece en muchas ventas.
+      </p>
+
+      <div class="info-box ib-orange">
+        <div class="ib-title">⚠️ Las relaciones N:M NO existen directamente en SQL</div>
+        No podés implementarlas entre dos tablas directamente. La solución universal es crear una <strong>Tabla Intermedia</strong> (tabla puente / junction table). Tiene como mínimo dos FK, una hacia cada tabla principal.
+      </div>
+
+      <!-- ERD visual N:M -->
+      <div class="erd-visual" style="margin-top:18px;">
+        <div class="erd-t">
+          <div class="erd-t-head gold">ventas</div>
+          <div class="erd-t-row"><span class="erd-icon-pk">🔑</span> id_venta</div>
+          <div class="erd-t-row"><span class="erd-icon-fk">🔗</span> id_cliente</div>
+          <div class="erd-t-row"><span class="erd-icon-col">▪</span> fecha_venta</div>
+        </div>
+        <div class="erd-conn">
+          <div class="erd-conn-line">
+            <span class="erd-conn-label" style="color:var(--orange);margin-right:4px;">1</span>
+            <div class="line" style="background:var(--orange);"></div>
+            <span class="erd-conn-label" style="color:var(--orange);margin-left:4px;">N</span>
+          </div>
+        </div>
+        <div class="erd-t">
+          <div class="erd-t-head orange">detalle_ventas</div>
+          <div class="erd-t-row"><span class="erd-icon-pk">🔑</span> id_detalle</div>
+          <div class="erd-t-row"><span class="erd-icon-fk">🔗</span> id_venta</div>
+          <div class="erd-t-row"><span class="erd-icon-fk">🔗</span> id_producto</div>
+          <div class="erd-t-row"><span class="erd-icon-col">▪</span> cantidad</div>
+          <div class="erd-t-row"><span class="erd-icon-col">▪</span> precio_unitario</div>
+        </div>
+        <div class="erd-conn">
+          <div class="erd-conn-line">
+            <span class="erd-conn-label" style="color:var(--orange);margin-right:4px;">N</span>
+            <div class="line" style="background:var(--orange);"></div>
+            <span class="erd-conn-label" style="color:var(--orange);margin-left:4px;">1</span>
+          </div>
+        </div>
+        <div class="erd-t">
+          <div class="erd-t-head gold">productos</div>
+          <div class="erd-t-row"><span class="erd-icon-pk">🔑</span> id_producto</div>
+          <div class="erd-t-row"><span class="erd-icon-col">▪</span> nombre</div>
+          <div class="erd-t-row"><span class="erd-icon-col">▪</span> precio</div>
+        </div>
+      </div>
+      <p class="erd-caption">La tabla <strong>detalle_ventas</strong> implementa la N:M. Dos relaciones 1:N convergen en ella.</p>
+
+      <div class="join-compare" style="margin-top:18px;">
+        <div class="jc-card inner">
+          <h5>⚡ Camino A — Automático</h5>
+          <p>Seleccioná <strong>M:N Non-Identifying</strong> y hacé clic en las dos tablas. Workbench crea la tabla intermedia con campos mínimos. Útil para aprender el concepto rápido.</p>
+        </div>
+        <div class="jc-card left">
+          <h5>✅ Camino B — Manual (recomendado)</h5>
+          <p>Creás la tabla intermedia con todos los campos del negocio (cantidad, precio…), luego establecés dos relaciones 1:N por separado.</p>
+        </div>
+      </div>
+
+      <div class="code-wrap" style="margin-top:18px;">
+        <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+        <pre><code><span class="cm">-- Tabla INTERMEDIA: implementa la N:M entre ventas y productos</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">detalle_ventas</span> (
+    <span class="col">id_detalle</span>      <span class="kw">INT</span>           <span class="kw">AUTO_INCREMENT NOT NULL</span>,
+    <span class="col">id_venta</span>        <span class="kw">INT</span>           <span class="kw">NOT NULL</span>,   <span class="cm">-- FK → ventas</span>
+    <span class="col">id_producto</span>     <span class="kw">INT</span>           <span class="kw">NOT NULL</span>,   <span class="cm">-- FK → productos</span>
+    <span class="col">cantidad</span>        <span class="kw">INT</span>           <span class="kw">NOT NULL</span>,
+    <span class="col">precio_unitario</span> <span class="kw">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>) <span class="kw">NOT NULL</span>,
+    <span class="kw">PRIMARY KEY</span> (<span class="col">id_detalle</span>),
+    <span class="kw">INDEX</span> <span class="con">idx_venta</span>    (<span class="col">id_venta</span>),
+    <span class="kw">INDEX</span> <span class="con">idx_producto</span> (<span class="col">id_producto</span>),
+    <span class="cm">-- Primera FK: cada detalle pertenece a UNA venta</span>
+    <span class="kw">CONSTRAINT</span> <span class="con">fk_detalle_venta</span>
+        <span class="kw">FOREIGN KEY</span> (<span class="col">id_venta</span>)
+        <span class="kw">REFERENCES</span> <span class="tbl">ventas</span> (<span class="col">id_venta</span>)
+        <span class="kw">ON DELETE CASCADE ON UPDATE CASCADE</span>,
+    <span class="cm">-- Segunda FK: cada detalle referencia UN producto</span>
+    <span class="kw">CONSTRAINT</span> <span class="con">fk_detalle_producto</span>
+        <span class="kw">FOREIGN KEY</span> (<span class="col">id_producto</span>)
+        <span class="kw">REFERENCES</span> <span class="tbl">productos</span> (<span class="col">id_producto</span>)
+        <span class="kw">ON DELETE RESTRICT ON UPDATE CASCADE</span>
+);</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TPs ─── -->
+<section class="section" id="tps">
+  <div class="section-header">
+    <div class="sh-icon si-orange">📝</div>
+    <div>
+      <h2>Trabajos Prácticos N° 5, 6 y 7</h2>
+      <p>Expandiendo TechPlay Store — Hacé clic en cada TP para desplegar</p>
+    </div>
+  </div>
+
+  <div class="tp-wrap">
+
+    <!-- ─ TP 5 ─ -->
+    <div class="tp-card" id="tp5">
+      <details>
+        <summary class="tp-summary">
+          <span class="tp-badge tp-b-green">1:1 · Inicial</span>
+          <div class="tp-title-block">
+            <h3>TP N° 5 — Fichas Técnicas de Consolas</h3>
+            <p>Crear la relación 1:1 entre productos y datos_tecnicos_consolas · 60–70 min.</p>
+          </div>
+          <span class="tp-arrow">›</span>
+        </summary>
+        <div class="tp-body">
+          <div class="tp-divider"></div>
+
+          <div class="info-box ib-green">
+            <div class="ib-title">🏪 Problema de Negocio</div>
+            El área técnica necesita registrar specs detalladas de las consolas (resolución, chip, consumo, certificación IRAM, puertos USB) sin llenar de NULLs la tabla principal de productos.
+          </div>
+
+          <h4 style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:20px 0 10px;">Objetivos</h4>
+          <div class="checklist" data-tp="0" data-total="5">
+            <label class="check-item"><input type="checkbox" class="check-box" onchange="updateTP(this)"><span class="check-num">01.</span><div class="check-text">Diseñar en Workbench el diagrama EER de la relación 1:1 entre productos y datos_tecnicos_consolas.</div></label>
+            <label class="check-item"><input type="checkbox" class="check-box" onchange="updateTP(this)"><span class="check-num">02.</span><div class="check-text">Identificar correctamente la tabla padre y la tabla hija, y justificar la decisión.</div></label>
+            <label class="check-item"><input type="checkbox" class="check-box" onchange="updateTP(this)"><span class="check-num">03.</span><div class="check-text">Activar la restricción UNIQUE en id_producto de la tabla hija para garantizar el 1:1.</div></label>
+            <label class="check-item"><input type="checkbox" class="check-box" onchange="updateTP(this)"><span class="check-num">04.</span><div class="check-text">Generar el script SQL con Forward Engineer y ejecutarlo en Workbench sin errores.</div></label>
+            <label class="check-item"><input type="checkbox" class="check-box" onchange="updateTP(this)"><span class="check-num">05.</span><div class="check-text">Insertar las 6 fichas técnicas de consolas y verificar con un SELECT + INNER JOIN.</div></label>
+          </div>
+          <div class="tp-progress-bar">
+            <span class="tpb-label" id="lbl-0">0 / 5</span>
+            <div class="tpb-fill"><div class="tpb-inner" id="bar-0" style="width:0%"></div></div>
+          </div>
+
+          <h4 style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:24px 0 10px;">Script SQL esperado</h4>
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre><code><span class="kw">USE</span> techplay;
+
+<span class="kw">CREATE TABLE</span> <span class="tbl">datos_tecnicos_consolas</span> (
+    <span class="col">id_tecnico</span>     <span class="kw">INT</span>         <span class="kw">AUTO_INCREMENT NOT NULL</span>,
+    <span class="col">id_producto</span>    <span class="kw">INT</span>         <span class="kw">NOT NULL</span>,
+    <span class="col">resolucion_max</span> <span class="kw">VARCHAR</span>(<span class="num">20</span>) <span class="kw">NULL</span>,
+    <span class="col">chip_grafico</span>   <span class="kw">VARCHAR</span>(<span class="num">60</span>) <span class="kw">NULL</span>,
+    <span class="col">consumo_watts</span>  <span class="kw">INT</span>         <span class="kw">NULL</span>,
+    <span class="col">certificacion</span>  <span class="kw">VARCHAR</span>(<span class="num">40</span>) <span class="kw">NULL</span>,
+    <span class="col">puertos_usb</span>    <span class="kw">INT</span>         <span class="kw">NULL</span>,
+    <span class="kw">PRIMARY KEY</span> (<span class="col">id_tecnico</span>),
+    <span class="kw">UNIQUE INDEX</span> <span class="con">uq_id_producto</span> (<span class="col">id_producto</span>),
+    <span class="kw">CONSTRAINT</span> <span class="con">fk_tecnico_producto</span>
+        <span class="kw">FOREIGN KEY</span> (<span class="col">id_producto</span>)
+        <span class="kw">REFERENCES</span> <span class="tbl">productos</span> (<span class="col">id_producto</span>)
+        <span class="kw">ON DELETE CASCADE ON UPDATE CASCADE</span>
+);
+
+<span class="cm">-- Insertar fichas de las 6 consolas (id_producto 1..6)</span>
+<span class="kw">INSERT INTO</span> <span class="tbl">datos_tecnicos_consolas</span>
+    (<span class="col">id_producto</span>, <span class="col">resolucion_max</span>, <span class="col">chip_grafico</span>, <span class="col">consumo_watts</span>, <span class="col">certificacion</span>, <span class="col">puertos_usb</span>)
+<span class="kw">VALUES</span>
+    (<span class="num">1</span>, <span class="str">'4K UHD / 8K'</span>,  <span class="str">'AMD RDNA 2 10.3 TFLOPS'</span>, <span class="num">350</span>, <span class="str">'IRAM 62301'</span>, <span class="num">1</span>),
+    (<span class="num">2</span>, <span class="str">'4K UHD'</span>,       <span class="str">'AMD RDNA 2 10.3 TFLOPS'</span>, <span class="num">340</span>, <span class="str">'IRAM 62301'</span>, <span class="num">1</span>),
+    (<span class="num">3</span>, <span class="str">'4K / 8K HDR'</span>,  <span class="str">'AMD RDNA 2 12 TFLOPS'</span>,   <span class="num">315</span>, <span class="str">'CE Mark'</span>,    <span class="num">3</span>),
+    (<span class="num">4</span>, <span class="str">'1440p QHD'</span>,    <span class="str">'AMD RDNA 2 4 TFLOPS'</span>,    <span class="num">75</span>,  <span class="str">'CE Mark'</span>,    <span class="num">1</span>),
+    (<span class="num">5</span>, <span class="str">'1080p'</span>,        <span class="str">'Tegra T234'</span>,              <span class="num">18</span>,  <span class="str">'IRAM 62301'</span>, <span class="num">1</span>),
+    (<span class="num">6</span>, <span class="str">'720p portátil'</span>,<span class="str">'Tegra T214'</span>,              <span class="num">15</span>,  <span class="str">'IRAM 62301'</span>, <span class="num">0</span>);
+
+<span class="cm">-- Verificación</span>
+<span class="kw">SELECT</span> p.nombre, p.precio, t.resolucion_max, t.chip_grafico, t.consumo_watts
+<span class="kw">FROM</span> <span class="tbl">productos</span> p
+<span class="kw">INNER JOIN</span> <span class="tbl">datos_tecnicos_consolas</span> t <span class="kw">ON</span> p.id_producto = t.id_producto
+<span class="kw">ORDER BY</span> p.precio <span class="kw">DESC</span>;</code></pre>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <!-- ─ TP 6 ─ -->
+    <div class="tp-card" id="tp6">
+      <details>
+        <summary class="tp-summary">
+          <span class="tp-badge tp-b-blue">1:N · Intermedio</span>
+          <div class="tp-title-block">
+            <h3>TP N° 6 — Sucursales y Métodos de Pago</h3>
+            <p>Dos nuevas relaciones 1:N expanden la tabla ventas · 80–90 min.</p>
+          </div>
+          <span class="tp-arrow">›</span>
+        </summary>
+        <div class="tp-body">
+          <div class="tp-divider"></div>
+
+          <div class="info-box ib-teal">
+            <div class="ib-title">🏪 Problema de Negocio</div>
+            TechPlay Store abre 2 sucursales nuevas (Posadas y Puerto Iguazú). El sistema debe registrar en qué sucursal se realizó cada venta y qué método de pago se usó (efectivo, débito, crédito, MODO). Ambas son relaciones 1:N con la tabla ventas.
+          </div>
+
+          <h4 style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:20px 0 10px;">Objetivos</h4>
+          <div class="checklist" data-tp="1" data-total="5">
+            <label class="check-item"><input type="checkbox" class="check-box" onchange="updateTP(this)"><span class="check-num">01.</span><div class="check-text">ales (id, nombre, ciudad, dirección, teléfono, activa).</div></label>
+            <label class="check-item"><input type="checkbox" class="check-box" onchange="updateTP(this)"><span class="check-num">02.</span><div class="check-text">Crear la tabla metodos_pago con recargo_porcentaje DECIMAL(4,2).</div></label>
+            <label class="check-item"><input type="checkbox" class="check-box" onchange="updateTP(this)"><span class="check-num">03.</span><div class="check-text">Modificar la tabla ventas con ALTER TABLE agregando id_sucursal e id_metodo_pago como FKs.</div></label>
+            <label class="check-item"><input type="checkbox" class="check-box" onchange="updateTP(this)"><span class="check-num">04.</span><div class="check-text">Establecer las dos relaciones 1:N en el diagrama EER (ventas → sucursales y ventas → metodos_pago).</div></label>
+            <label class="check-item"><input type="checkbox" class="check-box" onchange="updateTP(this)"><span class="check-num">05.</span><div class="check-text">Ejecutar la consulta final con 4 JOINs (clientes + ventas + sucursales + metodos_pago).</div></label>
+          </div>
+          <div class="tp-progress-bar">
+            <span class="tpb-label" id="lbl-1">0 / 5</span>
+            <div class="tpb-fill"><div class="tpb-inner" id="bar-1" style="width:0%"></div></div>
+          </div>
+
+          <h4 style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:24px 0 10px;">Script SQL esperado</h4>
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre><code><span class="kw">USE</span> techplay;
+
+<span class="kw">CREATE TABLE</span> <span class="tbl">sucursales</span> (
+    <span class="col">id_sucursal</span>     <span class="kw">INT</span>         <span class="kw">AUTO_INCREMENT NOT NULL</span>,
+    <span class="col">nombre_sucursal</span> <span class="kw">VARCHAR</span>(80) <span class="kw">NOT NULL</span>,
+    <span class="col">ciudad</span>          <span class="kw">VARCHAR</span>(60) <span class="kw">NOT NULL</span>,
+    <span class="col">activa</span>          <span class="kw">TINYINT</span>(1)  <span class="kw">NOT NULL DEFAULT</span> 1,
+    <span class="kw">PRIMARY KEY</span> (<span class="col">id_sucursal</span>)
+);
+
+<span class="kw">CREATE TABLE</span> <span class="tbl">metodos_pago</span> (
+    <span class="col">id_metodo</span>          <span class="kw">INT</span>          <span class="kw">AUTO_INCREMENT NOT NULL</span>,
+    <span class="col">nombre_metodo</span>      <span class="kw">VARCHAR</span>(40)  <span class="kw">NOT NULL</span>,
+    <span class="col">recargo_porcentaje</span> <span class="kw">DECIMAL</span>(4,2) <span class="kw">NOT NULL DEFAULT</span> 0.00,
+    <span class="kw">PRIMARY KEY</span> (<span class="col">id_metodo</span>)
+);
+
+<span class="kw">ALTER TABLE</span> <span class="tbl">ventas</span>
+    <span class="kw">ADD COLUMN</span> <span class="col">id_sucursal</span>    <span class="kw">INT NOT NULL DEFAULT</span> 1,
+    <span class="kw">ADD COLUMN</span> <span class="col">id_metodo_pago</span> <span class="kw">INT NOT NULL DEFAULT</span> 1,
+    <span class="kw">ADD CONSTRAINT</span> <span class="con">fk_venta_sucursal</span>
+        <span class="kw">FOREIGN KEY</span> (<span class="col">id_sucursal</span>)
+        <span class="kw">REFERENCES</span> <span class="tbl">sucursales</span> (<span class="col">id_sucursal</span>)
+        <span class="kw">ON DELETE RESTRICT ON UPDATE CASCADE</span>,
+    <span class="kw">ADD CONSTRAINT</span> <span class="con">fk_venta_metodo</span>
+        <span class="kw">FOREIGN KEY</span> (<span class="col">id_metodo_pago</span>)
+        <span class="kw">REFERENCES</span> <span class="tbl">metodos_pago</span> (<span class="col">id_metodo</span>)
+        <span class="kw">ON DELETE RESTRICT ON UPDATE CASCADE</span>;
+
+<span class="cm">-- 4 JOINs de verificacion:</span>
+<span class="kw">SELECT</span> v.id_venta, CONCAT(c.nombre,' ',c.apellido) <span class="kw">AS</span> cliente,
+       s.nombre_sucursal, mp.nombre_metodo
+<span class="kw">FROM</span> <span class="tbl">ventas</span> v
+<span class="kw">INNER JOIN</span> <span class="tbl">clientes</span>     c  <span class="kw">ON</span> v.id_cliente     = c.id_cliente
+<span class="kw">INNER JOIN</span> <span class="tbl">sucursales</span>   s  <span class="kw">ON</span> v.id_sucursal    = s.id_sucursal
+<span class="kw">INNER JOIN</span> <span class="tbl">metodos_pago</span> mp <span class="kw">ON</span> v.id_metodo_pago = mp.id_metodo;</code></pre>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <!-- TP 7 -->
+    <div class="tp-card" id="tp7">
+      <details>
+        <summary class="tp-summary">
+          <span class="tp-badge tp-b-orange">N:M &middot; Avanzado</span>
+          <div class="tp-title-block">
+            <h3>TP N&deg; 7 &mdash; Modulo de Promociones Especiales</h3>
+            <p>Relacion N:M con tabla intermedia + consultas analiticas &middot; 90&ndash;120 min.</p>
+          </div>
+          <span class="tp-arrow">&#8250;</span>
+        </summary>
+        <div class="tp-body">
+          <div class="tp-divider"></div>
+          <div class="info-box ib-orange">
+            <div class="ib-title">Problema de Negocio</div>
+            Marketing quiere promociones de fin de anio. Reglas: una promo incluye varios productos; un producto puede estar en varias promos. Cada combinacion tiene su propio descuento. Esto define una relacion N:M entre promociones y productos.
+          </div>
+          <h4 style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:20px 0 10px;">Objetivos</h4>
+          <div class="checklist" data-tp="2" data-total="4">
+            <label class="check-item"><input type="checkbox" class="check-box" onchange="updateTP(this)"><span class="check-num">01.</span><div class="check-text">Identificar las dos entidades (promociones y productos) y disenar la tabla intermedia promociones_productos con campo descuento_porcentaje.</div></label>
+            <label class="check-item"><input type="checkbox" class="check-box" onchange="updateTP(this)"><span class="check-num">02.</span><div class="check-text">Establecer en el diagrama EER dos relaciones 1:N que convergen en la tabla intermedia.</div></label>
+            <label class="check-item"><input type="checkbox" class="check-box" onchange="updateTP(this)"><span class="check-num">03.</span><div class="check-text">Generar y ejecutar el script SQL; insertar 3 promociones y sus productos con descuentos.</div></label>
+            <label class="check-item"><input type="checkbox" class="check-box" onchange="updateTP(this)"><span class="check-num">04.</span><div class="check-text">Ejecutar las consultas: promos activas hoy, productos en multiples promos, y analisis de ahorro con LEFT JOIN + COALESCE.</div></label>
+          </div>
+          <div class="tp-progress-bar">
+            <span class="tpb-label" id="lbl-2">0 / 4</span>
+            <div class="tpb-fill"><div class="tpb-inner" id="bar-2" style="width:0%"></div></div>
+          </div>
+          <div class="info-box ib-purple" style="margin-top:20px;">
+            <div class="ib-title">Reflexion clave: LEFT JOIN y COALESCE</div>
+            Usamos LEFT JOIN entre detalle_ventas y promociones_productos para ver TODAS las ventas, incluso las que ocurrieron fuera de cualquier periodo de promo. <code style="font-family:var(--mono);font-size:12px;color:var(--teal);">COALESCE(pp.precio_promo, dv.precio_unitario)</code> devuelve el precio_promo si existe, o el precio real si no hubo promo activa.
+          </div>
+          <h4 style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:24px 0 10px;">Script SQL esperado</h4>
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre><code><span class="kw">CREATE TABLE</span> <span class="tbl">promociones</span> (
+    <span class="col">id_promocion</span> <span class="kw">INT AUTO_INCREMENT NOT NULL</span>,
+    <span class="col">nombre_promo</span> <span class="kw">VARCHAR</span>(100) <span class="kw">NOT NULL</span>,
+    <span class="col">fecha_inicio</span> <span class="kw">DATE NOT NULL</span>,
+    <span class="col">fecha_fin</span>    <span class="kw">DATE NOT NULL</span>,
+    <span class="col">activa</span>       <span class="kw">TINYINT</span>(1) <span class="kw">NOT NULL DEFAULT</span> 1,
+    <span class="kw">PRIMARY KEY</span> (<span class="col">id_promocion</span>)
+);
+
+<span class="kw">CREATE TABLE</span> <span class="tbl">promociones_productos</span> (
+    <span class="col">id_promo_prod</span>        <span class="kw">INT AUTO_INCREMENT NOT NULL</span>,
+    <span class="col">id_promocion</span>         <span class="kw">INT NOT NULL</span>,
+    <span class="col">id_producto</span>          <span class="kw">INT NOT NULL</span>,
+    <span class="col">descuento_porcentaje</span> <span class="kw">DECIMAL</span>(5,2) <span class="kw">NOT NULL</span>,
+    <span class="col">precio_promo</span>         <span class="kw">DECIMAL</span>(10,2) <span class="kw">NULL</span>,
+    <span class="kw">PRIMARY KEY</span> (<span class="col">id_promo_prod</span>),
+    <span class="kw">UNIQUE INDEX</span> <span class="con">uq_pp</span> (<span class="col">id_promocion</span>, <span class="col">id_producto</span>),
+    <span class="kw">CONSTRAINT</span> <span class="con">fk_pp_promo</span>
+        <span class="kw">FOREIGN KEY</span> (<span class="col">id_promocion</span>) <span class="kw">REFERENCES</span> <span class="tbl">promociones</span>(<span class="col">id_promocion</span>)
+        <span class="kw">ON DELETE CASCADE ON UPDATE CASCADE</span>,
+    <span class="kw">CONSTRAINT</span> <span class="con">fk_pp_prod</span>
+        <span class="kw">FOREIGN KEY</span> (<span class="col">id_producto</span>) <span class="kw">REFERENCES</span> <span class="tbl">productos</span>(<span class="col">id_producto</span>)
+        <span class="kw">ON DELETE RESTRICT ON UPDATE CASCADE</span>
+);
+
+<span class="cm">-- Productos con promo activa HOY:</span>
+<span class="kw">SELECT</span> p.nombre, p.precio <span class="kw">AS</span> normal, pr.nombre_promo,
+       pp.descuento_porcentaje, pp.precio_promo
+<span class="kw">FROM</span> <span class="tbl">productos</span> p
+<span class="kw">INNER JOIN</span> <span class="tbl">promociones_productos</span> pp <span class="kw">ON</span> p.id_producto  = pp.id_producto
+<span class="kw">INNER JOIN</span> <span class="tbl">promociones</span>           pr <span class="kw">ON</span> pp.id_promocion = pr.id_promocion
+<span class="kw">WHERE</span> pr.activa = 1 <span class="kw">AND</span> <span class="fn">CURDATE</span>() <span class="kw">BETWEEN</span> pr.fecha_inicio <span class="kw">AND</span> pr.fecha_fin
+<span class="kw">ORDER BY</span> pp.descuento_porcentaje <span class="kw">DESC</span>;</code></pre>
+          </div>
+        </div>
+      </details>
+    </div>
+
+  </div><!-- /tp-wrap -->
+</section>
+
+<footer>
+  E.P.E.T. N&deg; 7 &middot; Base de Datos II &middot; 5&deg; Anio Grupo "B" &middot; Tecnico en Informatica Profesional y Personal &middot; Material Didactico N&deg; 2 &middot; 2025
+</footer>
+</main>
+
+<button class="fab" onclick="toggleShortcuts()" title="Atajos de MySQL Workbench">&#9000;&#65039;</button>
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeIfBg(event)">
+  <div class="shortcuts-panel">
+    <div class="sp-header">
+      <div><h3>Atajos de Workbench</h3><span>Imprescindibles para el laboratorio</span></div>
+      <button class="close-btn" onclick="toggleShortcuts()">&#x2715;</button>
+    </div>
+    <div class="sp-body">
+      <div class="sc-row"><span class="sc-desc">Ejecutar consulta seleccionada</span><div class="sc-keys"><kbd>Ctrl</kbd><span class="sc-plus">+</span><kbd>Enter</kbd></div></div>
+      <div class="sc-row"><span class="sc-desc">Ejecutar todo el script</span><div class="sc-keys"><kbd>Ctrl</kbd><span class="sc-plus">+</span><kbd>Shift</kbd><span class="sc-plus">+</span><kbd>Enter</kbd></div></div>
+      <div class="sc-row"><span class="sc-desc">Nueva pestania SQL</span><div class="sc-keys"><kbd>Ctrl</kbd><span class="sc-plus">+</span><kbd>T</kbd></div></div>
+      <div class="sc-row"><span class="sc-desc">Formatear SQL</span><div class="sc-keys"><kbd>Ctrl</kbd><span class="sc-plus">+</span><kbd>B</kbd></div></div>
+      <div class="sc-row"><span class="sc-desc">Comentar linea</span><div class="sc-keys"><kbd>Ctrl</kbd><span class="sc-plus">+</span><kbd>/</kbd></div></div>
+      <div class="sc-row"><span class="sc-desc">Abrir archivo SQL</span><div class="sc-keys"><kbd>Ctrl</kbd><span class="sc-plus">+</span><kbd>O</kbd></div></div>
+      <div class="sc-row"><span class="sc-desc">Guardar script</span><div class="sc-keys"><kbd>Ctrl</kbd><span class="sc-plus">+</span><kbd>S</kbd></div></div>
+      <div class="sc-row"><span class="sc-desc">Deshacer</span><div class="sc-keys"><kbd>Ctrl</kbd><span class="sc-plus">+</span><kbd>Z</kbd></div></div>
+      <div class="sc-row"><span class="sc-desc">Buscar en el editor</span><div class="sc-keys"><kbd>Ctrl</kbd><span class="sc-plus">+</span><kbd>F</kbd></div></div>
+      <div class="sc-row"><span class="sc-desc">Autocompletar</span><div class="sc-keys"><kbd>Ctrl</kbd><span class="sc-plus">+</span><kbd>Espacio</kbd></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const TP_TOTALS = [5, 5, 4];
+const GRAND = 14;
+
+function updateTP(cb) {
+  cb.closest('.check-item').classList.toggle('done', cb.checked);
+  const list = cb.closest('.checklist');
+  const tp   = parseInt(list.dataset.tp);
+  const done = [...list.querySelectorAll('.check-box')].filter(c=>c.checked).length;
+  const tot  = TP_TOTALS[tp];
+  document.getElementById('bar-'+tp).style.width=(done/tot*100)+'%';
+  document.getElementById('lbl-'+tp).textContent=done+' / '+tot+(done===tot?' 🎉':'');
+  updateGlobal(); save();
+}
+
+function updateGlobal() {
+  const done=[...document.querySelectorAll('.check-box')].filter(c=>c.checked).length;
+  const pct=Math.round(done/GRAND*100);
+  document.getElementById('globalFill').style.width=pct+'%';
+  document.getElementById('globalText').textContent=done+' / '+GRAND+' objetivos'+(done===GRAND?' 🏆':'');
+}
+
+function save() {
+  const s=[...document.querySelectorAll('.check-box')].map(c=>c.checked);
+  try{localStorage.setItem('bd2-eer-p',JSON.stringify(s));}catch(e){}
+}
+
+function load() {
+  try {
+    const s=JSON.parse(localStorage.getItem('bd2-eer-p')||'[]');
+    document.querySelectorAll('.check-box').forEach((c,i)=>{
+      if(s[i]){c.checked=true;c.closest('.check-item').classList.add('done');}
+    });
+    for(let tp=0;tp<3;tp++){
+      const list=document.querySelector('.checklist[data-tp="'+tp+'"]');
+      if(!list)continue;
+      const done=[...list.querySelectorAll('.check-box')].filter(c=>c.checked).length;
+      const tot=TP_TOTALS[tp];
+      document.getElementById('bar-'+tp).style.width=(done/tot*100)+'%';
+      document.getElementById('lbl-'+tp).textContent=done+' / '+tot+(done===tot?' 🎉':'');
+    }
+    updateGlobal();
+  }catch(e){}
+}
+
+function copyCode(btn) {
+  const text=btn.nextElementSibling.innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='✓ Copiado';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copiar';btn.classList.remove('copied');},2000);
+  }).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=text;
+    ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);
+    ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    btn.textContent='✓ Copiado';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copiar';btn.classList.remove('copied');},2000);
+  });
+}
+
+function toggleShortcuts(){document.getElementById('modalOverlay').classList.toggle('open');}
+function closeIfBg(e){if(e.target===document.getElementById('modalOverlay'))toggleShortcuts();}
+
+const sidebar=document.getElementById('sidebar');
+const sbOv=document.getElementById('sbOverlay');
+document.getElementById('navToggle').onclick=()=>{
+  sidebar.classList.contains('open')?closeSB():openSB();
+};
+sbOv.onclick=closeSB;
+function openSB(){sidebar.classList.add('open');sbOv.classList.add('open');}
+function closeSB(){sidebar.classList.remove('open');sbOv.classList.remove('open');}
+
+const navLinks=document.querySelectorAll('.sb-nav .nav-link:not([data-tp])');
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      navLinks.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+e.target.id));
+    }
+  });
+},{threshold:0.25});
+['inicio','intro','tipos','relaciones','tps'].forEach(id=>{
+  const el=document.getElementById(id);if(el)obs.observe(el);
+});
+
+function scrollTo11(){document.getElementById('r11').scrollIntoView({behavior:'smooth'});}
+function scrollTo1n(){document.getElementById('r1n').scrollIntoView({behavior:'smooth'});}
+function scrollToNm(){document.getElementById('rnm').scrollIntoView({behavior:'smooth'});}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){document.getElementById('modalOverlay').classList.remove('open');closeSB();}
+});
+document.addEventListener('DOMContentLoaded',load);
+</script>
+</body>
+</html>

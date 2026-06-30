@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Base de Datos II — 5° B | E.P.E.T. N° 7</title>
+<style>
+/* ═══════════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════════ */
+:root {
+  --bg0:      #080d18;
+  --bg1:      #0f172a;
+  --bg2:      #1e293b;
+  --bg3:      #243044;
+  --surface:  #172033;
+  --border:   #2a3a52;
+  --text:     #e2e8f0;
+  --muted:    #7e97b8;
+  --dim:      #3d5270;
+
+  --cyan:     #22d3ee;
+  --cyan-dim: #0e7490;
+  --violet:   #a78bfa;
+  --violet-dim:#4c1d95;
+  --green:    #4ade80;
+  --green-dim:#14532d;
+  --orange:   #fb923c;
+  --orange-dim:#7c2d12;
+  --red:      #f87171;
+  --red-dim:  #7f1d1d;
+  --yellow:   #fbbf24;
+
+  --radius:   12px;
+  --radius-sm:8px;
+  --font:     'Segoe UI', system-ui, -apple-system, sans-serif;
+  --mono:     'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  --nav-w:    240px;
+  --transition: 0.25s cubic-bezier(.4,0,.2,1);
+}
+
+/* ═══════════════════════════════════════════
+   RESET / BASE
+═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg0);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* ═══════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg1); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--dim); }
+
+/* ═══════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════ */
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ─── SIDEBAR NAV ──────────────────────────── */
+.sidebar {
+  width: var(--nav-w);
+  background: var(--bg1);
+  border-right: 1px solid var(--border);
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition);
+}
+
+.sidebar-brand {
+  padding: 20px 16px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-brand .school {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+.sidebar-brand .subject {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 2px;
+}
+.sidebar-brand .grade {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+.sidebar-progress {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.progress-label {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 6px;
+}
+.progress-bar-wrap {
+  background: var(--bg2);
+  border-radius: 99px;
+  height: 6px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--cyan), var(--violet));
+  border-radius: 99px;
+  transition: width .5s ease;
+}
+.progress-text {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+  text-align: right;
+}
+
+nav.sidebar-nav {
+  flex: 1;
+  padding: 8px 0;
+}
+
+.nav-section-label {
+  padding: 12px 16px 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 16px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13.5px;
+  border-left: 3px solid transparent;
+  transition: all var(--transition);
+}
+.nav-link:hover {
+  color: var(--text);
+  background: var(--bg2);
+}
+.nav-link.active {
+  color: var(--cyan);
+  border-left-color: var(--cyan);
+  background: rgba(34,211,238,.07);
+}
+.nav-link .icon { font-size: 15px; flex-shrink: 0; }
+.nav-tp-badge {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 99px;
+  letter-spacing: .04em;
+}
+.badge-inicial   { background: var(--green-dim);  color: var(--green);  }
+.badge-medio     { background: var(--cyan-dim);   color: var(--cyan);   }
+.badge-alto      { background: var(--orange-dim); color: var(--orange); }
+.badge-avanzado  { background: var(--red-dim);    color: var(--red);    }
+
+/* ─── MAIN ─────────────────────────────────── */
+.main {
+  margin-left: var(--nav-w);
+  flex: 1;
+  max-width: 900px;
+  padding: 48px 32px;
+}
+
+/* ─── MOBILE NAV TOGGLE ─────────────────────── */
+.nav-toggle {
+  display: none;
+  position: fixed;
+  top: 12px; left: 12px;
+  z-index: 200;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  width: 40px; height: 40px;
+  font-size: 18px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  z-index: 99;
+}
+
+/* ═══════════════════════════════════════════
+   SECTIONS
+═══════════════════════════════════════════ */
+.section { margin-bottom: 64px; }
+
+/* ─── HERO ──────────────────────────────────── */
+.hero {
+  position: relative;
+  padding: 48px 40px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--bg1);
+  border: 1px solid var(--border);
+  margin-bottom: 64px;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(34,211,238,.12) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 20% 80%, rgba(167,139,250,.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 12px;
+}
+.hero h1 {
+  font-size: clamp(26px, 5vw, 42px);
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.hero h1 span { color: var(--cyan); }
+.hero-sub {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+.hero-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip {
+  padding: 5px 14px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  color: var(--muted);
+}
+.chip.accent { border-color: var(--cyan-dim); color: var(--cyan); background: rgba(34,211,238,.08); }
+.hero-scan {
+  position: absolute;
+  right: -20px; top: -20px;
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  border: 1px solid rgba(34,211,238,.15);
+  pointer-events: none;
+}
+.hero-scan::before {
+  content: '';
+  position: absolute;
+  inset: 20px;
+  border-radius: 50%;
+  border: 1px solid rgba(167,139,250,.1);
+}
+
+/* ─── SECTION HEADERS ───────────────────────── */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.section-icon {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.icon-cyan   { background: rgba(34,211,238,.15); }
+.icon-violet { background: rgba(167,139,250,.15); }
+.icon-green  { background: rgba(74,222,128,.15); }
+.icon-orange { background: rgba(251,146,60,.15); }
+
+.section-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+.section-header p {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+/* ─── CARDS ─────────────────────────────────── */
+.card {
+  background: var(--bg1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 16px;
+}
+.card.accent-left-cyan   { border-left: 3px solid var(--cyan); }
+.card.accent-left-violet { border-left: 3px solid var(--violet); }
+.card.accent-left-green  { border-left: 3px solid var(--green); }
+.card.accent-left-orange { border-left: 3px solid var(--orange); }
+.card.accent-left-red    { border-left: 3px solid var(--red); }
+
+/* ─── INTRO CARD ────────────────────────────── */
+.intro-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+}
+.intro-card p { color: var(--muted); margin-bottom: 14px; }
+.intro-card p:last-child { margin-bottom: 0; }
+.intro-card strong { color: var(--text); }
+.highlight-box {
+  background: rgba(34,211,238,.07);
+  border: 1px solid var(--cyan-dim);
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  margin-top: 20px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.highlight-box .hl-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+.highlight-box p { color: var(--text); margin: 0; font-size: 14px; }
+.highlight-box p span { color: var(--cyan); font-weight: 600; }
+
+/* ─── FLIP CARDS ─────────────────────────────── */
+.myths-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+.flip-card {
+  height: 200px;
+  perspective: 1000px;
+  cursor: pointer;
+}
+.flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform .55s cubic-bezier(.4,0,.2,1);
+}
+.flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+.flip-front, .flip-back {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  padding: 24px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.flip-front {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+}
+.flip-back {
+  background: var(--surface);
+  border: 1px solid var(--cyan-dim);
+  transform: rotateY(180deg);
+}
+.myth-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 8px;
+}
+.myth-text {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 600;
+  line-height: 1.4;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+.flip-hint {
+  font-size: 11px;
+  color: var(--dim);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.reality-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.reality-text {
+  font-size: 13.5px;
+  color: var(--muted);
+  flex: 1;
+  display: flex;
+  align-items: center;
+  line-height: 1.5;
+}
+.flip-hint-back {
+  font-size: 11px;
+  color: var(--cyan-dim);
+}
+
+/* ─── STEPS ──────────────────────────────────── */
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+.step-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--transition), transform var(--transition);
+}
+.step-card:hover { border-color: var(--cyan-dim); transform: translateY(-2px); }
+.step-num {
+  font-size: 40px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--border);
+  position: absolute;
+  right: 12px; top: 8px;
+  font-family: var(--mono);
+  letter-spacing: -.05em;
+}
+.step-icon { font-size: 24px; margin-bottom: 10px; }
+.step-card h3 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.step-card p  { font-size: 13px; color: var(--muted); line-height: 1.5; }
+.step-card kbd {
+  background: var(--bg0);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--cyan);
+}
+
+/* ─── TP TABS ────────────────────────────────── */
+.tp-tabs {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  background: var(--bg1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 6px;
+}
+.tp-tab-btn {
+  flex: 1;
+  min-width: 100px;
+  padding: 9px 14px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.tp-tab-btn:hover { background: var(--bg2); color: var(--text); }
+.tp-tab-btn.active { background: var(--bg2); color: var(--text); }
+.tp-tab-btn.active.t1 { color: var(--green);  box-shadow: inset 0 -2px 0 var(--green); }
+.tp-tab-btn.active.t2 { color: var(--cyan);   box-shadow: inset 0 -2px 0 var(--cyan); }
+.tp-tab-btn.active.t3 { color: var(--orange); box-shadow: inset 0 -2px 0 var(--orange); }
+.tp-tab-btn.active.t4 { color: var(--red);    box-shadow: inset 0 -2px 0 var(--red); }
+
+.tp-panel { display: none; }
+.tp-panel.active { display: block; }
+
+.tp-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.tp-title-group h3 {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+}
+.tp-title-group p {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.tp-badge {
+  padding: 6px 16px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.tp-badge.inicial  { background: var(--green-dim);  color: var(--green);  border: 1px solid rgba(74,222,128,.25); }
+.tp-badge.medio    { background: var(--cyan-dim);   color: var(--cyan);   border: 1px solid rgba(34,211,238,.25); }
+.tp-badge.alto     { background: var(--orange-dim); color: var(--orange); border: 1px solid rgba(251,146,60,.25); }
+.tp-badge.avanzado { background: var(--red-dim);    color: var(--red);    border: 1px solid rgba(248,113,113,.25); }
+
+/* ─── THEORY BOX ─────────────────────────────── */
+.theory-box {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 24px;
+}
+.theory-box h4 {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--violet);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.theory-box p {
+  font-size: 13.5px;
+  color: var(--muted);
+  margin-bottom: 12px;
+  line-height: 1.7;
+}
+.theory-box p:last-child { margin-bottom: 0; }
+.theory-box strong { color: var(--text); }
+.theory-box .theory-note {
+  background: rgba(167,139,250,.08);
+  border: 1px solid rgba(167,139,250,.2);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--violet);
+  margin-top: 14px;
+}
+
+/* ─── CODE BLOCK ─────────────────────────────── */
+.code-wrap {
+  position: relative;
+  margin: 14px 0;
+}
+.code-wrap pre {
+  background: #0d1117;
+  border: 1px solid #1e293b;
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  overflow-x: auto;
+  margin: 0;
+}
+.code-wrap code {
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.7;
+  color: #e2e8f0;
+}
+.kw  { color: #79c0ff; font-weight: 600; }  /* keywords */
+.fn  { color: #d2a8ff; }                     /* functions */
+.str { color: #a5d6a7; }                     /* strings */
+.num { color: #ffa657; }                     /* numbers */
+.cm  { color: #6e7681; font-style: italic; } /* comments */
+.op  { color: #ff7b72; }                     /* operators */
+
+.copy-btn {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: all var(--transition);
+  letter-spacing: .04em;
+}
+.copy-btn:hover { background: var(--border); color: var(--text); }
+.copy-btn.copied { color: var(--green); border-color: var(--green-dim); }
+
+/* ─── CONSIGNAS / CHECKLIST ─────────────────── */
+.consignas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+.consigna-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  transition: background var(--transition), border-color var(--transition);
+  cursor: pointer;
+}
+.consigna-item:hover { border-color: var(--dim); }
+.consigna-item.done {
+  background: rgba(74,222,128,.04);
+  border-color: rgba(74,222,128,.2);
+}
+.consigna-check {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px; height: 20px;
+  min-width: 20px;
+  border: 2px solid var(--border);
+  border-radius: 5px;
+  background: var(--bg1);
+  cursor: pointer;
+  position: relative;
+  margin-top: 1px;
+  transition: all var(--transition);
+}
+.consigna-check:checked {
+  background: var(--green);
+  border-color: var(--green);
+}
+.consigna-check:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--bg0);
+  font-size: 12px;
+  font-weight: 800;
+}
+.consigna-num {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--dim);
+  min-width: 22px;
+  padding-top: 2px;
+  font-family: var(--mono);
+}
+.consigna-text {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.6;
+  flex: 1;
+  transition: all var(--transition);
+  user-select: none;
+}
+.consigna-item.done .consigna-text {
+  text-decoration: line-through;
+  color: var(--dim);
+}
+.consigna-hint {
+  font-size: 12px;
+  color: var(--cyan);
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: .8;
+}
+
+/* ─── PROGRESO SECTION ───────────────────────── */
+.tp-progress {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.tp-progress-bar-wrap {
+  flex: 1;
+  background: var(--bg0);
+  border-radius: 99px;
+  height: 6px;
+  overflow: hidden;
+}
+.tp-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green), var(--cyan));
+  border-radius: 99px;
+  transition: width .4s ease;
+}
+.tp-progress-label {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* ─── JOIN TABLE ─────────────────────────────── */
+.join-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 14px 0;
+}
+.join-card {
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  border: 1px solid;
+}
+.join-card.inner { background: rgba(34,211,238,.05); border-color: var(--cyan-dim); }
+.join-card.left  { background: rgba(74,222,128,.05); border-color: var(--green-dim); }
+.join-card h5 {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 8px;
+}
+.join-card.inner h5 { color: var(--cyan); }
+.join-card.left  h5 { color: var(--green); }
+.join-card p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+/* ─── FAB + MODAL ────────────────────────────── */
+.fab {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  z-index: 300;
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--cyan), var(--violet));
+  border: none;
+  color: var(--bg0);
+  font-size: 22px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(34,211,238,.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.fab:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 28px rgba(34,211,238,.45);
+}
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.7);
+  z-index: 400;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 24px;
+}
+.modal-overlay.open { display: flex; }
+
+.shortcuts-panel {
+  background: var(--bg1);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  width: 360px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 64px rgba(0,0,0,.6);
+  animation: slideUp .25s ease;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.shortcuts-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.shortcuts-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+.shortcuts-header span { font-size: 13px; color: var(--muted); margin-top: 2px; }
+.close-btn {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 8px;
+  width: 32px; height: 32px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+}
+.close-btn:hover { background: var(--bg3); color: var(--text); }
+
+.shortcuts-body { padding: 16px 20px; }
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.shortcut-row:last-child { border-bottom: none; }
+.shortcut-desc {
+  font-size: 13.5px;
+  color: var(--muted);
+}
+.shortcut-keys {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.shortcut-keys kbd {
+  background: var(--bg0);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  padding: 2px 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--cyan);
+}
+.shortcut-keys .plus {
+  color: var(--dim);
+  font-size: 11px;
+}
+
+/* ─── FOOTER ─────────────────────────────────── */
+footer {
+  margin-top: 80px;
+  padding: 24px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  font-size: 12px;
+  color: var(--dim);
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .sidebar-overlay.open { display: block; }
+  .nav-toggle { display: flex; }
+  .main {
+    margin-left: 0;
+    padding: 64px 16px 32px;
+  }
+  .myths-grid { grid-template-columns: 1fr; }
+  .steps-grid { grid-template-columns: 1fr 1fr; }
+  .join-compare { grid-template-columns: 1fr; }
+  .tp-tab-btn { font-size: 12px; padding: 8px 10px; min-width: 70px; }
+  .shortcuts-panel { width: 100%; }
+  .modal-overlay { padding: 0; align-items: flex-end; }
+  .shortcuts-panel { border-radius: 16px 16px 0 0; }
+}
+@media (max-width: 420px) {
+  .steps-grid { grid-template-columns: 1fr; }
+  .hero { padding: 28px 20px; }
+}
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     MOBILE NAV TOGGLE
+═══════════════════════════════════════════ -->
+<button class="nav-toggle" id="navToggle" aria-label="Abrir menú">☰</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- ═══════════════════════════════════════════
+     SIDEBAR
+═══════════════════════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="school">E.P.E.T. N° 7</div>
+    <div class="subject">Base de Datos II</div>
+    <div class="grade">5° Año — Grupo "B"</div>
+  </div>
+
+  <div class="sidebar-progress">
+    <div class="progress-label">Progreso total</div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="globalProgressFill" style="width:0%"></div>
+    </div>
+    <div class="progress-text" id="globalProgressText">0 / 19 ejercicios</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Inicio</div>
+    <a href="#inicio"   class="nav-link active"><span class="icon">🏠</span> Presentación</a>
+    <a href="#intro"    class="nav-link"><span class="icon">💡</span> ¿Para qué sirve?</a>
+    <a href="#mitos"    class="nav-link"><span class="icon">🃏</span> Mitos vs. Realidad</a>
+    <a href="#workbench" class="nav-link"><span class="icon">🖥️</span> Primeros Pasos</a>
+    <div class="nav-section-label">Trabajos Prácticos</div>
+    <a href="#tps" class="nav-link" data-tab="0"><span class="icon">✏️</span> TP N° 1 — Básico <span class="nav-tp-badge badge-inicial">Inicial</span></a>
+    <a href="#tps" class="nav-link" data-tab="1"><span class="icon">📊</span> TP N° 2 — Agregación <span class="nav-tp-badge badge-medio">Medio</span></a>
+    <a href="#tps" class="nav-link" data-tab="2"><span class="icon">🔗</span> TP N° 3 — JOINs <span class="nav-tp-badge badge-alto">Alto</span></a>
+    <a href="#tps" class="nav-link" data-tab="3"><span class="icon">🏆</span> TP N° 4 — Desafío <span class="nav-tp-badge badge-avanzado">Pro</span></a>
+  </nav>
+</aside>
+
+<!-- ═══════════════════════════════════════════
+     MAIN CONTENT
+═══════════════════════════════════════════ -->
+<main class="main">
+
+  <!-- ── HERO ─────────────────────────────────── -->
+  <div class="hero" id="inicio">
+    <div class="hero-scan"></div>
+    <div class="hero-eyebrow">E.P.E.T. N° 7 · Técnico en Informática Profesional y Personal</div>
+    <h1>Cuadernillo Digital<br><span>Base de Datos II</span></h1>
+    <p class="hero-sub">5° Año Grupo "B" · MySQL con MySQL Workbench · Año 2025</p>
+    <div class="hero-chips">
+      <span class="chip accent">MySQL Workbench</span>
+      <span class="chip">SQL Profesional</span>
+      <span class="chip">4 TPs Secuenciales</span>
+      <span class="chip">Nivel: Inicial → Avanzado</span>
+    </div>
+  </div>
+
+  <!-- ── INTRO ─────────────────────────────────── -->
+  <section class="section" id="intro">
+    <div class="section-header">
+      <div class="section-icon icon-cyan">💡</div>
+      <div>
+        <h2>¿Para qué te sirve esto?</h2>
+        <p>Tu futuro profesional empieza acá</p>
+      </div>
+    </div>
+    <div class="intro-card">
+      <p>¡Bienvenido/a a Base de Datos II! Si llegaste hasta acá, ya sos parte del <strong>5% de la población que sabe que existen las bases de datos</strong> y además las va a aprender a manejar.</p>
+      <p>No importa cuánto recuerdes del año pasado. Este cuadernillo digital está diseñado para que arranques desde cero, a tu ritmo, con ejercicios reales sobre una base de datos de una <strong>tienda de videojuegos y tecnología</strong> llamada <strong>TechPlay Store</strong>.</p>
+      <p><strong>MySQL Workbench</strong> es la herramienta oficial de Oracle para trabajar con MySQL, el motor de bases de datos más usado del planeta. Es gratuito, profesional y aparece en los avisos de trabajo de técnicos informáticos en toda Argentina.</p>
+      <div class="highlight-box">
+        <div class="hl-icon">🚀</div>
+        <p><span>Instagram, Netflix, Spotify, Fortnite, MercadoLibre</span> — todos usan bases de datos relacionales como MySQL. Al final de este cuadernillo, vas a poder leer y escribir el mismo lenguaje que usan sus desarrolladores.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── MITOS ──────────────────────────────────── -->
+  <section class="section" id="mitos">
+    <div class="section-header">
+      <div class="section-icon icon-violet">🃏</div>
+      <div>
+        <h2>Mitos vs. Realidades de SQL</h2>
+        <p>Hacé clic en cada carta para descubrir la realidad</p>
+      </div>
+    </div>
+    <div class="myths-grid">
+      <!-- Mito 1 -->
+      <div class="flip-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Mito 1: Tocar para ver realidad">
+        <div class="flip-inner">
+          <div class="flip-front">
+            <div>
+              <div class="myth-label">⚠️ Mito #1</div>
+              <div class="myth-text">"SQL es solo para matemáticos o genios de la programación."</div>
+            </div>
+            <div class="flip-hint">👆 Tocá para ver la realidad</div>
+          </div>
+          <div class="flip-back">
+            <div>
+              <div class="reality-label">✅ Realidad</div>
+              <div class="reality-text">SQL usa inglés básico y lógica cotidiana. Si sabés filtrar productos en MercadoLibre por precio y categoría, ya pensás como SQL.</div>
+            </div>
+            <div class="flip-hint-back">👆 Tocá para volver</div>
+          </div>
+        </div>
+      </div>
+      <!-- Mito 2 -->
+      <div class="flip-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Mito 2: Tocar para ver realidad">
+        <div class="flip-inner">
+          <div class="flip-front">
+            <div>
+              <div class="myth-label">⚠️ Mito #2</div>
+              <div class="myth-text">"Si no me acuerdo de nada del año pasado, ya desaprobé."</div>
+            </div>
+            <div class="flip-hint">👆 Tocá para ver la realidad</div>
+          </div>
+          <div class="flip-back">
+            <div>
+              <div class="reality-label">✅ Realidad</div>
+              <div class="reality-text">Este cuadernillo arranca desde cero absoluto. Tu constancia y esfuerzo de hoy valen más que tu memoria de ayer. ¡Acá se puede!</div>
+            </div>
+            <div class="flip-hint-back">👆 Tocá para volver</div>
+          </div>
+        </div>
+      </div>
+      <!-- Mito 3 -->
+      <div class="flip-card" onclick="this.classList.toggle('flipped')" role="button" tabindex="0" aria-label="Mito 3: Tocar para ver realidad">
+        <div class="flip-inner">
+          <div class="flip-front">
+            <div>
+              <div class="myth-label">⚠️ Mito #3</div>
+              <div class="myth-text">"Las bases de datos son aburridas y solo texto."</div>
+            </div>
+            <div class="flip-hint">👆 Tocá para ver la realidad</div>
+          </div>
+          <div class="flip-back">
+            <div>
+              <div class="reality-label">✅ Realidad</div>
+              <div class="reality-text">Son el motor de Instagram, Netflix y Fortnite. Sin bases de datos, tus juegos y redes favoritas no existirían. Todo es una tabla.</div>
+            </div>
+            <div class="flip-hint-back">👆 Tocá para volver</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── WORKBENCH ──────────────────────────────── -->
+  <section class="section" id="workbench">
+    <div class="section-header">
+      <div class="section-icon icon-green">🖥️</div>
+      <div>
+        <h2>Primeros Pasos en Workbench</h2>
+        <p>4 pasos para tener la base de datos lista</p>
+      </div>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <div class="step-icon">🚀</div>
+        <h3>Abrir Workbench</h3>
+        <p>Buscá <strong>"MySQL Workbench"</strong> en el menú Inicio y hacé doble clic. Si no aparece, avisale al profe.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <div class="step-icon">🔌</div>
+        <h3>Conectarse</h3>
+        <p>Hacé clic en <strong>"Local instance MySQL80"</strong>. Si pide contraseña, probá con <kbd>root</kbd> o dejala vacía.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <div class="step-icon">⚡</div>
+        <h3>Ejecutar el Script</h3>
+        <p>Andá a <strong>File → Open SQL Script</strong>, abrí el archivo del profe y presioná <kbd>Ctrl+Shift+Enter</kbd> para ejecutar todo.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">04</div>
+        <div class="step-icon">✅</div>
+        <h3>Verificar</h3>
+        <p>En el panel izquierdo (Schemas), refrescá 🔄 y buscá la base <strong>"techplay"</strong> con sus 6 tablas.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TPs ────────────────────────────────────── -->
+  <section class="section" id="tps">
+    <div class="section-header">
+      <div class="section-icon icon-orange">📝</div>
+      <div>
+        <h2>Trabajos Prácticos</h2>
+        <p>De lo simple a lo avanzado · Marcá cada ejercicio al completarlo</p>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tp-tabs">
+      <button class="tp-tab-btn t1 active" onclick="switchTab(0)">✏️ TP 1</button>
+      <button class="tp-tab-btn t2"        onclick="switchTab(1)">📊 TP 2</button>
+      <button class="tp-tab-btn t3"        onclick="switchTab(2)">🔗 TP 3</button>
+      <button class="tp-tab-btn t4"        onclick="switchTab(3)">🏆 TP 4</button>
+    </div>
+
+    <!-- ─ TP 1 ──────────────────────────────── -->
+    <div class="tp-panel active" id="tp-0">
+      <div class="card accent-left-green">
+        <div class="tp-header">
+          <div class="tp-title-group">
+            <h3>✏️ TP N° 1 — Recordando lo Básico</h3>
+            <p>SELECT · WHERE · ORDER BY · Operadores lógicos (AND, OR, NOT)</p>
+          </div>
+          <span class="tp-badge inicial">Inicial</span>
+        </div>
+
+        <div class="theory-box">
+          <h4>📖 Mini repaso teórico</h4>
+          <p>Una consulta SQL básica siempre tiene la misma estructura. Pensala como una pregunta en inglés sencillo:</p>
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre><code><span class="kw">SELECT</span>  columna1, columna2    <span class="cm">-- ¿QUÉ querés ver?</span>
+<span class="kw">FROM</span>    nombre_tabla          <span class="cm">-- ¿DE DÓNDE?</span>
+<span class="kw">WHERE</span>   condicion             <span class="cm">-- ¿QUÉ FILTRO?</span>
+<span class="kw">ORDER BY</span> columna <span class="kw">ASC</span>|<span class="kw">DESC</span>;   <span class="cm">-- ¿EN QUÉ ORDEN?</span></code></pre>
+          </div>
+          <p><strong>Operadores de comparación:</strong> <code style="color:var(--cyan)"> = </code> igual · <code style="color:var(--cyan)"> != </code> distinto · <code style="color:var(--cyan)"> &gt; </code> mayor · <code style="color:var(--cyan)"> &lt; </code> menor</p>
+          <p><strong>Operadores lógicos:</strong> <code style="color:var(--violet)">AND</code> (ambas condiciones verdaderas) · <code style="color:var(--violet)">OR</code> (al menos una) · <code style="color:var(--violet)">NOT</code> (niega)</p>
+          <div class="theory-note">💡 <strong>Tip:</strong> Los textos en WHERE van entre comillas simples ('Posadas') y los números sin comillas (precio &gt; 100000).</div>
+        </div>
+
+        <h4 style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Consignas — marcá cada una al completarla</h4>
+        <div class="consignas-list" data-tp="0">
+          <label class="consigna-item">
+            <input type="checkbox" class="consigna-check" onchange="updateProgress(this)">
+            <span class="consigna-num">01.</span>
+            <div class="consigna-text">Mostrá el nombre, precio y stock de TODOS los productos de la tienda, ordenados por precio de mayor a menor.</div>
+          </label>
+          <label class="consigna-item">
+            <input type="checkbox" class="consigna-check" onchange="updateProgress(this)">
+            <span class="consigna-num">02.</span>
+            <div class="consigna-text">Mostrá el nombre completo y la ciudad de los clientes que viven en <code style="color:var(--green)">'Posadas'</code>, ordenados alfabéticamente por apellido.</div>
+          </label>
+          <label class="consigna-item">
+            <input type="checkbox" class="consigna-check" onchange="updateProgress(this)">
+            <span class="consigna-num">03.</span>
+            <div class="consigna-text">Mostrá los productos con precio mayor a $100.000 <strong>Y</strong> stock mayor a 10 unidades. Columnas: nombre, precio, stock.</div>
+          </label>
+          <label class="consigna-item">
+            <input type="checkbox" class="consigna-check" onchange="updateProgress(this)">
+            <span class="consigna-num">04.</span>
+            <div class="consigna-text">Mostrá todos los productos que <strong>NO</strong> son de la categoría 2 (id_categoria != 2) y que además tienen stock mayor a 20 unidades.</div>
+          </label>
+          <label class="consigna-item">
+            <input type="checkbox" class="consigna-check" onchange="updateProgress(this)">
+            <span class="consigna-num">05.</span>
+            <div class="consigna-text">Buscá los clientes que viven en <code style="color:var(--green)">'Posadas'</code> O en <code style="color:var(--green)">'Jardín América'</code>. Mostrá nombre, apellido y ciudad.</div>
+          </label>
+        </div>
+        <div class="tp-progress">
+          <span class="tp-progress-label" id="progress-label-0">0 / 5 completados</span>
+          <div class="tp-progress-bar-wrap"><div class="tp-progress-fill" id="progress-fill-0" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─ TP 2 ──────────────────────────────── -->
+    <div class="tp-panel" id="tp-1">
+      <div class="card accent-left-cyan">
+        <div class="tp-header">
+          <div class="tp-title-group">
+            <h3>📊 TP N° 2 — Funciones de Agregación</h3>
+            <p>COUNT · SUM · AVG · MAX · MIN · GROUP BY · HAVING</p>
+          </div>
+          <span class="tp-badge medio">Intermedio</span>
+        </div>
+
+        <div class="theory-box">
+          <h4>📖 Mini repaso teórico</h4>
+          <p>Las funciones de agregación <strong>calculan un único resultado</strong> a partir de varias filas:</p>
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre><code><span class="fn">COUNT</span>(*)           <span class="cm">-- Cuenta cuántas filas hay</span>
+<span class="fn">SUM</span>(precio)        <span class="cm">-- Suma todos los precios</span>
+<span class="fn">AVG</span>(precio)        <span class="cm">-- Calcula el promedio</span>
+<span class="fn">MAX</span>(precio)        <span class="cm">-- Devuelve el valor más alto</span>
+<span class="fn">MIN</span>(precio)        <span class="cm">-- Devuelve el valor más bajo</span>
+
+<span class="cm">-- Con GROUP BY agrupamos por categoría:</span>
+<span class="kw">SELECT</span> id_categoria, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> cantidad
+<span class="kw">FROM</span> productos
+<span class="kw">GROUP BY</span> id_categoria
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(*) &gt; <span class="num">3</span>;</code></pre>
+          </div>
+          <div class="theory-note">⚠️ <strong>Diferencia clave:</strong> <code style="color:var(--red)">WHERE</code> filtra FILAS individuales (antes de agrupar). <code style="color:var(--violet)">HAVING</code> filtra GRUPOS (después del GROUP BY).</div>
+        </div>
+
+        <h4 style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Consignas</h4>
+        <div class="consignas-list" data-tp="1">
+          <label class="consigna-item">
+            <input type="checkbox" class="consigna-check" onchange="updateProgress(this)">
+            <span class="consigna-num">01.</span>
+            <div class="consigna-text">¿Cuántos productos hay registrados en total? Usá <code style="color:var(--fn-color,#d2a8ff)">COUNT(*)</code>.</div>
+          </label>
+          <label class="consigna-item">
+            <input type="checkbox" class="consigna-check" onchange="updateProgress(this)">
+            <span class="consigna-num">02.</span>
+            <div class="consigna-text">¿Cuál es el precio promedio de los productos? Redondeá a 2 decimales con <code style="color:#d2a8ff">ROUND(AVG(precio), 2)</code>.</div>
+          </label>
+          <label class="consigna-item">
+            <input type="checkbox" class="consigna-check" onchange="updateProgress(this)">
+            <span class="consigna-num">03.</span>
+            <div class="consigna-text">Mostrá cuántos productos hay en cada categoría (id_categoria). Usá GROUP BY y ordená de mayor a menor cantidad.</div>
+          </label>
+          <label class="consigna-item">
+            <input type="checkbox" class="consigna-check" onchange="updateProgress(this)">
+            <span class="consigna-num">04.</span>
+            <div class="consigna-text">¿Cuál es el producto más caro (MAX) y el más barato (MIN) de la tienda? Mostrá ambos en una sola consulta.</div>
+          </label>
+          <label class="consigna-item">
+            <input type="checkbox" class="consigna-check" onchange="updateProgress(this)">
+            <span class="consigna-num">05.</span>
+            <div class="consigna-text">Mostrá solo las categorías que tienen MÁS DE 3 productos registrados. Usá GROUP BY y <strong>HAVING</strong> (no WHERE).</div>
+          </label>
+        </div>
+        <div class="tp-progress">
+          <span class="tp-progress-label" id="progress-label-1">0 / 5 completados</span>
+          <div class="tp-progress-bar-wrap"><div class="tp-progress-fill" id="progress-fill-1" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─ TP 3 ──────────────────────────────── -->
+    <div class="tp-panel" id="tp-2">
+      <div class="card accent-left-orange">
+        <div class="tp-header">
+          <div class="tp-title-group">
+            <h3>🔗 TP N° 3 — Relacionando Tablas con JOINs</h3>
+            <p>INNER JOIN · LEFT JOIN · Consultas multitabla</p>
+          </div>
+          <span class="tp-badge alto">Interm. Alto</span>
+        </div>
+
+        <div class="theory-box">
+          <h4>📖 Mini repaso teórico — ¿Qué es un JOIN?</h4>
+          <p>Las tablas están conectadas por claves foráneas (FK). El JOIN es el comando para <strong>unir sus datos en una sola consulta</strong>, como si juntaras dos hojas de cálculo por una columna en común.</p>
+
+          <div class="join-compare">
+            <div class="join-card inner">
+              <h5>⚡ INNER JOIN</h5>
+              <p>Solo devuelve filas que tienen <strong>coincidencia en AMBAS tablas</strong>. Si un producto no tiene proveedor, no aparece.</p>
+            </div>
+            <div class="join-card left">
+              <h5>⬅️ LEFT JOIN</h5>
+              <p>Devuelve <strong>TODOS los registros</strong> de la tabla izquierda (FROM). Los que no tienen coincidencia aparecen con <code style="color:var(--red)">NULL</code>.</p>
+            </div>
+          </div>
+
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre><code><span class="cm">-- INNER JOIN: producto + su categoría</span>
+<span class="kw">SELECT</span> p.nombre, c.nombre <span class="kw">AS</span> categoria
+<span class="kw">FROM</span> productos p
+<span class="kw">INNER JOIN</span> categorias c <span class="kw">ON</span> p.id_categoria = c.id_categoria;
+
+<span class="cm">-- LEFT JOIN: todos los clientes (tengan o no ventas)</span>
+<span class="kw">SELECT</span> c.nombre, c.apellido, v.fecha_venta
+<span class="kw">FROM</span> clientes c
+<span class="kw">LEFT JOIN</span> ventas v <span class="kw">ON</span> c.id_cliente = v.id_cliente;</code></pre>
+          </div>
+          <div class="theory-note">💡 <strong>Truco:</strong> Poné alias cortos a las tablas (p para productos, c para clientes) y escribí el campo como <code style="color:var(--cyan)">tabla.columna</code>. Así evitás errores de ambigüedad.</div>
+        </div>
+
+        <h4 style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Consignas</h4>
+        <div class="consignas-list" data-tp="2">
+          <label class="consigna-item">
+            <input type="checkbox" class="consigna-check" onchange="updateProgress(this)">
+            <span class="consigna-num">01.</span>
+            <div class="consigna-text">Con <strong>INNER JOIN</strong>, mostrá el nombre de cada producto junto con el nombre de su categoría (no el id, sino el nombre real de la tabla categorias).</div>
+          </label>
+          <label class="consigna-item">
+            <input type="checkbox" class="consigna-check" onchange="updateProgress(this)">
+            <span class="consigna-num">02.</span>
+            <div class="consigna-text">Con <strong>INNER JOIN</strong>, mostrá el nombre del producto junto con el nombre del proveedor que lo suministra.</div>
+          </label>
+          <label class="consigna-item">
+            <input type="checkbox" class="consigna-check" onchange="updateProgress(this)">
+            <span class="consigna-num">03.</span>
+            <div class="consigna-text">Uniendo clientes, ventas y detalle_ventas con <strong>INNER JOIN</strong>, mostrá: nombre del cliente, fecha de la venta y el id del producto comprado.</div>
+          </label>
+          <label class="consigna-item">
+            <input type="checkbox" class="consigna-check" onchange="updateProgress(this)">
+            <span class="consigna-num">04.</span>
+            <div class="consigna-text">Con <strong>LEFT JOIN</strong>, mostrá TODOS los clientes y, si tienen ventas, la fecha. Los que no compraron deben aparecer igual (con NULL en fecha_venta).</div>
+          </label>
+          <label class="consigna-item">
+            <input type="checkbox" class="consigna-check" onchange="updateProgress(this)">
+            <span class="consigna-num">05.</span>
+            <div class="consigna-text">Uniendo productos, detalle_ventas y ventas, mostrá qué productos se vendieron en ventas con estado <code style="color:var(--green)">'completada'</code>. Columnas: nombre del producto, cantidad vendida y fecha.</div>
+          </label>
+        </div>
+        <div class="tp-progress">
+          <span class="tp-progress-label" id="progress-label-2">0 / 5 completados</span>
+          <div class="tp-progress-bar-wrap"><div class="tp-progress-fill" id="progress-fill-2" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─ TP 4 ──────────────────────────────── -->
+    <div class="tp-panel" id="tp-3">
+      <div class="card accent-left-red">
+        <div class="tp-header">
+          <div class="tp-title-group">
+            <h3>🏆 TP N° 4 — El Desafío Profesional</h3>
+            <p>Subconsultas · JOIN + GROUP BY + HAVING combinados</p>
+          </div>
+          <span class="tp-badge avanzado">Avanzado</span>
+        </div>
+
+        <div class="theory-box">
+          <h4>📖 Mini repaso teórico — Subconsultas</h4>
+          <p>Una <strong>subconsulta</strong> es una consulta SQL escrita dentro de otra. MySQL la ejecuta primero y usa el resultado como si fuera un valor o una tabla temporal.</p>
+          <div class="code-wrap">
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            <pre><code><span class="cm">-- Subconsulta: productos más caros que el promedio</span>
+<span class="kw">SELECT</span> nombre, precio
+<span class="kw">FROM</span> productos
+<span class="kw">WHERE</span> precio &gt; (<span class="kw">SELECT</span> <span class="fn">AVG</span>(precio) <span class="kw">FROM</span> productos);
+
+<span class="cm">-- Combinado: JOIN + GROUP BY + HAVING</span>
+<span class="kw">SELECT</span> c.nombre, <span class="fn">SUM</span>(dv.precio_unitario * dv.cantidad) <span class="kw">AS</span> total
+<span class="kw">FROM</span> clientes c
+<span class="kw">INNER JOIN</span> ventas v <span class="kw">ON</span> c.id_cliente = v.id_cliente
+<span class="kw">INNER JOIN</span> detalle_ventas dv <span class="kw">ON</span> v.id_venta = dv.id_venta
+<span class="kw">GROUP BY</span> c.id_cliente
+<span class="kw">HAVING</span> total &gt; <span class="num">500000</span>;</code></pre>
+          </div>
+          <div class="theory-note">🧠 <strong>Estrategia:</strong> Dividí el problema. Primero identificá las tablas (JOINs), después qué calculás (agregación), luego el filtro (HAVING o subconsulta).</div>
+        </div>
+
+        <h4 style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Consignas</h4>
+        <div class="consignas-list" data-tp="3">
+          <label class="consigna-item">
+            <input type="checkbox" class="consigna-check" onchange="updateProgress(this)">
+            <span class="consigna-num">01.</span>
+            <div class="consigna-text"><strong>Análisis de ventas:</strong> Mostrá el nombre de cada cliente y el total en pesos que gastó (precio_unitario × cantidad). Ordenalo del que más gastó al que menos. Solo ventas con estado 'completada'.</div>
+          </label>
+          <label class="consigna-item">
+            <input type="checkbox" class="consigna-check" onchange="updateProgress(this)">
+            <span class="consigna-num">02.</span>
+            <div class="consigna-text"><strong>Productos estrella:</strong> Mostrá los productos que se vendieron en una cantidad total mayor a 2 unidades (sumando todas sus ventas). Columnas: nombre del producto y total de unidades vendidas.</div>
+          </label>
+          <label class="consigna-item">
+            <input type="checkbox" class="consigna-check" onchange="updateProgress(this)">
+            <span class="consigna-num">03.</span>
+            <div class="consigna-text"><strong>Clientes premium:</strong> Mostrá el nombre y apellido de los clientes que gastaron MÁS que el gasto promedio de todos los clientes. Usá una subconsulta para calcular el promedio general.</div>
+          </label>
+          <label class="consigna-item">
+            <input type="checkbox" class="consigna-check" onchange="updateProgress(this)">
+            <span class="consigna-num">04.</span>
+            <div class="consigna-text"><strong>Stock crítico:</strong> La tienda considera crítico tener menos de 10 unidades. Mostrá nombre del producto, nombre de categoría, nombre del proveedor y stock actual. Ordená de menor a mayor stock.</div>
+          </label>
+        </div>
+        <div class="tp-progress">
+          <span class="tp-progress-label" id="progress-label-3">0 / 4 completados</span>
+          <div class="tp-progress-bar-wrap"><div class="tp-progress-fill" id="progress-fill-3" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </section><!-- /tps -->
+
+  <footer>
+    <p>E.P.E.T. N° 7 · Base de Datos II · 5° Año Grupo "B" · Técnico en Informática Profesional y Personal · 2025</p>
+  </footer>
+</main>
+
+<!-- ═══════════════════════════════════════════
+     FAB + SHORTCUTS MODAL
+═══════════════════════════════════════════ -->
+<button class="fab" onclick="toggleShortcuts()" aria-label="Atajos de teclado" title="Atajos de MySQL Workbench">⌨️</button>
+
+<div class="modal-overlay" id="shortcutsOverlay" onclick="closeIfOverlay(event)">
+  <div class="shortcuts-panel">
+    <div class="shortcuts-header">
+      <div>
+        <h3>⌨️ Atajos de Workbench</h3>
+        <span>Imprescindibles para el laboratorio</span>
+      </div>
+      <button class="close-btn" onclick="toggleShortcuts()">✕</button>
+    </div>
+    <div class="shortcuts-body">
+      <div class="shortcut-row">
+        <span class="shortcut-desc">Ejecutar consulta seleccionada</span>
+        <div class="shortcut-keys"><kbd>Ctrl</kbd><span class="plus">+</span><kbd>Enter</kbd></div>
+      </div>
+      <div class="shortcut-row">
+        <span class="shortcut-desc">Ejecutar todo el script</span>
+        <div class="shortcut-keys"><kbd>Ctrl</kbd><span class="plus">+</span><kbd>Shift</kbd><span class="plus">+</span><kbd>Enter</kbd></div>
+      </div>
+      <div class="shortcut-row">
+        <span class="shortcut-desc">Nueva pestaña SQL</span>
+        <div class="shortcut-keys"><kbd>Ctrl</kbd><span class="plus">+</span><kbd>T</kbd></div>
+      </div>
+      <div class="shortcut-row">
+        <span class="shortcut-desc">Formatear / Beautify SQL</span>
+        <div class="shortcut-keys"><kbd>Ctrl</kbd><span class="plus">+</span><kbd>B</kbd></div>
+      </div>
+      <div class="shortcut-row">
+        <span class="shortcut-desc">Comentar línea seleccionada</span>
+        <div class="shortcut-keys"><kbd>Ctrl</kbd><span class="plus">+</span><kbd>/</kbd></div>
+      </div>
+      <div class="shortcut-row">
+        <span class="shortcut-desc">Abrir archivo SQL</span>
+        <div class="shortcut-keys"><kbd>Ctrl</kbd><span class="plus">+</span><kbd>O</kbd></div>
+      </div>
+      <div class="shortcut-row">
+        <span class="shortcut-desc">Guardar script actual</span>
+        <div class="shortcut-keys"><kbd>Ctrl</kbd><span class="plus">+</span><kbd>S</kbd></div>
+      </div>
+      <div class="shortcut-row">
+        <span class="shortcut-desc">Deshacer último cambio</span>
+        <div class="shortcut-keys"><kbd>Ctrl</kbd><span class="plus">+</span><kbd>Z</kbd></div>
+      </div>
+      <div class="shortcut-row">
+        <span class="shortcut-desc">Buscar en el editor</span>
+        <div class="shortcut-keys"><kbd>Ctrl</kbd><span class="plus">+</span><kbd>F</kbd></div>
+      </div>
+      <div class="shortcut-row">
+        <span class="shortcut-desc">Seleccionar todo el texto</span>
+        <div class="shortcut-keys"><kbd>Ctrl</kbd><span class="plus">+</span><kbd>A</kbd></div>
+      </div>
+      <div class="shortcut-row">
+        <span class="shortcut-desc">Cerrar pestaña actual</span>
+        <div class="shortcut-keys"><kbd>Ctrl</kbd><span class="plus">+</span><kbd>W</kbd></div>
+      </div>
+      <div class="shortcut-row">
+        <span class="shortcut-desc">Autocompletar en el editor</span>
+        <div class="shortcut-keys"><kbd>Ctrl</kbd><span class="plus">+</span><kbd>Espacio</kbd></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════ -->
+<script>
+// ── TOTALES POR TP ──────────────────────
+const TP_TOTALS = [5, 5, 5, 4]; // TP1..TP4
+const GRAND_TOTAL = TP_TOTALS.reduce((a,b) => a+b, 0); // 19
+
+// ── TAB SWITCHING ────────────────────────
+function switchTab(idx) {
+  document.querySelectorAll('.tp-panel').forEach((p,i) => {
+    p.classList.toggle('active', i === idx);
+  });
+  document.querySelectorAll('.tp-tab-btn').forEach((b,i) => {
+    b.classList.toggle('active', i === idx);
+  });
+}
+
+// ── NAV LINKS WITH TAB ──────────────────
+document.querySelectorAll('.nav-link[data-tab]').forEach(link => {
+  link.addEventListener('click', e => {
+    const tab = parseInt(link.dataset.tab);
+    switchTab(tab);
+    closeSidebar();
+  });
+});
+
+// ── PROGRESS TRACKING ────────────────────
+function updateProgress(checkbox) {
+  const item = checkbox.closest('.consigna-item');
+  item.classList.toggle('done', checkbox.checked);
+
+  // Find which TP list
+  const list = checkbox.closest('.consignas-list');
+  const tp = parseInt(list.dataset.tp);
+
+  const checks = list.querySelectorAll('.consigna-check');
+  const done = [...checks].filter(c => c.checked).length;
+  const total = TP_TOTALS[tp];
+  const pct = Math.round(done / total * 100);
+
+  document.getElementById('progress-fill-' + tp).style.width = pct + '%';
+  document.getElementById('progress-label-' + tp).textContent =
+    done + ' / ' + total + ' completados' + (done === total ? ' 🎉' : '');
+
+  // Global
+  updateGlobal();
+  // Save to localStorage
+  saveState();
+}
+
+function updateGlobal() {
+  let totalDone = 0;
+  document.querySelectorAll('.consigna-check').forEach(c => {
+    if (c.checked) totalDone++;
+  });
+  const pct = Math.round(totalDone / GRAND_TOTAL * 100);
+  document.getElementById('globalProgressFill').style.width = pct + '%';
+  document.getElementById('globalProgressText').textContent =
+    totalDone + ' / ' + GRAND_TOTAL + ' ejercicios' + (totalDone === GRAND_TOTAL ? ' 🏆' : '');
+}
+
+// ── PERSIST PROGRESS ─────────────────────
+function saveState() {
+  const state = [];
+  document.querySelectorAll('.consigna-check').forEach(c => state.push(c.checked));
+  try { localStorage.setItem('bd2-progress', JSON.stringify(state)); } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const state = JSON.parse(localStorage.getItem('bd2-progress') || '[]');
+    const checks = document.querySelectorAll('.consigna-check');
+    checks.forEach((c, i) => {
+      if (state[i]) {
+        c.checked = true;
+        c.closest('.consigna-item').classList.add('done');
+      }
+    });
+    // Rebuild all bar states
+    for (let tp = 0; tp < 4; tp++) {
+      const list = document.querySelector('.consignas-list[data-tp="'+tp+'"]');
+      if (!list) continue;
+      const done = [...list.querySelectorAll('.consigna-check')].filter(c => c.checked).length;
+      const total = TP_TOTALS[tp];
+      const pct = Math.round(done / total * 100);
+      document.getElementById('progress-fill-' + tp).style.width = pct + '%';
+      document.getElementById('progress-label-' + tp).textContent =
+        done + ' / ' + total + ' completados' + (done === total ? ' 🎉' : '');
+    }
+    updateGlobal();
+  } catch(e) {}
+}
+
+// ── COPY CODE ────────────────────────────
+function copyCode(btn) {
+  const pre = btn.nextElementSibling;
+  const text = pre.innerText || pre.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copiado';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copiar';
+      btn.classList.remove('copied');
+    }, 2000);
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;opacity:0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = '✓ Copiado';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// ── SHORTCUTS MODAL ──────────────────────
+function toggleShortcuts() {
+  const overlay = document.getElementById('shortcutsOverlay');
+  overlay.classList.toggle('open');
+}
+function closeIfOverlay(e) {
+  if (e.target === document.getElementById('shortcutsOverlay')) toggleShortcuts();
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.getElementById('shortcutsOverlay').classList.remove('open');
+    closeSidebar();
+  }
+});
+
+// ── FLIP CARDS KEYBOARD ──────────────────
+document.querySelectorAll('.flip-card').forEach(card => {
+  card.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      card.classList.toggle('flipped');
+    }
+  });
+});
+
+// ── MOBILE SIDEBAR ───────────────────────
+const sidebar  = document.getElementById('sidebar');
+const overlay  = document.getElementById('sidebarOverlay');
+const toggle   = document.getElementById('navToggle');
+
+function openSidebar()  { sidebar.classList.add('open'); overlay.classList.add('open'); }
+function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('open'); }
+
+toggle.addEventListener('click', () => {
+  sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+});
+overlay.addEventListener('click', closeSidebar);
+
+// ── NAV ACTIVE STATE (scroll) ────────────
+const sections = ['inicio','intro','mitos','workbench','tps'];
+const navLinks  = document.querySelectorAll('.sidebar-nav .nav-link:not([data-tab])');
+
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      navLinks.forEach(l => {
+        l.classList.toggle('active', l.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { threshold: 0.3 });
+
+sections.forEach(id => {
+  const el = document.getElementById(id);
+  if (el) obs.observe(el);
+});
+
+// ── INIT ─────────────────────────────────
+document.addEventListener('DOMContentLoaded', loadState);
+</script>
+</body>
+</html>

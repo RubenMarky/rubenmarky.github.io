@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Supabase Cloud — Base de Datos II | E.P.E.T. N° 7</title>
+<style>
+:root {
+  --bg0:#0a0e14; --bg1:#0f1620; --bg2:#15202e; --bg3:#1b2a3d;
+  --surface:#111b28; --border:#1f3147; --border2:#2c4566;
+  --text:#e3ecf5; --muted:#6d8aab; --dim:#33506e;
+  --green:#3ecf8e; --green-dim:#093d27; --green-glo:rgba(62,207,142,.16);
+  --emerald:#10b981;
+  --cyan:#22d3ee; --violet:#a78bfa; --amber:#fbbf24;
+  --p1:#3ecf8e; --p1d:#093d27;
+  --p2:#22d3ee; --p2d:#083d4a;
+  --p3:#a78bfa; --p3d:#2e1d54;
+  --p4:#fb923c; --p4d:#3d1e08;
+  --radius:11px; --font:'Segoe UI',system-ui,-apple-system,sans-serif;
+  --mono:'Cascadia Code','Fira Code','Consolas',monospace;
+  --sb-w:250px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg0);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.7;min-height:100vh;}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--bg0);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sb-w);background:var(--bg1);border-right:1px solid var(--border);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100;display:flex;flex-direction:column;transition:transform .28s cubic-bezier(.4,0,.2,1);}
+.sb-brand{padding:20px 18px 16px;border-bottom:1px solid var(--border);position:relative;overflow:hidden;}
+.sb-brand::after{content:'';position:absolute;right:-30px;top:-30px;width:90px;height:90px;border-radius:50%;border:1px solid var(--green-glo);}
+.sb-bolt{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--green);margin-bottom:4px;}
+.sb-subject{font-size:15px;font-weight:700;color:var(--text);}
+.sb-grade{font-size:12px;color:var(--muted);margin-top:2px;}
+.sb-prog{padding:12px 18px;border-bottom:1px solid var(--border);}
+.spl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px;}
+.spbar{background:var(--bg2);border-radius:99px;height:6px;overflow:hidden;}
+.spfill{height:100%;background:linear-gradient(90deg,var(--green),var(--cyan));border-radius:99px;transition:width .5s ease;}
+.sptext{font-size:11px;color:var(--muted);text-align:right;margin-top:4px;}
+nav.sbnav{flex:1;padding:6px 0;}
+.nav-gl{padding:12px 18px 4px;font-size:9.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);}
+.nav-link{display:flex;align-items:center;gap:9px;padding:9px 18px;color:var(--muted);text-decoration:none;font-size:13px;border-left:3px solid transparent;transition:all .2s;}
+.nav-link:hover{color:var(--text);background:var(--bg2);}
+.nav-link.active{color:var(--green);border-left-color:var(--green);background:var(--green-glo);}
+.nav-link .ni{font-size:14px;flex-shrink:0;}
+.nav-ph{margin-left:auto;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:99px;letter-spacing:.04em;}
+.ph1{background:var(--p1d);color:var(--p1);}
+.ph2{background:var(--p2d);color:var(--p2);}
+.ph3{background:var(--p3d);color:var(--p3);}
+.ph4{background:var(--p4d);color:var(--p4);}
+
+.main{margin-left:var(--sb-w);flex:1;max-width:900px;padding:52px 36px;}
+.nav-toggle{display:none;position:fixed;top:12px;left:12px;z-index:200;background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:8px;width:40px;height:40px;font-size:18px;cursor:pointer;align-items:center;justify-content:center;}
+.sb-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:99;}
+
+/* HERO */
+.hero{position:relative;padding:48px 44px;border-radius:14px;border:1px solid var(--border2);background:var(--bg1);overflow:hidden;margin-bottom:56px;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 60% at 88% 12%,rgba(62,207,142,.1) 0%,transparent 62%),radial-gradient(ellipse 38% 45% at 8% 88%,rgba(34,211,238,.07) 0%,transparent 58%);pointer-events:none;}
+.hero-eyebrow{font-size:10.5px;font-weight:700;letter-spacing:.17em;text-transform:uppercase;color:var(--green);margin-bottom:12px;}
+.hero h1{font-size:clamp(25px,4.6vw,40px);font-weight:800;line-height:1.14;color:var(--text);margin-bottom:7px;}
+.hero h1 em{font-style:normal;color:var(--green);}
+.hero-sub{font-size:14px;color:var(--muted);margin-bottom:24px;max-width:500px;}
+.hero-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.chip{padding:4px 13px;border-radius:99px;font-size:11.5px;font-weight:600;border:1px solid var(--border2);background:var(--bg2);color:var(--muted);}
+.chip.green{border-color:rgba(62,207,142,.3);color:var(--green);background:var(--green-glo);}
+
+/* cloud deco */
+.cloud-deco{position:absolute;right:40px;top:40px;opacity:.18;pointer-events:none;font-size:62px;}
+
+/* SECTION */
+.section{margin-bottom:56px;}
+.section-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:24px;}
+.shi{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
+.shi-green{background:rgba(62,207,142,.14);}
+.shi-cyan{background:rgba(34,211,238,.12);}
+.shi-violet{background:rgba(167,139,250,.12);}
+.shi-amber{background:rgba(251,191,36,.12);}
+.section-header h2{font-size:19px;font-weight:700;color:var(--text);}
+.section-header p{font-size:12.5px;color:var(--muted);margin-top:2px;}
+
+.card{background:var(--bg1);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px;}
+.card p{color:var(--muted);font-size:14px;line-height:1.75;margin-bottom:12px;}
+.card p:last-child{margin-bottom:0;}
+.card strong{color:var(--text);}
+
+/* INFO BOX */
+.ibox{border-radius:var(--radius);padding:16px 20px;margin:16px 0;border:1px solid;font-size:13.5px;line-height:1.7;}
+.ib-green{background:var(--green-glo);border-color:rgba(62,207,142,.3);color:var(--text);}
+.ib-cyan{background:rgba(34,211,238,.06);border-color:rgba(34,211,238,.25);color:var(--text);}
+.ib-amber{background:rgba(251,191,36,.07);border-color:rgba(251,191,36,.3);color:var(--text);}
+.ib-red{background:rgba(248,113,113,.07);border-color:rgba(248,113,113,.3);color:var(--text);}
+.ibt{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.ib-green .ibt{color:var(--green);}
+.ib-cyan .ibt{color:var(--cyan);}
+.ib-amber .ibt{color:var(--amber);}
+.ib-red .ibt{color:#f87171;}
+
+/* GLOSSARY TERM */
+.term{border-bottom:1.5px dotted var(--green);color:var(--green);cursor:help;position:relative;font-weight:600;}
+.term:hover,.term:focus{background:var(--green-glo);outline:none;}
+.term .tip{visibility:hidden;opacity:0;position:absolute;bottom:130%;left:50%;transform:translateX(-50%) translateY(6px);width:260px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.55;color:var(--text);font-weight:400;z-index:50;box-shadow:0 12px 32px rgba(0,0,0,.5);transition:all .2s;text-align:left;}
+.term .tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--border2);}
+.term:hover .tip,.term:focus .tip{visibility:visible;opacity:1;transform:translateX(-50%) translateY(0);}
+.term .tip .es{display:block;color:var(--text);margin-bottom:6px;}
+.term .tip .mysql{display:block;color:var(--cyan);font-size:11px;padding-top:6px;border-top:1px solid var(--border);}
+.term .tip .mysql b{color:var(--cyan);}
+
+/* PHASE CARDS */
+.phase{background:var(--bg1);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:14px;}
+.phase-head{display:flex;align-items:center;gap:14px;padding:18px 22px;cursor:pointer;list-style:none;user-select:none;transition:background .2s;}
+.phase-head:hover{background:var(--bg2);}
+details[open] .phase-head{background:var(--bg2);}
+.phase-head::-webkit-details-marker{display:none;}
+.phase-badge{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.pb1{background:var(--p1d);}
+.pb2{background:var(--p2d);}
+.pb3{background:var(--p3d);}
+.pb4{background:var(--p4d);}
+.phase-tt{flex:1;}
+.phase-num{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px;}
+.pn1{color:var(--p1);} .pn2{color:var(--p2);} .pn3{color:var(--p3);} .pn4{color:var(--p4);}
+.phase-tt h3{font-size:16px;font-weight:700;color:var(--text);}
+.phase-tt p{font-size:12.5px;color:var(--muted);margin-top:1px;}
+.phase-arrow{color:var(--muted);font-size:18px;transition:transform .25s;flex-shrink:0;}
+details[open] .phase-arrow{transform:rotate(90deg);}
+.phase-body{padding:4px 22px 24px;}
+.phase-divider{height:1px;background:var(--border);margin-bottom:18px;}
+.phase-prog{display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:10px 14px;margin-top:16px;}
+.ppfill{flex:1;background:var(--bg0);border-radius:99px;height:5px;overflow:hidden;}
+.ppinner{height:100%;border-radius:99px;transition:width .4s ease;}
+.ppi1{background:linear-gradient(90deg,var(--p1),var(--cyan));}
+.ppi2{background:linear-gradient(90deg,var(--p2),var(--green));}
+.ppi3{background:linear-gradient(90deg,var(--p3),var(--cyan));}
+.ppi4{background:linear-gradient(90deg,var(--p4),var(--amber));}
+.pplabel{font-size:11.5px;color:var(--muted);white-space:nowrap;}
+
+/* CHECKLIST */
+.checklist{display:flex;flex-direction:column;gap:9px;margin:14px 0;}
+.citem{display:flex;align-items:flex-start;gap:12px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:12px 15px;cursor:pointer;transition:all .2s;}
+.citem:hover{border-color:var(--border2);}
+.citem.done{background:rgba(62,207,142,.05);border-color:rgba(62,207,142,.22);}
+.cbox{width:19px;height:19px;min-width:19px;border:2px solid var(--border2);border-radius:5px;background:var(--bg1);cursor:pointer;position:relative;margin-top:2px;transition:all .2s;appearance:none;-webkit-appearance:none;}
+.cbox:checked{background:var(--green);border-color:var(--green);}
+.cbox:checked::after{content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--bg0);font-size:11px;font-weight:800;}
+.cnum{font-size:11px;font-weight:700;color:var(--dim);font-family:var(--mono);min-width:24px;padding-top:1px;}
+.ctext{font-size:13.5px;color:var(--text);line-height:1.6;flex:1;transition:all .2s;}
+.citem.done .ctext{text-decoration:line-through;color:var(--dim);}
+.ctext code{font-family:var(--mono);font-size:12px;color:var(--cyan);background:var(--bg0);padding:1px 6px;border-radius:4px;border:1px solid var(--border);}
+.ctext .en{color:var(--green);font-weight:600;}
+
+/* CODE */
+.code-wrap{position:relative;margin:14px 0;}
+.code-wrap pre{background:#070d14;border:1px solid var(--border);border-radius:8px;padding:18px 20px;overflow-x:auto;margin:0;}
+.code-wrap code{font-family:var(--mono);font-size:12.5px;line-height:1.75;color:#c9d1d9;}
+.kw{color:#79c0ff;font-weight:600;} .fn{color:#d2a8ff;} .str{color:#7ee787;} .num{color:#ffa657;} .cm{color:#4a5f75;font-style:italic;} .tbl{color:var(--cyan);} .col{color:#e8c47d;}
+.copy-btn{position:absolute;top:8px;right:8px;background:var(--bg3);border:1px solid var(--border2);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;font-family:var(--font);cursor:pointer;transition:all .2s;letter-spacing:.04em;}
+.copy-btn:hover{background:var(--border2);color:var(--text);}
+.copy-btn.copied{color:var(--green);border-color:var(--green-dim);}
+
+/* STEPS */
+.steps{display:flex;flex-direction:column;gap:10px;margin:14px 0;}
+.step{display:flex;gap:14px;align-items:flex-start;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:13px 16px;}
+.step-n{min-width:26px;height:26px;background:var(--green-glo);border:1px solid rgba(62,207,142,.3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--green);flex-shrink:0;margin-top:1px;}
+.step-body{font-size:13.5px;color:var(--muted);line-height:1.6;}
+.step-body strong{color:var(--text);}
+.step-body .en{color:var(--green);font-weight:600;}
+.step-body code{font-family:var(--mono);font-size:12px;color:var(--cyan);background:var(--bg0);padding:1px 6px;border-radius:4px;border:1px solid var(--border);}
+
+/* DATA TABLE */
+.dtable{width:100%;border-collapse:collapse;font-size:12.5px;margin:14px 0;}
+.dtable th{background:var(--bg3);color:var(--green);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:9px 12px;text-align:left;border-bottom:1px solid var(--border2);}
+.dtable td{padding:8px 12px;border-bottom:1px solid var(--border);color:var(--muted);vertical-align:top;}
+.dtable .cn{font-family:var(--mono);font-size:11.5px;color:var(--cyan);font-weight:600;white-space:nowrap;}
+.dtable .ty{font-family:var(--mono);font-size:11px;color:var(--amber);}
+
+/* GLOSSARY GRID */
+.glos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin:14px 0;}
+.glos-card{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:14px 16px;transition:all .2s;cursor:default;}
+.glos-card:hover{border-color:var(--green);background:var(--green-glo);}
+.gc-en{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--green);margin-bottom:5px;}
+.gc-es{font-size:12.5px;color:var(--text);line-height:1.5;margin-bottom:6px;}
+.gc-my{font-size:11px;color:var(--cyan);padding-top:6px;border-top:1px solid var(--border);}
+
+/* FAB */
+.fab{position:fixed;bottom:24px;right:24px;z-index:300;width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--cyan));border:none;color:var(--bg0);font-size:20px;cursor:pointer;box-shadow:0 4px 20px rgba(62,207,142,.3);display:flex;align-items:center;justify-content:center;transition:transform .2s,box-shadow .2s;}
+.fab:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(62,207,142,.45);}
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:400;align-items:flex-end;justify-content:flex-end;padding:24px;}
+.modal-ov.open{display:flex;}
+.spanel{background:var(--bg1);border:1px solid var(--border2);border-radius:14px;width:360px;max-height:82vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.7);animation:slideUp .22s ease;}
+@keyframes slideUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.sph{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid var(--border);}
+.sph h3{font-size:15px;font-weight:700;color:var(--text);}
+.sph span{font-size:12px;color:var(--muted);margin-top:2px;}
+.cbtn{background:var(--bg2);border:1px solid var(--border);color:var(--muted);border-radius:7px;width:30px;height:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .2s;}
+.cbtn:hover{background:var(--bg3);color:var(--text);}
+.spb{padding:14px 20px;}
+.scr{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.scr:last-child{border-bottom:none;}
+.scd{font-size:13px;color:var(--muted);}
+.sck{display:flex;gap:3px;align-items:center;}
+.sck kbd{background:var(--bg0);border:1px solid var(--border2);border-bottom-width:2px;border-radius:4px;padding:2px 7px;font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--green);}
+.scp{color:var(--dim);font-size:10px;}
+
+footer{margin-top:72px;padding:22px;border-top:1px solid var(--border);text-align:center;font-size:11.5px;color:var(--dim);}
+
+@media (max-width:780px){
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .sb-ov.open{display:block;}
+  .nav-toggle{display:flex;}
+  .main{margin-left:0;padding:64px 16px 32px;}
+  .glos-grid{grid-template-columns:1fr;}
+  .spanel{width:100%;border-radius:14px 14px 0 0;}
+  .modal-ov{padding:0;align-items:flex-end;}
+  .term .tip{width:200px;}
+  .cloud-deco{display:none;}
+}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms !important;animation-duration:.01ms !important;}}
+</style>
+</head>
+<body>
+
+<button class="nav-toggle" id="navToggle" aria-label="Menú">☰</button>
+<div class="sb-ov" id="sbOv"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sb-brand">
+    <div class="sb-bolt">⚡ E.P.E.T. N° 7</div>
+    <div class="sb-subject">Supabase Cloud</div>
+    <div class="sb-grade">Base de Datos II · 5° "B" · 2026</div>
+  </div>
+  <div class="sb-prog">
+    <div class="spl">Progreso total</div>
+    <div class="spbar"><div class="spfill" id="gFill" style="width:0%"></div></div>
+    <div class="sptext" id="gText">0 / 16 pasos</div>
+  </div>
+  <nav class="sbnav">
+    <div class="nav-gl">Teoría</div>
+    <a href="#que-es" class="nav-link active"><span class="ni">⚡</span> ¿Qué es Supabase?</a>
+    <a href="#glosario" class="nav-link"><span class="ni">📖</span> Glosario EN-ES</a>
+    <div class="nav-gl">Tutorial por Fases</div>
+    <a href="#fase1" class="nav-link" data-ph="0"><span class="ni">👤</span> Fase 1: Registro <span class="nav-ph ph1">1</span></a>
+    <a href="#fase2" class="nav-link" data-ph="1"><span class="ni">🚀</span> Fase 2: Proyecto <span class="nav-ph ph2">2</span></a>
+    <a href="#fase3" class="nav-link" data-ph="2"><span class="ni">🗂️</span> Fase 3: Tablas <span class="nav-ph ph3">3</span></a>
+    <a href="#fase4" class="nav-link" data-ph="3"><span class="ni">⌨️</span> Fase 4: SQL <span class="nav-ph ph4">4</span></a>
+  </nav>
+</aside>
+
+<main class="main">
+
+<!-- HERO -->
+<div class="hero" id="inicio">
+  <div class="cloud-deco">☁️</div>
+  <div class="hero-eyebrow">E.P.E.T. N° 7 · Técnico en Informática Profesional y Personal</div>
+  <h1>Tu base de datos<br>en la <em>nube</em></h1>
+  <p class="hero-sub">Aprendé Supabase y PostgreSQL: el mismo SQL que ya sabés, ahora corriendo en un servidor profesional al que se conectan apps reales. Material N° 3 · Año 2026</p>
+  <div class="hero-chips">
+    <span class="chip green">Supabase BaaS</span>
+    <span class="chip">PostgreSQL</span>
+    <span class="chip">100% Gratis</span>
+    <span class="chip">Desde el navegador</span>
+  </div>
+</div>
+
+<!-- ¿QUÉ ES? -->
+<section class="section" id="que-es">
+  <div class="section-header">
+    <div class="shi shi-green">⚡</div>
+    <div>
+      <h2>¿Qué es Supabase y por qué importa?</h2>
+      <p>El "Firebase de código abierto" que usan las startups modernas</p>
+    </div>
+  </div>
+  <div class="card">
+    <p>Hasta ahora usaste <strong>MySQL Workbench</strong> instalado en las PC del laboratorio. Funciona genial para aprender, pero la base vive solo en esa máquina. Si querés que una app de celular o una web se conecte a tus datos desde cualquier lado, necesitás una base de datos <strong>en la nube</strong>.</p>
+    <p>Supabase es justamente eso: alguien ya instaló, configuró y mantiene un servidor <span class="term">PostgreSQL<span class="tip"><span class="es">Sistema de base de datos relacional, primo hermano de MySQL. Usa tablas, claves primarias y foráneas.</span><span class="mysql"><b>≈ MySQL</b> — el 90% del SQL funciona igual</span></span></span> profesional, y te lo regala listo para usar desde el navegador.</p>
+    <div class="ibox ib-green">
+      <div class="ibt">⚡ Lo que necesitás saber</div>
+      <strong>Gratis</strong> para hasta 2 proyectos · Usa <strong>PostgreSQL</strong> (relacional, como MySQL) · Incluye base de datos, login de usuarios y APIs automáticas · Todo desde el navegador, incluso el celu.
+    </div>
+    <p>La gran diferencia con Firebase: mientras Firebase usa NoSQL, Supabase usa una base de datos relacional con <span class="term">Foreign Keys<span class="tip"><span class="es">Clave foránea: enlaza una tabla con otra para mantener los datos conectados y coherentes.</span><span class="mysql"><b>= MySQL</b> FOREIGN KEY (idéntico)</span></span></span> y <span class="term">Primary Keys<span class="tip"><span class="es">Clave primaria: identifica de forma única cada fila de una tabla.</span><span class="mysql"><b>= MySQL</b> PRIMARY KEY (idéntico)</span></span></span>… exactamente lo que ya dominás.</p>
+  </div>
+</section>
+
+<!-- GLOSARIO -->
+<section class="section" id="glosario">
+  <div class="section-header">
+    <div class="shi shi-cyan">📖</div>
+    <div>
+      <h2>Glosario Inglés → Español</h2>
+      <p>La plataforma está en inglés. Pasá el mouse o tocá cada término para ver su traducción y equivalente en MySQL.</p>
+    </div>
+  </div>
+  <div class="glos-grid">
+    <div class="glos-card"><div class="gc-en">Table Editor</div><div class="gc-es">Editor de Tablas: crear y ver tablas visualmente, como una planilla.</div><div class="gc-my">≈ Vista de tablas de Workbench</div></div>
+    <div class="glos-card"><div class="gc-en">SQL Editor</div><div class="gc-es">Editor SQL: escribir y ejecutar consultas con código.</div><div class="gc-my">≈ Query Tab de Workbench</div></div>
+    <div class="glos-card"><div class="gc-en">Query</div><div class="gc-es">Consulta: una instrucción SQL (SELECT, INSERT…).</div><div class="gc-my">= Query (idéntico)</div></div>
+    <div class="glos-card"><div class="gc-en">Row</div><div class="gc-es">Fila: un registro completo de la tabla.</div><div class="gc-my">= Row / registro</div></div>
+    <div class="glos-card"><div class="gc-en">Foreign Key</div><div class="gc-es">Clave foránea: enlaza dos tablas entre sí.</div><div class="gc-my">= FOREIGN KEY (idéntico)</div></div>
+    <div class="glos-card"><div class="gc-en">Primary Key</div><div class="gc-es">Clave primaria: identifica cada fila de forma única.</div><div class="gc-my">= PRIMARY KEY (idéntico)</div></div>
+    <div class="glos-card"><div class="gc-en">Row Level Security</div><div class="gc-es">Seguridad a Nivel de Fila: controla quién puede ver o editar cada fila.</div><div class="gc-my">No existe directo en MySQL básico</div></div>
+    <div class="glos-card"><div class="gc-en">Authentication</div><div class="gc-es">Autenticación: sistema de registro y login de usuarios, listo para usar.</div><div class="gc-my">≈ Gestión de usuarios (manual)</div></div>
+    <div class="glos-card"><div class="gc-en">Run</div><div class="gc-es">Ejecutar la consulta SQL.</div><div class="gc-my">= Execute (el rayo ⚡)</div></div>
+    <div class="glos-card"><div class="gc-en">Insert row</div><div class="gc-es">Insertar fila: agregar un registro nuevo.</div><div class="gc-my">= INSERT INTO</div></div>
+    <div class="glos-card"><div class="gc-en">Region</div><div class="gc-es">Región: dónde está físicamente el servidor en la nube.</div><div class="gc-my">No aplica (servidor local)</div></div>
+    <div class="glos-card"><div class="gc-en">Backend-as-a-Service</div><div class="gc-es">Backend como Servicio: te dan el servidor listo, sin configurarlo.</div><div class="gc-my">No aplica</div></div>
+  </div>
+</section>
+
+<!-- FASES -->
+<section class="section" id="tutorial">
+  <div class="section-header">
+    <div class="shi shi-violet">🧩</div>
+    <div>
+      <h2>Tutorial por Fases</h2>
+      <p>Seguí cada fase en orden. Marcá los pasos a medida que los completás en Supabase.</p>
+    </div>
+  </div>
+
+  <!-- FASE 1 -->
+  <div class="phase" id="fase1">
+    <details open>
+      <summary class="phase-head">
+        <div class="phase-badge pb1">👤</div>
+        <div class="phase-tt">
+          <div class="phase-num pn1">Fase 1</div>
+          <h3>Crear tu cuenta</h3>
+          <p>Registrarte en Supabase con GitHub o email</p>
+        </div>
+        <span class="phase-arrow">›</span>
+      </summary>
+      <div class="phase-body">
+        <div class="phase-divider"></div>
+        <div class="steps">
+          <div class="step"><div class="step-n">1</div><div class="step-body">Entrá a <code>https://supabase.com</code> en el navegador.</div></div>
+          <div class="step"><div class="step-n">2</div><div class="step-body">Hacé clic en el botón verde <span class="en">Start your project</span> ("Empezá tu proyecto"), arriba a la derecha.</div></div>
+          <div class="step"><div class="step-n">3</div><div class="step-body">En la pantalla de registro elegí <span class="en">Continue with GitHub</span> ("Continuar con GitHub") si tenés cuenta de GitHub — es lo más rápido. O registrate con tu email.</div></div>
+        </div>
+        <h4 style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:18px 0 10px;">Marcá tu avance</h4>
+        <div class="checklist" data-ph="0" data-total="3">
+          <label class="citem"><input type="checkbox" class="cbox" onchange="up(this)"><span class="cnum">1.1</span><div class="ctext">Entré a supabase.com y di clic en <span class="en">Start your project</span>.</div></label>
+          <label class="citem"><input type="checkbox" class="cbox" onchange="up(this)"><span class="cnum">1.2</span><div class="ctext">Elegí registrarme con GitHub o con email.</div></label>
+          <label class="citem"><input type="checkbox" class="cbox" onchange="up(this)"><span class="cnum">1.3</span><div class="ctext">Confirmé mi cuenta (verifiqué el email si hizo falta).</div></label>
+        </div>
+        <div class="phase-prog"><span class="pplabel" id="lbl-0">0 / 3</span><div class="ppfill"><div class="ppinner ppi1" id="bar-0" style="width:0%"></div></div></div>
+      </div>
+    </details>
+  </div>
+
+  <!-- FASE 2 -->
+  <div class="phase" id="fase2">
+    <details>
+      <summary class="phase-head">
+        <div class="phase-badge pb2">🚀</div>
+        <div class="phase-tt">
+          <div class="phase-num pn2">Fase 2</div>
+          <h3>Crear tu primer proyecto</h3>
+          <p>Organización, nombre, contraseña y región</p>
+        </div>
+        <span class="phase-arrow">›</span>
+      </summary>
+      <div class="phase-body">
+        <div class="phase-divider"></div>
+        <div class="steps">
+          <div class="step"><div class="step-n">1</div><div class="step-body">Clic en <span class="en">New Project</span> ("Nuevo Proyecto").</div></div>
+          <div class="step"><div class="step-n">2</div><div class="step-body">Creá una <span class="en">Organization</span> (organización): un nombre que agrupa proyectos. Ej: <code>EPET7-5B</code>. Tipo <strong>Personal</strong>, plan <strong>Free</strong>.</div></div>
+          <div class="step"><div class="step-n">3</div><div class="step-body"><span class="en">Project name</span>: escribí <code>techplay-cloud</code>.</div></div>
+          <div class="step"><div class="step-n">4</div><div class="step-body"><span class="en">Database Password</span>: ¡anotala en un lugar seguro! Es la contraseña de la base PostgreSQL, no la de tu cuenta.</div></div>
+          <div class="step"><div class="step-n">5</div><div class="step-body"><span class="en">Region</span>: elegí <strong>South America (São Paulo)</strong>, la más cercana a Argentina = más rápida.</div></div>
+          <div class="step"><div class="step-n">6</div><div class="step-body">Clic en <span class="en">Create new project</span> y esperá 1–2 min mientras crea tu servidor.</div></div>
+        </div>
+        <div class="ibox ib-red"><div class="ibt">⚠️ No pierdas la contraseña</div>La <span class="en">Database Password</span> no se recupera fácil. Anotala apenas la creás, junto al nombre del proyecto.</div>
+        <h4 style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:18px 0 10px;">Marcá tu avance</h4>
+        <div class="checklist" data-ph="1" data-total="4">
+          <label class="citem"><input type="checkbox" class="cbox" onchange="up(this)"><span class="cnum">2.1</span><div class="ctext">Creé la organización (plan Free).</div></label>
+          <label class="citem"><input type="checkbox" class="cbox" onchange="up(this)"><span class="cnum">2.2</span><div class="ctext">Nombré el proyecto <code>techplay-cloud</code>.</div></label>
+          <label class="citem"><input type="checkbox" class="cbox" onchange="up(this)"><span class="cnum">2.3</span><div class="ctext">Anoté mi <span class="en">Database Password</span> en lugar seguro.</div></label>
+          <label class="citem"><input type="checkbox" class="cbox" onchange="up(this)"><span class="cnum">2.4</span><div class="ctext">Elegí la región Sudamérica y creé el proyecto.</div></label>
+        </div>
+        <div class="phase-prog"><span class="pplabel" id="lbl-1">0 / 4</span><div class="ppfill"><div class="ppinner ppi2" id="bar-1" style="width:0%"></div></div></div>
+      </div>
+    </details>
+  </div>
+
+  <!-- FASE 3 -->
+  <div class="phase" id="fase3">
+    <details>
+      <summary class="phase-head">
+        <div class="phase-badge pb3">🗂️</div>
+        <div class="phase-tt">
+          <div class="phase-num pn3">Fase 3</div>
+          <h3>Diseñar las tablas</h3>
+          <p>Crear usuarios y videojuegos con la interfaz visual</p>
+        </div>
+        <span class="phase-arrow">›</span>
+      </summary>
+      <div class="phase-body">
+        <div class="phase-divider"></div>
+        <p style="color:var(--muted);font-size:14px;margin-bottom:14px;">Vamos a crear la base <strong style="color:var(--text);">TechPlay Cloud</strong>: dos tablas relacionadas (1:N) para gestionar usuarios y sus videojuegos favoritos.</p>
+
+        <div class="steps">
+          <div class="step"><div class="step-n">1</div><div class="step-body">En la barra lateral, clic en <span class="en">Table Editor</span> ("Editor de Tablas").</div></div>
+          <div class="step"><div class="step-n">2</div><div class="step-body">Clic en <span class="en">New table</span>. Nombre: <code>usuarios</code>.</div></div>
+          <div class="step"><div class="step-n">3</div><div class="step-body">Supabase ya crea <code>id</code> y <code>created_at</code> solos. Agregá las demás columnas con <span class="en">Add column</span>:</div></div>
+        </div>
+
+        <table class="dtable">
+          <thead><tr><th>Columna</th><th>Tipo</th><th>Qué guarda</th></tr></thead>
+          <tbody>
+            <tr><td class="cn">nombre_usuario</td><td class="ty">text</td><td>El nick (ej: GamerPro_99)</td></tr>
+            <tr><td class="cn">email</td><td class="ty">text</td><td>Correo, único por usuario</td></tr>
+            <tr><td class="cn">edad</td><td class="ty">int4</td><td>Edad (número entero)</td></tr>
+            <tr><td class="cn">pais</td><td class="ty">text</td><td>País de residencia</td></tr>
+          </tbody>
+        </table>
+
+        <div class="ibox ib-cyan"><div class="ibt">Tipos modernos de PostgreSQL</div>
+          <code style="font-family:var(--mono);color:var(--amber);font-size:12px;">text</code> = VARCHAR · <code style="font-family:var(--mono);color:var(--amber);font-size:12px;">int4</code> = INT · <code style="font-family:var(--mono);color:var(--amber);font-size:12px;">uuid</code> = id único universal · <code style="font-family:var(--mono);color:var(--amber);font-size:12px;">timestamptz</code> = fecha y hora con zona horaria.
+        </div>
+
+        <div class="steps" style="margin-top:16px;">
+          <div class="step"><div class="step-n">4</div><div class="step-body">Clic en <span class="en">Save</span>. Repetí para crear la tabla <code>videojuegos</code> con: <code>titulo</code> (text), <code>plataforma</code> (text), <code>horas_jugadas</code> (int4) y <code>id_usuario</code> (int8).</div></div>
+          <div class="step"><div class="step-n">5</div><div class="step-body">En <code>id_usuario</code>, configurá la <span class="term" style="color:var(--p3);border-color:var(--p3);">Foreign Key<span class="tip"><span class="es">Clave foránea: conecta cada videojuego con un usuario existente.</span><span class="mysql"><b>= MySQL</b> FOREIGN KEY</span></span></span> apuntando a <code>usuarios.id</code>.</div></div>
+          <div class="step"><div class="step-n">6</div><div class="step-body">Cargá datos con <span class="en">Insert → Insert row</span>. En videojuegos, poné en <code>id_usuario</code> el id de un usuario que ya exista.</div></div>
+        </div>
+
+        <h4 style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:18px 0 10px;">Marcá tu avance</h4>
+        <div class="checklist" data-ph="2" data-total="5">
+          <label class="citem"><input type="checkbox" class="cbox" onchange="up(this)"><span class="cnum">3.1</span><div class="ctext">Creé la tabla <code>usuarios</code> con sus 4 columnas.</div></label>
+          <label class="citem"><input type="checkbox" class="cbox" onchange="up(this)"><span class="cnum">3.2</span><div class="ctext">Creé la tabla <code>videojuegos</code> con sus columnas.</div></label>
+          <label class="citem"><input type="checkbox" class="cbox" onchange="up(this)"><span class="cnum">3.3</span><div class="ctext">Configuré la <span class="en">Foreign Key</span> de <code>id_usuario</code> → <code>usuarios.id</code>.</div></label>
+          <label class="citem"><input type="checkbox" class="cbox" onchange="up(this)"><span class="cnum">3.4</span><div class="ctext">Inserté 3–4 usuarios de prueba.</div></label>
+          <label class="citem"><input type="checkbox" class="cbox" onchange="up(this)"><span class="cnum">3.5</span><div class="ctext">Inserté videojuegos enlazados a usuarios existentes.</div></label>
+        </div>
+        <div class="phase-prog"><span class="pplabel" id="lbl-2">0 / 5</span><div class="ppfill"><div class="ppinner ppi3" id="bar-2" style="width:0%"></div></div></div>
+      </div>
+    </details>
+  </div>
+
+  <!-- FASE 4 -->
+  <div class="phase" id="fase4">
+    <details>
+      <summary class="phase-head">
+        <div class="phase-badge pb4">⌨️</div>
+        <div class="phase-tt">
+          <div class="phase-num pn4">Fase 4</div>
+          <h3>Consultas en el SQL Editor</h3>
+          <p>Comprobar que el SQL funciona igual que en Workbench</p>
+        </div>
+        <span class="phase-arrow">›</span>
+      </summary>
+      <div class="phase-body">
+        <div class="phase-divider"></div>
+        <div class="steps">
+          <div class="step"><div class="step-n">1</div><div class="step-body">En la barra lateral, clic en <span class="en">SQL Editor</span> ("Editor SQL").</div></div>
+          <div class="step"><div class="step-n">2</div><div class="step-body">Clic en <span class="en">New query</span> y pegá el script de abajo.</div></div>
+          <div class="step"><div class="step-n">3</div><div class="step-body">Clic en <span class="en">Run</span> ("Ejecutar") o presioná <code>Ctrl + Enter</code>. ¡Vas a ver tus datos abajo, igual que en Workbench!</div></div>
+        </div>
+
+        <h4 style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:18px 0 10px;">Script SQL — crea todo de una vez</h4>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre><code><span class="cm">-- TechPlay Cloud: pegá esto en el SQL Editor y dale Run</span>
+
+<span class="kw">CREATE TABLE</span> <span class="tbl">usuarios</span> (
+    <span class="col">id</span>             <span class="kw">BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY</span>,
+    <span class="col">nombre_usuario</span> <span class="kw">TEXT</span>        <span class="kw">NOT NULL</span>,
+    <span class="col">email</span>          <span class="kw">TEXT</span>        <span class="kw">NOT NULL UNIQUE</span>,
+    <span class="col">edad</span>           <span class="kw">INT</span>,
+    <span class="col">pais</span>           <span class="kw">TEXT</span>,
+    <span class="col">created_at</span>     <span class="kw">TIMESTAMPTZ DEFAULT</span> <span class="fn">now</span>()
+);
+
+<span class="kw">CREATE TABLE</span> <span class="tbl">videojuegos</span> (
+    <span class="col">id</span>            <span class="kw">BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY</span>,
+    <span class="col">titulo</span>        <span class="kw">TEXT</span>        <span class="kw">NOT NULL</span>,
+    <span class="col">plataforma</span>    <span class="kw">TEXT</span>,
+    <span class="col">horas_jugadas</span> <span class="kw">INT</span>         <span class="kw">DEFAULT</span> <span class="num">0</span>,
+    <span class="col">id_usuario</span>    <span class="kw">BIGINT</span>      <span class="kw">REFERENCES</span> <span class="tbl">usuarios</span>(<span class="col">id</span>),
+    <span class="col">created_at</span>    <span class="kw">TIMESTAMPTZ DEFAULT</span> <span class="fn">now</span>()
+);
+
+<span class="cm">-- Datos de prueba</span>
+<span class="kw">INSERT INTO</span> <span class="tbl">usuarios</span> (<span class="col">nombre_usuario</span>, <span class="col">email</span>, <span class="col">edad</span>, <span class="col">pais</span>) <span class="kw">VALUES</span>
+    (<span class="str">'GamerPro_99'</span>,  <span class="str">'gamer99@mail.com'</span>, <span class="num">17</span>, <span class="str">'Argentina'</span>),
+    (<span class="str">'NoobMaster'</span>,   <span class="str">'noob@mail.com'</span>,    <span class="num">16</span>, <span class="str">'Argentina'</span>),
+    (<span class="str">'QueenOfFPS'</span>,   <span class="str">'queen@mail.com'</span>,   <span class="num">17</span>, <span class="str">'Brasil'</span>);
+
+<span class="kw">INSERT INTO</span> <span class="tbl">videojuegos</span> (<span class="col">titulo</span>, <span class="col">plataforma</span>, <span class="col">horas_jugadas</span>, <span class="col">id_usuario</span>) <span class="kw">VALUES</span>
+    (<span class="str">'God of War Ragnarök'</span>,      <span class="str">'PS5'</span>,    <span class="num">120</span>, <span class="num">1</span>),
+    (<span class="str">'Halo Infinite'</span>,            <span class="str">'Xbox'</span>,   <span class="num">60</span>,  <span class="num">2</span>),
+    (<span class="str">'The Legend of Zelda TotK'</span>, <span class="str">'Switch'</span>, <span class="num">200</span>, <span class="num">3</span>);
+
+<span class="cm">-- Verificación con JOIN (¿te suena de TechPlay Store?)</span>
+<span class="kw">SELECT</span> u.nombre_usuario, v.titulo, v.plataforma, v.horas_jugadas
+<span class="kw">FROM</span> <span class="tbl">videojuegos</span> v
+<span class="kw">INNER JOIN</span> <span class="tbl">usuarios</span> u <span class="kw">ON</span> v.id_usuario = u.id
+<span class="kw">ORDER BY</span> v.horas_jugadas <span class="kw">DESC</span>;</code></pre>
+        </div>
+
+        <div class="ibox ib-green"><div class="ibt">🎉 ¡Lo lograste!</div>Si la última consulta te devuelve resultados, creaste una base de datos relacional en la nube y comprobaste que el SQL de MySQL funciona casi idéntico en PostgreSQL. Un paso enorme hacia el desarrollo profesional.</div>
+
+        <h4 style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:18px 0 10px;">Marcá tu avance</h4>
+        <div class="checklist" data-ph="3" data-total="4">
+          <label class="citem"><input type="checkbox" class="cbox" onchange="up(this)"><span class="cnum">4.1</span><div class="ctext">Abrí el <span class="en">SQL Editor</span> y creé una <span class="en">New query</span>.</div></label>
+          <label class="citem"><input type="checkbox" class="cbox" onchange="up(this)"><span class="cnum">4.2</span><div class="ctext">Ejecuté <code>SELECT * FROM usuarios;</code> con <span class="en">Run</span>.</div></label>
+          <label class="citem"><input type="checkbox" class="cbox" onchange="up(this)"><span class="cnum">4.3</span><div class="ctext">Ejecuté la consulta con <code>INNER JOIN</code> entre las dos tablas.</div></label>
+          <label class="citem"><input type="checkbox" class="cbox" onchange="up(this)"><span class="cnum">4.4</span><div class="ctext">Comprobé que los resultados aparecen abajo, como en Workbench.</div></label>
+        </div>
+        <div class="phase-prog"><span class="pplabel" id="lbl-3">0 / 4</span><div class="ppfill"><div class="ppinner ppi4" id="bar-3" style="width:0%"></div></div></div>
+      </div>
+    </details>
+  </div>
+
+</section>
+
+<footer>
+  E.P.E.T. N° 7 · Base de Datos II · 5° Año "B" · Técnico en Informática Profesional y Personal · Material N° 3 · Supabase & PostgreSQL · 2026
+</footer>
+</main>
+
+<button class="fab" onclick="toggleSC()" title="Atajos de Supabase">⌨️</button>
+<div class="modal-ov" id="modalOv" onclick="closeBg(event)">
+  <div class="spanel">
+    <div class="sph">
+      <div><h3>⌨️ Atajos de Supabase</h3><span>SQL Editor y navegación</span></div>
+      <button class="cbtn" onclick="toggleSC()">✕</button>
+    </div>
+    <div class="spb">
+      <div class="scr"><span class="scd">Ejecutar la consulta (Run)</span><div class="sck"><kbd>Ctrl</kbd><span class="scp">+</span><kbd>Enter</kbd></div></div>
+      <div class="scr"><span class="scd">Guardar la query</span><div class="sck"><kbd>Ctrl</kbd><span class="scp">+</span><kbd>S</kbd></div></div>
+      <div class="scr"><span class="scd">Nueva query</span><div class="sck"><kbd>Ctrl</kbd><span class="scp">+</span><kbd>K</kbd></div></div>
+      <div class="scr"><span class="scd">Buscar en el editor</span><div class="sck"><kbd>Ctrl</kbd><span class="scp">+</span><kbd>F</kbd></div></div>
+      <div class="scr"><span class="scd">Comentar línea</span><div class="sck"><kbd>Ctrl</kbd><span class="scp">+</span><kbd>/</kbd></div></div>
+      <div class="scr"><span class="scd">Autocompletar</span><div class="sck"><kbd>Ctrl</kbd><span class="scp">+</span><kbd>Espacio</kbd></div></div>
+      <div class="scr"><span class="scd">Deshacer</span><div class="sck"><kbd>Ctrl</kbd><span class="scp">+</span><kbd>Z</kbd></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const PH_TOTALS=[3,4,5,4];
+const GRAND=16;
+
+function up(cb){
+  cb.closest('.citem').classList.toggle('done',cb.checked);
+  const list=cb.closest('.checklist');
+  const ph=parseInt(list.dataset.ph);
+  const done=[...list.querySelectorAll('.cbox')].filter(c=>c.checked).length;
+  const tot=PH_TOTALS[ph];
+  document.getElementById('bar-'+ph).style.width=(done/tot*100)+'%';
+  document.getElementById('lbl-'+ph).textContent=done+' / '+tot+(done===tot?' 🎉':'');
+  updateG(); save();
+}
+function updateG(){
+  const done=[...document.querySelectorAll('.cbox')].filter(c=>c.checked).length;
+  const pct=Math.round(done/GRAND*100);
+  document.getElementById('gFill').style.width=pct+'%';
+  document.getElementById('gText').textContent=done+' / '+GRAND+' pasos'+(done===GRAND?' 🏆':'');
+}
+function save(){
+  try{localStorage.setItem('supabase-prog',JSON.stringify([...document.querySelectorAll('.cbox')].map(c=>c.checked)));}catch(e){}
+}
+function load(){
+  try{
+    const s=JSON.parse(localStorage.getItem('supabase-prog')||'[]');
+    document.querySelectorAll('.cbox').forEach((c,i)=>{if(s[i]){c.checked=true;c.closest('.citem').classList.add('done');}});
+    for(let ph=0;ph<4;ph++){
+      const list=document.querySelector('.checklist[data-ph="'+ph+'"]');
+      if(!list)continue;
+      const done=[...list.querySelectorAll('.cbox')].filter(c=>c.checked).length;
+      const tot=PH_TOTALS[ph];
+      document.getElementById('bar-'+ph).style.width=(done/tot*100)+'%';
+      document.getElementById('lbl-'+ph).textContent=done+' / '+tot+(done===tot?' 🎉':'');
+    }
+    updateG();
+  }catch(e){}
+}
+function copyCode(btn){
+  const text=btn.nextElementSibling.innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='✓ Copiado';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copiar';btn.classList.remove('copied');},2000);
+  }).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=text;ta.style.cssText='position:fixed;opacity:0';
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    btn.textContent='✓ Copiado';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copiar';btn.classList.remove('copied');},2000);
+  });
+}
+function toggleSC(){document.getElementById('modalOv').classList.toggle('open');}
+function closeBg(e){if(e.target===document.getElementById('modalOv'))toggleSC();}
+
+const sidebar=document.getElementById('sidebar'),sbOv=document.getElementById('sbOv');
+document.getElementById('navToggle').onclick=()=>{sidebar.classList.contains('open')?closeSB():openSB();};
+sbOv.onclick=closeSB;
+function openSB(){sidebar.classList.add('open');sbOv.classList.add('open');}
+function closeSB(){sidebar.classList.remove('open');sbOv.classList.remove('open');}
+document.querySelectorAll('.nav-link[data-ph]').forEach(l=>l.addEventListener('click',closeSB));
+
+const navLinks=document.querySelectorAll('.sbnav .nav-link:not([data-ph])');
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){navLinks.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+e.target.id));}});},{threshold:0.25});
+['inicio','que-es','glosario','tutorial'].forEach(id=>{const el=document.getElementById(id);if(el)obs.observe(el);});
+
+// touch support for glossary terms on mobile
+document.querySelectorAll('.term').forEach(t=>{
+  t.setAttribute('tabindex','0');
+  t.addEventListener('click',e=>{e.stopPropagation();t.classList.toggle('tapped');
+    const tip=t.querySelector('.tip');
+    if(tip){const on=tip.style.visibility==='visible';
+      document.querySelectorAll('.term .tip').forEach(x=>{x.style.visibility='';x.style.opacity='';});
+      if(!on){tip.style.visibility='visible';tip.style.opacity='1';tip.style.transform='translateX(-50%) translateY(0)';}
+    }
+  });
+});
+document.addEventListener('click',()=>{document.querySelectorAll('.term .tip').forEach(x=>{x.style.visibility='';x.style.opacity='';});});
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.getElementById('modalOv').classList.remove('open');closeSB();}});
+document.addEventListener('DOMContentLoaded',load);
+</script>
+</body>
+</html>
