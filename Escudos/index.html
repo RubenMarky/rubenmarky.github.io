@@ -324,6 +324,10 @@
       color: var(--text-dim);
       text-transform: uppercase;
       font-family: 'Orbitron', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
     }
     .pie span { color: var(--neon); }
 
@@ -343,6 +347,39 @@
     @media (prefers-reduced-motion: reduce) {
       .escudo-card { transition: none; }
       .escudo-card:hover { transform: none; }
+    }
+
+    /* ============================================================
+       CONTADOR DE VISITAS (número real vía CounterAPI)
+       ============================================================ */
+    .visitas {
+      margin-top: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 6px 16px;
+      border-radius: 999px;
+      background: var(--neon-faint);
+      border: 1px solid var(--neon-soft);
+      box-shadow: 0 0 14px rgba(0, 243, 255, 0.10);
+    }
+    .visitas[hidden] { display: none; }
+    .visitas svg { color: var(--neon); flex-shrink: 0; filter: drop-shadow(0 0 4px var(--neon-soft)); }
+    .visitas-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.66rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .visitas-num {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--neon);
+      text-shadow: 0 0 8px var(--neon-soft);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.04em;
     }
   </style>
 </head>
@@ -541,6 +578,11 @@
     <!-- ===== Pie ===== -->
     <footer class="pie">
       20 Escudos · Toca para <span>expandir</span> a pantalla completa
+      <div class="visitas" id="visitas" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        <span class="visitas-label">Visitas</span>
+        <span class="visitas-num" id="visitasNum">…</span>
+      </div>
     </footer>
 
   </div><!-- /lienzo -->
@@ -566,6 +608,30 @@
       },
       Thumbs: { type: "classic" },
     });
+  </script>
+
+  <script>
+    /* Contador de visitas — CounterAPI v1 (sin registro ni token).
+       Cuenta 1 vez por sesión; si el servicio falla, no muestra nada. */
+    (function () {
+      var NS  = 'rubenmarky-epet7';
+      var KEY = 'galeria-escudos';
+      var base = 'https://api.counterapi.dev/v1/' + NS + '/' + KEY;
+      var yaContado = sessionStorage.getItem('epet7_galeria_visita');
+      var url = yaContado ? (base + '/') : (base + '/up');
+
+      fetch(url)
+        .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+        .then(function (d) {
+          var n = d && (d.count != null ? d.count : d.value);
+          if (n == null || isNaN(n)) return Promise.reject();
+          if (!yaContado) sessionStorage.setItem('epet7_galeria_visita', '1');
+          document.getElementById('visitasNum').textContent =
+            Number(n).toLocaleString('es-AR');
+          document.getElementById('visitas').hidden = false;
+        })
+        .catch(function () { /* silencioso */ });
+    })();
   </script>
 </body>
 </html>
