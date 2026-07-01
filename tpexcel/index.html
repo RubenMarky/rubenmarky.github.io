@@ -131,6 +131,18 @@ footer .mono{font-family:var(--mono)}
   .count{width:100%;margin-left:0}
   .stats{gap:18px}
 }
+
+footer .side{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.visitas{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:5px 12px;border-radius:8px;
+  background:#eef2fa;border:1px solid var(--line);
+  font-family:var(--mono);font-size:12px;color:var(--muted);
+}
+.visitas[hidden]{display:none}
+.visitas svg{color:var(--excel);flex:none}
+.visitas b{color:var(--ink);font-weight:700}
+
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}}
 </style>
 </head>
@@ -190,7 +202,13 @@ footer .mono{font-family:var(--mono)}
       <img class="flogo" src="escudo_epet.png" alt="Escudo E.P.E.T. N° 7" width="38" height="38">
       <div>Material didáctico de <b>Prof. Rubén Markwart</b><br>E.P.E.T. N° 7 — EPJA · Jardín América, Misiones</div>
     </div>
-    <div class="mono">=BANCO_TP_EXCEL(2026)</div>
+    <div class="side">
+      <div class="mono">=BANCO_TP_EXCEL(2026)</div>
+      <div class="visitas" id="visitas" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        Visitas: <b id="visitasNum">…</b>
+      </div>
+    </div>
   </div>
 </footer>
 
@@ -301,6 +319,30 @@ chipsEl.addEventListener('click', e=>{
 qEl.addEventListener('input', e=>{ query=e.target.value.trim().toLowerCase(); apply(); });
 
 apply();
+</script>
+
+<script>
+// Contador de visitas — CounterAPI v1 (sin registro ni token).
+// Cuenta 1 vez por sesión; si el servicio falla, no muestra nada.
+(function () {
+  var NS  = 'rubenmarky-epet7';
+  var KEY = 'banco-tp-excel';
+  var base = 'https://api.counterapi.dev/v1/' + NS + '/' + KEY;
+  var yaContado = sessionStorage.getItem('epet7_excel_visita');
+  var url = yaContado ? (base + '/') : (base + '/up');
+
+  fetch(url)
+    .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+    .then(function (d) {
+      var n = d && (d.count != null ? d.count : d.value);
+      if (n == null || isNaN(n)) return Promise.reject();
+      if (!yaContado) sessionStorage.setItem('epet7_excel_visita', '1');
+      document.getElementById('visitasNum').textContent =
+        Number(n).toLocaleString('es-AR');
+      document.getElementById('visitas').hidden = false;
+    })
+    .catch(function () { /* silencioso */ });
+})();
 </script>
 </body>
 </html>
