@@ -353,22 +353,30 @@
     .sublink-arrow { color: var(--text-muted); transition: transform .3s ease; flex-shrink: 0; }
     .sublink:hover .sublink-arrow { transform: translateX(4px); color: #fff; }
 
-    .sublinks-all {
-      grid-column: 1 / -1;
-      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-      padding: 0.9rem; border-radius: 14px;
-      background: rgba(236, 92, 153, 0.08);
-      border: 1px solid rgba(236, 92, 153, 0.22);
-      text-decoration: none; color: var(--accent-5);
-      font-weight: 600; font-size: 0.9rem; letter-spacing: .02em;
-      transition: all .3s ease;
+
+    /* ───────────────────────────────────────────────
+       Contador de visitas (número real vía CounterAPI)
+    ─────────────────────────────────────────────── */
+    .visits {
+      margin-top: 0.9rem;
+      display: inline-flex; align-items: center; gap: 0.55rem;
+      padding: 0.45rem 1.1rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
-    .sublinks-all:hover {
-      background: rgba(236, 92, 153, 0.15);
-      border-color: rgba(236, 92, 153, 0.4);
+    .visits[hidden] { display: none; }
+    .visits svg { color: var(--accent-1); flex-shrink: 0; }
+    .visits-count {
+      font-weight: 700;
+      color: #e2e8f0;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.03em;
     }
-    .sublinks-all .arrow { transition: transform .3s ease; }
-    .sublinks-all:hover .arrow { transform: translateX(4px); }
 
   </style>
 </head>
@@ -481,11 +489,6 @@
             </div>
             <span class="sublink-arrow">→</span>
           </a>
-
-          <a href="./EPET7_Bases_Datos_II_TP.html" class="sublinks-all">
-            <span>Abrir el índice completo de Trabajos Prácticos</span>
-            <span class="arrow">→</span>
-          </a>
         </div>
       </details>
     </div>
@@ -493,9 +496,10 @@
 
   <footer>
     <p>© 2026 Prof. Markwart Rubén · Jardín América, Misiones</p>
- <!-- Contador de Visitas Definitivo - Azul Eléctrico -->
-    <div style="text-align: center; margin-top: 15px; margin-bottom: 5px;">
-        <img src="https://getloli.com" alt="Contador de Visitas" style="display: inline-block; height: 30px; filter: hue-rotate(140deg) brightness(0.9);">
+    <div class="visits" id="visits" hidden>
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+      <span>Visitas:</span>
+      <span class="visits-count" id="visitsCount">…</span>
     </div>
   </footer>
 
@@ -518,6 +522,31 @@
         }
         el.appendChild(wEl);
       });
+    })();
+  </script>
+
+  <script>
+    /* Contador de visitas — CounterAPI v1 (sin registro ni token).
+       Cuenta 1 vez por sesión; en recargas usa lectura sin incrementar.
+       Si el servicio falla, no muestra nada (evita el icono roto). */
+    (function () {
+      var NS  = 'rubenmarky-epet7';
+      var KEY = 'portal-bd';
+      var base = 'https://api.counterapi.dev/v1/' + NS + '/' + KEY;
+      var yaContado = sessionStorage.getItem('epet7_visita');
+      var url = yaContado ? (base + '/') : (base + '/up');
+
+      fetch(url)
+        .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+        .then(function (d) {
+          var n = d && (d.count != null ? d.count : d.value);
+          if (n == null || isNaN(n)) return Promise.reject();
+          if (!yaContado) sessionStorage.setItem('epet7_visita', '1');
+          document.getElementById('visitsCount').textContent =
+            Number(n).toLocaleString('es-AR');
+          document.getElementById('visits').hidden = false;
+        })
+        .catch(function () { /* silencioso */ });
     })();
   </script>
 </body>
