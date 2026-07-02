@@ -3,669 +3,2713 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>50 Herramientas · Taller de Informática · E.P.E.T N°7 EPJA</title>
-
-<!-- Ícono del navegador -->
-<link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,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">
-<link rel="icon" type="image/png" sizes="16x16" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAADJklEQVR4nAXBu28bdQDA8e/97pw7P+/8tkni4AQqmqK0EjAAYoAsLIgFiYWRjT+Dv4CRBVXMLAgxAGLqAi2ilBbUPErS2K7j59l353s/+Hykjz77IkukLeScSn+nTaFYIqepqGqOKE5xbJdSQWVLyoiCkMHMYjIe0THyOJsNSqteZRNmGLUaQtVIZRlZzSOpGnpFZTo/Y2Ku0DSNyXiMUdI4vLFP6FoU9CJKo9Wl4G0oGjpuknF084Ba1eB6MqNmVBGhzZOn50i+TegFDB0fRcowqjqHez3EeGHhRwnT+ZK3b9/koNfGWdlsVmuunp2zmM0p57eYXY8wlJDQHDEYz1C38tx/9A9Kt1rAjSIK1RZpEPLbg79ZmBb/nYzwVmsUIbG2l8SRhZuEKFlKvXFIu26w3WkiOp0mekVnOl8RxQlPHp/z870zBhjs9XvoeoWTtczYraCgkqQZfhhQKpdxHAcxM20KhTzPL664vLzir9MljVtv8O57R/TVDR/uq5T8Ka4kM7RVpFQiyySiJMK2VgjXdbFth8PXevz58IREkeh38zz66Q/014+h/wHNnE5kPSengBfLVLZSPHuD77goWZbihxHDywtezFw8FH757nvazT5nqzWBa2PnNAQqYbBhLck8e/yQ7WaTiq6h2BsXRZUIfR+BwLMsUnfDixh++OYBmmtythGUi2XCLEZLc2zvvco6Sjm9HCBAJvBC0gik1CJcTihKC9QkwPU95Mzl/XqNW0dHCEVDzWXECDw3ZDpfItbmkpc6daqNMr5vkc+rzG0Q8ZR9kfD5dp87Nw7492JAUS1iNKrEaUIWB0Shj/TlV3ezVruBbhhMhjO+vvstpr1FK5xzXBWcTieMSk3yLx/R6HR4581X6LZbjIZXrJcmiiwEy7lJFMQY9Rq7vV2y4TWK3ONX18TUu3S6uwjhE0UWrbqBuVgQRQmKqqKMZwtyioLj+aRC8OknH3M5GHL/6RjLi1Ejn4oKtw92OOjvsV5bzGZzPM8jjmIUy7IQQkISNRzHIUlT+rs7NKt1frz3O1GacvzWHapGGcu28YMAz/MwTZM0zfgf5IGc0SeBim0AAAAASUVORK5CYII=">
-<link rel="shortcut icon" href="data:image/png;base64,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">
+<title>Control de Herramientas · E.P.E.T N°7</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,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">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
 <style>
-  :root{
-    --ink:#0c1320;
-    --ink-soft:#1a2436;
-    --paper:#f4f1ea;
-    --paper-2:#e9e4d8;
-    --line:#cbc4b3;
-    --orange:#ff5722;
-    --orange-2:#ff7a4d;
-    --steel:#1f4e79;
-    --steel-2:#2a6bb0;
-    --green:#1f7a4d;
-    --amber:#e8a400;
-    --violet:#6d3fb0;
-    --red:#c0392b;
-    --shadow: 6px 6px 0 var(--ink);
-  }
+:root {
+  --ink: #0c1320;
+  --ink-soft: #1a2436;
+  --paper: #f4f1ea;
+  --paper-2: #e9e4d8;
+  --line: #cbc4b3;
+  --orange: #ff5722;
+  --orange-2: #ff7a4d;
+  --steel: #1f4e79;
+  --steel-2: #2a6bb0;
+  --green: #1f7a4d;
+  --amber: #e8a400;
+  --red: #c0392b;
+  --shadow: 4px 4px 0 var(--ink);
+}
 
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{
-    font-family:'Sora',sans-serif;
-    background:var(--paper);
-    color:var(--ink);
-    overflow-x:hidden;
-    background-image:
-      radial-gradient(circle at 1px 1px, rgba(12,19,32,.07) 1px, transparent 0);
-    background-size:22px 22px;
-  }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Sora', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
-  /* ---------- HEADER ---------- */
-  header{
-    position:relative;
-    background:var(--ink);
-    color:var(--paper);
-    padding:64px 24px 90px;
-    overflow:hidden;
-    border-bottom:6px solid var(--orange);
-  }
-  header::before{
-    content:"";
-    position:absolute;inset:0;
-    background-image:
-      repeating-linear-gradient(45deg, transparent 0 18px, rgba(255,87,34,.05) 18px 19px);
-    pointer-events:none;
-  }
-  .badge{
-    display:inline-flex;align-items:center;gap:10px;
-    font-family:'Space Mono',monospace;
-    font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;
-    border:1.5px solid rgba(244,241,234,.4);
-    padding:7px 14px;border-radius:40px;
-    color:var(--paper);
-    margin-bottom:28px;
-  }
-  .badge .dot{width:8px;height:8px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 3px rgba(255,87,34,.25)}
-  h1.title{
-    font-family:'Archivo Black',sans-serif;
-    line-height:.92;
-    font-size:clamp(2.6rem,9vw,6.4rem);
-    letter-spacing:-.01em;
-    text-transform:uppercase;
-  }
-  h1.title .num{
-    color:var(--orange);
-    -webkit-text-stroke:0;
-    position:relative;
-  }
-  h1.title .out{
-    color:transparent;
-    -webkit-text-stroke:1.6px var(--paper);
-  }
-  .subtitle{
-    margin-top:24px;
-    max-width:620px;
-    font-weight:300;
-    font-size:1.05rem;
-    line-height:1.6;
-    color:rgba(244,241,234,.82);
-  }
-  .meta-row{
-    margin-top:34px;
-    display:flex;flex-wrap:wrap;gap:10px;
-    font-family:'Space Mono',monospace;
-    font-size:.74rem;letter-spacing:.05em;
-  }
-  .meta-row span{
-    border:1px solid rgba(244,241,234,.25);
-    padding:8px 13px;border-radius:6px;
-    color:rgba(244,241,234,.85);
-    display:flex;align-items:center;gap:7px;
-  }
-  .meta-row span b{color:var(--orange);font-weight:700}
+/* ── HEADER ── */
+header {
+  background: var(--ink);
+  color: #fff;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.header-title { display: flex; flex-direction: column; gap: 0.1rem; }
+.header-title h1 {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: clamp(1rem, 3vw, 1.4rem);
+  letter-spacing: -0.5px;
+}
+.header-title small {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  color: #adb8c9;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.btn-config {
+  background: transparent;
+  border: 2px solid rgba(255,255,255,0.3);
+  color: #fff;
+  padding: 0.4rem 0.9rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  cursor: pointer;
+  border-radius: 0;
+  transition: background 0.2s;
+}
+.btn-config:hover { background: rgba(255,255,255,0.1); }
 
-  /* deco corner */
-  .corner-tag{
-    position:absolute;top:0;right:0;
-    background:var(--orange);color:var(--ink);
-    font-family:'Archivo Black',sans-serif;
-    font-size:.78rem;letter-spacing:.05em;
-    padding:14px 22px;
-    clip-path:polygon(22px 0,100% 0,100% 100%,0 100%);
-    text-transform:uppercase;
-  }
+/* ── NAV TABS ── */
+nav {
+  background: var(--ink-soft);
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+nav::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 0.75rem 1.25rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #7a8ca0;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+.tab:hover { color: #fff; }
+.tab.active { color: var(--orange); border-bottom-color: var(--orange); }
 
-  /* ---------- TOOLBAR ---------- */
-  .toolbar{
-    position:sticky;top:0;z-index:60;
-    background:var(--paper);
-    border-bottom:2px solid var(--ink);
-    padding:16px 24px;
-    box-shadow:0 6px 0 -3px rgba(12,19,32,.12);
-  }
-  .toolbar-inner{
-    max-width:1180px;margin:0 auto;
-    display:flex;flex-wrap:wrap;gap:14px;align-items:center;
-  }
-  .search-wrap{
-    flex:1 1 260px;
-    position:relative;
-    min-width:220px;
-  }
-  .search-wrap svg{
-    position:absolute;left:14px;top:50%;transform:translateY(-50%);
-    width:18px;height:18px;stroke:var(--ink);opacity:.5;
-  }
-  #search{
-    width:100%;
-    font-family:'Space Mono',monospace;
-    font-size:.9rem;
-    padding:13px 16px 13px 44px;
-    border:2px solid var(--ink);
-    border-radius:8px;
-    background:#fff;
-    color:var(--ink);
-    box-shadow:var(--shadow);
-    transition:transform .12s ease, box-shadow .12s ease;
-  }
-  #search:focus{outline:none;transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--orange)}
-  #search::placeholder{color:rgba(12,19,32,.4)}
+/* ── MAIN LAYOUT ── */
+main { flex: 1; padding: 1.5rem; max-width: 1100px; width: 100%; margin: 0 auto; }
+.section { display: none; }
+.section.active { display: block; }
 
-  .counter{
-    font-family:'Space Mono',monospace;
-    font-size:.8rem;
-    background:var(--ink);color:var(--paper);
-    padding:11px 15px;border-radius:8px;
-    white-space:nowrap;
-  }
-  .counter b{color:var(--orange)}
+/* ── SETUP SCREEN ── */
+#setup {
+  max-width: 500px;
+  margin: 3rem auto;
+  background: #fff;
+  border: 2px solid var(--ink);
+  box-shadow: var(--shadow);
+  padding: 2rem;
+}
+#setup h2 {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+#setup p {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+.setup-steps {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.8rem;
+  line-height: 1.8;
+  font-family: 'Space Mono', monospace;
+}
+.setup-steps b { color: var(--steel); }
 
-  .filters{
-    width:100%;
-    display:flex;flex-wrap:wrap;gap:9px;
-    max-width:1180px;margin:14px auto 0;
-  }
-  .chip{
-    font-family:'Space Mono',monospace;
-    font-size:.74rem;letter-spacing:.04em;
-    padding:8px 14px;
-    border:2px solid var(--ink);
-    border-radius:40px;
-    background:#fff;cursor:pointer;
-    text-transform:uppercase;
-    transition:all .14s ease;
-    user-select:none;
-    display:flex;align-items:center;gap:7px;
-  }
-  .chip .swatch{width:9px;height:9px;border-radius:50%}
-  .chip:hover{transform:translateY(-2px)}
-  .chip.active{background:var(--ink);color:var(--paper)}
-  .chip[data-cat="all"].active{background:var(--orange);color:var(--ink);border-color:var(--ink)}
+/* ── FORMS ── */
+.form-group { margin-bottom: 1rem; }
+label {
+  display: block;
+  font-size: 0.75rem;
+  font-family: 'Space Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.35rem;
+  color: var(--ink-soft);
+}
+input, select, textarea {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: 2px solid var(--line);
+  background: #fff;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.88rem;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s;
+  border-radius: 0;
+  appearance: none;
+}
+input:focus, select:focus { border-color: var(--steel); }
+select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8z' fill='%230c1320'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; padding-right: 2.5rem; }
 
-  /* ---------- MAIN GRID ---------- */
-  main{max-width:1180px;margin:0 auto;padding:48px 24px 40px}
+/* ── BUTTONS ── */
+.btn {
+  display: inline-block;
+  padding: 0.55rem 1.1rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border: 2px solid var(--ink);
+  background: var(--ink);
+  color: #fff;
+  box-shadow: var(--shadow);
+  transition: transform 0.1s, box-shadow 0.1s;
+  text-decoration: none;
+}
+.btn:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+.btn-orange { background: var(--orange); border-color: var(--orange); }
+.btn-orange:hover { box-shadow: 6px 6px 0 var(--orange); }
+.btn-steel { background: var(--steel); border-color: var(--steel); }
+.btn-green { background: var(--green); border-color: var(--green); }
+.btn-red { background: var(--red); border-color: var(--red); }
+.btn-amber { background: var(--amber); border-color: var(--amber); color: var(--ink); }
+.btn-outline {
+  background: transparent;
+  color: var(--ink);
+  box-shadow: var(--shadow);
+}
+.btn-sm { padding: 0.3rem 0.7rem; font-size: 0.68rem; box-shadow: 2px 2px 0 var(--ink); }
+.btn-sm:hover { box-shadow: 4px 4px 0 var(--ink); }
 
-  .cat-header{
-    display:flex;align-items:center;gap:18px;
-    margin:54px 0 26px;
-    scroll-margin-top:140px;
-  }
-  .cat-header:first-child{margin-top:0}
-  .cat-header .cat-index{
-    font-family:'Archivo Black',sans-serif;
-    font-size:2.4rem;line-height:1;
-    color:transparent;-webkit-text-stroke:1.5px var(--ink);
-  }
-  .cat-header h2{
-    font-family:'Archivo Black',sans-serif;
-    font-size:clamp(1.3rem,3.6vw,2rem);
-    text-transform:uppercase;letter-spacing:-.01em;
-  }
-  .cat-header .rule{flex:1;height:3px;background:var(--ink)}
-  .cat-header .pill{
-    font-family:'Space Mono',monospace;font-size:.72rem;
-    padding:5px 11px;border-radius:30px;color:#fff;font-weight:700;
-  }
+/* ── SECTION HEADER ── */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.section-header h2 {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 1.25rem;
+}
 
-  .grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-    gap:18px;
-  }
+/* ── CARD FORM ── */
+.card-form {
+  background: #fff;
+  border: 2px solid var(--ink);
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: none;
+}
+.card-form.open { display: block; }
+.card-form h3 {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--paper-2);
+}
+.form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }
+.form-actions { display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap; }
 
-  .card{
-    position:relative;
-    background:#fff;
-    border:2px solid var(--ink);
-    border-radius:12px;
-    padding:22px 20px 20px;
-    box-shadow:var(--shadow);
-    transition:transform .16s cubic-bezier(.2,.8,.2,1), box-shadow .16s ease;
-    overflow:hidden;
-    animation:pop .4s backwards;
-  }
-  @keyframes pop{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-  .card::after{
-    content:"";position:absolute;left:0;top:0;bottom:0;width:6px;
-    background:var(--c,var(--steel));
-  }
-  .card:hover{
-    transform:translate(-3px,-3px);
-    box-shadow:9px 9px 0 var(--c,var(--steel));
-  }
-  .card-top{
-    display:flex;align-items:flex-start;gap:14px;margin-bottom:12px;
-  }
-  .icon-box{
-    flex:none;width:52px;height:52px;border-radius:10px;
-    background:var(--c,var(--steel));
-    display:flex;align-items:center;justify-content:center;
-    color:#fff;
-  }
-  .icon-box svg{width:28px;height:28px;stroke:#fff;fill:none;stroke-width:1.8}
-  .card .id{
-    font-family:'Archivo Black',sans-serif;
-    font-size:1.5rem;line-height:1;
-    color:transparent;-webkit-text-stroke:1.4px var(--c,var(--steel));
-    margin-left:auto;
-  }
-  .card h3{
-    font-size:1.06rem;font-weight:700;line-height:1.2;
-    margin-bottom:9px;color:var(--ink);
-  }
-  .card p{
-    font-size:.86rem;line-height:1.55;font-weight:300;
-    color:var(--ink-soft);
-  }
-  .card .tag{
-    display:inline-block;margin-top:14px;
-    font-family:'Space Mono',monospace;font-size:.66rem;
-    letter-spacing:.08em;text-transform:uppercase;
-    padding:4px 10px;border-radius:5px;
-    color:var(--c,var(--steel));
-    border:1.5px solid var(--c,var(--steel));
-  }
+/* ── TABLE ── */
+.table-wrap { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  background: #fff;
+  border: 2px solid var(--ink);
+}
+thead th {
+  background: var(--ink);
+  color: #fff;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.65rem 0.85rem;
+  text-align: left;
+  white-space: nowrap;
+}
+tbody tr { border-bottom: 1px solid var(--line); transition: background 0.15s; }
+tbody tr:hover { background: var(--paper); }
+tbody tr:last-child { border-bottom: none; }
+td { padding: 0.65rem 0.85rem; vertical-align: middle; }
+.td-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
 
-  .empty{
-    text-align:center;padding:60px 20px;
-    font-family:'Space Mono',monospace;color:var(--ink-soft);
-    display:none;
-  }
-  .empty.show{display:block}
-  .empty b{font-size:1.1rem;color:var(--ink)}
+/* ── BADGES ── */
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  border: 1.5px solid currentColor;
+}
+.badge-green { color: var(--green); }
+.badge-red { color: var(--red); }
+.badge-amber { color: var(--amber); }
+.badge-cat { color: #3a6ea5; text-transform: none; letter-spacing: 0; }
+.badge-none { color: #9aa6b0; text-transform: none; letter-spacing: 0; border-style: dashed; }
 
-  /* ---------- PROMPTS SECTION ---------- */
-  .prompts{
-    background:var(--ink);color:var(--paper);
-    margin-top:70px;padding:64px 24px;
-    border-top:6px solid var(--orange);
-    position:relative;
-  }
-  .prompts-inner{max-width:1180px;margin:0 auto}
-  .prompts h2{
-    font-family:'Archivo Black',sans-serif;
-    font-size:clamp(1.6rem,4.5vw,2.6rem);
-    text-transform:uppercase;line-height:1;
-  }
-  .prompts h2 span{color:var(--orange)}
-  .prompts .lead{
-    margin:18px 0 36px;max-width:640px;
-    font-weight:300;color:rgba(244,241,234,.8);line-height:1.6;
-  }
-  .prompts .lead code{
-    font-family:'Space Mono',monospace;background:rgba(255,87,34,.18);
-    color:var(--orange-2);padding:2px 7px;border-radius:5px;font-size:.85em;
-  }
-  .prompt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
-  .prompt-card{
-    background:var(--ink-soft);
-    border:1.5px solid rgba(244,241,234,.18);
-    border-radius:12px;padding:22px;
-    display:flex;flex-direction:column;
-  }
-  .prompt-card .pc-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-  .prompt-card .pc-num{
-    font-family:'Archivo Black',sans-serif;font-size:1.1rem;
-    color:var(--ink);background:var(--orange);
-    width:32px;height:32px;border-radius:8px;
-    display:flex;align-items:center;justify-content:center;flex:none;
-  }
-  .prompt-card h4{font-size:.98rem;font-weight:700;line-height:1.2}
-  .prompt-card .pc-body{
-    font-family:'Space Mono',monospace;font-size:.78rem;line-height:1.6;
-    color:rgba(244,241,234,.78);
-    background:rgba(0,0,0,.25);
-    border-radius:8px;padding:14px;flex:1;
-    border-left:3px solid var(--orange);
-    white-space:pre-wrap;
-  }
-  .copy-btn{
-    margin-top:14px;align-self:flex-start;
-    font-family:'Space Mono',monospace;font-size:.74rem;letter-spacing:.06em;
-    text-transform:uppercase;cursor:pointer;
-    background:var(--orange);color:var(--ink);font-weight:700;
-    border:none;padding:9px 16px;border-radius:7px;
-    transition:transform .12s ease, background .12s ease;
-    display:flex;align-items:center;gap:8px;
-  }
-  .copy-btn:hover{transform:translateY(-2px)}
-  .copy-btn.copied{background:var(--green);color:#fff}
+/* ── DASHBOARD CARDS ── */
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.dash-card {
+  background: #fff;
+  border: 2px solid var(--ink);
+  box-shadow: var(--shadow);
+  padding: 1.25rem;
+}
+.dash-card .number {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 2.5rem;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+.dash-card .label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #666;
+}
+.dash-card.orange { border-color: var(--orange); }
+.dash-card.orange .number { color: var(--orange); }
+.dash-card.green { border-color: var(--green); }
+.dash-card.green .number { color: var(--green); }
+.dash-card.steel { border-color: var(--steel); }
+.dash-card.steel .number { color: var(--steel); }
 
-  /* ---------- FOOTER ---------- */
-  footer{
-    background:var(--paper-2);
-    padding:40px 24px;
-    border-top:2px solid var(--ink);
-    text-align:center;
-  }
-  footer .f-title{
-    font-family:'Archivo Black',sans-serif;font-size:1rem;text-transform:uppercase;
-    letter-spacing:.02em;margin-bottom:8px;
-  }
-  footer .f-sub{
-    font-family:'Space Mono',monospace;font-size:.78rem;
-    color:var(--ink-soft);letter-spacing:.04em;
-  }
-  footer .f-sub b{color:var(--orange)}
+/* ── EMPTY STATE ── */
+.empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #999;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+}
 
-  /* back to top */
-  .top-btn{
-    position:fixed;right:22px;bottom:22px;z-index:80;
-    width:50px;height:50px;border-radius:12px;
-    background:var(--orange);border:2px solid var(--ink);
-    box-shadow:4px 4px 0 var(--ink);cursor:pointer;
-    display:flex;align-items:center;justify-content:center;
-    opacity:0;pointer-events:none;transition:opacity .25s ease, transform .12s ease;
-  }
-  .top-btn.show{opacity:1;pointer-events:auto}
-  .top-btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
-  .top-btn svg{width:22px;height:22px;stroke:var(--ink);stroke-width:2.4;fill:none}
+/* ── ALERT ── */
+.alert {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.82rem;
+  border: 2px solid;
+  display: none;
+}
+.alert.show { display: block; }
+.alert-ok { border-color: var(--green); background: #e8f5ee; color: var(--green); }
+.alert-err { border-color: var(--red); background: #fdecea; color: var(--red); }
 
-  @media(max-width:560px){
-    header{padding:48px 18px 70px}
-    main{padding:34px 16px}
-    .toolbar{padding:14px 16px}
-    .card{padding:18px 16px}
-  }
+/* ── FOOTER ── */
+footer {
+  background: var(--ink);
+  color: #7a8ca0;
+  text-align: center;
+  padding: 0.75rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── SPINNER ── */
+.spinner {
+  display: inline-block;
+  width: 18px; height: 18px;
+  border: 3px solid rgba(0,0,0,0.15);
+  border-top-color: var(--ink);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+  margin-right: 0.4rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading { text-align: center; padding: 2rem; color: #888; font-family: 'Space Mono', monospace; font-size: 0.8rem; }
+
+/* ── AUTH ── */
+#login { max-width: 400px; margin: 3rem auto; background: #fff; border: 2px solid var(--ink); box-shadow: var(--shadow); padding: 2rem; }
+#login h2 { font-family: 'Archivo Black', sans-serif; font-size: 1.2rem; margin-bottom: 1.5rem; }
+.user-badge { display: none; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.user-badge.visible { display: flex; }
+.user-email { font-family: 'Space Mono', monospace; font-size: 0.68rem; color: #adb8c9; }
+.role-chip { font-family: 'Space Mono', monospace; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.2rem 0.5rem; border: 1.5px solid; }
+.role-chip.admin { color: var(--orange); border-color: var(--orange); }
+.role-chip.usuario { color: #7a8ca0; border-color: #7a8ca0; }
+.admin-tab { display: none; }
+body.is-admin .admin-tab { display: block; }
+.admin-only-inline { display: none; }
+body.is-admin .admin-only-inline { display: inline-block; }
+.admin-only-block { display: none; }
+body.is-admin .admin-only-block { display: block; }
+
+/* ── INFORMES ── */
+.report-toolbar { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: flex-end; margin-bottom: 1.25rem; }
+.report-output {
+  background: #fff;
+  border: 2px solid var(--ink);
+  box-shadow: var(--shadow);
+  padding: 2rem;
+  margin-top: 1.5rem;
+  min-height: 120px;
+}
+.report-output .rep-head { border-bottom: 3px solid var(--ink); padding-bottom: 0.85rem; margin-bottom: 1.25rem; }
+.report-output .rep-inst { font-family: 'Archivo Black', sans-serif; font-size: 1.15rem; }
+.report-output .rep-sub { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: #666; text-transform: uppercase; letter-spacing: 0.5px; }
+.report-output .rep-title { font-family: 'Archivo Black', sans-serif; font-size: 1.3rem; margin-top: 0.75rem; }
+.report-output .rep-meta { font-family: 'Space Mono', monospace; font-size: 0.72rem; color: #888; margin-top: 0.25rem; }
+.report-output table { box-shadow: none; margin-top: 1rem; }
+.report-output .rep-stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 1rem; margin: 1rem 0; }
+.report-output .rep-stat { border: 2px solid var(--line); padding: 1rem; text-align: center; }
+.report-output .rep-stat .n { font-family: 'Archivo Black', sans-serif; font-size: 1.8rem; color: var(--orange); }
+.report-output .rep-stat .l { font-family: 'Space Mono', monospace; font-size: 0.65rem; text-transform: uppercase; color: #666; }
+.report-empty { color: #999; font-style: italic; padding: 2rem 0; text-align: center; }
+
+/* ── IMPRESIÓN ── */
+@media print {
+  header, nav, footer, .report-toolbar, .section-header, .no-print { display: none !important; }
+  body { background: #fff; }
+  main { padding: 0; max-width: none; }
+  .section { display: none !important; }
+  .section.active { display: block !important; }
+  .report-output { border: none; box-shadow: none; padding: 0; margin: 0; }
+  .report-output table { border: 1px solid #000; }
+  thead th { background: #000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .badge { border: 1px solid #999; padding: 1px 4px; }
+  @page { margin: 1.5cm; }
+}
 </style>
 </head>
 <body>
 
+<!-- ═══════════════════════════ HEADER ═══════════════════════════ -->
 <header>
-  <div class="corner-tag">EPJA · 2026</div>
-  <div class="badge"><span class="dot"></span> Operador de Informática · Administración y Gestión</div>
-  <h1 class="title"><span class="num">50</span> <span class="out">Herra</span>mientas<br>del Taller</h1>
-  <p class="subtitle">Guía interactiva de las herramientas fundamentales del taller de informática: hardware, periféricos, redes, software, mantenimiento y seguridad. Buscá, filtrá y aprendé.</p>
-  <div class="meta-row">
-    <span><b>6</b> categorías</span>
-    <span><b>50</b> herramientas</span>
-    <span><b>5</b> prompts de IA</span>
-    <span>E.P.E.T N°7 · Jardín América, Misiones</span>
+  <div class="header-title">
+    <h1 id="hdr-titulo">&#128295; Control de Herramientas</h1>
+    <small id="hdr-subtitulo">E.P.E.T N°7 · Taller de Informática</small>
+  </div>
+  <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;">
+    <div id="user-badge" class="user-badge">
+      <span id="user-email" class="user-email"></span>
+      <span id="user-role" class="role-chip"></span>
+      <button class="btn-config" onclick="logout()">Salir</button>
+    </div>
+    <button class="btn-config" id="btn-config" onclick="toggleSetup()">&#9881; Configurar</button>
   </div>
 </header>
 
-<div class="toolbar">
-  <div class="toolbar-inner">
-    <div class="search-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-      <input id="search" type="text" placeholder="Buscar herramienta... (ej: RAM, router, antivirus)">
-    </div>
-    <div class="counter">Mostrando <b id="count">50</b> / 50</div>
+<!-- ═══════════════════════════ TABS ════════════════════════════ -->
+<nav id="nav-tabs">
+  <button class="tab active" data-tab="dashboard" onclick="showTab('dashboard')">Dashboard</button>
+  <button class="tab" data-tab="retiros" onclick="showTab('retiros')">Retiros</button>
+  <button class="tab admin-tab" data-tab="herramientas" onclick="showTab('herramientas')"><span data-term-pc>Herramientas</span></button>
+  <button class="tab admin-tab" data-tab="profesores" onclick="showTab('profesores')">Profesores</button>
+  <button class="tab admin-tab" data-tab="alumnos" onclick="showTab('alumnos')">Alumnos</button>
+  <button class="tab admin-tab" data-tab="usuarios" onclick="showTab('usuarios')">Usuarios</button>
+  <button class="tab admin-tab" data-tab="informes" onclick="showTab('informes')">Informes</button>
+  <button class="tab admin-tab" data-tab="copias" onclick="showTab('copias')">Copias</button>
+  <button class="tab admin-tab" data-tab="auditoria" onclick="showTab('auditoria')">Auditoría</button>
+  <button class="tab admin-tab" data-tab="ajustes" onclick="showTab('ajustes')">Ajustes</button>
+</nav>
+
+<main>
+
+<!-- ═══════════════════════ LOGIN ═══════════════════════════════ -->
+<div id="login" class="section">
+  <h2>Iniciar sesión</h2>
+  <div class="form-group" style="margin-top:1rem;">
+    <label>Email</label>
+    <input type="email" id="l-email" placeholder="usuario@epet7.edu.ar" onkeydown="if(event.key==='Enter')doLogin()">
   </div>
-  <div class="filters" id="filters"></div>
+  <div class="form-group">
+    <label>Contraseña</label>
+    <input type="password" id="l-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+  </div>
+  <div id="alert-login" class="alert"></div>
+  <div class="form-actions">
+    <button class="btn btn-orange" onclick="doLogin()">Ingresar</button>
+  </div>
 </div>
 
-<main id="main">
-  <div class="empty" id="empty"><b>Sin resultados</b><br>Probá con otra palabra clave.</div>
+<!-- ═══════════════════════ SETUP SCREEN ════════════════════════ -->
+<div id="setup" class="section active">
+  <h2>Configurar Supabase</h2>
+  <p>Esta app usa <strong>Supabase</strong> como base de datos gratuita en la nube. Seguí estos pasos para conectarla:</p>
+  <div class="setup-steps">
+    <b>1.</b> Creá una cuenta en <b>supabase.com</b><br>
+    <b>2.</b> Creá un nuevo proyecto<br>
+    <b>3.</b> Ejecutá el archivo <b>control-herramientas-schema.sql</b> en SQL Editor<br>
+    <b>4.</b> Copiá la URL y la clave anónima desde <b>Settings → API</b><br>
+    <b>5.</b> Pegalas abajo y guardá
+  </div>
+  <div class="form-group">
+    <label>URL del Proyecto</label>
+    <input type="url" id="input-url" placeholder="https://xxxxxxxxxxxx.supabase.co">
+  </div>
+  <div class="form-group">
+    <label>Clave Anónima (anon public)</label>
+    <input type="text" id="input-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6...">
+  </div>
+
+  <hr style="border:none;border-top:2px dashed var(--line);margin:1.25rem 0;">
+
+  <div class="form-group">
+    <label>
+      Clave Service Role
+      <small style="font-weight:normal;text-transform:none;color:#888;"> — Settings → API → service_role (necesaria para gestionar usuarios)</small>
+    </label>
+    <input type="text" id="input-service-key" autocomplete="off" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6... (service_role)">
+  </div>
+  <div id="service-key-status" style="font-family:'Space Mono',monospace;font-size:0.72rem;margin-bottom:1rem;display:none;"></div>
+
+  <div id="alert-setup" class="alert"></div>
+  <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem;">
+    <button class="btn btn-orange" onclick="saveConfig()">Guardar y conectar</button>
+    <button class="btn btn-steel" onclick="saveServiceKeyOnly()">Guardar solo Service Key</button>
+    <button class="btn btn-outline" onclick="clearConfig()">Borrar configuración</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════ DASHBOARD ════════════════════════════ -->
+<div id="dashboard" class="section">
+  <div class="section-header">
+    <h2>Dashboard</h2>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+      <button class="btn btn-orange btn-sm admin-only-inline" onclick="exportarJSON()" title="Descargar copia de seguridad completa">⬇ Copia rápida</button>
+      <button class="btn btn-outline btn-sm" onclick="loadDashboard()">&#8635; Actualizar</button>
+    </div>
+  </div>
+
+  <div id="backup-reminder" class="alert" style="border-color:var(--amber);background:#fdf6e3;color:var(--ink);display:none;align-items:center;justify-content:space-between;gap:0.75rem;flex-wrap:wrap;">
+    <span id="backup-reminder-text" style="flex:1;min-width:200px;"></span>
+    <span style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+      <button class="btn btn-amber btn-sm" onclick="exportarJSON()">Descargar copia</button>
+      <button class="btn btn-outline btn-sm" onclick="posponerRecordatorio()">Más tarde</button>
+    </span>
+  </div>
+  <div class="dash-grid">
+    <div class="dash-card orange">
+      <div class="number" id="d-activos">–</div>
+      <div class="label">Retiros activos</div>
+    </div>
+    <div class="dash-card green">
+      <div class="number" id="d-hoy">–</div>
+      <div class="label">Devueltos hoy</div>
+    </div>
+    <div class="dash-card steel">
+      <div class="number" id="d-herramientas">–</div>
+      <div class="label"><span data-term-pc>Herramientas</span></div>
+    </div>
+  </div>
+  <h3 style="font-family:'Archivo Black',sans-serif;margin-bottom:1rem;">Préstamos activos</h3>
+  <div class="table-wrap">
+    <table id="tbl-dashboard">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th><span data-term-sc>Herramienta</span></th>
+          <th>Alumno</th>
+          <th>Profesor</th>
+          <th>Fecha retiro</th>
+          <th>Estado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tbody-dashboard"></tbody>
+    </table>
+  </div>
+
+  <div class="admin-only-block" style="margin-top:1.75rem;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-bottom:1rem;">
+      <h3 style="font-family:'Archivo Black',sans-serif;">Actividad reciente</h3>
+      <button class="btn btn-outline btn-sm" onclick="showTab('auditoria')">Ver auditoría completa →</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha y hora</th>
+            <th>Usuario</th>
+            <th>Acción</th>
+            <th>Detalle</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-actividad"><tr><td colspan="4" class="empty">–</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ RETIROS ══════════════════════════════ -->
+<div id="retiros" class="section">
+  <div class="section-header">
+    <h2>Retiros</h2>
+    <button class="btn btn-orange" onclick="toggleForm('form-retiro')">+ Nuevo retiro</button>
+  </div>
+
+  <div id="form-retiro" class="card-form">
+    <h3>Registrar retiro de <span data-term-s>herramienta</span></h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label><span data-term-sc>Herramienta</span></label>
+        <select id="r-herramienta"><option value="">Seleccionar…</option></select>
+      </div>
+      <div class="form-group">
+        <label>Alumno</label>
+        <select id="r-alumno"><option value="">Seleccionar…</option></select>
+      </div>
+      <div class="form-group">
+        <label>Profesor</label>
+        <select id="r-profesor"><option value="">Seleccionar…</option></select>
+      </div>
+      <div class="form-group">
+        <label>Fecha y hora de retiro</label>
+        <input type="datetime-local" id="r-fecha">
+      </div>
+    </div>
+    <div id="alert-retiro" class="alert"></div>
+    <div class="form-actions">
+      <button class="btn btn-orange" onclick="addRetiro()">Registrar</button>
+      <button class="btn btn-outline" onclick="toggleForm('form-retiro')">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th><span data-term-sc>Herramienta</span></th>
+          <th>Alumno</th>
+          <th>Curso</th>
+          <th>Profesor</th>
+          <th>Retiro</th>
+          <th>Devolución</th>
+          <th>Estado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tbody-retiros"><tr><td colspan="9" class="loading"><span class="spinner"></span>Cargando…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════ HERRAMIENTAS ════════════════════════ -->
+<div id="herramientas" class="section">
+  <div class="section-header">
+    <h2><span data-term-pc>Herramientas</span></h2>
+    <button class="btn btn-orange" onclick="toggleForm('form-herramienta')">+ Agregar</button>
+  </div>
+
+  <div id="form-herramienta" class="card-form">
+    <h3 id="fh-title">Agregar herramienta</h3>
+    <input type="hidden" id="h-id">
+    <div class="form-group">
+      <label>Nombre</label>
+      <input type="text" id="h-nombre" placeholder="Ej: Destornillador Phillips N°2">
+    </div>
+    <div class="form-group">
+      <label>Categoría <small style="font-weight:normal;text-transform:none;color:#888;">(opcional)</small></label>
+      <input type="text" id="h-categoria" list="cat-list" autocomplete="off" placeholder="Ej: Herramientas de Mantenimiento">
+      <datalist id="cat-list">
+        <option value="Hardware Principal"></option>
+        <option value="Periféricos"></option>
+        <option value="Red y Conectividad"></option>
+        <option value="Herramientas de Mantenimiento"></option>
+        <option value="Insumos Consumibles"></option>
+        <option value="Seguridad y Gestión"></option>
+        <option value="Copias de Seguridad y Clonación"></option>
+        <option value="Diagnóstico de Hardware y Sistema"></option>
+        <option value="Gestión de Particiones y Discos"></option>
+        <option value="Herramientas de Contraseñas y Seguridad"></option>
+        <option value="Licencias y Activación (Open-Source)"></option>
+        <option value="Optimización y Automatización (Scripts)"></option>
+        <option value="Recuperación de Datos"></option>
+        <option value="Redes y Conectividad"></option>
+        <option value="Utilidades del Sistema y Exploradores"></option>
+      </datalist>
+    </div>
+    <div id="alert-herramienta" class="alert"></div>
+    <div class="form-actions">
+      <button class="btn btn-orange" onclick="saveHerramienta()">Guardar</button>
+      <button class="btn btn-outline" onclick="cancelHerramienta()">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin:0.25rem 0 0.75rem;">
+      <label for="filtro-categoria" style="font-family:'Space Mono',monospace;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.3px;color:#666;">Filtrar por categoría</label>
+      <select id="filtro-categoria" onchange="renderHerramientas()" style="max-width:340px;">
+        <option value="">Todas</option>
+      </select>
+      <span id="filtro-contador" style="font-family:'Space Mono',monospace;font-size:0.7rem;color:#888;"></span>
+    </div>
+    <table>
+      <thead>
+        <tr><th>#</th><th>Nombre</th><th>Categoría</th><th>En uso</th><th></th></tr>
+      </thead>
+      <tbody id="tbody-herramientas"><tr><td colspan="5" class="loading"><span class="spinner"></span>Cargando…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PROFESORES ══════════════════════════ -->
+<div id="profesores" class="section">
+  <div class="section-header">
+    <h2>Profesores</h2>
+    <button class="btn btn-orange" onclick="toggleForm('form-profesor')">+ Agregar</button>
+  </div>
+
+  <div id="form-profesor" class="card-form">
+    <h3 id="fp-title">Agregar profesor</h3>
+    <input type="hidden" id="p-id">
+    <div class="form-group">
+      <label>Nombre</label>
+      <input type="text" id="p-nombre" placeholder="Ej: García, Carlos">
+    </div>
+    <div id="alert-profesor" class="alert"></div>
+    <div class="form-actions">
+      <button class="btn btn-orange" onclick="saveProfesor()">Guardar</button>
+      <button class="btn btn-outline" onclick="cancelProfesor()">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>#</th><th>Nombre</th><th></th></tr>
+      </thead>
+      <tbody id="tbody-profesores"><tr><td colspan="3" class="loading"><span class="spinner"></span>Cargando…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════ ALUMNOS ═════════════════════════════ -->
+<div id="alumnos" class="section">
+  <div class="section-header">
+    <h2>Alumnos</h2>
+    <button class="btn btn-orange" onclick="toggleForm('form-alumno')">+ Agregar</button>
+  </div>
+
+  <div id="form-alumno" class="card-form">
+    <h3 id="fa-title">Agregar alumno</h3>
+    <input type="hidden" id="a-id">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Nombre</label>
+        <input type="text" id="a-nombre" placeholder="Ej: Rodríguez, Juan">
+      </div>
+      <div class="form-group">
+        <label>Curso</label>
+        <input type="text" id="a-curso" placeholder="Ej: 3° A">
+      </div>
+    </div>
+    <div id="alert-alumno" class="alert"></div>
+    <div class="form-actions">
+      <button class="btn btn-orange" onclick="saveAlumno()">Guardar</button>
+      <button class="btn btn-outline" onclick="cancelAlumno()">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>#</th><th>Nombre</th><th>Curso</th><th></th></tr>
+      </thead>
+      <tbody id="tbody-alumnos"><tr><td colspan="4" class="loading"><span class="spinner"></span>Cargando…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════ USUARIOS ════════════════════════════ -->
+<div id="usuarios" class="section">
+  <div class="section-header">
+    <h2>Usuarios</h2>
+    <button class="btn btn-orange" onclick="abrirFormUsuario()">+ Nuevo usuario</button>
+  </div>
+
+  <div id="form-usuario" class="card-form">
+    <h3>Crear usuario regular</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="u-email" placeholder="nombre@epet7.edu.ar">
+      </div>
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input type="password" id="u-password" placeholder="Mínimo 6 caracteres">
+      </div>
+    </div>
+    <div id="alert-usuario" class="alert"></div>
+    <div class="form-actions">
+      <button class="btn btn-orange" onclick="createUsuario()">Crear usuario</button>
+      <button class="btn btn-outline" onclick="toggleForm('form-usuario')">Cancelar</button>
+    </div>
+  </div>
+
+  <div id="usuarios-no-service-key" class="alert alert-err" style="display:none;">
+    ⚠ Para crear usuarios necesitás configurar la <strong>Service Role Key</strong> en ⚙ Configurar.
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Email</th><th>Rol</th><th>Creado</th><th>Último ingreso</th><th></th></tr>
+      </thead>
+      <tbody id="tbody-usuarios"><tr><td colspan="5" class="loading"><span class="spinner"></span>Cargando…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════ COPIAS DE SEGURIDAD ═════════════════ -->
+<div id="copias" class="section">
+  <div class="section-header">
+    <h2>Copias de seguridad</h2>
+    <button class="btn btn-outline btn-sm" onclick="loadCopias()">&#8635; Actualizar</button>
+  </div>
+
+  <p style="font-size:0.85rem;color:#555;line-height:1.6;margin-bottom:1.25rem;max-width:640px;">
+    Generá una copia de todos los datos de la base (herramientas, alumnos, profesores y retiros)
+    en un archivo que podés guardar en tu computadora o pendrive. Si algún día se pierde la
+    información, podés restaurarla desde ese archivo.
+  </p>
+
+  <div class="dash-grid">
+    <div class="dash-card orange">
+      <div class="number" id="c-herramientas">–</div>
+      <div class="label"><span data-term-pc>Herramientas</span></div>
+    </div>
+    <div class="dash-card steel">
+      <div class="number" id="c-alumnos">–</div>
+      <div class="label">Alumnos</div>
+    </div>
+    <div class="dash-card green">
+      <div class="number" id="c-profesores">–</div>
+      <div class="label">Profesores</div>
+    </div>
+    <div class="dash-card orange">
+      <div class="number" id="c-retiros">–</div>
+      <div class="label">Retiros</div>
+    </div>
+  </div>
+
+  <!-- Exportar -->
+  <div style="background:#fff;border:2px solid var(--ink);box-shadow:var(--shadow);padding:1.5rem;margin-bottom:1.5rem;">
+    <h3 style="font-family:'Archivo Black',sans-serif;font-size:1rem;margin-bottom:0.75rem;">Descargar copia</h3>
+    <p style="font-size:0.82rem;color:#555;line-height:1.5;margin-bottom:1rem;">
+      El archivo <strong>JSON</strong> es la copia completa para restaurar. Los archivos
+      <strong>CSV</strong> sirven para abrir las tablas en Excel.
+    </p>
+    <div class="form-actions">
+      <button class="btn btn-orange" onclick="exportarJSON()">⬇ Copia completa (JSON)</button>
+      <button class="btn btn-steel" onclick="exportarCSV('herramienta')">CSV Herramientas</button>
+      <button class="btn btn-steel" onclick="exportarCSV('alumno')">CSV Alumnos</button>
+      <button class="btn btn-steel" onclick="exportarCSV('profesor')">CSV Profesores</button>
+      <button class="btn btn-steel" onclick="exportarCSV('retiro')">CSV Retiros</button>
+    </div>
+    <div id="alert-export" class="alert"></div>
+  </div>
+
+  <!-- Restaurar -->
+  <div style="background:#fff;border:2px solid var(--red);box-shadow:4px 4px 0 var(--red);padding:1.5rem;">
+    <h3 style="font-family:'Archivo Black',sans-serif;font-size:1rem;margin-bottom:0.75rem;color:var(--red);">Restaurar desde una copia</h3>
+    <p style="font-size:0.82rem;color:#555;line-height:1.5;margin-bottom:1rem;">
+      Seleccioná un archivo de copia (<strong>.json</strong>) generado por esta app. Se agregarán
+      los registros que contenga. <strong>Atención:</strong> esto no borra los datos actuales, los
+      complementa. Usalo solo si entendés lo que hacés.
+    </p>
+    <div class="form-group" style="margin-bottom:1rem;">
+      <label>Archivo de copia</label>
+      <input type="file" id="restore-file" accept=".json,application/json">
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-red" onclick="restaurarJSON()">↺ Restaurar datos</button>
+    </div>
+    <div id="alert-restore" class="alert"></div>
+    <div id="restore-log" style="font-family:'Space Mono',monospace;font-size:0.72rem;margin-top:1rem;white-space:pre-wrap;color:var(--ink-soft);"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ AUDITORÍA ═══════════════════════════ -->
+<div id="auditoria" class="section">
+  <div class="section-header">
+    <h2>Auditoría</h2>
+    <button class="btn btn-outline btn-sm" onclick="loadAuditoria()">&#8635; Buscar</button>
+  </div>
+
+  <p style="font-size:0.85rem;color:#555;line-height:1.6;margin-bottom:1.25rem;max-width:680px;">
+    Registro de actividad del sistema: ingresos, altas, ediciones y bajas. Elegí un rango de
+    fechas y, si querés, filtrá por un usuario en particular.
+  </p>
+
+  <div id="auditoria-no-table" class="alert alert-err" style="display:none;">
+    ⚠ El módulo de auditoría todavía no está activado. Ejecutá el archivo
+    <strong>auditoria-schema.sql</strong> en Supabase (SQL Editor) y volvé a intentar.
+  </div>
+
+  <div style="background:#fff;border:2px solid var(--ink);box-shadow:var(--shadow);padding:1.5rem;margin-bottom:1.5rem;">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Desde</label>
+        <input type="date" id="aud-desde">
+      </div>
+      <div class="form-group">
+        <label>Hasta</label>
+        <input type="date" id="aud-hasta">
+      </div>
+      <div class="form-group">
+        <label>Usuario</label>
+        <select id="aud-usuario"><option value="">Todos los usuarios</option></select>
+      </div>
+      <div class="form-group">
+        <label>Tipo de acción</label>
+        <select id="aud-accion">
+          <option value="">Todas</option>
+          <option value="INGRESO">Ingreso</option>
+          <option value="SALIDA">Salida</option>
+          <option value="ALTA">Alta</option>
+          <option value="EDICION">Edición</option>
+          <option value="BAJA">Baja</option>
+          <option value="DEVOLUCION">Devolución</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-orange" onclick="loadAuditoria()">Buscar</button>
+      <button class="btn btn-outline" onclick="resetFiltrosAuditoria()">Limpiar filtros</button>
+      <button class="btn btn-steel" onclick="exportarAuditoriaCSV()">Exportar resultado (CSV)</button>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha y hora</th>
+          <th>Usuario</th>
+          <th>Acción</th>
+          <th>Entidad</th>
+          <th>Detalle</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-auditoria"><tr><td colspan="5" class="empty">Elegí los filtros y tocá Buscar.</td></tr></tbody>
+    </table>
+  </div>
+
+  <!-- Mantenimiento de la auditoría -->
+  <div style="background:#fff;border:2px solid var(--red);box-shadow:4px 4px 0 var(--red);padding:1.5rem;margin-top:2rem;max-width:640px;">
+    <h3 style="font-family:'Archivo Black',sans-serif;font-size:1rem;margin-bottom:0.5rem;color:var(--red);">Mantenimiento del historial</h3>
+    <p style="font-size:0.82rem;color:#555;line-height:1.5;margin-bottom:1.25rem;">
+      La auditoría crece con el uso. Acá podés purgar registros antiguos o vaciarla por completo.
+      <strong>Antes de borrar, la app descarga automáticamente una copia en CSV</strong> de lo que se elimina.
+    </p>
+
+    <div id="auditoria-total" style="font-family:'Space Mono',monospace;font-size:0.75rem;color:var(--steel);margin-bottom:1rem;">Registros en total: …</div>
+
+    <!-- Vaciar todo -->
+    <p style="font-size:0.8rem;color:#555;margin-bottom:0.5rem;">
+      <strong>Vaciar todo el historial</strong> (para empezar de cero). Esta acción no se puede deshacer.
+      Antes de borrar, la app descarga una copia en CSV.
+    </p>
+    <div class="form-actions">
+      <button class="btn btn-red" onclick="vaciarAuditoria()">Vaciar toda la auditoría</button>
+    </div>
+
+    <div id="alert-aud-limpieza" class="alert"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ INFORMES ════════════════════════════ -->
+<div id="informes" class="section">
+  <div class="section-header">
+    <h2>Informes</h2>
+  </div>
+
+  <p style="font-size:0.85rem;color:#555;line-height:1.6;margin-bottom:1.25rem;max-width:700px;">
+    Generá informes formateados y listos para imprimir o guardar como PDF. Elegí el tipo de
+    informe, ajustá las opciones y tocá <strong>Generar</strong>. Después usá
+    <strong>Imprimir / Guardar PDF</strong> para obtener el documento limpio.
+  </p>
+
+  <div class="report-toolbar">
+    <div class="form-group" style="margin-bottom:0;min-width:240px;">
+      <label>Tipo de informe</label>
+      <select id="rep-tipo" onchange="onCambioTipoInforme()">
+        <option value="activos">Préstamos activos (ahora)</option>
+        <option value="retiros">Retiros por fechas</option>
+        <option value="inventario" id="opt-inventario">Inventario de herramientas</option>
+        <option value="listado-alumnos">Listado de alumnos</option>
+        <option value="listado-profesores">Listado de profesores</option>
+        <option value="ranking-herramientas" id="opt-ranking-h">Ranking de herramientas más usadas</option>
+        <option value="ranking-alumnos">Ranking de alumnos con más retiros</option>
+      </select>
+    </div>
+    <div class="form-group rep-rango" style="margin-bottom:0;display:none;">
+      <label>Desde</label>
+      <input type="date" id="rep-desde">
+    </div>
+    <div class="form-group rep-rango" style="margin-bottom:0;display:none;">
+      <label>Hasta</label>
+      <input type="date" id="rep-hasta">
+    </div>
+    <div class="form-group rep-cat" style="margin-bottom:0;display:none;min-width:230px;">
+      <label>Categoría</label>
+      <select id="rep-categoria"><option value="">Todas las categorías</option></select>
+    </div>
+    <button class="btn btn-orange" onclick="generarInforme()">Generar</button>
+    <button class="btn btn-steel no-print" id="btn-imprimir" onclick="window.print()" style="display:none;">⎙ Imprimir</button>
+    <button class="btn btn-green no-print" id="btn-pdf" onclick="descargarInformePDF()" style="display:none;">⬇ Descargar PDF</button>
+  </div>
+
+  <div id="rep-output" class="report-output">
+    <div class="report-empty">Elegí un tipo de informe y tocá “Generar”.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ AJUSTES ═════════════════════════════ -->
+<div id="ajustes" class="section">
+  <div class="section-header">
+    <h2>Ajustes</h2>
+  </div>
+
+  <p style="font-size:0.85rem;color:#555;line-height:1.6;margin-bottom:1.25rem;max-width:680px;">
+    Personalizá los nombres que aparecen en toda la aplicación. Útil si otra escuela,
+    organización o sector quiere reutilizar el sistema. Los cambios se aplican para todos
+    los usuarios.
+  </p>
+
+  <div id="ajustes-no-table" class="alert alert-err" style="display:none;">
+    ⚠ El módulo de ajustes todavía no está activado. Ejecutá el archivo
+    <strong>configuracion-schema.sql</strong> en Supabase (SQL Editor) y volvé a intentar.
+  </div>
+
+  <div style="background:#fff;border:2px solid var(--ink);box-shadow:var(--shadow);padding:1.5rem;max-width:600px;">
+    <h3 style="font-family:'Archivo Black',sans-serif;font-size:1rem;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:2px solid var(--paper-2);">Identidad de la institución</h3>
+    <div class="form-group">
+      <label>Nombre de la institución</label>
+      <input type="text" id="cfg-institucion" placeholder="Ej: E.P.E.T N°7" maxlength="150" oninput="previewAjustes()">
+    </div>
+    <div class="form-group">
+      <label>Tipo de control</label>
+      <input type="text" id="cfg-tipo" placeholder="Ej: Control de Herramientas" maxlength="100" oninput="previewAjustes()">
+    </div>
+    <div class="form-group">
+      <label>Sector / Área</label>
+      <input type="text" id="cfg-sector" placeholder="Ej: Taller de Informática" maxlength="100" oninput="previewAjustes()">
+    </div>
+
+    <h3 style="font-family:'Archivo Black',sans-serif;font-size:1rem;margin:1.5rem 0 1rem;padding-bottom:0.5rem;border-bottom:2px solid var(--paper-2);">¿Qué se presta?</h3>
+    <p style="font-size:0.8rem;color:#666;line-height:1.5;margin-bottom:1rem;">
+      Cambiá la palabra “herramienta” por la que use tu institución (libro, instrumento, equipo…).
+      Se reemplaza en menús, botones, tablas e informes. Escribilo en minúscula.
+    </p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>En singular</label>
+        <input type="text" id="cfg-term-sing" placeholder="Ej: libro" maxlength="40" oninput="previewAjustes()">
+      </div>
+      <div class="form-group">
+        <label>En plural</label>
+        <input type="text" id="cfg-term-plur" placeholder="Ej: libros" maxlength="40" oninput="previewAjustes()">
+      </div>
+    </div>
+
+    <div style="background:var(--paper-2);border:1px solid var(--line);padding:0.85rem 1rem;margin:0.5rem 0 1rem;font-size:0.8rem;">
+      <strong style="font-family:'Space Mono',monospace;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--steel);">Vista previa</strong><br>
+      <span style="font-family:'Archivo Black',sans-serif;font-size:0.95rem;" id="cfg-preview-titulo">🔧 Control de Herramientas</span><br>
+      <span style="font-family:'Space Mono',monospace;font-size:0.7rem;color:#666;" id="cfg-preview-sub">E.P.E.T N°7 · Taller de Informática</span><br>
+      <span style="font-size:0.75rem;color:#888;font-style:italic;" id="cfg-preview-term">Ejemplo: "Nuevo retiro de herramientas", "Agregar herramienta", columna "Herramienta".</span>
+    </div>
+
+    <div id="alert-ajustes" class="alert"></div>
+    <div class="form-actions">
+      <button class="btn btn-orange" onclick="guardarAjustes()">Guardar cambios</button>
+      <button class="btn btn-outline" onclick="loadAjustes()">Restablecer</button>
+    </div>
+  </div>
+</div>
+
 </main>
 
-<section class="prompts" id="prompts">
-  <div class="prompts-inner">
-    <h2>Prompts para <span>generar imágenes</span> con IA</h2>
-    <p class="lead">Copiá un prompt, reemplazá <code>[nombre del componente]</code> por la herramienta que necesités ilustrar y pegalo en Gemini (gemini.google.com) o Google ImageFX. Podés ajustar estilo, color y tamaño.</p>
-    <div class="prompt-grid" id="promptGrid"></div>
-  </div>
-</section>
+<footer id="hdr-footer">E.P.E.T N°7 · Control de Herramientas · Taller de Informática</footer>
 
-<footer>
-  <div class="f-title">E.P.E.T N°7 (EPJA) — Jardín América, Misiones</div>
-  <div class="f-sub">Operador de Informática para Administración y Gestión · <b>Prof. Markwart Rubén</b> · Ciclo Lectivo 2026</div>
-</footer>
-
-<button class="top-btn" id="topBtn" aria-label="Volver arriba">
-  <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-</button>
-
+<!-- ═══════════════════════ JAVASCRIPT ══════════════════════════ -->
 <script>
-/* ---------- ICONOS (SVG path data) ---------- */
-const ICONS = {
-  desktop:'<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/>',
-  monitor:'<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M9 20h6M12 16v4"/>',
-  keyboard:'<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/>',
-  mouse:'<rect x="7" y="3" width="10" height="18" rx="5"/><path d="M12 7v4"/>',
-  cpu:'<rect x="6" y="6" width="12" height="12" rx="1.5"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3"/>',
-  laptop:'<rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 20h20"/>',
-  ram:'<rect x="2" y="8" width="20" height="9" rx="1"/><path d="M6 8v-2M10 8v-2M14 8v-2M18 8v-2M5 11v3M9 11v3M13 11v3M17 11v3"/>',
-  gpu:'<rect x="2" y="6" width="20" height="11" rx="1.5"/><circle cx="9" cy="11.5" r="3"/><path d="M15 9h4M15 13h4"/>',
-  hdd:'<rect x="3" y="7" width="18" height="10" rx="2"/><circle cx="8" cy="12" r="2.5"/><path d="M16 12h2"/>',
-  usb:'<rect x="8" y="3" width="8" height="14" rx="1.5"/><path d="M12 17v4M10 7h.01"/><circle cx="12" cy="10" r="1"/>',
-  printer:'<path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="1.5"/><rect x="7" y="14" width="10" height="6"/>',
-  scanner:'<rect x="3" y="6" width="18" height="6" rx="1.5"/><path d="M5 16h14M5 19h9"/>',
-  projector:'<rect x="3" y="7" width="14" height="9" rx="1.5"/><circle cx="10" cy="11.5" r="2.5"/><path d="M17 11h4"/>',
-  headset:'<path d="M4 13v-1a8 8 0 0116 0v1"/><rect x="2" y="13" width="4" height="6" rx="1.5"/><rect x="18" y="13" width="4" height="6" rx="1.5"/><path d="M20 19a4 4 0 01-4 4h-2"/>',
-  webcam:'<circle cx="12" cy="11" r="6"/><circle cx="12" cy="11" r="2.5"/><path d="M8 21h8"/>',
-  speaker:'<rect x="5" y="3" width="14" height="18" rx="2"/><circle cx="12" cy="14" r="3.5"/><circle cx="12" cy="7" r="1"/>',
-  mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3M8 21h8"/>',
-  tablet:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M11 18h2"/>',
-  phone:'<rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/>',
-  hdmi:'<path d="M4 9h16l-2 6H6z"/><path d="M8 9V7h8v2"/>',
-  router:'<rect x="3" y="13" width="18" height="6" rx="1.5"/><path d="M7 16h.01M11 16h.01M8 13l-2-4M16 13l2-4M12 13V8"/>',
-  switch:'<rect x="3" y="9" width="18" height="6" rx="1.5"/><path d="M7 12h.01M11 12h.01M15 12h.01M19 12h.01"/>',
-  cable:'<path d="M4 12a4 4 0 014-4h2a4 4 0 014 4 4 4 0 004 4h2"/><rect x="2" y="10" width="3" height="4" rx="1"/>',
-  wifi:'<path d="M5 12.5a10 10 0 0114 0M8 16a5 5 0 018 0"/><circle cx="12" cy="19" r="1.2"/>',
-  bluetooth:'<path d="M8 7l8 10-4 3V4l4 3-8 10"/>',
-  fiber:'<path d="M3 12c4-6 14 6 18 0"/><circle cx="3" cy="12" r="1.5"/><circle cx="21" cy="12" r="1.5"/>',
-  netusb:'<rect x="4" y="8" width="16" height="9" rx="1.5"/><path d="M12 8V4M10 4h4"/>',
-  os:'<rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18M7 6.5h.01M9.5 6.5h.01"/>',
-  word:'<path d="M6 2h9l5 5v15a1 1 0 01-1 1H6a1 1 0 01-1-1V3a1 1 0 011-1z"/><path d="M14 2v6h6M8 13l1.5 5 1.5-4 1.5 4L14 13"/>',
-  excel:'<path d="M6 2h9l5 5v15a1 1 0 01-1 1H6a1 1 0 01-1-1V3a1 1 0 011-1z"/><path d="M14 2v6h6M8 13l4 5M12 13l-4 5"/>',
-  present:'<rect x="3" y="4" width="18" height="11" rx="1.5"/><path d="M12 15v4M8 19h8"/><path d="M7 8h6M7 11h4"/>',
-  browser:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 3 2.5 15 0 18M12 3c-2.5 3-2.5 15 0 18"/>',
-  mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
-  shield:'<path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5z"/><path d="M9 12l2 2 4-4"/>',
-  zip:'<path d="M6 2h9l5 5v15a1 1 0 01-1 1H6a1 1 0 01-1-1V3a1 1 0 011-1z"/><path d="M10 2v2M12 4v2M10 6v2M12 8v2M10 10v3h2v-3"/>',
-  cloud:'<path d="M7 18a4 4 0 010-8 5 5 0 019.5-1A4 4 0 1117 18z"/><path d="M12 13v5M9.5 16l2.5 2.5L14.5 16"/>',
-  database:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>',
-  screwdriver:'<path d="M14 4l6 6-2 2-2-2-7 7-3 1 1-3 7-7-2-2z"/>',
-  pliers:'<path d="M8 3l4 8 4-8M12 11v4M9 22l3-7 3 7"/>',
-  wristband:'<circle cx="12" cy="12" r="7"/><path d="M12 5v3M12 16v3M5 12h3M16 12h3"/>',
-  thermal:'<rect x="8" y="3" width="8" height="16" rx="2"/><path d="M9 7h6M8 19h8"/>',
-  multimeter:'<rect x="4" y="3" width="16" height="14" rx="2"/><rect x="7" y="6" width="10" height="4" rx="1"/><path d="M9 21l3-4 3 4"/>',
-  solder:'<path d="M3 21l5-5M8 16l8-8 3 3-8 8z"/><path d="M16 8l3-3"/>',
-  spray:'<rect x="8" y="7" width="8" height="14" rx="2"/><path d="M9 7V4h6v3M18 5h2M18 8h2"/>',
-  flashlight:'<path d="M8 3h8l-1 5H9zM9 8h6v11a1 1 0 01-1 1h-4a1 1 0 01-1-1z"/><path d="M11 12h2"/>',
-  blower:'<circle cx="9" cy="12" r="6"/><path d="M15 12h6M19 9l2 3-2 3"/>',
-  tape:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/>',
-  qr:'<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3M20 14v3M14 20h3M20 20h.01"/>',
-  lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/><circle cx="12" cy="16" r="1.5"/>',
-  ups:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M13 8l-3 5h3l-2 4"/>'
-};
+// ─── Supabase client ───────────────────────────────────────────
+let db = null;
+let dbAdmin = null;   // cliente con service_role key para gestión de usuarios
+let currentUser = null;
+let currentRole = null;
 
-/* ---------- CATEGORÍAS ---------- */
-const CATS = {
-  hw:   {name:'Hardware Principal',   color:'#1f4e79'},
-  peri: {name:'Periféricos',          color:'#2560a0'},
-  red:  {name:'Red y Conectividad',   color:'#e8a400'},
-  sw:   {name:'Software y Sistemas',  color:'#1f7a4d'},
-  mant: {name:'Mantenimiento',        color:'#c0392b'},
-  seg:  {name:'Seguridad y Gestión',  color:'#6d3fb0'},
-};
-
-/* ---------- DATOS ---------- */
-const TOOLS = [
-  {id:1,cat:'hw',icon:'desktop',name:'Computadora de escritorio (PC)',desc:'Equipo de procesamiento fijo compuesto por CPU, monitor, teclado y mouse. Es el centro de trabajo en el taller. Permite ejecutar sistemas operativos, software de gestión y herramientas de diagnóstico.',tag:'Procesamiento fijo'},
-  {id:2,cat:'hw',icon:'monitor',name:'Monitor',desc:'Dispositivo de salida visual que muestra la información procesada. Los modelos actuales son LCD o LED. El tamaño se mide en pulgadas diagonales. La resolución más común es Full HD (1920×1080).',tag:'Salida visual'},
-  {id:3,cat:'hw',icon:'keyboard',name:'Teclado',desc:'Dispositivo de entrada para ingresar texto, comandos y datos mediante teclas. Puede ser USB o inalámbrico. El diseño más común en Argentina es el layout QWERTY en español latinoamericano.',tag:'Entrada · QWERTY'},
-  {id:4,cat:'hw',icon:'mouse',name:'Mouse (ratón)',desc:'Dispositivo de entrada para mover el cursor y seleccionar elementos. Puede ser óptico, láser o trackball. Su velocidad se mide en DPI. La variante inalámbrica usa Bluetooth o receptor USB.',tag:'Entrada · DPI'},
-  {id:5,cat:'hw',icon:'cpu',name:'CPU (Unidad Central de Procesamiento)',desc:'El «cerebro» de la computadora. Ejecuta las instrucciones de los programas. Se mide en GHz y núcleos. Las marcas principales son Intel y AMD. La disipación de calor requiere cooler y pasta térmica.',tag:'GHz · núcleos'},
-  {id:6,cat:'hw',icon:'laptop',name:'Laptop / Notebook',desc:'Computadora portátil con todos los componentes integrados: pantalla, teclado, batería y trackpad. La herramienta de trabajo móvil por excelencia. Su mantenimiento incluye limpieza de ventilación y reemplazo de batería.',tag:'Portátil'},
-  {id:7,cat:'hw',icon:'ram',name:'Memoria RAM',desc:'Memoria de acceso aleatorio que almacena temporalmente los datos que usa el procesador. Se mide en GB. Los tipos más comunes son DDR4 y DDR5. A mayor RAM, más aplicaciones simultáneas.',tag:'GB · DDR4/DDR5'},
-  {id:8,cat:'hw',icon:'gpu',name:'Tarjeta de video (GPU)',desc:'Componente encargado de procesar y generar imágenes. Puede ser integrada o dedicada (discreta). Fundamental para diseño gráfico, edición de video y juegos. Marcas principales: NVIDIA y AMD.',tag:'NVIDIA · AMD'},
-  {id:9,cat:'hw',icon:'hdd',name:'Disco duro externo (HDD/SSD)',desc:'Dispositivo de almacenamiento masivo portátil. Los HDD usan platos magnéticos y los SSD memoria flash (más rápidos). Se conectan por USB. Ideales para copias de seguridad (backup).',tag:'Backup · USB'},
-  {id:10,cat:'hw',icon:'usb',name:'Pendrive (memoria USB)',desc:'Almacenamiento portátil de pequeño tamaño que se conecta por puerto USB. Capacidades comunes: 8, 16, 32 y 64 GB. Permite transportar archivos e instalar sistemas operativos (pendrive booteable).',tag:'Portátil · Booteable'},
-
-  {id:11,cat:'peri',icon:'printer',name:'Impresora',desc:'Dispositivo de salida que transfiere información digital a papel. Las de inyección de tinta usan cartuchos; las láser usan tóner y son más veloces. Las multifunción imprimen, copian y escanean.',tag:'Salida · Papel'},
-  {id:12,cat:'peri',icon:'scanner',name:'Escáner',desc:'Convierte documentos físicos (papel, fotos) en imágenes digitales. La resolución se mide en DPI. Los modelos planos son los más comunes en oficina. Los automáticos procesan varias hojas por minuto.',tag:'Digitalización · DPI'},
-  {id:13,cat:'peri',icon:'projector',name:'Proyector',desc:'Dispositivo de salida que amplía imágenes sobre una pantalla o pared. Se conecta por HDMI o VGA. La luminosidad se mide en lúmenes. Esencial en aulas y salas de presentación.',tag:'Salida · Lúmenes'},
-  {id:14,cat:'peri',icon:'headset',name:'Auriculares (headset)',desc:'Dispositivos de entrada y salida de audio. Los headset combinan auriculares con micrófono, ideales para videoconferencias. Se conectan por jack 3.5 mm, USB o Bluetooth. El ANC mejora la concentración.',tag:'Audio I/O'},
-  {id:15,cat:'peri',icon:'webcam',name:'Cámara web (Webcam)',desc:'Cámara de video digital que captura imagen en tiempo real para videoconferencias y streaming. La calidad se mide en megapíxeles y fps. La resolución estándar es Full HD (1080p). Se conecta por USB.',tag:'Video · 1080p'},
-  {id:16,cat:'peri',icon:'speaker',name:'Parlantes (altavoces)',desc:'Dispositivos de salida de audio. Pueden ser 2.0 o 2.1 (con subwoofer). La potencia se mide en vatios (W). Suelen conectarse por jack 3.5 mm o USB. En el taller se usan para pruebas de audio.',tag:'Salida · Watts'},
-  {id:17,cat:'peri',icon:'mic',name:'Micrófono',desc:'Dispositivo de entrada de audio que convierte el sonido en señal eléctrica digital. Los de condensador capturan alta calidad; los dinámicos son más resistentes. De mesa, solapa o integrado en headset.',tag:'Entrada · Audio'},
-  {id:18,cat:'peri',icon:'tablet',name:'Tablet',desc:'Dispositivo portátil con pantalla táctil que funciona como computadora liviana. Usa Android o iPadOS. Útil para consumo de contenidos, presentaciones y educación. Algunas soportan lápices ópticos.',tag:'Táctil · Android/iPadOS'},
-  {id:19,cat:'peri',icon:'phone',name:'Smartphone',desc:'Teléfono inteligente con capacidad de computación. Integra cámara, GPS, internet y cientos de apps. En el taller se usa para pruebas de conectividad WiFi, Bluetooth y aplicaciones móviles de gestión.',tag:'Móvil · Apps'},
-  {id:20,cat:'peri',icon:'hdmi',name:'Cable HDMI',desc:'Cable que transmite audio y video digital de alta definición en un solo conector. Soporta resoluciones desde HD hasta 8K según la versión. Conecta computadoras, consolas y proyectores a pantallas.',tag:'Audio+Video · 8K'},
-
-  {id:21,cat:'red',icon:'router',name:'Router / Módem',desc:'Dirige el tráfico de datos entre redes. El router conecta la red local (LAN) con internet (WAN); el módem convierte la señal del proveedor. La mayoría de los equipos actuales combinan ambas funciones.',tag:'LAN ↔ WAN'},
-  {id:22,cat:'red',icon:'switch',name:'Switch (conmutador)',desc:'Conecta múltiples computadoras dentro de una red local (LAN). A diferencia del hub, envía los datos solo al dispositivo destino (más eficiente). Los gestionados permiten configurar VLAN y prioridades.',tag:'LAN · VLAN'},
-  {id:23,cat:'red',icon:'cable',name:'Cable de red (RJ45 / UTP)',desc:'Cable de par trenzado para conexiones Ethernet. El conector RJ45 es el más común. Categorías usadas: Cat5e (hasta 1 Gbps) y Cat6 (hasta 10 Gbps). La conexión más estable y segura para redes locales.',tag:'Ethernet · Cat5e/6'},
-  {id:24,cat:'red',icon:'wifi',name:'WiFi (red inalámbrica)',desc:'Tecnología de red inalámbrica basada en el estándar IEEE 802.11. Conecta dispositivos sin cables. WiFi 5 y WiFi 6 ofrecen hasta varios Gbps. La seguridad se gestiona con WPA2 o WPA3.',tag:'802.11 · WPA2/3'},
-  {id:25,cat:'red',icon:'bluetooth',name:'Bluetooth',desc:'Comunicación inalámbrica de corto alcance (hasta ~10 m). Conecta periféricos (mouse, teclado, auriculares) sin cables. La versión Bluetooth 5.0 mejora el rango y la velocidad de transferencia.',tag:'Inalámbrico · 10m'},
-  {id:26,cat:'red',icon:'fiber',name:'Fibra óptica',desc:'Transmite datos mediante pulsos de luz a través de filamentos de vidrio o plástico. Ofrece velocidades muy superiores al cobre y no sufre interferencias electromagnéticas. Base del internet de alta velocidad.',tag:'Luz · Alta velocidad'},
-  {id:27,cat:'red',icon:'netusb',name:'Adaptador de red USB',desc:'Agrega conectividad de red a una computadora por USB. Puede ser WiFi, Ethernet o Bluetooth. Útil cuando la placa de red integrada falla o cuando se necesita una segunda interfaz para diagnóstico.',tag:'USB · Diagnóstico'},
-
-  {id:28,cat:'sw',icon:'os',name:'Sistema operativo (SO)',desc:'Software base que gestiona los recursos del hardware y permite ejecutar otras aplicaciones. Los más usados son Windows, macOS y Linux. En el taller se trabaja con instalación, configuración y recuperación.',tag:'Windows·macOS·Linux'},
-  {id:29,cat:'sw',icon:'word',name:'Procesador de texto',desc:'Software para crear, editar y dar formato a documentos. Los más conocidos son Microsoft Word y LibreOffice Writer (gratuito). Permiten insertar tablas, imágenes, numeración automática y exportar a PDF.',tag:'Word · Writer'},
-  {id:30,cat:'sw',icon:'excel',name:'Planilla de cálculo',desc:'Software para organizar datos en filas y columnas, hacer cálculos y crear gráficos. Excel y LibreOffice Calc son los más usados. Esenciales para administración, contabilidad y análisis de datos.',tag:'Excel · Calc'},
-  {id:31,cat:'sw',icon:'present',name:'Software de presentaciones',desc:'Permite crear diapositivas con texto, imágenes, videos y animaciones. PowerPoint e Impress son los más populares. Se exportan a PDF o se presentan conectando la PC a un proyector.',tag:'PowerPoint · Impress'},
-  {id:32,cat:'sw',icon:'browser',name:'Navegador web',desc:'Aplicación para acceder a sitios de internet vía HTTP/HTTPS. Los más usados: Chrome, Firefox y Edge. Admiten extensiones que amplían sus funciones. La navegación privada no guarda historial local.',tag:'HTTP/HTTPS'},
-  {id:33,cat:'sw',icon:'mail',name:'Cliente de correo electrónico',desc:'Software para enviar, recibir y organizar mensajes. Thunderbird, Outlook y Gmail (web) son los más comunes. Usa IMAP o POP3 para recibir y SMTP para enviar. Permite gestionar múltiples cuentas.',tag:'IMAP·POP3·SMTP'},
-  {id:34,cat:'sw',icon:'shield',name:'Antivirus / Antimalware',desc:'Software de seguridad que detecta, bloquea y elimina virus, troyanos, ransomware y otros programas maliciosos. Se actualiza con nuevas definiciones. Populares: Windows Defender, Avast, Malwarebytes.',tag:'Anti-malware'},
-  {id:35,cat:'sw',icon:'zip',name:'Compresor de archivos',desc:'Reduce el tamaño de archivos y carpetas agrupándolos en un paquete comprimido. Formatos comunes: ZIP, RAR y 7Z. WinRAR y 7-Zip son los más usados. Facilita el envío y almacenamiento de datos.',tag:'ZIP·RAR·7Z'},
-  {id:36,cat:'sw',icon:'cloud',name:'Almacenamiento en la nube',desc:'Servicio para guardar archivos en servidores remotos y acceder desde cualquier dispositivo con internet. Google Drive, OneDrive y Dropbox son los más populares. Incluyen sincronización y compartido.',tag:'Drive·OneDrive'},
-  {id:37,cat:'sw',icon:'database',name:'Base de datos',desc:'Sistema para almacenar, organizar y consultar grandes volúmenes de información de forma estructurada. MySQL, SQLite y Access son los más usados en educación y gestión. El lenguaje SQL realiza consultas y reportes.',tag:'SQL · MySQL'},
-
-  {id:38,cat:'mant',icon:'screwdriver',name:'Destornillador',desc:'Herramienta manual para aflojar o ajustar tornillos de los componentes. En informática se usan el Phillips (estrella) N°1 y N°2, y el de punta plana. El magnético facilita el trabajo en espacios reducidos.',tag:'Phillips · Plano'},
-  {id:39,cat:'mant',icon:'pliers',name:'Alicate de punta fina',desc:'Para sujetar, doblar o retirar piezas pequeñas dentro del gabinete. Útil para recuperar tornillos caídos, manejar cables en espacios reducidos o extraer jumpers de las placas madre.',tag:'Precisión'},
-  {id:40,cat:'mant',icon:'wristband',name:'Pulsera antiestática',desc:'Se usa en la muñeca y se conecta a tierra para evitar descargas electrostáticas (ESD) que dañan los componentes. Es obligatoria al manipular placas, RAM, tarjetas de video o procesadores.',tag:'ESD · Seguridad'},
-  {id:41,cat:'mant',icon:'thermal',name:'Pasta térmica',desc:'Compuesto que se aplica entre el procesador (CPU/GPU) y el disipador para mejorar la transferencia térmica y evitar el recalentamiento. Se reemplaza cada 2-3 años o ante temperaturas elevadas sin causa.',tag:'Disipación'},
-  {id:42,cat:'mant',icon:'multimeter',name:'Multímetro digital',desc:'Instrumento que mide tensión (voltios), corriente (amperios) y resistencia (ohmios). En informática se usa para verificar la fuente de alimentación, probar cables de red y detectar cortocircuitos.',tag:'V · A · Ω'},
-  {id:43,cat:'mant',icon:'solder',name:'Cautín (soldador)',desc:'Herramienta eléctrica para soldar componentes electrónicos. Repara conexiones en placas, cables y conectores. La temperatura de trabajo suele ser de 300 °C a 380 °C. Se usa con estaño y flux (fundente).',tag:'300-380 °C'},
-  {id:44,cat:'mant',icon:'spray',name:'Limpiador de contactos',desc:'Spray o líquido especial para limpiar contactos metálicos de tarjetas, conectores y módulos de RAM oxidados. Mejora la conductividad y soluciona problemas de conexión. Aplicar con precaución y dejar secar.',tag:'Limpieza · Spray'},
-  {id:45,cat:'mant',icon:'flashlight',name:'Linterna LED / Luz de trabajo',desc:'Fuente de iluminación portátil para trabajar dentro del gabinete o con poca luz. Las modernas usan LED de bajo consumo y alta luminosidad. Algunas incluyen lupa integrada para inspeccionar componentes.',tag:'LED · Portátil'},
-  {id:46,cat:'mant',icon:'blower',name:'Soplador de aire / Pera de goma',desc:'Sopla aire y remueve polvo de los componentes internos sin electricidad. La versión eléctrica (aire comprimido) es más potente. El polvo en ventiladores y disipadores causa recalentamiento.',tag:'Limpieza · Polvo'},
-  {id:47,cat:'mant',icon:'tape',name:'Cinta aislante',desc:'Cinta adhesiva no conductora (PVC o vinilo) para aislar cables, proteger conexiones eléctricas y marcar componentes. En el taller también sirve para identificar puertos o rotular equipos. Resiste calor y humedad.',tag:'Aislante · PVC'},
-
-  {id:48,cat:'seg',icon:'qr',name:'Código QR',desc:'Código de barras bidimensional que almacena URLs, textos, contactos o instrucciones. Se genera con apps gratuitas y se lee con la cámara de un smartphone. En el taller se usa para compartir recursos y formularios.',tag:'2D · Cámara'},
-  {id:49,cat:'seg',icon:'lock',name:'Seguridad informática',desc:'Conjunto de prácticas y herramientas para proteger los sistemas de amenazas. Incluye contraseñas seguras, autenticación en dos pasos (2FA), cifrado de datos y copias de seguridad regulares. Eje fundamental.',tag:'2FA · Cifrado'},
-  {id:50,cat:'seg',icon:'ups',name:'UPS (Alimentación ininterrumpida)',desc:'Proporciona energía de respaldo ante cortes o fluctuaciones de tensión. Protege equipos y evita pérdida de datos. La autonomía varía según la capacidad en VA (volt-amperios). Indispensable en toda instalación profesional.',tag:'Respaldo · VA'},
-];
-
-/* ---------- PROMPTS ---------- */
-const PROMPTS = [
-  {n:1,title:'Ilustración de hardware (técnico)',body:'Genera una ilustración técnica isométrica de los siguientes componentes de hardware: [nombre del componente]. Fondo blanco o transparente. Estilo: dibujo técnico limpio, líneas definidas, colores planos (azul marino, gris claro, naranja como acento). Sin texto ni etiquetas. 512×512 px. PNG.'},
-  {n:2,title:'Ícono plano para apunte',body:'Crea un ícono plano (flat design) de [nombre de la herramienta] para un apunte educativo de secundaria técnica. Diseño simple, reconocible, fondo transparente. Paleta: azul oscuro (#1A3A5C), azul medio (#2560A0) y blanco. Sin sombras ni gradientes. Minimalista. 256×256 px.'},
-  {n:3,title:'Diagrama de conexiones',body:'Genera un diagrama educativo que muestre cómo se conectan los componentes de una PC de escritorio: monitor, CPU (torre), teclado, mouse, impresora y router. Usa flechas con etiquetas del tipo de conexión (USB, HDMI, RJ45...). Infografía técnica, fondo blanco, azul y naranja. Texto en español latinoamericano.'},
-  {n:4,title:'Kit de mantenimiento',body:'Crea una infografía titulada «Kit de mantenimiento de PC» en cuadrícula ordenada: destornillador Phillips, alicate de punta fina, pulsera antiestática, pasta térmica, multímetro, soplador de aire y limpiador de contactos. Cada una con ilustración plana y su nombre en español. Fondo blanco, técnico-educativo, azul y naranja.'},
-  {n:5,title:'Diagrama de red local (LAN)',body:'Genera un diagrama de red local (LAN) para un taller escolar: router, switch, 5 computadoras por cable UTP RJ45, 2 laptops por WiFi, una impresora en red y un servidor. Iconos simples. Conexiones con líneas sólidas (cable) y punteadas (WiFi). Etiquetas en español. Fondo blanco, estilo limpio y educativo.'},
-];
-
-/* ---------- RENDER ---------- */
-const main = document.getElementById('main');
-const empty = document.getElementById('empty');
-const filtersEl = document.getElementById('filters');
-const countEl = document.getElementById('count');
-const searchEl = document.getElementById('search');
-let activeCat = 'all';
-let query = '';
-
-// Build filter chips
-const chipData = [['all','Todas','var(--orange)'], ...Object.entries(CATS).map(([k,v])=>[k,v.name,v.color])];
-chipData.forEach(([cat,label,color])=>{
-  const chip = document.createElement('div');
-  chip.className = 'chip' + (cat==='all'?' active':'');
-  chip.dataset.cat = cat;
-  chip.innerHTML = (cat!=='all'?`<span class="swatch" style="background:${color}"></span>`:'') + label;
-  chip.onclick = ()=>{
-    activeCat = cat;
-    document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active', c.dataset.cat===cat));
-    render();
-  };
-  filtersEl.appendChild(chip);
-});
-
-function render(){
-  // Remove existing category blocks
-  document.querySelectorAll('.cat-block').forEach(e=>e.remove());
-
-  const q = query.trim().toLowerCase();
-  let total = 0;
-
-  Object.entries(CATS).forEach(([catKey,cat])=>{
-    if(activeCat!=='all' && activeCat!==catKey) return;
-
-    const items = TOOLS.filter(t=>{
-      if(t.cat!==catKey) return false;
-      if(!q) return true;
-      return (t.name+' '+t.desc+' '+t.tag).toLowerCase().includes(q);
-    });
-    if(items.length===0) return;
-    total += items.length;
-
-    const block = document.createElement('div');
-    block.className = 'cat-block';
-
-    const head = document.createElement('div');
-    head.className = 'cat-header';
-    head.innerHTML = `
-      <span class="cat-index">${String(Object.keys(CATS).indexOf(catKey)+1).padStart(2,'0')}</span>
-      <h2>${cat.name}</h2>
-      <span class="rule" style="background:${cat.color}"></span>
-      <span class="pill" style="background:${cat.color}">${items.length}</span>`;
-    block.appendChild(head);
-
-    const grid = document.createElement('div');
-    grid.className = 'grid';
-    items.forEach((t,i)=>{
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.style.setProperty('--c', cat.color);
-      card.style.animationDelay = (i*0.03)+'s';
-      card.innerHTML = `
-        <div class="card-top">
-          <div class="icon-box"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">${ICONS[t.icon]||ICONS.cpu}</svg></div>
-          <span class="id">${String(t.id).padStart(2,'0')}</span>
-        </div>
-        <h3>${t.name}</h3>
-        <p>${t.desc}</p>
-        <span class="tag">${t.tag}</span>`;
-      grid.appendChild(card);
-    });
-    block.appendChild(grid);
-    main.insertBefore(block, empty);
-  });
-
-  countEl.textContent = total;
-  empty.classList.toggle('show', total===0);
+function escapeHTML(str) {
+  if (str === null || str === undefined) return '';
+  return String(str).replace(/[&<>'"]/g, tag => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    "'": '&#39;',
+    '"': '&quot;'
+  }[tag] || tag));
 }
 
-searchEl.addEventListener('input', e=>{ query = e.target.value; render(); });
+function initSupabase(url, key) {
+  try {
+    db = supabase.createClient(url, key);
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
 
-// Prompts
-const pg = document.getElementById('promptGrid');
-PROMPTS.forEach(p=>{
-  const card = document.createElement('div');
-  card.className = 'prompt-card';
-  card.innerHTML = `
-    <div class="pc-head"><span class="pc-num">${p.n}</span><h4>${p.title}</h4></div>
-    <div class="pc-body">${p.body}</div>
-    <button class="copy-btn">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg>
-      Copiar prompt
-    </button>`;
-  const btn = card.querySelector('.copy-btn');
-  btn.onclick = ()=>{
-    navigator.clipboard.writeText(p.body).then(()=>{
-      btn.classList.add('copied');
-      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg> ¡Copiado!`;
-      setTimeout(()=>{
-        btn.classList.remove('copied');
-        btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg> Copiar prompt`;
-      },1800);
+function initSupabaseAdmin(url, serviceKey) {
+  try {
+    dbAdmin = supabase.createClient(url, serviceKey, {
+      auth: { autoRefreshToken: false, persistSession: false }
     });
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
+
+// ─── Config ────────────────────────────────────────────────────
+async function checkAuth() {
+  const { data: { session } } = await db.auth.getSession();
+  if (session?.user) {
+    currentUser = session.user;
+    await loadRole(currentUser.id);
+    applyPermissions();
+    cargarConfigGlobal();
+    showTab('dashboard');
+  } else {
+    showSection('login');
+  }
+}
+
+async function loadRole(uid) {
+  const { data: { user } } = await db.auth.getUser();
+  // El rol viene de app_metadata.role (asignado desde el panel de Supabase).
+  // Fallbacks por compatibilidad con versiones anteriores.
+  currentRole = user?.app_metadata?.role
+             ?? user?.user_metadata?.role
+             ?? user?.user_metadata?.rol
+             ?? 'usuario';
+}
+
+async function doLogin() {
+  const alertEl = document.getElementById('alert-login');
+  const email = document.getElementById('l-email').value.trim();
+  const pwd = document.getElementById('l-password').value;
+  if (!email || !pwd) { showAlert(alertEl, 'err', 'Completá todos los campos.'); return; }
+  const { data, error } = await db.auth.signInWithPassword({ email, password: pwd });
+  if (error) { showAlert(alertEl, 'err', error.message); return; }
+  currentUser = data.user;
+  await loadRole(data.user.id);
+  registrarAuditoria('INGRESO', 'sesion', null, 'Inicio de sesión');
+  applyPermissions();
+  cargarConfigGlobal();
+  showTab('dashboard');
+}
+
+async function logout() {
+  registrarAuditoria('SALIDA', 'sesion', null, 'Cierre de sesión');
+  await db.auth.signOut();
+  currentUser = null;
+  currentRole = null;
+  document.body.classList.remove('is-admin');
+  updateHeaderAuth();
+  showSection('login');
+}
+
+function applyPermissions() {
+  if (currentRole === 'admin') {
+    document.body.classList.add('is-admin');
+  } else {
+    document.body.classList.remove('is-admin');
+  }
+  updateHeaderAuth();
+}
+
+function updateHeaderAuth() {
+  const badge = document.getElementById('user-badge');
+  const configBtn = document.getElementById('btn-config');
+  if (currentUser) {
+    document.getElementById('user-email').textContent = currentUser.email;
+    const chip = document.getElementById('user-role');
+    chip.textContent = currentRole;
+    chip.className = 'role-chip ' + currentRole;
+    badge.classList.add('visible');
+    if (configBtn) configBtn.style.display = currentRole === 'admin' ? 'inline-block' : 'none';
+  } else {
+    badge.classList.remove('visible');
+    if (configBtn) configBtn.style.display = 'inline-block';
+  }
+}
+
+function loadConfig() {
+  const url = localStorage.getItem('sb_url');
+  const key = localStorage.getItem('sb_key');
+  if (url && key) {
+    document.getElementById('input-url').value = url;
+    document.getElementById('input-key').value = key;
+    const serviceKey = localStorage.getItem('sb_service_key');
+    if (serviceKey) {
+      document.getElementById('input-service-key').value = serviceKey;
+      initSupabaseAdmin(url, serviceKey);
+    }
+    if (initSupabase(url, key)) {
+      checkAuth();
+      return true;
+    }
+  }
+  showSection('setup');
+  showSetupStatus();
+  return false;
+}
+
+function saveConfig() {
+  const url = document.getElementById('input-url').value.trim();
+  const key = document.getElementById('input-key').value.trim();
+  const alertEl = document.getElementById('alert-setup');
+
+  if (!url || !key) {
+    showAlert(alertEl, 'err', 'Completá los dos campos.');
+    return;
+  }
+  if (!url.startsWith('https://')) {
+    showAlert(alertEl, 'err', 'La URL debe empezar con https://');
+    return;
+  }
+
+  if (!initSupabase(url, key)) {
+    showAlert(alertEl, 'err', 'No se pudo inicializar el cliente. Verificá los datos.');
+    return;
+  }
+
+  localStorage.setItem('sb_url', url);
+  localStorage.setItem('sb_key', key);
+
+  // Guardar service key si se proporcionó
+  const serviceKey = document.getElementById('input-service-key').value.trim();
+  if (serviceKey) {
+    localStorage.setItem('sb_service_key', serviceKey);
+    initSupabaseAdmin(url, serviceKey);
+  }
+
+  // Test connection
+  db.from('herramienta').select('id', { count: 'exact', head: true })
+    .then(({ error }) => {
+      if (error) {
+        showAlert(alertEl, 'err', 'Conexión fallida: ' + error.message);
+      } else {
+        showAlert(alertEl, 'ok', '¡Conexión exitosa! Iniciá sesión…');
+        setTimeout(() => showSection('login'), 1000);
+      }
+    });
+}
+
+function saveServiceKeyOnly() {
+  const url = localStorage.getItem('sb_url');
+  const alertEl = document.getElementById('alert-setup');
+  if (!url) {
+    showAlert(alertEl, 'err', 'Primero guardá la URL y la clave anónima.');
+    return;
+  }
+  const sk = document.getElementById('input-service-key').value.trim();
+  if (!sk) {
+    showAlert(alertEl, 'err', 'Pegá la Service Role Key en el campo.');
+    return;
+  }
+  localStorage.setItem('sb_service_key', sk);
+  if (initSupabaseAdmin(url, sk)) {
+    showAlert(alertEl, 'ok', '✓ Service Role Key guardada. Ya podés gestionar usuarios.');
+    showSetupStatus();
+    // Cerrar setup y volver a usuarios si estaba en esa sección
+    setTimeout(() => {
+      if (db && currentUser) showTab('usuarios');
+    }, 1200);
+  } else {
+    showAlert(alertEl, 'err', 'No se pudo inicializar el cliente admin. Verificá la key.');
+  }
+}
+
+function showSetupStatus() {
+  const statusEl = document.getElementById('service-key-status');
+  if (!statusEl) return;
+  const sk = localStorage.getItem('sb_service_key');
+  if (sk) {
+    statusEl.style.display = 'block';
+    statusEl.style.color = 'var(--green)';
+    statusEl.textContent = '✓ Service Role Key guardada (' + sk.slice(0,20) + '…)';
+  } else {
+    statusEl.style.display = 'block';
+    statusEl.style.color = 'var(--red)';
+    statusEl.textContent = '✗ Service Role Key no configurada';
+  }
+}
+
+function clearConfig() {
+  localStorage.removeItem('sb_url');
+  localStorage.removeItem('sb_key');
+  localStorage.removeItem('sb_service_key');
+  db = null;
+  dbAdmin = null;
+  showSection('setup');
+}
+
+function toggleSetup() {
+  const s = document.getElementById('setup');
+  if (s.classList.contains('active')) {
+    if (db) showTab('dashboard');
+  } else {
+    showSection('setup');
+    showSetupStatus();
+  }
+}
+
+// ─── Navigation ────────────────────────────────────────────────
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showTab(id) {
+  if (!db) { showSection('setup'); return; }
+  if (!currentUser) { showSection('login'); return; }
+  const adminOnly = ['herramientas', 'profesores', 'alumnos', 'copias', 'auditoria', 'ajustes', 'informes'];
+  if (adminOnly.includes(id) && currentRole !== 'admin') return;
+  showSection(id);
+  // Activar tab por data-tab (no por índice posicional, que falla con tabs ocultos)
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === id);
+  });
+  const loaders = { dashboard: loadDashboard, retiros: loadRetiros, herramientas: loadHerramientas, profesores: loadProfesores, alumnos: loadAlumnos, usuarios: loadUsuarios, copias: loadCopias, auditoria: initAuditoria, ajustes: loadAjustes, informes: initInformes };
+  if (loaders[id]) loaders[id]();
+}
+
+function toggleForm(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+// ─── Alerts ────────────────────────────────────────────────────
+function showAlert(el, type, msg) {
+  el.className = 'alert show alert-' + (type === 'ok' ? 'ok' : 'err');
+  el.textContent = msg;
+  setTimeout(() => { el.className = 'alert'; }, 4000);
+}
+
+// ─── Helpers ───────────────────────────────────────────────────
+function fmt(dt) {
+  if (!dt) return '–';
+  const d = new Date(dt);
+  return d.toLocaleDateString('es-AR', { day:'2-digit', month:'2-digit', year:'2-digit' })
+    + ' ' + d.toLocaleTimeString('es-AR', { hour:'2-digit', minute:'2-digit' });
+}
+
+function localNow() {
+  const now = new Date();
+  const offset = now.getTimezoneOffset();
+  const local = new Date(now.getTime() - offset * 60000);
+  return local.toISOString().slice(0, 16);
+}
+
+// ─── DASHBOARD ─────────────────────────────────────────────────
+async function loadDashboard() {
+  const tbody = document.getElementById('tbody-dashboard');
+  tbody.innerHTML = '<tr><td colspan="7" class="loading"><span class="spinner"></span>Cargando…</td></tr>';
+
+  const [rActivos, rHoy, rHerr] = await Promise.all([
+    db.from('retiro').select('id', { count: 'exact', head: true }).is('fecha_devolucion', null),
+    db.from('retiro').select('id', { count: 'exact', head: true }).gte('fecha_devolucion', new Date().toISOString().slice(0,10)),
+    db.from('herramienta').select('id', { count: 'exact', head: true }),
+  ]);
+
+  document.getElementById('d-activos').textContent = rActivos.count ?? '?';
+  document.getElementById('d-hoy').textContent    = rHoy.count ?? '?';
+  document.getElementById('d-herramientas').textContent = rHerr.count ?? '?';
+
+  chequearRecordatorioCopia();
+  if (currentRole === 'admin') loadActividadReciente();
+
+  const { data, error } = await db.from('retiro')
+    .select('id, fecha_retiro, fecha_devolucion, herramienta(nombre), alumno(nombre, curso), profesor(nombre)')
+    .is('fecha_devolucion', null)
+    .order('fecha_retiro', { ascending: false });
+
+  if (error) { tbody.innerHTML = `<tr><td colspan="7" class="empty">Error: ${error.message}</td></tr>`; return; }
+  if (!data.length) { tbody.innerHTML = '<tr><td colspan="7" class="empty">No hay préstamos activos ✓</td></tr>'; return; }
+
+  tbody.innerHTML = data.map(r => `
+    <tr>
+      <td><code>${r.id}</code></td>
+      <td>${escapeHTML(r.herramienta?.nombre)}</td>
+      <td>${escapeHTML(r.alumno?.nombre)}</td>
+      <td>${escapeHTML(r.profesor?.nombre)}</td>
+      <td>${fmt(r.fecha_retiro)}</td>
+      <td><span class="badge badge-amber">En uso</span></td>
+      <td><button class="btn btn-green btn-sm" onclick="registrarDevolucion(${r.id})">Devolver</button></td>
+    </tr>`).join('');
+}
+
+// ─── RETIROS ───────────────────────────────────────────────────
+async function loadRetiros() {
+  const tbody = document.getElementById('tbody-retiros');
+  tbody.innerHTML = '<tr><td colspan="9" class="loading"><span class="spinner"></span>Cargando…</td></tr>';
+
+  await populateSelectsRetiro();
+
+  const { data, error } = await db.from('retiro')
+    .select('id, fecha_retiro, fecha_devolucion, herramienta(nombre), alumno(nombre, curso), profesor(nombre)')
+    .order('fecha_retiro', { ascending: false });
+
+  if (error) { tbody.innerHTML = `<tr><td colspan="9" class="empty">Error: ${error.message}</td></tr>`; return; }
+  if (!data.length) { tbody.innerHTML = '<tr><td colspan="9" class="empty">Sin registros aún</td></tr>'; return; }
+
+  tbody.innerHTML = data.map(r => {
+    const devuelto = !!r.fecha_devolucion;
+    const badge = devuelto
+      ? '<span class="badge badge-green">Devuelto</span>'
+      : '<span class="badge badge-amber">En uso</span>';
+    const action = devuelto ? '' : `<button class="btn btn-green btn-sm" onclick="registrarDevolucion(${r.id})">Devolver</button>`;
+    return `<tr>
+      <td><code>${r.id}</code></td>
+      <td>${escapeHTML(r.herramienta?.nombre)}</td>
+      <td>${escapeHTML(r.alumno?.nombre)}</td>
+      <td>${escapeHTML(r.alumno?.curso)}</td>
+      <td>${escapeHTML(r.profesor?.nombre)}</td>
+      <td>${fmt(r.fecha_retiro)}</td>
+      <td>${fmt(r.fecha_devolucion)}</td>
+      <td>${badge}</td>
+      <td class="td-actions">${action}
+        <button class="btn btn-red btn-sm" onclick="deleteRetiro(${r.id})">✕</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function populateSelectsRetiro() {
+  const [{ data: hs }, { data: as }, { data: ps }] = await Promise.all([
+    db.from('herramienta').select('id, nombre, categoria').order('categoria', { nullsFirst: false }).order('nombre'),
+    db.from('alumno').select('id, nombre, curso').order('nombre'),
+    db.from('profesor').select('id, nombre').order('nombre'),
+  ]);
+
+  const fill = (id, items, label) => {
+    const sel = document.getElementById(id);
+    sel.innerHTML = `<option value="">Seleccionar…</option>` +
+      items.map(i => {
+        const text = i.nombre + (label && i[label] ? ' · ' + i[label] : '');
+        return `<option value="${i.id}">${escapeHTML(text)}</option>`;
+      }).join('');
   };
-  pg.appendChild(card);
-});
 
-// Back to top
-const topBtn = document.getElementById('topBtn');
-window.addEventListener('scroll', ()=>{
-  topBtn.classList.toggle('show', window.scrollY>500);
-});
-topBtn.onclick = ()=>window.scrollTo({top:0,behavior:'smooth'});
+  // Herramienta: agrupada por categoría con <optgroup>
+  const selH = document.getElementById('r-herramienta');
+  const grupos = {};
+  (hs || []).forEach(h => {
+    const cat = h.categoria || 'Sin categoría';
+    (grupos[cat] = grupos[cat] || []).push(h);
+  });
+  const cats = Object.keys(grupos).sort((a, b) => {
+    if (a === 'Sin categoría') return 1;
+    if (b === 'Sin categoría') return -1;
+    return a.localeCompare(b, 'es');
+  });
+  selH.innerHTML = `<option value="">Seleccionar…</option>` +
+    cats.map(cat =>
+      `<optgroup label="${escapeHTML(cat)}">` +
+      grupos[cat].map(h => `<option value="${h.id}">${escapeHTML(h.nombre)}</option>`).join('') +
+      `</optgroup>`
+    ).join('');
 
-render();
+  fill('r-alumno', as || [], 'curso');
+  fill('r-profesor', ps || [], null);
+
+  document.getElementById('r-fecha').value = localNow();
+}
+
+async function addRetiro() {
+  const alertEl = document.getElementById('alert-retiro');
+  const idH = document.getElementById('r-herramienta').value;
+  const idA = document.getElementById('r-alumno').value;
+  const idP = document.getElementById('r-profesor').value;
+  const fecha = document.getElementById('r-fecha').value;
+
+  if (!idH || !idA || !idP || !fecha) {
+    showAlert(alertEl, 'err', 'Completá todos los campos.'); return;
+  }
+
+  const { error } = await db.from('retiro').insert({
+    id_herramienta: parseInt(idH),
+    id_alumno: parseInt(idA),
+    id_profesor: parseInt(idP),
+    fecha_retiro: new Date(fecha).toISOString(),
+  });
+
+  if (error) { showAlert(alertEl, 'err', error.message); return; }
+
+  const txtH = document.getElementById('r-herramienta').selectedOptions[0]?.text || idH;
+  const txtA = document.getElementById('r-alumno').selectedOptions[0]?.text || idA;
+  registrarAuditoria('ALTA', 'retiro', null, `Retiro de "${txtH}" por ${txtA}`);
+
+  showAlert(alertEl, 'ok', 'Retiro registrado.');
+  document.getElementById('form-retiro').classList.remove('open');
+  loadRetiros();
+}
+
+async function registrarDevolucion(id) {
+  if (!confirm('¿Confirmar devolución?')) return;
+  const { error } = await db.from('retiro').update({ fecha_devolucion: new Date().toISOString() }).eq('id', id);
+  if (error) { alert(error.message); return; }
+  registrarAuditoria('DEVOLUCION', 'retiro', id, 'Devolución registrada');
+  loadRetiros();
+  if (document.getElementById('dashboard').classList.contains('active')) loadDashboard();
+}
+
+async function deleteRetiro(id) {
+  if (!confirm('¿Eliminar este registro?')) return;
+  const { error } = await db.from('retiro').delete().eq('id', id);
+  if (error) { alert(error.message); return; }
+  registrarAuditoria('BAJA', 'retiro', id, 'Registro de retiro eliminado');
+  loadRetiros();
+}
+
+// ─── HERRAMIENTAS ──────────────────────────────────────────────
+let herramientaEditId = null;
+
+let herramientasCache = [];
+let enUsoCache = new Set();
+
+async function loadHerramientas() {
+  const tbody = document.getElementById('tbody-herramientas');
+  tbody.innerHTML = '<tr><td colspan="5" class="loading"><span class="spinner"></span>Cargando…</td></tr>';
+
+  const { data: hs, error } = await db.from('herramienta').select('id, nombre, categoria').order('categoria', { nullsFirst: false }).order('nombre');
+  if (error) { tbody.innerHTML = `<tr><td colspan="5" class="empty">Error: ${error.message}</td></tr>`; return; }
+
+  // Count active retiros per herramienta
+  const { data: activos } = await db.from('retiro').select('id_herramienta').is('fecha_devolucion', null);
+  enUsoCache = new Set((activos || []).map(r => r.id_herramienta));
+  herramientasCache = hs || [];
+
+  // Poblar el filtro con las categorías presentes (conservando la selección actual)
+  const filtro = document.getElementById('filtro-categoria');
+  const seleccion = filtro.value;
+  const cats = [...new Set(herramientasCache.map(h => h.categoria).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b, 'es'));
+  const haySinCat = herramientasCache.some(h => !h.categoria);
+  filtro.innerHTML = `<option value="">Todas</option>` +
+    cats.map(c => `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join('') +
+    (haySinCat ? `<option value="__SIN__">Sin categoría</option>` : '');
+  filtro.value = seleccion; // mantiene el filtro si la categoría sigue existiendo
+
+  renderHerramientas();
+}
+
+function renderHerramientas() {
+  const tbody = document.getElementById('tbody-herramientas');
+  const contador = document.getElementById('filtro-contador');
+  const filtro = document.getElementById('filtro-categoria').value;
+
+  let lista = herramientasCache;
+  if (filtro === '__SIN__') lista = lista.filter(h => !h.categoria);
+  else if (filtro) lista = lista.filter(h => h.categoria === filtro);
+
+  if (!herramientasCache.length) {
+    tbody.innerHTML = `<tr><td colspan="5" class="empty">Sin ${Tp()} cargadas</td></tr>`;
+    contador.textContent = '';
+    return;
+  }
+  if (!lista.length) {
+    tbody.innerHTML = `<tr><td colspan="5" class="empty">No hay ${Tp()} en esa categoría</td></tr>`;
+  } else {
+    tbody.innerHTML = lista.map(h => `<tr>
+      <td><code>${h.id}</code></td>
+      <td>${escapeHTML(h.nombre)}</td>
+      <td>${h.categoria ? `<span class="badge badge-cat">${escapeHTML(h.categoria)}</span>` : '<span class="badge badge-none">Sin categoría</span>'}</td>
+      <td>${enUsoCache.has(h.id) ? '<span class="badge badge-amber">En uso</span>' : '<span class="badge badge-green">Disponible</span>'}</td>
+      <td class="td-actions">
+        <button class="btn btn-steel btn-sm" data-id="${h.id}" data-nombre="${escapeHTML(h.nombre)}" data-categoria="${escapeHTML(h.categoria || '')}" onclick="onEditHerramienta(this)">Editar</button>
+        <button class="btn btn-red btn-sm" onclick="deleteHerramienta(${h.id})">✕</button>
+      </td>
+    </tr>`).join('');
+  }
+  contador.textContent = filtro ? `${lista.length} de ${herramientasCache.length}` : `${herramientasCache.length} en total`;
+}
+
+function onEditHerramienta(btn) {
+  editHerramienta(parseInt(btn.dataset.id), btn.dataset.nombre, btn.dataset.categoria);
+}
+
+function editHerramienta(id, nombre, categoria) {
+  herramientaEditId = id;
+  document.getElementById('h-id').value = id;
+  document.getElementById('h-nombre').value = nombre;
+  document.getElementById('h-categoria').value = categoria || '';
+  document.getElementById('fh-title').textContent = 'Editar ' + T();
+  document.getElementById('form-herramienta').classList.add('open');
+}
+
+function cancelHerramienta() {
+  herramientaEditId = null;
+  document.getElementById('h-id').value = '';
+  document.getElementById('h-nombre').value = '';
+  document.getElementById('h-categoria').value = '';
+  document.getElementById('fh-title').textContent = 'Agregar ' + T();
+  document.getElementById('form-herramienta').classList.remove('open');
+}
+
+async function saveHerramienta() {
+  const alertEl = document.getElementById('alert-herramienta');
+  const nombre = document.getElementById('h-nombre').value.trim();
+  const categoria = document.getElementById('h-categoria').value.trim();
+  if (!nombre) { showAlert(alertEl, 'err', 'Ingresá un nombre.'); return; }
+
+  const payload = { nombre, categoria: categoria || null };
+  let error;
+
+  if (herramientaEditId) {
+    ({ error } = await db.from('herramienta').update(payload).eq('id', herramientaEditId));
+  } else {
+    ({ error } = await db.from('herramienta').insert(payload));
+  }
+
+  if (error) { showAlert(alertEl, 'err', error.message); return; }
+  registrarAuditoria(herramientaEditId ? 'EDICION' : 'ALTA', 'herramienta',
+    herramientaEditId, `Herramienta "${nombre}"${categoria ? ' · ' + categoria : ''}`);
+  showAlert(alertEl, 'ok', 'Guardado.');
+  cancelHerramienta();
+  loadHerramientas();
+}
+
+async function deleteHerramienta(id) {
+  if (!confirm(`¿Eliminar ${T()}? Se perderán los registros de retiro asociados.`)) return;
+  const { error } = await db.from('herramienta').delete().eq('id', id);
+  if (error) { alert(error.message); return; }
+  registrarAuditoria('BAJA', 'herramienta', id, 'Herramienta eliminada');
+  loadHerramientas();
+}
+
+// ─── PROFESORES ────────────────────────────────────────────────
+let profesorEditId = null;
+
+async function loadProfesores() {
+  const tbody = document.getElementById('tbody-profesores');
+  tbody.innerHTML = '<tr><td colspan="3" class="loading"><span class="spinner"></span>Cargando…</td></tr>';
+
+  const { data, error } = await db.from('profesor').select('id, nombre').order('nombre');
+  if (error) { tbody.innerHTML = `<tr><td colspan="3" class="empty">Error: ${error.message}</td></tr>`; return; }
+  if (!data.length) { tbody.innerHTML = '<tr><td colspan="3" class="empty">Sin profesores cargados</td></tr>'; return; }
+
+  tbody.innerHTML = data.map(p => `<tr>
+    <td><code>${p.id}</code></td>
+    <td>${escapeHTML(p.nombre)}</td>
+    <td class="td-actions">
+      <button class="btn btn-steel btn-sm" data-id="${p.id}" data-nombre="${escapeHTML(p.nombre)}" onclick="onEditProfesor(this)">Editar</button>
+      <button class="btn btn-red btn-sm" onclick="deleteProfesor(${p.id})">✕</button>
+    </td>
+  </tr>`).join('');
+}
+
+function onEditProfesor(btn) {
+  editProfesor(parseInt(btn.dataset.id), btn.dataset.nombre);
+}
+
+function editProfesor(id, nombre) {
+  profesorEditId = id;
+  document.getElementById('p-id').value = id;
+  document.getElementById('p-nombre').value = nombre;
+  document.getElementById('fp-title').textContent = 'Editar profesor';
+  document.getElementById('form-profesor').classList.add('open');
+}
+
+function cancelProfesor() {
+  profesorEditId = null;
+  document.getElementById('p-id').value = '';
+  document.getElementById('p-nombre').value = '';
+  document.getElementById('fp-title').textContent = 'Agregar profesor';
+  document.getElementById('form-profesor').classList.remove('open');
+}
+
+async function saveProfesor() {
+  const alertEl = document.getElementById('alert-profesor');
+  const nombre = document.getElementById('p-nombre').value.trim();
+  if (!nombre) { showAlert(alertEl, 'err', 'Ingresá un nombre.'); return; }
+
+  const payload = { nombre };
+  let error;
+  if (profesorEditId) {
+    ({ error } = await db.from('profesor').update(payload).eq('id', profesorEditId));
+  } else {
+    ({ error } = await db.from('profesor').insert(payload));
+  }
+
+  if (error) { showAlert(alertEl, 'err', error.message); return; }
+  registrarAuditoria(profesorEditId ? 'EDICION' : 'ALTA', 'profesor',
+    profesorEditId, `Profesor "${nombre}"`);
+  showAlert(alertEl, 'ok', 'Guardado.');
+  cancelProfesor();
+  loadProfesores();
+}
+
+async function deleteProfesor(id) {
+  if (!confirm('¿Eliminar profesor?')) return;
+  const { error } = await db.from('profesor').delete().eq('id', id);
+  if (error) { alert(error.message); return; }
+  registrarAuditoria('BAJA', 'profesor', id, 'Profesor eliminado');
+  loadProfesores();
+}
+
+// ─── ALUMNOS ───────────────────────────────────────────────────
+let alumnoEditId = null;
+
+async function loadAlumnos() {
+  const tbody = document.getElementById('tbody-alumnos');
+  tbody.innerHTML = '<tr><td colspan="4" class="loading"><span class="spinner"></span>Cargando…</td></tr>';
+
+  const { data, error } = await db.from('alumno').select('id, nombre, curso').order('nombre');
+  if (error) { tbody.innerHTML = `<tr><td colspan="4" class="empty">Error: ${error.message}</td></tr>`; return; }
+  if (!data.length) { tbody.innerHTML = '<tr><td colspan="4" class="empty">Sin alumnos cargados</td></tr>'; return; }
+
+  tbody.innerHTML = data.map(a => `<tr>
+    <td><code>${a.id}</code></td>
+    <td>${escapeHTML(a.nombre)}</td>
+    <td>${escapeHTML(a.curso ?? '–')}</td>
+    <td class="td-actions">
+      <button class="btn btn-steel btn-sm" data-id="${a.id}" data-nombre="${escapeHTML(a.nombre)}" data-curso="${escapeHTML(a.curso || '')}" onclick="onEditAlumno(this)">Editar</button>
+      <button class="btn btn-red btn-sm" onclick="deleteAlumno(${a.id})">✕</button>
+    </td>
+  </tr>`).join('');
+}
+
+function onEditAlumno(btn) {
+  editAlumno(parseInt(btn.dataset.id), btn.dataset.nombre, btn.dataset.curso);
+}
+
+function editAlumno(id, nombre, curso) {
+  alumnoEditId = id;
+  document.getElementById('a-id').value = id;
+  document.getElementById('a-nombre').value = nombre;
+  document.getElementById('a-curso').value = curso;
+  document.getElementById('fa-title').textContent = 'Editar alumno';
+  document.getElementById('form-alumno').classList.add('open');
+}
+
+function cancelAlumno() {
+  alumnoEditId = null;
+  document.getElementById('a-id').value = '';
+  document.getElementById('a-nombre').value = '';
+  document.getElementById('a-curso').value = '';
+  document.getElementById('fa-title').textContent = 'Agregar alumno';
+  document.getElementById('form-alumno').classList.remove('open');
+}
+
+async function saveAlumno() {
+  const alertEl = document.getElementById('alert-alumno');
+  const nombre = document.getElementById('a-nombre').value.trim();
+  const curso  = document.getElementById('a-curso').value.trim();
+  if (!nombre) { showAlert(alertEl, 'err', 'Ingresá un nombre.'); return; }
+
+  const payload = { nombre, curso: curso || null };
+  let error;
+  if (alumnoEditId) {
+    ({ error } = await db.from('alumno').update(payload).eq('id', alumnoEditId));
+  } else {
+    ({ error } = await db.from('alumno').insert(payload));
+  }
+
+  if (error) { showAlert(alertEl, 'err', error.message); return; }
+  registrarAuditoria(alumnoEditId ? 'EDICION' : 'ALTA', 'alumno',
+    alumnoEditId, `Alumno "${nombre}"${curso ? ' ('+curso+')' : ''}`);
+  showAlert(alertEl, 'ok', 'Guardado.');
+  cancelAlumno();
+  loadAlumnos();
+}
+
+async function deleteAlumno(id) {
+  if (!confirm('¿Eliminar alumno?')) return;
+  const { error } = await db.from('alumno').delete().eq('id', id);
+  if (error) { alert(error.message); return; }
+  registrarAuditoria('BAJA', 'alumno', id, 'Alumno eliminado');
+  loadAlumnos();
+}
+
+// ─── USUARIOS ──────────────────────────────────────────────────
+function abrirFormUsuario() {
+  // Reintentar dbAdmin desde localStorage
+  if (!dbAdmin) {
+    const url = localStorage.getItem('sb_url');
+    const sk  = localStorage.getItem('sb_service_key');
+    if (url && sk) initSupabaseAdmin(url, sk);
+  }
+  if (!dbAdmin) {
+    const noKeyMsg = document.getElementById('usuarios-no-service-key');
+    noKeyMsg.style.display = 'block';
+    noKeyMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  toggleForm('form-usuario');
+}
+
+async function loadUsuarios() {
+  const tbody = document.getElementById('tbody-usuarios');
+  const noKeyMsg = document.getElementById('usuarios-no-service-key');
+
+  // Intentar inicializar dbAdmin desde localStorage si todavía no está listo
+  if (!dbAdmin) {
+    const url = localStorage.getItem('sb_url');
+    const sk  = localStorage.getItem('sb_service_key');
+    if (url && sk) initSupabaseAdmin(url, sk);
+  }
+
+  if (!dbAdmin) {
+    noKeyMsg.style.display = 'block';
+    tbody.innerHTML = '<tr><td colspan="5" class="empty">Configurá la Service Role Key para ver los usuarios.</td></tr>';
+    return;
+  }
+  noKeyMsg.style.display = 'none';
+  tbody.innerHTML = '<tr><td colspan="5" class="loading"><span class="spinner"></span>Cargando…</td></tr>';
+
+  const { data, error } = await dbAdmin.auth.admin.listUsers();
+  if (error) {
+    tbody.innerHTML = `<tr><td colspan="5" class="empty">Error: ${error.message}</td></tr>`;
+    return;
+  }
+
+  const users = data.users || [];
+  if (!users.length) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty">Sin usuarios registrados</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = users.map(u => {
+    const role = u.app_metadata?.role ?? u.user_metadata?.role ?? 'usuario';
+    const badgeClass = role === 'admin' ? 'badge-amber' : 'badge-green';
+    const creado = u.created_at ? new Date(u.created_at).toLocaleDateString('es-AR') : '–';
+    const ultimo = u.last_sign_in_at ? fmt(u.last_sign_in_at) : 'Nunca';
+    const esSelf = u.id === currentUser?.id;
+    const deleteBtn = esSelf ? '' : `<button class="btn btn-red btn-sm" data-id="${u.id}" data-email="${escapeHTML(u.email)}" onclick="onDeleteUsuario(this)">✕</button>`;
+    const roleBtn = esSelf ? '' :
+      role === 'admin'
+        ? `<button class="btn btn-outline btn-sm" onclick="setRoleUsuario('${u.id}','usuario')">→ usuario</button>`
+        : `<button class="btn btn-amber btn-sm" onclick="setRoleUsuario('${u.id}','admin')">→ admin</button>`;
+    return `<tr>
+      <td>${escapeHTML(u.email)}${esSelf ? ' <span class="badge badge-amber">vos</span>' : ''}</td>
+      <td><span class="badge ${badgeClass}">${escapeHTML(role)}</span></td>
+      <td>${creado}</td>
+      <td>${ultimo}</td>
+      <td class="td-actions">${roleBtn}${deleteBtn}</td>
+    </tr>`;
+  }).join('');
+}
+
+function onDeleteUsuario(btn) {
+  deleteUsuario(btn.dataset.id, btn.dataset.email);
+}
+
+async function createUsuario() {
+  const alertEl = document.getElementById('alert-usuario');
+  const email    = document.getElementById('u-email').value.trim();
+  const password = document.getElementById('u-password').value;
+
+  if (!email || !password) { showAlert(alertEl, 'err', 'Completá email y contraseña.'); return; }
+  if (password.length < 6)  { showAlert(alertEl, 'err', 'La contraseña debe tener al menos 6 caracteres.'); return; }
+
+  // Reintentar dbAdmin desde localStorage si no está listo
+  if (!dbAdmin) {
+    const url = localStorage.getItem('sb_url');
+    const sk  = localStorage.getItem('sb_service_key');
+    if (url && sk) initSupabaseAdmin(url, sk);
+  }
+
+  if (!dbAdmin) {
+    showAlert(alertEl, 'err', 'Necesitás configurar la Service Role Key en ⚙ Configurar.');
+    return;
+  }
+
+  const { data, error } = await dbAdmin.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+    app_metadata: { role: 'usuario' }
+  });
+
+  if (error) { showAlert(alertEl, 'err', error.message); return; }
+
+  registrarAuditoria('ALTA', 'usuario', null, `Usuario creado: ${data.user.email}`);
+  showAlert(alertEl, 'ok', `Usuario ${data.user.email} creado correctamente.`);
+  document.getElementById('u-email').value = '';
+  document.getElementById('u-password').value = '';
+  document.getElementById('form-usuario').classList.remove('open');
+  loadUsuarios();
+}
+
+async function setRoleUsuario(uid, nuevoRol) {
+  if (!dbAdmin) return;
+  const { error } = await dbAdmin.auth.admin.updateUserById(uid, {
+    app_metadata: { role: nuevoRol }
+  });
+  if (error) { alert(error.message); return; }
+  registrarAuditoria('EDICION', 'usuario', uid, `Rol cambiado a "${nuevoRol}"`);
+  loadUsuarios();
+}
+
+async function deleteUsuario(uid, email) {
+  if (!confirm(`¿Eliminar el usuario ${email}? Esta acción no se puede deshacer.`)) return;
+  if (!dbAdmin) return;
+  const { error } = await dbAdmin.auth.admin.deleteUser(uid);
+  if (error) { alert(error.message); return; }
+  registrarAuditoria('BAJA', 'usuario', uid, `Usuario eliminado: ${email}`);
+  loadUsuarios();
+}
+
+// ─── COPIAS DE SEGURIDAD ───────────────────────────────────────
+const BACKUP_TABLES = ['herramienta', 'alumno', 'profesor', 'retiro'];
+
+async function loadCopias() {
+  const ids = {
+    herramienta: 'c-herramientas',
+    alumno:      'c-alumnos',
+    profesor:    'c-profesores',
+    retiro:      'c-retiros',
+  };
+  for (const t of BACKUP_TABLES) {
+    const el = document.getElementById(ids[t]);
+    if (el) el.textContent = '…';
+  }
+  const counts = await Promise.all(
+    BACKUP_TABLES.map(t => db.from(t).select('id', { count: 'exact', head: true }))
+  );
+  BACKUP_TABLES.forEach((t, i) => {
+    const el = document.getElementById(ids[t]);
+    if (el) el.textContent = counts[i].count ?? '?';
+  });
+}
+
+// ─── RECORDATORIO DE COPIA ─────────────────────────────────────
+const DIAS_RECORDATORIO = 7;   // avisar si pasaron más de N días sin copia
+
+function marcarCopiaHecha() {
+  localStorage.setItem('ultima_copia', new Date().toISOString());
+  const banner = document.getElementById('backup-reminder');
+  if (banner) banner.style.display = 'none';
+}
+
+function posponerRecordatorio() {
+  // Posponer 1 día sin contar como copia hecha.
+  const manana = new Date();
+  manana.setDate(manana.getDate() + 1);
+  localStorage.setItem('recordatorio_pospuesto', manana.toISOString());
+  const banner = document.getElementById('backup-reminder');
+  if (banner) banner.style.display = 'none';
+}
+
+function chequearRecordatorioCopia() {
+  const banner = document.getElementById('backup-reminder');
+  const texto = document.getElementById('backup-reminder-text');
+  if (!banner || !texto) return;
+  if (currentRole !== 'admin') { banner.style.display = 'none'; return; }
+
+  // Si fue pospuesto y todavía no llegó el momento, no mostrar.
+  const pospuesto = localStorage.getItem('recordatorio_pospuesto');
+  if (pospuesto && new Date() < new Date(pospuesto)) { banner.style.display = 'none'; return; }
+
+  const ultima = localStorage.getItem('ultima_copia');
+  let mostrar = false, mensaje = '';
+
+  if (!ultima) {
+    mostrar = true;
+    mensaje = '⚠ Todavía no descargaste ninguna copia de seguridad. Conviene guardar una en tu computadora o pendrive.';
+  } else {
+    const dias = Math.floor((Date.now() - new Date(ultima).getTime()) / 86400000);
+    if (dias >= DIAS_RECORDATORIO) {
+      mostrar = true;
+      const cuando = dias === 1 ? 'hace 1 día' : `hace ${dias} días`;
+      mensaje = `⚠ La última copia de seguridad fue ${cuando}. Conviene descargar una nueva.`;
+    }
+  }
+
+  banner.style.display = mostrar ? 'flex' : 'none';
+  if (mostrar) texto.textContent = mensaje;
+}
+
+function descargarArchivo(contenido, nombre, tipo) {
+  const blob = new Blob([contenido], { type: tipo });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = nombre;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function selloFecha() {
+  const d = new Date();
+  const p = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}`;
+}
+
+async function exportarJSON() {
+  const alertEl = document.getElementById('alert-export');
+  showAlert(alertEl, 'ok', 'Generando copia…');
+  try {
+    const backup = {
+      app: 'control-herramientas-epet7',
+      version: 1,
+      generado: new Date().toISOString(),
+      tablas: {},
+    };
+    for (const t of BACKUP_TABLES) {
+      const { data, error } = await db.from(t).select('*').order('id');
+      if (error) throw new Error(`${t}: ${error.message}`);
+      backup.tablas[t] = data || [];
+    }
+    descargarArchivo(
+      JSON.stringify(backup, null, 2),
+      `copia_herramientas_${selloFecha()}.json`,
+      'application/json'
+    );
+    const total = BACKUP_TABLES.reduce((s, t) => s + backup.tablas[t].length, 0);
+    showAlert(alertEl, 'ok', `Copia descargada (${total} registros).`);
+    marcarCopiaHecha();
+  } catch (e) {
+    showAlert(alertEl, 'err', 'Error al generar la copia: ' + e.message);
+  }
+}
+
+function aCSV(filas) {
+  if (!filas.length) return '';
+  const cols = Object.keys(filas[0]);
+  const escapar = v => {
+    if (v === null || v === undefined) return '';
+    const s = String(v);
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+  const cabecera = cols.join(',');
+  const cuerpo = filas.map(f => cols.map(c => escapar(f[c])).join(',')).join('\n');
+  return cabecera + '\n' + cuerpo;
+}
+
+async function exportarCSV(tabla) {
+  const alertEl = document.getElementById('alert-export');
+  try {
+    const { data, error } = await db.from(tabla).select('*').order('id');
+    if (error) throw new Error(error.message);
+    if (!data || !data.length) { showAlert(alertEl, 'err', `La tabla ${tabla} está vacía.`); return; }
+    // BOM para que Excel reconozca acentos
+    descargarArchivo('\ufeff' + aCSV(data), `${tabla}_${selloFecha()}.csv`, 'text/csv;charset=utf-8');
+    showAlert(alertEl, 'ok', `CSV de ${tabla} descargado (${data.length} filas).`);
+  } catch (e) {
+    showAlert(alertEl, 'err', 'Error: ' + e.message);
+  }
+}
+
+async function restaurarJSON() {
+  const alertEl = document.getElementById('alert-restore');
+  const logEl = document.getElementById('restore-log');
+  const fileInput = document.getElementById('restore-file');
+  logEl.textContent = '';
+
+  const file = fileInput.files[0];
+  if (!file) { showAlert(alertEl, 'err', 'Elegí un archivo de copia primero.'); return; }
+
+  let backup;
+  try {
+    backup = JSON.parse(await file.text());
+  } catch (e) {
+    showAlert(alertEl, 'err', 'El archivo no es un JSON válido.');
+    return;
+  }
+  if (!backup.tablas || backup.app !== 'control-herramientas-epet7') {
+    showAlert(alertEl, 'err', 'No parece una copia de esta aplicación.');
+    return;
+  }
+  if (!confirm('¿Restaurar los datos de esta copia? Se agregarán a los registros actuales.')) return;
+
+  showAlert(alertEl, 'ok', 'Restaurando…');
+  // Orden: primero tablas base, retiro al final (depende de las otras).
+  const orden = ['herramienta', 'alumno', 'profesor', 'retiro'];
+  let lineas = [];
+  for (const t of orden) {
+    const filas = backup.tablas[t];
+    if (!Array.isArray(filas) || !filas.length) { lineas.push(`${t}: sin registros`); continue; }
+    // Insertar respetando los id originales (upsert para no duplicar si ya existen).
+    const { error } = await db.from(t).upsert(filas, { onConflict: 'id' });
+    if (error) {
+      lineas.push(`${t}: ERROR — ${error.message}`);
+    } else {
+      lineas.push(`${t}: ${filas.length} registros restaurados ✓`);
+    }
+    logEl.textContent = lineas.join('\n');
+  }
+  showAlert(alertEl, 'ok', 'Restauración finalizada. Revisá el detalle abajo.');
+  loadCopias();
+}
+
+// ─── AUDITORÍA ─────────────────────────────────────────────────
+// Escribe un evento en la tabla auditoria. Nunca interrumpe la
+// acción principal: si falla (p. ej. la tabla no existe todavía),
+// solo lo informa en consola.
+async function registrarAuditoria(accion, entidad, entidadId, detalle) {
+  if (!db || !currentUser) return;
+  try {
+    await db.from('auditoria').insert({
+      usuario_id: currentUser.id,
+      usuario_email: currentUser.email,
+      accion,
+      entidad: entidad || null,
+      entidad_id: entidadId != null ? String(entidadId) : null,
+      detalle: detalle || null,
+    });
+  } catch (e) {
+    console.warn('No se pudo registrar auditoría:', e?.message || e);
+  }
+}
+
+const COLOR_ACCION = {
+  INGRESO: 'badge-green', SALIDA: 'badge-green',
+  ALTA: 'badge-green', EDICION: 'badge-amber',
+  BAJA: 'badge-red', DEVOLUCION: 'badge-green',
+};
+
+async function loadActividadReciente() {
+  const tbody = document.getElementById('tbody-actividad');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="4" class="loading"><span class="spinner"></span>Cargando…</td></tr>';
+  const { data, error } = await db.from('auditoria')
+    .select('fecha, usuario_email, accion, entidad, entidad_id, detalle')
+    .order('fecha', { ascending: false })
+    .limit(8);
+  if (error) {
+    // Tabla no activada todavía: ocultar el bloque sin molestar.
+    const bloque = tbody.closest('.admin-only-block');
+    if (bloque) bloque.style.display = 'none';
+    return;
+  }
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="4" class="empty">Sin actividad registrada aún.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(r => `
+    <tr>
+      <td>${fmt(r.fecha)}</td>
+      <td>${escapeHTML(r.usuario_email ?? '–')}</td>
+      <td><span class="badge ${COLOR_ACCION[r.accion] || ''}">${escapeHTML(r.accion)}</span></td>
+      <td>${escapeHTML(r.detalle ?? '–')}${r.entidad_id ? ' <code>#'+escapeHTML(r.entidad_id)+'</code>' : ''}</td>
+    </tr>`).join('');
+}
+
+async function initAuditoria() {
+  // Verificar que la tabla exista
+  const aviso = document.getElementById('auditoria-no-table');
+  const { error } = await db.from('auditoria').select('id', { count: 'exact', head: true });
+  if (error) {
+    aviso.style.display = 'block';
+    document.getElementById('tbody-auditoria').innerHTML =
+      '<tr><td colspan="5" class="empty">Módulo no activado.</td></tr>';
+    return;
+  }
+  aviso.style.display = 'none';
+
+  // Rango por defecto: últimos 30 días
+  if (!document.getElementById('aud-desde').value) {
+    const hoy = new Date();
+    const hace30 = new Date(hoy.getTime() - 30*86400000);
+    document.getElementById('aud-hasta').value = hoy.toISOString().slice(0,10);
+    document.getElementById('aud-desde').value = hace30.toISOString().slice(0,10);
+  }
+  await poblarUsuariosAuditoria();
+  actualizarTotalAuditoria();
+  loadAuditoria();
+}
+
+async function poblarUsuariosAuditoria() {
+  // Lista de emails distintos que aparecen en la auditoría
+  const sel = document.getElementById('aud-usuario');
+  const actual = sel.value;
+  const { data } = await db.from('auditoria').select('usuario_email').order('usuario_email');
+  const emails = [...new Set((data || []).map(r => r.usuario_email).filter(Boolean))];
+  sel.innerHTML = '<option value="">Todos los usuarios</option>' +
+    emails.map(e => `<option value="${e}">${e}</option>`).join('');
+  if (emails.includes(actual)) sel.value = actual;
+}
+
+let auditoriaUltimoResultado = [];
+
+async function loadAuditoria() {
+  const tbody = document.getElementById('tbody-auditoria');
+  tbody.innerHTML = '<tr><td colspan="5" class="loading"><span class="spinner"></span>Buscando…</td></tr>';
+
+  const desde   = document.getElementById('aud-desde').value;
+  const hasta   = document.getElementById('aud-hasta').value;
+  const usuario = document.getElementById('aud-usuario').value;
+  const accion  = document.getElementById('aud-accion').value;
+
+  let q = db.from('auditoria').select('*').order('fecha', { ascending: false }).limit(1000);
+  if (desde)   q = q.gte('fecha', new Date(desde + 'T00:00:00').toISOString());
+  if (hasta)   q = q.lte('fecha', new Date(hasta + 'T23:59:59').toISOString());
+  if (usuario) q = q.eq('usuario_email', usuario);
+  if (accion)  q = q.eq('accion', accion);
+
+  const { data, error } = await q;
+  if (error) {
+    document.getElementById('auditoria-no-table').style.display = 'block';
+    tbody.innerHTML = `<tr><td colspan="5" class="empty">Error: ${error.message}</td></tr>`;
+    return;
+  }
+
+  auditoriaUltimoResultado = data || [];
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty">Sin actividad en este período.</td></tr>';
+    return;
+  }
+
+  const colorAccion = COLOR_ACCION;
+  tbody.innerHTML = data.map(r => `
+    <tr>
+      <td>${fmt(r.fecha)}</td>
+      <td>${escapeHTML(r.usuario_email ?? '–')}</td>
+      <td><span class="badge ${colorAccion[r.accion] || ''}">${escapeHTML(r.accion)}</span></td>
+      <td>${escapeHTML(r.entidad ?? '–')}${r.entidad_id ? ' <code>#'+escapeHTML(r.entidad_id)+'</code>' : ''}</td>
+      <td>${escapeHTML(r.detalle ?? '–')}</td>
+    </tr>`).join('');
+}
+
+function resetFiltrosAuditoria() {
+  document.getElementById('aud-usuario').value = '';
+  document.getElementById('aud-accion').value = '';
+  const hoy = new Date();
+  const hace30 = new Date(hoy.getTime() - 30*86400000);
+  document.getElementById('aud-hasta').value = hoy.toISOString().slice(0,10);
+  document.getElementById('aud-desde').value = hace30.toISOString().slice(0,10);
+  loadAuditoria();
+}
+
+function exportarAuditoriaCSV() {
+  if (!auditoriaUltimoResultado.length) { alert('No hay resultados para exportar. Hacé una búsqueda primero.'); return; }
+  descargarAuditoriaComoCSV(auditoriaUltimoResultado, 'auditoria');
+}
+
+// Convierte un conjunto de registros de auditoría a CSV y lo descarga.
+function descargarAuditoriaComoCSV(registros, prefijo) {
+  const filas = registros.map(r => ({
+    fecha: fmt(r.fecha),
+    usuario: r.usuario_email ?? '',
+    accion: r.accion,
+    entidad: r.entidad ?? '',
+    entidad_id: r.entidad_id ?? '',
+    detalle: r.detalle ?? '',
+  }));
+  descargarArchivo('\ufeff' + aCSV(filas), `${prefijo}_${selloFecha()}.csv`, 'text/csv;charset=utf-8');
+}
+
+// Muestra el total de registros en el panel de mantenimiento.
+async function actualizarTotalAuditoria() {
+  const el = document.getElementById('auditoria-total');
+  if (!el) return;
+  const { count, error } = await db.from('auditoria').select('id', { count: 'exact', head: true });
+  el.textContent = error ? 'Registros en total: (no disponible)' : `Registros en total: ${count ?? 0}`;
+}
+
+// Vacía toda la auditoría, con respaldo y confirmación fuerte.
+async function vaciarAuditoria() {
+  const alertEl = document.getElementById('alert-aud-limpieza');
+
+  // Traer todo para respaldarlo
+  showAlert(alertEl, 'ok', 'Preparando respaldo…');
+  const { data: todo, error: e1 } = await db.from('auditoria').select('*').order('fecha');
+  if (e1) { showAlert(alertEl, 'err', 'Error: ' + e1.message); return; }
+
+  if (!todo.length) {
+    showAlert(alertEl, 'ok', 'La auditoría ya está vacía.');
+    return;
+  }
+
+  // Confirmación fuerte: escribir una palabra
+  const palabra = prompt(`Vas a borrar TODOS los ${todo.length} registros de la auditoría. Esta acción no se puede deshacer.\n\nPrimero se descargará una copia en CSV.\n\nPara confirmar, escribí la palabra:  VACIAR`);
+  if (palabra !== 'VACIAR') {
+    showAlert(alertEl, 'err', 'Cancelado (no se escribió "VACIAR").');
+    return;
+  }
+
+  // Respaldo automático
+  descargarAuditoriaComoCSV(todo, 'auditoria_completa_respaldo');
+
+  // Borrar todo. Se usa un filtro siempre verdadero (id >= 0) porque
+  // Supabase exige una condición en los delete.
+  const { error: e2 } = await db.from('auditoria').delete().gte('id', 0);
+  if (e2) {
+    showAlert(alertEl, 'err', 'No se pudo vaciar: ' + e2.message + ' (¿ejecutaste auditoria-limpieza.sql?)');
+    return;
+  }
+
+  // Registrar el vaciado (queda como primer registro del nuevo historial)
+  registrarAuditoria('BAJA', 'auditoria', null, `Auditoría vaciada (${todo.length} registros archivados en CSV)`);
+  showAlert(alertEl, 'ok', `Auditoría vaciada. Se archivaron ${todo.length} registro(s) en el CSV descargado.`);
+  actualizarTotalAuditoria();
+  loadAuditoria();
+}
+
+// ─── INFORMES ──────────────────────────────────────────────────
+function initInformes() {
+  // Rango por defecto: mes en curso
+  const hoy = new Date();
+  const primero = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+  if (!document.getElementById('rep-desde').value) {
+    document.getElementById('rep-desde').value = primero.toISOString().slice(0,10);
+    document.getElementById('rep-hasta').value = hoy.toISOString().slice(0,10);
+  }
+  // Actualizar opciones que mencionan el término
+  const optInv = document.getElementById('opt-inventario');
+  if (optInv) optInv.textContent = `Inventario de ${Tp()}`;
+  const optRk = document.getElementById('opt-ranking-h');
+  if (optRk) optRk.textContent = `Ranking de ${Tp()} más usadas`;
+  onCambioTipoInforme();
+}
+
+function onCambioTipoInforme() {
+  const tipo = document.getElementById('rep-tipo').value;
+  const necesitaRango = (tipo === 'retiros');
+  const necesitaCat = (tipo === 'inventario' || tipo === 'ranking-herramientas');
+  document.querySelectorAll('.rep-rango').forEach(el => el.style.display = necesitaRango ? 'block' : 'none');
+  document.querySelectorAll('.rep-cat').forEach(el => el.style.display = necesitaCat ? 'block' : 'none');
+  if (necesitaCat) cargarCategoriasInforme();
+  // Ocultar botones hasta que se genere de nuevo
+  document.getElementById('btn-imprimir').style.display = 'none';
+  document.getElementById('btn-pdf').style.display = 'none';
+  document.getElementById('rep-output').innerHTML =
+    '<div class="report-empty">Tocá “Generar” para ver el informe.</div>';
+}
+
+async function cargarCategoriasInforme() {
+  const sel = document.getElementById('rep-categoria');
+  const previo = sel.value;
+  const { data } = await db.from('herramienta').select('categoria');
+  const cats = [...new Set((data || []).map(d => d.categoria).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b, 'es'));
+  const haySin = (data || []).some(d => !d.categoria);
+  sel.innerHTML = `<option value="">Todas las categorías</option>` +
+    cats.map(c => `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join('') +
+    (haySin ? `<option value="__SIN__">Sin categoría</option>` : '');
+  sel.value = previo;
+}
+
+let informeActual = null;   // datos crudos del último informe, para el PDF
+
+function repCabecera(titulo, meta) {
+  const inst   = configActual.nombre_institucion || 'E.P.E.T N°7';
+  const sector = configActual.nombre_sector || 'Taller de Informática';
+  const tipo   = configActual.tipo_control || 'Control de Herramientas';
+  const ahora  = new Date().toLocaleString('es-AR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  informeActual = { inst, sector, tipo, titulo, meta: meta || '', ahora, cols: [], filas: [], stats: [] };
+  return `
+    <div class="rep-head">
+      <div class="rep-inst">${inst}</div>
+      <div class="rep-sub">${tipo} · ${sector}</div>
+      <div class="rep-title">${titulo}</div>
+      <div class="rep-meta">${meta ? meta + ' · ' : ''}Generado el ${ahora}</div>
+    </div>`;
+}
+
+// Quita etiquetas HTML para tener texto plano (los badges, etc.) en el PDF.
+function textoPlano(v) {
+  if (v === null || v === undefined) return '';
+  return String(v).replace(/<[^>]*>/g, '').trim();
+}
+
+function repTabla(cols, filas) {
+  if (informeActual) {
+    informeActual.cols = cols;
+    informeActual.filas = filas.map(f => f.map(textoPlano));
+  }
+  if (!filas.length) return '<div class="report-empty">Sin datos para mostrar.</div>';
+  const head = '<tr>' + cols.map(c => `<th>${c}</th>`).join('') + '</tr>';
+  const body = filas.map(f => '<tr>' + f.map(c => `<td>${c ?? '–'}</td>`).join('') + '</tr>').join('');
+  return `<div class="table-wrap"><table><thead>${head}</thead><tbody>${body}</tbody></table></div>`;
+}
+
+async function generarInforme() {
+  const tipo = document.getElementById('rep-tipo').value;
+  const out = document.getElementById('rep-output');
+  out.innerHTML = '<div class="loading"><span class="spinner"></span>Generando informe…</div>';
+
+  try {
+    let html = '';
+    if (tipo === 'activos')                  html = await repActivos();
+    else if (tipo === 'retiros')             html = await repRetiros();
+    else if (tipo === 'inventario')          html = await repInventario();
+    else if (tipo === 'listado-alumnos')     html = await repListado('alumno');
+    else if (tipo === 'listado-profesores')  html = await repListado('profesor');
+    else if (tipo === 'ranking-herramientas')html = await repRankingHerramientas();
+    else if (tipo === 'ranking-alumnos')     html = await repRankingAlumnos();
+
+    out.innerHTML = html;
+    document.getElementById('btn-imprimir').style.display = 'inline-block';
+    document.getElementById('btn-pdf').style.display = 'inline-block';
+    registrarAuditoria('INGRESO', 'informe', null, `Informe generado: ${tipo}`);
+  } catch (e) {
+    out.innerHTML = `<div class="report-empty">Error al generar el informe: ${e.message}</div>`;
+  }
+}
+
+function descargarInformePDF() {
+  if (!informeActual) { alert('Generá un informe primero.'); return; }
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    alert('No se pudo cargar el generador de PDF. Revisá tu conexión a internet o usá el botón Imprimir.');
+    return;
+  }
+  const { jsPDF } = window.jspdf;
+  const docp = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const inkRGB = [12, 19, 32];
+  const ancho = docp.internal.pageSize.getWidth();
+  const margen = 14;
+
+  // Cabecera institucional
+  docp.setFont('helvetica', 'bold'); docp.setFontSize(14); docp.setTextColor(...inkRGB);
+  docp.text(informeActual.inst, margen, 18);
+  docp.setFont('helvetica', 'normal'); docp.setFontSize(8); docp.setTextColor(100);
+  docp.text(`${informeActual.tipo} · ${informeActual.sector}`.toUpperCase(), margen, 23);
+  docp.setDrawColor(...inkRGB); docp.setLineWidth(0.6); docp.line(margen, 26, ancho - margen, 26);
+
+  // Título del informe
+  docp.setFont('helvetica', 'bold'); docp.setFontSize(15); docp.setTextColor(...inkRGB);
+  docp.text(informeActual.titulo, margen, 35);
+  docp.setFont('helvetica', 'normal'); docp.setFontSize(8); docp.setTextColor(130);
+  const metaTxt = (informeActual.meta ? informeActual.meta + ' · ' : '') + 'Generado el ' + informeActual.ahora;
+  docp.text(metaTxt, margen, 40);
+
+  let yInicio = 46;
+
+  // Estadísticas (solo inventario)
+  if (informeActual.stats && informeActual.stats.length) {
+    const resumen = informeActual.stats.map(s => `${s[0]}: ${s[1]}`).join('     ');
+    docp.setFont('helvetica', 'bold'); docp.setFontSize(10); docp.setTextColor(255, 87, 34);
+    docp.text(resumen, margen, yInicio);
+    yInicio += 8;
+  }
+
+  // Tabla
+  docp.autoTable({
+    startY: yInicio,
+    head: [informeActual.cols],
+    body: informeActual.filas.length ? informeActual.filas : [['Sin datos para mostrar']],
+    margin: { left: margen, right: margen },
+    styles: { font: 'helvetica', fontSize: 9, cellPadding: 2.5, textColor: inkRGB },
+    headStyles: { fillColor: inkRGB, textColor: [255,255,255], fontStyle: 'bold', fontSize: 8 },
+    alternateRowStyles: { fillColor: [244, 241, 234] },
+  });
+
+  // Pie con numeración de páginas
+  const totalPag = docp.internal.getNumberOfPages();
+  for (let i = 1; i <= totalPag; i++) {
+    docp.setPage(i);
+    docp.setFontSize(7); docp.setTextColor(150);
+    docp.text(`${informeActual.inst} · página ${i} de ${totalPag}`,
+      ancho / 2, docp.internal.pageSize.getHeight() - 8, { align: 'center' });
+  }
+
+  // Nombre de archivo
+  const slug = informeActual.titulo.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+  docp.save(`informe_${slug}_${selloFecha()}.pdf`);
+  registrarAuditoria('INGRESO', 'informe', null, `PDF descargado: ${informeActual.titulo}`);
+}
+
+async function repActivos() {
+  const { data, error } = await db.from('retiro')
+    .select('id, fecha_retiro, herramienta(nombre), alumno(nombre, curso), profesor(nombre)')
+    .is('fecha_devolucion', null)
+    .order('fecha_retiro', { ascending: true });
+  if (error) throw new Error(error.message);
+  const filas = (data || []).map(r => [
+    r.id, escapeHTML(r.herramienta?.nombre), escapeHTML(r.alumno?.nombre), escapeHTML(r.alumno?.curso), escapeHTML(r.profesor?.nombre), fmt(r.fecha_retiro)
+  ]);
+  return repCabecera('Préstamos activos', `${filas.length} ${filas.length === 1 ? T() : Tp()} sin devolver`)
+    + repTabla(['#', Tc(),'Alumno','Curso','Profesor','Fecha de retiro'], filas);
+}
+
+async function repRetiros() {
+  const desde = document.getElementById('rep-desde').value;
+  const hasta = document.getElementById('rep-hasta').value;
+  let q = db.from('retiro')
+    .select('id, fecha_retiro, fecha_devolucion, herramienta(nombre), alumno(nombre, curso), profesor(nombre)')
+    .order('fecha_retiro', { ascending: false });
+  if (desde) q = q.gte('fecha_retiro', new Date(desde + 'T00:00:00').toISOString());
+  if (hasta) q = q.lte('fecha_retiro', new Date(hasta + 'T23:59:59').toISOString());
+  const { data, error } = await q;
+  if (error) throw new Error(error.message);
+  const filas = (data || []).map(r => [
+    r.id, escapeHTML(r.herramienta?.nombre), escapeHTML(r.alumno?.nombre), escapeHTML(r.alumno?.curso), escapeHTML(r.profesor?.nombre),
+    fmt(r.fecha_retiro), r.fecha_devolucion ? fmt(r.fecha_devolucion) : 'Sin devolver'
+  ]);
+  const fmtFecha = d => d ? new Date(d+'T00:00:00').toLocaleDateString('es-AR') : '—';
+  return repCabecera('Retiros por período', `Del ${fmtFecha(desde)} al ${fmtFecha(hasta)} · ${filas.length} registro(s)`)
+    + repTabla(['#', Tc(),'Alumno','Curso','Profesor','Retiro','Devolución'], filas);
+}
+
+async function repInventario() {
+  const filtroCat = document.getElementById('rep-categoria').value;
+  const { data: hs, error } = await db.from('herramienta').select('id, nombre, categoria').order('categoria', { nullsFirst: false }).order('nombre');
+  if (error) throw new Error(error.message);
+
+  let lista = hs || [];
+  if (filtroCat === '__SIN__')      lista = lista.filter(h => !h.categoria);
+  else if (filtroCat)               lista = lista.filter(h => h.categoria === filtroCat);
+
+  const { data: activos } = await db.from('retiro').select('id_herramienta').is('fecha_devolucion', null);
+  const enUso = new Set((activos || []).map(r => r.id_herramienta));
+  const filas = lista.map(h => [
+    h.id,
+    escapeHTML(h.nombre),
+    h.categoria ? escapeHTML(h.categoria) : 'Sin categoría',
+    enUso.has(h.id)
+      ? '<span class="badge badge-amber">En uso</span>'
+      : '<span class="badge badge-green">Disponible</span>'
+  ]);
+  const enUsoFiltrado = lista.filter(h => enUso.has(h.id)).length;
+  const disp = lista.length - enUsoFiltrado;
+  const stats = `
+    <div class="rep-stat-grid">
+      <div class="rep-stat"><div class="n">${lista.length}</div><div class="l">Total</div></div>
+      <div class="rep-stat"><div class="n">${disp}</div><div class="l">Disponibles</div></div>
+      <div class="rep-stat"><div class="n">${enUsoFiltrado}</div><div class="l">En uso</div></div>
+    </div>`;
+  const metaCat = filtroCat ? 'Categoría: ' + (filtroCat === '__SIN__' ? 'Sin categoría' : filtroCat) : '';
+  const cab = repCabecera('Inventario de ' + Tp(), metaCat);
+  if (informeActual) informeActual.stats = [
+    ['Total', lista.length], ['Disponibles', disp], ['En uso', enUsoFiltrado]
+  ];
+  return cab + stats + repTabla(['#', Tc(), 'Categoría', 'Estado'], filas);
+}
+
+async function repListado(tabla) {
+  const cols = tabla === 'alumno' ? 'id, nombre, curso' : 'id, nombre';
+  const { data, error } = await db.from(tabla).select(cols).order('nombre');
+  if (error) throw new Error(error.message);
+  const titulo = tabla === 'alumno' ? 'Listado de alumnos' : 'Listado de profesores';
+  if (tabla === 'alumno') {
+    const filas = (data || []).map(a => [a.id, escapeHTML(a.nombre), escapeHTML(a.curso)]);
+    return repCabecera(titulo, `${filas.length} alumno(s)`) + repTabla(['#','Nombre','Curso'], filas);
+  }
+  const filas = (data || []).map(p => [p.id, escapeHTML(p.nombre)]);
+  return repCabecera(titulo, `${filas.length} profesor(es)`) + repTabla(['#','Nombre'], filas);
+}
+
+async function repRankingHerramientas() {
+  const filtroCat = document.getElementById('rep-categoria').value;
+  const { data, error } = await db.from('retiro').select('herramienta(nombre, categoria)');
+  if (error) throw new Error(error.message);
+  const conteo = {};
+  (data || []).forEach(r => {
+    const h = r.herramienta;
+    if (!h?.nombre) return;
+    if (!conteo[h.nombre]) conteo[h.nombre] = { n: 0, categoria: h.categoria || null };
+    conteo[h.nombre].n++;
+  });
+  let entradas = Object.entries(conteo);
+  if (filtroCat === '__SIN__')      entradas = entradas.filter(([, v]) => !v.categoria);
+  else if (filtroCat)               entradas = entradas.filter(([, v]) => v.categoria === filtroCat);
+  entradas.sort((a, b) => b[1].n - a[1].n);
+  const filas = entradas.map(([nombre, v], i) => [
+    i + 1,
+    escapeHTML(nombre),
+    v.categoria ? escapeHTML(v.categoria) : 'Sin categoría',
+    v.n
+  ]);
+  const meta = filtroCat
+    ? 'Categoría: ' + (filtroCat === '__SIN__' ? 'Sin categoría' : filtroCat)
+    : `Sobre ${(data||[]).length} retiro(s) totales`;
+  return repCabecera('Ranking de ' + Tp() + ' más usadas', meta)
+    + repTabla(['Puesto', Tc(), 'Categoría', 'Veces retirada'], filas);
+}
+
+async function repRankingAlumnos() {
+  const { data, error } = await db.from('retiro').select('alumno(nombre, curso)');
+  if (error) throw new Error(error.message);
+  const conteo = {};
+  (data || []).forEach(r => {
+    const n = r.alumno?.nombre;
+    if (n) {
+      const clave = n + (r.alumno?.curso ? ' · ' + r.alumno.curso : '');
+      conteo[clave] = (conteo[clave] || 0) + 1;
+    }
+  });
+  const orden = Object.entries(conteo).sort((a,b) => b[1]-a[1]);
+  const filas = orden.map(([nombre, n], i) => [i+1, escapeHTML(nombre), n]);
+  return repCabecera('Ranking de alumnos con más retiros', `Sobre ${(data||[]).length} retiro(s) totales`)
+    + repTabla(['Puesto','Alumno','Cantidad de retiros'], filas);
+}
+
+// ─── AJUSTES / CONFIGURACIÓN ───────────────────────────────────
+let configActual = {
+  nombre_institucion: 'E.P.E.T N°7',
+  tipo_control: 'Control de Herramientas',
+  nombre_sector: 'Taller de Informática',
+  termino_singular: 'herramienta',
+  termino_plural: 'herramientas',
+};
+
+// Devuelve la primera letra en mayúscula.
+function capitalizar(s) {
+  if (!s) return s;
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+// Helpers de término: T()=singular minúscula, Tc()=singular capitalizado,
+// Tp()=plural minúscula, Tpc()=plural capitalizado.
+function T()   { return configActual.termino_singular || 'herramienta'; }
+function Tc()  { return capitalizar(T()); }
+function Tp()  { return configActual.termino_plural || 'herramientas'; }
+function Tpc() { return capitalizar(Tp()); }
+
+// Reemplaza los textos visibles marcados con data-term-* en el DOM.
+function aplicarTerminoDOM() {
+  document.querySelectorAll('[data-term-s]').forEach(el => { el.textContent = T(); });
+  document.querySelectorAll('[data-term-sc]').forEach(el => { el.textContent = Tc(); });
+  document.querySelectorAll('[data-term-p]').forEach(el => { el.textContent = Tp(); });
+  document.querySelectorAll('[data-term-pc]').forEach(el => { el.textContent = Tpc(); });
+}
+
+// Aplica la configuración a toda la interfaz (header, footer, título de pestaña).
+function aplicarConfig(cfg) {
+  const inst   = cfg.nombre_institucion || 'E.P.E.T N°7';
+  const tipo   = cfg.tipo_control || 'Control de Herramientas';
+  const sector = cfg.nombre_sector || 'Taller de Informática';
+
+  const h1 = document.getElementById('hdr-titulo');
+  if (h1) h1.innerHTML = '&#128295; ' + tipo;
+  const sub = document.getElementById('hdr-subtitulo');
+  if (sub) sub.textContent = `${inst} · ${sector}`;
+  const foot = document.getElementById('hdr-footer');
+  if (foot) foot.textContent = `${inst} · ${tipo} · ${sector}`;
+  document.title = `${tipo} · ${inst}`;
+  aplicarTerminoDOM();
+}
+
+// Trae la configuración desde la base. Si la tabla no existe, usa los valores por defecto.
+async function cargarConfigGlobal() {
+  if (!db) return;
+  try {
+    const { data, error } = await db.from('configuracion').select('*').eq('id', 1).single();
+    if (error || !data) return;     // tabla no creada o sin fila: se mantiene el default
+    configActual = {
+      nombre_institucion: data.nombre_institucion,
+      tipo_control: data.tipo_control,
+      nombre_sector: data.nombre_sector,
+      termino_singular: data.termino_singular || 'herramienta',
+      termino_plural: data.termino_plural || 'herramientas',
+    };
+    aplicarConfig(configActual);
+  } catch (e) {
+    console.warn('Configuración no disponible:', e?.message || e);
+  }
+}
+
+// Carga los valores actuales en el formulario de Ajustes.
+async function loadAjustes() {
+  const aviso = document.getElementById('ajustes-no-table');
+  const { data, error } = await db.from('configuracion').select('*').eq('id', 1).single();
+  if (error) {
+    aviso.style.display = 'block';
+    return;
+  }
+  aviso.style.display = 'none';
+  document.getElementById('cfg-institucion').value = data.nombre_institucion || '';
+  document.getElementById('cfg-tipo').value        = data.tipo_control || '';
+  document.getElementById('cfg-sector').value      = data.nombre_sector || '';
+  document.getElementById('cfg-term-sing').value   = data.termino_singular || 'herramienta';
+  document.getElementById('cfg-term-plur').value   = data.termino_plural || 'herramientas';
+  previewAjustes();
+}
+
+// Actualiza la vista previa en vivo mientras se escribe.
+function previewAjustes() {
+  const inst   = document.getElementById('cfg-institucion').value.trim() || 'E.P.E.T N°7';
+  const tipo   = document.getElementById('cfg-tipo').value.trim() || 'Control de Herramientas';
+  const sector = document.getElementById('cfg-sector').value.trim() || 'Taller de Informática';
+  const sing   = document.getElementById('cfg-term-sing').value.trim() || 'herramienta';
+  const plur   = document.getElementById('cfg-term-plur').value.trim() || 'herramientas';
+  document.getElementById('cfg-preview-titulo').textContent = '🔧 ' + tipo;
+  document.getElementById('cfg-preview-sub').textContent = `${inst} · ${sector}`;
+  document.getElementById('cfg-preview-term').textContent =
+    `Ejemplo: "Nuevo retiro de ${plur}", "Agregar ${sing}", columna "${capitalizar(sing)}".`;
+}
+
+async function guardarAjustes() {
+  const alertEl = document.getElementById('alert-ajustes');
+  const inst   = document.getElementById('cfg-institucion').value.trim();
+  const tipo   = document.getElementById('cfg-tipo').value.trim();
+  const sector = document.getElementById('cfg-sector').value.trim();
+  const sing   = document.getElementById('cfg-term-sing').value.trim();
+  const plur   = document.getElementById('cfg-term-plur').value.trim();
+
+  if (!inst || !tipo || !sector || !sing || !plur) {
+    showAlert(alertEl, 'err', 'Completá todos los campos.');
+    return;
+  }
+
+  const { error } = await db.from('configuracion').update({
+    nombre_institucion: inst,
+    tipo_control: tipo,
+    nombre_sector: sector,
+    termino_singular: sing,
+    termino_plural: plur,
+    actualizado: new Date().toISOString(),
+  }).eq('id', 1);
+
+  if (error) { showAlert(alertEl, 'err', 'No se pudo guardar: ' + error.message); return; }
+
+  configActual = { nombre_institucion: inst, tipo_control: tipo, nombre_sector: sector,
+                   termino_singular: sing, termino_plural: plur };
+  aplicarConfig(configActual);
+  // Refrescar pestañas y vista activa para que tomen el nuevo término.
+  refrescarTextosDinamicos();
+  registrarAuditoria('EDICION', 'configuracion', null, `Datos de la institución actualizados`);
+  showAlert(alertEl, 'ok', 'Cambios guardados y aplicados.');
+}
+
+// Refresca textos dinámicos: recarga la vista activa para que tablas y
+// mensajes generados por JS tomen el nuevo término.
+function refrescarTextosDinamicos() {
+  const activa = document.querySelector('.section.active');
+  if (!activa) return;
+  const id = activa.id;
+  const loaders = { dashboard: loadDashboard, retiros: loadRetiros, herramientas: loadHerramientas };
+  if (loaders[id]) loaders[id]();
+}
+
+// ─── Init ──────────────────────────────────────────────────────
+loadConfig();
 </script>
 </body>
 </html>
