@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curso de Excel Intermedio-Avanzado — E.P.E.T. N° 7 · EPJA</title>
+<meta name="description" content="Trayecto completo de Excel para la Tecnicatura en Informática de la E.P.E.T. N° 7: funciones, caso integrador, Power Query, VBA y dashboards. Cada TP con guía imprimible y planilla verificada.">
+<link rel="icon" href="escudo_epet7.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fondo:#0B1220; --panel:#111C2E; --panel2:#0E1727; --linea:#23334D;
+  --neon:#38BDF8; --neonSuave:#7DD3FC;
+  --verde:#3FA46A; --verdeOsc:#2F6B4F;
+  --fuego:#F97316;
+  --texto:#E6EDF7; --sub:#93A5BF; --mono:#9BD1F5;
+  --radio:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Barlow',sans-serif; background:var(--fondo); color:var(--texto);
+  background-image:
+    linear-gradient(rgba(56,189,248,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56,189,248,.045) 1px, transparent 1px);
+  background-size:44px 44px;
+}
+a{color:var(--neonSuave)}
+.contenedor{max-width:1080px;margin:0 auto;padding:0 20px}
+
+/* ---------- Barra superior ---------- */
+.barra{
+  display:flex;align-items:center;gap:14px;padding:14px 0;
+  border-bottom:1px solid var(--linea);
+}
+.barra img{width:52px;height:52px;object-fit:contain;border-radius:8px;
+  box-shadow:0 0 14px rgba(56,189,248,.35)}
+.barra .quien b{font-family:'Chakra Petch',sans-serif;font-size:1.05rem;letter-spacing:.06em}
+.barra .quien span{display:block;color:var(--sub);font-size:.8rem}
+.barra .nivel{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:.72rem;
+  color:var(--neonSuave);border:1px solid var(--linea);border-radius:999px;padding:6px 12px;
+  background:var(--panel2)}
+
+/* ---------- Hero ---------- */
+.hero{padding:44px 0 30px;text-align:left}
+.hero h1{
+  font-family:'Chakra Petch',sans-serif;font-weight:700;
+  font-size:clamp(1.9rem,4.6vw,3rem);line-height:1.08;letter-spacing:.01em;
+}
+.hero h1 .acento{color:var(--neon)}
+.hero p.baja{color:var(--sub);max-width:640px;margin:14px 0 20px;font-size:1.02rem;line-height:1.55}
+.hero p.baja b{color:var(--texto)}
+
+/* firma visual: barra de fórmulas */
+.fx{
+  display:flex;align-items:center;gap:0;max-width:640px;margin:0 0 22px;
+  border:1px solid var(--linea);border-radius:8px;overflow:hidden;
+  background:var(--panel2);font-family:'JetBrains Mono',monospace;font-size:.86rem;
+}
+.fx .celda{padding:9px 14px;color:var(--sub);border-right:1px solid var(--linea);background:var(--panel)}
+.fx .efe{padding:9px 12px;color:var(--verde);font-style:italic;border-right:1px solid var(--linea)}
+.fx .formula{padding:9px 14px;color:var(--mono);white-space:nowrap;overflow:hidden}
+.fx .formula::after{content:"▍";color:var(--neon);animation:parpadeo 1.1s steps(1) infinite}
+@keyframes parpadeo{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.fx .formula::after{animation:none}}
+
+.cta{display:flex;flex-wrap:wrap;align-items:center;gap:14px}
+.boton-zip{
+  display:inline-flex;align-items:center;gap:10px;text-decoration:none;
+  font-family:'Chakra Petch',sans-serif;font-weight:600;font-size:1rem;letter-spacing:.03em;
+  color:#07131F;background:var(--neon);padding:13px 22px;border-radius:9px;
+  box-shadow:0 0 22px rgba(56,189,248,.35);transition:transform .15s, box-shadow .15s;
+}
+.boton-zip:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(56,189,248,.55)}
+.cta small{color:var(--sub);font-size:.8rem}
+
+.stats{display:flex;flex-wrap:wrap;gap:26px;margin-top:30px;padding-top:22px;border-top:1px solid var(--linea)}
+.stats div b{font-family:'Chakra Petch',sans-serif;font-size:1.5rem;color:var(--neonSuave);display:block}
+.stats div span{color:var(--sub);font-size:.8rem}
+
+/* ---------- Toolbar ---------- */
+.herramientas{display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+  padding:18px 0 6px;position:sticky;top:0;z-index:5;
+  background:linear-gradient(var(--fondo) 82%, transparent)}
+.buscador{flex:1;min-width:220px;position:relative}
+.buscador input{
+  width:100%;padding:11px 14px 11px 38px;border-radius:9px;border:1px solid var(--linea);
+  background:var(--panel);color:var(--texto);font-family:'Barlow',sans-serif;font-size:.95rem;
+}
+.buscador input:focus{outline:2px solid var(--neon);outline-offset:1px}
+.buscador::before{content:"⌕";position:absolute;left:13px;top:50%;transform:translateY(-54%);
+  color:var(--sub);font-size:1.1rem}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  font-family:'JetBrains Mono',monospace;font-size:.74rem;cursor:pointer;
+  border:1px solid var(--linea);border-radius:999px;padding:8px 13px;
+  background:var(--panel);color:var(--sub);transition:.15s;
+}
+.chip:hover{border-color:var(--neon);color:var(--texto)}
+.chip.activo{background:var(--neon);color:#07131F;border-color:var(--neon);font-weight:600}
+.chip:focus-visible{outline:2px solid var(--neonSuave);outline-offset:2px}
+
+/* ---------- Grilla de cards ---------- */
+.grilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;padding:16px 0 40px}
+.card{
+  background:var(--panel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:18px 18px 16px;display:flex;flex-direction:column;gap:10px;position:relative;
+  transition:border-color .15s, transform .15s;
+}
+.card:hover{border-color:var(--neon);transform:translateY(-3px)}
+.card .cabeza{display:flex;align-items:center;gap:10px}
+.card .num{
+  font-family:'Chakra Petch',sans-serif;font-weight:700;font-size:1.05rem;
+  color:#07131F;background:var(--neon);border-radius:7px;padding:3px 9px;min-width:44px;text-align:center;
+}
+.card.extra .num{background:var(--fuego)}
+.card .formula-tp{
+  font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--mono);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;
+}
+.card h2{font-family:'Chakra Petch',sans-serif;font-size:1.12rem;font-weight:600;line-height:1.25}
+.card p{color:var(--sub);font-size:.88rem;line-height:1.5;flex:1}
+.card .tags{display:flex;flex-wrap:wrap;gap:6px}
+.card .tag{font-size:.68rem;font-family:'JetBrains Mono',monospace;color:var(--sub);
+  border:1px solid var(--linea);border-radius:5px;padding:2px 7px;background:var(--panel2)}
+.card .descargas{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.bajar{
+  display:inline-flex;align-items:center;gap:6px;text-decoration:none;
+  font-size:.8rem;font-weight:600;border-radius:7px;padding:8px 12px;transition:.15s;
+  border:1px solid transparent;
+}
+.bajar.docx{background:rgba(56,189,248,.12);color:var(--neonSuave);border-color:rgba(56,189,248,.4)}
+.bajar.docx:hover{background:rgba(56,189,248,.24)}
+.bajar.xlsx{background:rgba(63,164,106,.14);color:#7BD8A4;border-color:rgba(63,164,106,.45)}
+.bajar.xlsx:hover{background:rgba(63,164,106,.28)}
+.bajar.zip{background:rgba(249,115,22,.13);color:#FDBA74;border-color:rgba(249,115,22,.4)}
+.bajar.zip:hover{background:rgba(249,115,22,.26)}
+.bajar.pdf{background:rgba(239,68,68,.12);color:#FCA5A5;border-color:rgba(239,68,68,.4)}
+.bajar.pdf:hover{background:rgba(239,68,68,.24)}
+
+.vacio{display:none;text-align:center;color:var(--sub);padding:50px 0}
+.vacio b{color:var(--texto);font-family:'Chakra Petch',sans-serif}
+
+/* ---------- Nota de publicación ---------- */
+.nota{
+  border:1px dashed var(--linea);border-radius:var(--radio);padding:16px 18px;
+  color:var(--sub);font-size:.85rem;line-height:1.6;margin-bottom:40px;background:var(--panel2);
+}
+.nota code{font-family:'JetBrains Mono',monospace;color:var(--mono);font-size:.8rem}
+
+/* ---------- Footer ---------- */
+footer{border-top:1px solid var(--linea);padding:30px 0 36px;text-align:center;color:var(--sub);font-size:.88rem}
+footer img{width:64px;height:64px;object-fit:contain;margin-bottom:10px;opacity:.95;
+  filter:drop-shadow(0 0 10px rgba(56,189,248,.35))}
+footer b{color:var(--texto)}
+footer .cierre{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--verde);margin-top:14px}
+
+@media (max-width:560px){
+  .stats{gap:18px}
+  .fx .formula{font-size:.74rem}
+}
+</style>
+</head>
+<body>
+
+<div class="contenedor">
+
+  <div class="barra">
+    <img src="escudo_epet7.png" alt="Escudo E.P.E.T. N° 7">
+    <div class="quien">
+      <b>E.P.E.T. N° 7</b>
+      <span>EPJA · Tecnicatura en Informática · Jardín América, Misiones</span>
+    </div>
+    <span class="nivel">NIVEL: INTERMEDIO → AVANZADO</span>
+  </div>
+
+  <section class="hero">
+    <h1>Curso de Excel<br><span class="acento">Intermedio-Avanzado</span></h1>
+    <p class="baja">Diez trabajos prácticos + material de aula para pasar de las funciones al análisis de datos real:
+    fórmulas por familias, un <b>caso integrador</b> de negocio, <b>Power Query</b>, <b>macros VBA</b> y
+    <b>dashboards ejecutivos</b>. Cada TP trae su <b>guía imprimible (Word)</b> y su <b>planilla verificada</b> con la solución funcionando.</p>
+
+    <div class="fx" role="img" aria-label="Barra de fórmulas de Excel">
+      <span class="celda">A1</span>
+      <span class="efe">fx</span>
+      <span class="formula">=CURSO.EXCEL("EPJA";2026;"completo")</span>
+    </div>
+
+    <div class="cta">
+      <a class="boton-zip" href="Curso_Excel_EPET7_completo.zip" download>⬇ Descargar todo (ZIP)</a>
+      <small>21 archivos · guías + planillas + kit VBA + póster</small>
+    </div>
+
+    <div class="stats">
+      <div><b>10+1</b><span>prácticos + póster</span></div>
+      <div><b>21</b><span>archivos</span></div>
+      <div><b>40+</b><span>funciones cubiertas</span></div>
+      <div><b>5</b><span>tecnologías: fórmulas · PQ · VBA · TD · BI</span></div>
+    </div>
+  </section>
+
+  <div class="herramientas">
+    <div class="buscador">
+      <input id="buscar" type="search" placeholder="Buscar por función, tema o palabra (ej: BUSCARX, comisiones, macro)…" aria-label="Buscar prácticos">
+    </div>
+    <div class="chips" id="chips" role="tablist" aria-label="Filtrar por categoría">
+      <button class="chip activo" data-cat="todos">Todos</button>
+      <button class="chip" data-cat="funciones">Funciones</button>
+      <button class="chip" data-cat="caso">Caso real</button>
+      <button class="chip" data-cat="pq">Power Query</button>
+      <button class="chip" data-cat="vba">VBA</button>
+      <button class="chip" data-cat="bi">Dashboard</button>
+      <button class="chip" data-cat="aula">Material de aula</button>
+    </div>
+  </div>
+
+  <main class="grilla" id="grilla"></main>
+
+  <div class="vacio" id="vacio">
+    <b>Sin resultados</b><br>Probá con otra palabra o tocá “Todos” para ver los 11 materiales.
+  </div>
+
+  <div class="nota">
+    📁 <b>Para que descarguen los archivos:</b> subí los <code>.xlsx</code>, <code>.docx</code>, los <code>.zip</code>,
+    el <code>.pdf</code> y <code>escudo_epet7.png</code> al mismo repositorio que este <code>index.html</code>.
+    Si guardás los materiales en una carpeta, cambiá la línea <code>const BASE = ""</code> por
+    <code>const BASE = "archivos/"</code> al inicio del script (dejá el ZIP completo y el escudo en la raíz).
+  </div>
+
+</div>
+
+<footer>
+  <img src="escudo_epet7.png" alt="Escudo E.P.E.T. N° 7">
+  <div>Material didáctico de <b>Prof. Rubén Markwart</b><br>
+  E.P.E.T. N° 7 — EPJA · Jardín América, Misiones</div>
+  <div class="cierre">=SI.CONJUNTO(PRACTICA>=10;"Excel dominado";VERDADERO;"Seguí practicando")</div>
+</footer>
+
+<script>
+const BASE = "";
+
+const TPS = [
+  {n:"01", cat:"funciones", formula:'=SIFECHA(B6;B7;"d")',
+   titulo:"Funciones de fecha y hora",
+   desc:"HOY, AHORA, FECHA, SIFECHA, FIN.MES, DIAS.LAB y más, aplicadas a los plazos de un proyecto escolar. Diez ejercicios con resultados para autoverificar.",
+   tags:["HOY","SIFECHA","DIAS.LAB","FIN.MES"],
+   archivos:[["Guía (Word)","TP01_Guia_Fecha_y_Hora.docx","docx"],["Planilla resuelta","Ejercicios_Fecha_Hora_Excel.xlsx","xlsx"]]},
+  {n:"02", cat:"funciones", formula:'=SI.CONJUNTO(A2>=9;"Excelente";…)',
+   titulo:"Funciones lógicas",
+   desc:"SI, Y, O, SI.ERROR, NO, XO, ELEGIR y SI.CONJUNTO decidiendo aprobaciones, presupuestos y alertas de stock. Con hoja de práctica resuelta.",
+   tags:["SI","Y/O","XO","SI.CONJUNTO"],
+   archivos:[["Guía (Word)","TP02_Guia_Funciones_Logicas.docx","docx"],["Planilla resuelta","Ejercicios_Funciones_Logicas_Excel.xlsx","xlsx"]]},
+  {n:"03", cat:"funciones", formula:'=BUSCARV("Carla";A2:D5;2;FALSO)',
+   titulo:"Seis funciones esenciales",
+   desc:"BUSCARV, SI, CONCATENAR, SUMAR.SI, CONTAR.SI y HOY sobre una base de empleados y ventas. El kit de supervivencia de cualquier planilla.",
+   tags:["BUSCARV","SUMAR.SI","CONTAR.SI"],
+   archivos:[["Guía (Word)","TP03_Guia_6_Funciones_Esenciales.docx","docx"],["Planilla resuelta","Ejercicios_6_Funciones_Excel.xlsx","xlsx"]]},
+  {n:"04", cat:"funciones", formula:'=IZQUIERDA(A3;ENCONTRAR("@";A3)-1)',
+   titulo:"Funciones de texto",
+   desc:"Limpieza de datos sucios reales: legajos, correos y nombres mal cargados con IZQUIERDA, EXTRAE, LARGO, ENCONTRAR y NOMPROPIO. Con ejercicio bonus combinado.",
+   tags:["EXTRAE","ENCONTRAR","NOMPROPIO"],
+   archivos:[["Guía (Word)","TP04_Guia_Funciones_Texto.docx","docx"],["Planilla resuelta","Ejercicios_Funciones_Texto_Excel.xlsx","xlsx"]]},
+  {n:"05", cat:"funciones", formula:'=FILTRAR(A2:D7;C2:C7<10)',
+   titulo:"Búsqueda y referencia avanzadas",
+   desc:"BUSCARX, ÍNDICE+COINCIDIR, DESREF, TRANSPONER y las matrices dinámicas FILTRAR, ORDENAR y UNICOS sobre un inventario. Con plan B para versiones viejas.",
+   tags:["BUSCARX","ÍNDICE","FILTRAR","UNICOS"],
+   archivos:[["Guía (Word)","TP05_Guia_Busqueda_Referencia.docx","docx"],["Planilla resuelta","Ejercicios_Busqueda_Referencia_Excel.xlsx","xlsx"]]},
+  {n:"06", cat:"funciones", formula:'=TIR(A6:A10)',
+   titulo:"Funciones financieras",
+   desc:"Cuotas de préstamos, planes de ahorro y evaluación de un proyecto de inversión con PAGO, VA, VF, TIR, VNA, TASA, NPER e INT.PAGO.DIR. Resultados exactos verificados.",
+   tags:["PAGO","TIR","VNA","NPER"],
+   archivos:[["Guía (Word)","TP06_Guia_Funciones_Financieras.docx","docx"],["Planilla resuelta","Ejercicios_Funciones_Financieras_Excel.xlsx","xlsx"]]},
+  {n:"07", cat:"caso", formula:'=SUMAR.SI($C$2:$C$11;C2;$F$2:$F$11)',
+   titulo:"Caso integrador: Tierra Colorada S.A.",
+   desc:"Un negocio completo en una hoja: limpiar textos, calcular plazos, comisiones escalonadas, cruzar con BUSCARX y armar el mini-tablero gerencial. Cinco desafíos encadenados con 87 fórmulas.",
+   tags:["integrador","evaluación","comisiones"],
+   archivos:[["Guía (Word)","TP07_Guia_Caso_Integrador.docx","docx"],["Planilla resuelta","Caso_Integrador_Tierra_Colorada.xlsx","xlsx"]]},
+  {n:"08", cat:"pq", formula:'= Table.UnpivotOtherColumns(…)',
+   titulo:"Power Query: limpieza de datos",
+   desc:"Las 6 transformaciones esenciales del editor: promover encabezados, dividir columnas, tipos y errores, unpivot, columna condicional y merge. Con archivo de datos sucios a propósito.",
+   tags:["ETL","unpivot","merge","código M"],
+   archivos:[["Guía (Word)","TP08_Guia_Power_Query.docx","docx"],["Datos de práctica","Datos_Practica_PowerQuery.xlsx","xlsx"]]},
+  {n:"09", cat:"vba", formula:'Sub ReiniciarPlanilla()',
+   titulo:"Automatización con macros VBA",
+   desc:"Seis macros reales: formato cebra con bucles, log de cambios automático, consolidación de hojas, protección masiva, botón de reinicio y exportación a PDF. Kit con módulo .bas importable.",
+   tags:["VBA","macros","eventos",".xlsm"],
+   archivos:[["Guía (Word)","TP09_Guia_Automatizacion_VBA.docx","docx"],["Kit completo","Kit_Automatizacion_VBA.zip","zip"]]},
+  {n:"10", cat:"bi", formula:'=SI(Ventas>=Meta;"▲";"▼")',
+   titulo:"Dashboard ejecutivo interactivo",
+   desc:"Barras de datos, gráfico combinado, segmentadores multi-TD, burbujas, sparklines y tarjetas KPI semafóricas. Andamiaje con datos calibrados para que los gráficos cuenten una historia.",
+   tags:["BI","KPI","segmentadores","sparklines"],
+   archivos:[["Guía (Word)","TP10_Guia_Dashboard_BI.docx","docx"],["Andamiaje de datos","Andamiaje_Dashboard_Excel.xlsx","xlsx"]]},
+  {n:"＋", cat:"aula", extra:true, formula:'Ctrl + Shift + $',
+   titulo:"Póster: atajos de teclado",
+   desc:"Cheat sheet imprimible A4 apaisado con 34 atajos en 5 categorías (Windows y Mac) y el Desafío de los 60 segundos. Para pegar al lado de cada monitor del laboratorio.",
+   tags:["atajos","imprimible","A4"],
+   archivos:[["Póster (PDF)","CheatSheet_Atajos_Excel.pdf","pdf"]]},
+];
+
+const grilla = document.getElementById("grilla");
+const vacio = document.getElementById("vacio");
+const buscar = document.getElementById("buscar");
+const chips = document.querySelectorAll(".chip");
+let catActiva = "todos";
+
+const ICONO = {docx:"📄", xlsx:"📊", zip:"🗜️", pdf:"🖨️"};
+
+function render(){
+  const q = buscar.value.trim().toLowerCase();
+  grilla.innerHTML = "";
+  let visibles = 0;
+  TPS.forEach(tp=>{
+    const texto = (tp.titulo+" "+tp.desc+" "+tp.tags.join(" ")+" "+tp.formula).toLowerCase();
+    const pasaCat = catActiva==="todos" || tp.cat===catActiva;
+    const pasaQ = !q || texto.includes(q);
+    if(!(pasaCat && pasaQ)) return;
+    visibles++;
+    const card = document.createElement("article");
+    card.className = "card"+(tp.extra?" extra":"");
+    card.innerHTML = `
+      <div class="cabeza">
+        <span class="num">${tp.n}</span>
+        <span class="formula-tp" title="${tp.formula}">${tp.formula}</span>
+      </div>
+      <h2>${tp.titulo}</h2>
+      <p>${tp.desc}</p>
+      <div class="tags">${tp.tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div>
+      <div class="descargas">${tp.archivos.map(([lbl,file,tipo])=>
+        `<a class="bajar ${tipo}" href="${BASE}${file}" download>${ICONO[tipo]} ${lbl}</a>`).join("")}
+      </div>`;
+    grilla.appendChild(card);
+  });
+  vacio.style.display = visibles ? "none" : "block";
+}
+
+chips.forEach(ch=>{
+  ch.addEventListener("click", ()=>{
+    chips.forEach(c=>c.classList.remove("activo"));
+    ch.classList.add("activo");
+    catActiva = ch.dataset.cat;
+    render();
+  });
+});
+buscar.addEventListener("input", render);
+render();
+</script>
+</body>
+</html>
