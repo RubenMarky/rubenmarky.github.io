@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Curso de Excel Intermedio-Avanzado — E.P.E.T. N° 7 </title>
 <meta name="description" content="Trayecto completo de Excel para la Tecnicatura en Informática de la E.P.E.T. N° 7: funciones, caso integrador, Power Query, VBA y dashboards. Cada TP con guía imprimible y planilla verificada.">
-<link rel="icon" href="7_Escudo_EPET7.png">
+<link rel="icon" type="image/png" href="7_Escudo_EPET7.png">
+<link rel="apple-touch-icon" href="7_Escudo_EPET7.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -48,8 +49,27 @@ a{color:var(--neonSuave)}
 .hero h1{
   font-family:'Chakra Petch',sans-serif;font-weight:700;
   font-size:clamp(1.9rem,4.6vw,3rem);line-height:1.08;letter-spacing:.01em;
+  background-image:linear-gradient(110deg, var(--texto) 30%, #ffffff 50%, var(--texto) 70%);
+  background-size:260% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:brilloBarrido 6s linear infinite;
 }
-.hero h1 .acento{color:var(--neon)}
+.hero h1 .acento{
+  color:var(--neon);-webkit-text-fill-color:var(--neon);
+  animation:brilloAcento 2.6s ease-in-out infinite;
+}
+@keyframes brilloBarrido{
+  0%{background-position:220% 0}
+  100%{background-position:-120% 0}
+}
+@keyframes brilloAcento{
+  0%,100%{text-shadow:0 0 10px rgba(56,189,248,.45),0 0 22px rgba(56,189,248,.22)}
+  50%{text-shadow:0 0 22px rgba(56,189,248,.9),0 0 42px rgba(56,189,248,.55)}
+}
+@media (prefers-reduced-motion:reduce){
+  .hero h1{animation:none;background-position:0 0}
+  .hero h1 .acento{animation:none}
+}
 .hero p.baja{color:var(--sub);max-width:640px;margin:14px 0 20px;font-size:1.02rem;line-height:1.55}
 .hero p.baja b{color:var(--texto)}
 
@@ -168,7 +188,7 @@ footer .cierre{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var
 <div class="contenedor">
 
   <div class="barra">
-    <img src="escudo_epet7.png" alt="Escudo E.P.E.T. N° 7">
+    <img src="7_Escudo_EPET7.png" alt="Escudo E.P.E.T. N° 7">
     <div class="quien">
       <b>E.P.E.T. N° 7</b>
       <span>Tecnicatura en Informática · Jardín América, Misiones</span>
