@@ -1,4 +1,5 @@
 // 1. SELECTORES DEL DOM
+const inputBuscador = document.getElementById('buscador');
 const formulario = document.getElementById('formulario-alumno');
 const inputNombre = document.getElementById('nombre');
 const inputNota = document.getElementById('nota');
