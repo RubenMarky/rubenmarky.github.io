@@ -37,24 +37,38 @@ function actualizarEstadisticas() {
     }
 }
 
-// Renderiza los alumnos en la interfaz de usuario
-function mostrarAlumnos() {
+// Renderiza los alumnos en la interfaz de usuario (soporta filtros)
+function mostrarAlumnos(textoFiltro = '') {
     // Limpiar el contenedor antes de renderizar
     listaAlumnos.innerHTML = '';
 
-    // Si no hay alumnos, mostrar un mensaje amigable
+    // Filtrar el arreglo original según lo que escriba el usuario
+    const alumnosFiltrados = alumnos.filter(alumno => 
+        alumno.nombre.toLowerCase().includes(textoFiltro.toLowerCase())
+    );
+
+    // Si no hay alumnos en el arreglo general
     if (alumnos.length === 0) {
         listaAlumnos.innerHTML = `<li class="lista-vacia">No hay alumnos registrados aún.</li>`;
         actualizarEstadisticas();
         return;
     }
 
-    // Generar los elementos de la lista de forma dinámica
-    alumnos.forEach((alumno, index) => {
+    // Si el filtro no coincide con ningún estudiante
+    if (alumnosFiltrados.length === 0) {
+        listaAlumnos.innerHTML = `<li class="lista-vacia">No se encontraron alumnos que coincidan con "${textoFiltro}".</li>`;
+        return; 
+        // Nota: No llamamos a actualizarEstadisticas() aquí para que el promedio global del curso no se altere al buscar
+    }
+
+    // Generar los elementos usando la lista filtrada
+    alumnosFiltrados.forEach((alumno) => {
+        // Encontrar el índice real en el arreglo original para que el botón eliminar borre al alumno correcto
+        const indexReal = alumnos.findIndex(a => a === alumno);
+
         const li = document.createElement('li');
         li.classList.add('alumno-item');
 
-        // Condición visual: nota de 4.0 o superior aprueba (puedes cambiarla según tu sistema)
         const esAprobado = alumno.nota >= 4.0;
         const claseEstado = esAprobado ? 'nota-aprobado' : 'nota-reprobado';
 
@@ -63,7 +77,7 @@ function mostrarAlumnos() {
                 <span class="alumno-nombre">${alumno.nombre}</span>
                 <span class="alumno-nota ${claseEstado}">Nota: ${alumno.nota.toFixed(1)}</span>
             </div>
-            <button class="btn-eliminar" onclick="eliminarAlumno(${index})" title="Eliminar alumno">❌</button>
+            <button class="btn-eliminar" onclick="eliminarAlumno(${indexReal})" title="Eliminar alumno">❌</button>
         `;
         
         listaAlumnos.appendChild(li);
@@ -71,6 +85,7 @@ function mostrarAlumnos() {
 
     actualizarEstadisticas();
 }
+
 
 // Registra un nuevo estudiante
 function registrarAlumno(e) {
@@ -113,4 +128,11 @@ formulario.addEventListener('submit', registrarAlumno);
 
 // Cargar la aplicación al iniciar la página
 document.addEventListener('DOMContentLoaded', mostrarAlumnos);
+
+// Escuchar la escritura en la barra de búsqueda
+inputBuscador.addEventListener('input', (e) => {
+    const texto = e.target.value;
+    mostrarAlumnos(texto);
+});
+
 
