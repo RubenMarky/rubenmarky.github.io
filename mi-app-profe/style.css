@@ -254,3 +254,15 @@ button[type="submit"]:hover {
     padding: 30px 0;
     font-style: italic;
 }
+.contenedor-buscador {
+    margin-bottom: 20px;
+    background-color: #f8fafc;
+    padding: 15px;
+    border-radius: var(--borde-radio);
+    border: 1px solid #e2e8f0;
+}
+
+.contenedor-buscador input {
+    background-color: var(--color-blanco);
+}
+
