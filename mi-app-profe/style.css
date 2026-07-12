@@ -1,20 +1,256 @@
-/* Colores dinámicos para las notas */
+/* ==========================================================================
+   1. VARIABLES Y CONFIGURACIÓN GENERAL
+   ========================================================================== */
+:root {
+    --color-fondo: #f4f6f9;
+    --color-principal: #1e3a8a;    /* Azul académico */
+    --color-secundario: #3b82f6;   /* Azul claro */
+    --color-texto: #334155;
+    --color-blanco: #ffffff;
+    --color-exito: #16a34a;        /* Verde aprobación */
+    --color-error: #dc2626;        /* Rojo reprobación */
+    --borde-radio: 8px;
+    --sombra: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    --fuente: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--fuente);
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+    line-height: 1.6;
+    padding: 20px;
+}
+
+/* ==========================================================================
+   2. ENCABEZADO Y PIE DE PÁGINA
+   ========================================================================== */
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    color: var(--color-principal);
+    font-size: 2.2rem;
+    margin-bottom: 5px;
+}
+
+header p {
+    color: #64748b;
+    font-size: 1.1rem;
+}
+
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+/* ==========================================================================
+   3. DISEÑO ESTRUCTURAL (LAYOUT DE SECCIONES)
+   ========================================================================== */
+.contenedor-principal {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 25px;
+}
+
+/* Cambio a dos columnas en pantallas más grandes que tablets */
+@media (min-width: 768px) {
+    .contenedor-principal {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .seccion-lista {
+        grid-column: span 2; /* El listado ocupa todo el ancho inferior */
+    }
+}
+
+section {
+    background-color: var(--color-blanco);
+    padding: 25px;
+    border-radius: var(--borde-radio);
+    box-shadow: var(--sombra);
+}
+
+section h2 {
+    color: var(--color-principal);
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 8px;
+}
+
+/* ==========================================================================
+   4. COMPONENTES (FORMULARIO, TARJETAS Y LISTA)
+   ========================================================================== */
+
+/* Formulario */
+.grupo-input {
+    margin-bottom: 15px;
+}
+
+.grupo-input label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 0.95rem;
+}
+
+.grupo-input input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: var(--borde-radio);
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+.grupo-input input:focus {
+    outline: none;
+    border-color: var(--color-secundario);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+button[type="submit"] {
+    width: 100%;
+    background-color: var(--color-principal);
+    color: var(--color-blanco);
+    border: none;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: var(--borde-radio);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+button[type="submit"]:hover {
+    background-color: var(--color-secundario);
+}
+
+/* Tarjetas de Estadísticas */
+.tarjetas-resumen {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    height: calc(100% - 50px); /* Alinea verticalmente con el formulario */
+}
+
+.tarjeta {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--borde-radio);
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.tarjeta h3 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: #64748b;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+}
+
+.tarjeta p {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--color-principal);
+}
+
+/* Listado de Alumnos */
+.lista-estudiantes {
+    list-style: none;
+}
+
+.alumno-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 12px 18px;
+    margin-bottom: 10px;
+    border-radius: var(--borde-radio);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.alumno-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.alumno-info {
+    display: flex;
+    flex-direction: column;
+}
+
+@media (min-width: 480px) {
+    .alumno-info {
+        flex-direction: row;
+        align-items: center;
+        gap: 30px;
+    }
+}
+
+.alumno-nombre {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* Colores dinámicos del JavaScript */
+.alumno-nota {
+    font-size: 0.95rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
 .nota-aprobado {
-    color: #2e7d32; /* Verde */
+    background-color: #dcfce7;
+    color: var(--color-exito);
     font-weight: bold;
 }
 
 .nota-reprobado {
-    color: #c62828; /* Rojo */
+    background-color: #fee2e2;
+    color: var(--color-error);
     font-weight: bold;
 }
 
-/* Ejemplo básico de tarjeta por si lo necesitas */
-.alumno-card {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    margin: 5px 0;
-    border-bottom: 1px solid #ccc;
+/* Botón Eliminar Individual */
+.btn-eliminar {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+.btn-eliminar:hover {
+    background-color: #f1f5f9;
+}
+
+.lista-vacia {
+    text-align: center;
+    color: #94a3b8;
+    padding: 30px 0;
+    font-style: italic;
 }
