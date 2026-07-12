@@ -1,76 +1,89 @@
-let alumnos = JSON.parse(localStorage.getItem("alumnos")) || [];
-let editandoIndex = null;
+// 1. SELECTORES DEL DOM (Ajusta los IDs según tu index.html)
+const formulario = document.getElementById('formulario-alumno'); // Tu formulario
+const inputNombre = document.getElementById('input-nombre');     // Input del nombre
+const inputNota = document.getElementById('input-nota');         // Input de la nota
+const listaAlumnos = document.getElementById('lista-alumnos');   // Contenedor/Tabla donde se muestran
+const promedioGrupalTxt = document.getElementById('promedio-grupal'); // Texto para el promedio total
 
-mostrarAlumnos();
+// 2. ESTADO DE LA APLICACIÓN (Cargar de localStorage o iniciar vacío)
+let alumnos = JSON.parse(localStorage.getItem('alumnos')) || [];
 
-function agregarAlumno() {
-  let nombre = document.getElementById("nombre").value;
-  let nota = document.getElementById("nota").value;
+// 3. FUNCIONES
 
-  if (nombre === "" || nota === "") return;
-
-  if (editandoIndex !== null) {
-    // ✏️ Editar
-    alumnos[editandoIndex] = { nombre, nota };
-    editandoIndex = null;
-  } else {
-    // ➕ Agregar
-    alumnos.push({ nombre, nota });
-  }
-
-  guardarDatos();
-  mostrarAlumnos();
-
-  // limpiar inputs
-  document.getElementById("nombre").value = "";
-  document.getElementById("nota").value = "";
+// Guarda la lista en el navegador
+function guardarEnLocalStorage() {
+    localStorage.setItem('alumnos', JSON.stringify(alumnos));
 }
 
+// Calcula y muestra el promedio de todo el curso
+function actualizarPromedioGeneral() {
+    if (alumnos.length === 0) {
+        if (promedioGrupalTxt) promedioGrupalTxt.textContent = "0.0";
+        return;
+    }
+    const suma = alumnos.reduce((total, alumno) => total + alumno.nota, 0);
+    const promedio = (suma / alumnos.length).toFixed(1);
+    if (promedioGrupalTxt) promedioGrupalTxt.textContent = promedio;
+}
+
+// Renderiza los alumnos en el HTML
 function mostrarAlumnos() {
-  let lista = document.getElementById("lista");
-  lista.innerHTML = "";
+    // Limpiar contenedor antes de volver a pintar
+    listaAlumnos.innerHTML = '';
 
-  alumnos.forEach((alumno, index) => {
-    let li = document.createElement("li");
-    li.textContent = alumno.nombre + " - Nota: " + alumno.nota;
+    alumnos.forEach((alumno, index) => {
+        const elemento = document.createElement('div');
+        elemento.classList.add('alumno-card');
 
-function eliminarAlumno(index) {
-  let confirmar = confirm("¿Estás seguro que querés eliminar este alumno?");
+        // Condición visual: nota mayor o igual a 4 aprueba (puedes cambiar el 4 por un 6 o 7)
+        const esAprobado = alumno.nota >= 4;
+        const claseEstado = esAprobado ? 'nota-aprobado' : 'nota-reprobado';
 
-  if (confirmar) {
-    alumnos.splice(index, 1);
-    guardarDatos();
+        // Estructura interna de cada fila o tarjeta de alumno
+        elemento.innerHTML = `
+            <span><strong>${alumno.nombre}</strong></span>
+            <span class="${claseEstado}">Nota: ${alumno.nota}</span>
+            <button onclick="eliminarAlumno(${index})">❌</button>
+        `;
+        
+        listaAlumnos.appendChild(elemento);
+    });
+
+    actualizarPromedioGeneral();
+}
+
+// Agrega un nuevo alumno
+function agregarAlumno(e) {
+    e.preventDefault(); // Evitar que la página se recargue
+
+    const nombre = inputNombre.value.trim();
+    const nota = parseFloat(inputNota.value);
+
+    // Validación básica
+    if (nombre === '' || isNaN(nota) || nota < 0 || nota > 10) {
+        alert('Por favor, ingresa un nombre válido y una nota entre 0 y 10.');
+        return;
+    }
+
+    const nuevoAlumno = { nombre, nota };
+    alumnos.push(nuevoAlumno);
+
+    guardarEnLocalStorage();
     mostrarAlumnos();
-  }
+
+    // Limpiar formulario
+    formulario.reset();
 }
 
-    // ✏️ editar
-    let btnEditar = document.createElement("button");
-    btnEditar.textContent = "✏️";
-    btnEditar.onclick = () => editarAlumno(index);
-
-    li.appendChild(btnEditar);
-    li.appendChild(btnEliminar);
-
-    lista.appendChild(li);
-  });
+// Elimina un alumno por su índice
+window.eliminarAlumno = function(index) {
+    alumnos.splice(index, 1);
+    guardarEnLocalStorage();
+    mostrarAlumnos();
 }
 
-function guardarDatos() {
-  localStorage.setItem("alumnos", JSON.stringify(alumnos));
-}
+// 4. EVENTOS Y ARRANQUE
+formulario.addEventListener('submit', agregarAlumno);
 
-function eliminarAlumno(index) {
-  alumnos.splice(index, 1);
-  guardarDatos();
-  mostrarAlumnos();
-}
-
-function editarAlumno(index) {
-  let alumno = alumnos[index];
-
-  document.getElementById("nombre").value = alumno.nombre;
-  document.getElementById("nota").value = alumno.nota;
-
-  editandoIndex = index;
-}
+// Arrancar la app mostrando lo que ya esté guardado
+document.addEventListener('DOMContentLoaded', mostrarAlumnos);
