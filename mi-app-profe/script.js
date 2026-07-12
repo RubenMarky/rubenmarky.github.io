@@ -1,4 +1,5 @@
 // 1. SELECTORES DEL DOM
+const btnExportar = document.getElementById('btn-exportar');
 const inputBuscador = document.getElementById('buscador');
 const formulario = document.getElementById('formulario-alumno');
 const inputNombre = document.getElementById('nombre');
@@ -134,5 +135,36 @@ inputBuscador.addEventListener('input', (e) => {
     const texto = e.target.value;
     mostrarAlumnos(texto);
 });
+// Función para exportar los datos a formato CSV (Excel)
+function exportarAExcel() {
+    if (alumnos.length === 0) {
+        alert("No hay alumnos registrados para exportar.");
+        return;
+    }
+
+    // Configurar el encabezado del archivo (con codificación UTF-8 para tildes y caracteres especiales)
+    let contenidoCSV = "data:text/csv;charset=utf-8,\uFEFF";
+    contenidoCSV += "Nombre Completo;Nota Final;Estado\n";
+
+    // Recorrer los alumnos y armar las filas
+    alumnos.forEach(alumno => {
+        const estado = alumno.nota >= 4.0 ? "Aprobado" : "Reprobado";
+        contenidoCSV += `${alumno.nombre};${alumno.nota.toFixed(1)};${estado}\n`;
+    });
+
+    // Crear un enlace invisible de descarga en el navegador
+    const URI_codificada = encodeURI(contenidoCSV);
+    const enlaceDescarga = document.createElement("a");
+    enlaceDescarga.setAttribute("href", URI_codificada);
+    enlaceDescarga.setAttribute("download", "reporte_notas_alumnos.csv");
+    
+    // Simular el click para descargar y remover el elemento del DOM
+    document.body.appendChild(enlaceDescarga);
+    enlaceDescarga.click();
+    document.body.removeChild(enlaceDescarga);
+}
+
+// Escuchar el click en el botón de exportación
+btnExportar.addEventListener('click', exportarAExcel);
 
 
