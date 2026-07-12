@@ -1,89 +1,115 @@
-// 1. SELECTORES DEL DOM (Ajusta los IDs según tu index.html)
-const formulario = document.getElementById('formulario-alumno'); // Tu formulario
-const inputNombre = document.getElementById('input-nombre');     // Input del nombre
-const inputNota = document.getElementById('input-nota');         // Input de la nota
-const listaAlumnos = document.getElementById('lista-alumnos');   // Contenedor/Tabla donde se muestran
-const promedioGrupalTxt = document.getElementById('promedio-grupal'); // Texto para el promedio total
+// 1. SELECTORES DEL DOM
+const formulario = document.getElementById('formulario-alumno');
+const inputNombre = document.getElementById('nombre');
+const inputNota = document.getElementById('nota');
+const listaAlumnos = document.getElementById('lista');
+const totalAlumnosTxt = document.getElementById('total-alumnos');
+const promedioGrupalTxt = document.getElementById('promedio-grupal');
 
-// 2. ESTADO DE LA APLICACIÓN (Cargar de localStorage o iniciar vacío)
+// 2. ESTADO DE LA APLICACIÓN (Cargar desde localStorage o iniciar vacío)
 let alumnos = JSON.parse(localStorage.getItem('alumnos')) || [];
 
 // 3. FUNCIONES
 
-// Guarda la lista en el navegador
+// Guarda la lista actualizada en el navegador
 function guardarEnLocalStorage() {
     localStorage.setItem('alumnos', JSON.stringify(alumnos));
 }
 
-// Calcula y muestra el promedio de todo el curso
-function actualizarPromedioGeneral() {
+// Calcula las estadísticas del curso (Total de alumnos y promedio general)
+function actualizarEstadisticas() {
+    // Actualizar cantidad total
+    if (totalAlumnosTxt) {
+        totalAlumnosTxt.textContent = alumnos.length;
+    }
+
+    // Calcular promedio general
     if (alumnos.length === 0) {
         if (promedioGrupalTxt) promedioGrupalTxt.textContent = "0.0";
         return;
     }
     const suma = alumnos.reduce((total, alumno) => total + alumno.nota, 0);
     const promedio = (suma / alumnos.length).toFixed(1);
-    if (promedioGrupalTxt) promedioGrupalTxt.textContent = promedio;
+    
+    if (promedioGrupalTxt) {
+        promedioGrupalTxt.textContent = promedio;
+    }
 }
 
-// Renderiza los alumnos en el HTML
+// Renderiza los alumnos en la interfaz de usuario
 function mostrarAlumnos() {
-    // Limpiar contenedor antes de volver a pintar
+    // Limpiar el contenedor antes de renderizar
     listaAlumnos.innerHTML = '';
 
-    alumnos.forEach((alumno, index) => {
-        const elemento = document.createElement('div');
-        elemento.classList.add('alumno-card');
+    // Si no hay alumnos, mostrar un mensaje amigable
+    if (alumnos.length === 0) {
+        listaAlumnos.innerHTML = `<li class="lista-vacia">No hay alumnos registrados aún.</li>`;
+        actualizarEstadisticas();
+        return;
+    }
 
-        // Condición visual: nota mayor o igual a 4 aprueba (puedes cambiar el 4 por un 6 o 7)
-        const esAprobado = alumno.nota >= 4;
+    // Generar los elementos de la lista de forma dinámica
+    alumnos.forEach((alumno, index) => {
+        const li = document.createElement('li');
+        li.classList.add('alumno-item');
+
+        // Condición visual: nota de 4.0 o superior aprueba (puedes cambiarla según tu sistema)
+        const esAprobado = alumno.nota >= 4.0;
         const claseEstado = esAprobado ? 'nota-aprobado' : 'nota-reprobado';
 
-        // Estructura interna de cada fila o tarjeta de alumno
-        elemento.innerHTML = `
-            <span><strong>${alumno.nombre}</strong></span>
-            <span class="${claseEstado}">Nota: ${alumno.nota}</span>
-            <button onclick="eliminarAlumno(${index})">❌</button>
+        li.innerHTML = `
+            <div class="alumno-info">
+                <span class="alumno-nombre">${alumno.nombre}</span>
+                <span class="alumno-nota ${claseEstado}">Nota: ${alumno.nota.toFixed(1)}</span>
+            </div>
+            <button class="btn-eliminar" onclick="eliminarAlumno(${index})" title="Eliminar alumno">❌</button>
         `;
         
-        listaAlumnos.appendChild(elemento);
+        listaAlumnos.appendChild(li);
     });
 
-    actualizarPromedioGeneral();
+    actualizarEstadisticas();
 }
 
-// Agrega un nuevo alumno
-function agregarAlumno(e) {
-    e.preventDefault(); // Evitar que la página se recargue
+// Registra un nuevo estudiante
+function registrarAlumno(e) {
+    e.preventDefault(); // Detener la recarga automática del formulario
 
     const nombre = inputNombre.value.trim();
     const nota = parseFloat(inputNota.value);
 
-    // Validación básica
+    // Validación de seguridad adicional
     if (nombre === '' || isNaN(nota) || nota < 0 || nota > 10) {
-        alert('Por favor, ingresa un nombre válido y una nota entre 0 y 10.');
+        alert('Por favor, ingresa datos válidos. La nota debe ser de 0 a 10.');
         return;
     }
 
+    // Guardar en la estructura de datos
     const nuevoAlumno = { nombre, nota };
     alumnos.push(nuevoAlumno);
 
+    // Persistir y refrescar interfaz
     guardarEnLocalStorage();
     mostrarAlumnos();
 
-    // Limpiar formulario
+    // Limpiar campos del formulario automáticamente
     formulario.reset();
+    inputNombre.focus(); // Devolver el foco al nombre para agilidad
 }
 
-// Elimina un alumno por su índice
+// Elimina un estudiante de la lista por su índice
 window.eliminarAlumno = function(index) {
-    alumnos.splice(index, 1);
-    guardarEnLocalStorage();
-    mostrarAlumnos();
+    // Confirmación opcional para evitar accidentes
+    if (confirm(`¿Estás seguro de que deseas eliminar este registro?`)) {
+        alumnos.splice(index, 1);
+        guardarEnLocalStorage();
+        mostrarAlumnos();
+    }
 }
 
-// 4. EVENTOS Y ARRANQUE
-formulario.addEventListener('submit', agregarAlumno);
+// 4. INICIALIZACIÓN DE EVENTOS
+formulario.addEventListener('submit', registrarAlumno);
 
-// Arrancar la app mostrando lo que ya esté guardado
+// Cargar la aplicación al iniciar la página
 document.addEventListener('DOMContentLoaded', mostrarAlumnos);
+
