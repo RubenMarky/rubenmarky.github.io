@@ -265,4 +265,21 @@ button[type="submit"]:hover {
 .contenedor-buscador input {
     background-color: var(--color-blanco);
 }
+#btn-exportar {
+    margin-top: 12px;
+    width: 100%;
+    background-color: var(--color-exito); /* Color verde para descargas */
+    color: var(--color-blanco);
+    border: none;
+    padding: 10px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    border-radius: var(--borde-radio);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#btn-exportar:hover {
+    background-color: #15803d; /* Verde más oscuro al pasar el cursor */
+}
 
