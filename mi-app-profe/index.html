@@ -298,7 +298,7 @@ button[type="submit"]:hover {
       </div>
     </section>
 
-    <!-- SECCIÓN BUSCADOR Y DESCARGA CORREGIDA -->
+        <!-- SECCIÓN LISTA TOTALMENTE CORREGIDA -->
     <section class="seccion-lista">
       <h2>Listado de Calificaciones</h2>
       
@@ -307,15 +307,17 @@ button[type="submit"]:hover {
           <label for="buscador">🔍 Buscar Alumno:</label>
           <input type="text" id="buscador" placeholder="Escribe un nombre para filtrar...">
         </div>
-        <!-- Botón corregido con clase específica para forzar el estilo -->
-        <button id="btn-exportar" type="button" style="background-color: #16a34a !important; color: #ffffff !important; border: 1px solid #15803d !important; padding: 10px 15px !important; font-size: 0.95rem !important; font-weight: bold !important; border-radius: 8px !important; cursor: pointer !important; display: block !important; width: 100% !important; margin-top: 12px !important; font-family: sans-serif !important;">📥 Descargar Reporte (Excel/CSV)</button>
+        
+        <!-- El botón debe estar AQUÍ, adentro de 'contenedor-buscador' pero ABAJO del input -->
+        <button id="btn-exportar" type="button" style="background-color: #16a34a !important; color: #ffffff !important; border: 1px solid #15803d !important; padding: 12px 15px !important; font-size: 1rem !important; font-weight: bold !important; border-radius: 8px !important; cursor: pointer !important; display: block !important; width: 100% !important; margin-top: 12px !important; font-family: sans-serif !important;">📥 Descargar Reporte (Excel/CSV)</button>
       </div>
+
       <div class="tabla-contenedor">
         <ul id="lista" class="lista-estudiantes"></ul>
       </div>
     </section>
 
-
+    
   </main>
 
   <footer>
