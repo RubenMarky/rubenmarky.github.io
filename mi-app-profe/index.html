@@ -257,7 +257,7 @@ button[type="submit"]:hover {
 
   <main class="contenedor-principal">
     
-    <!-- Sección 1: Formulario de ingreso -->
+    <!-- SECCIÓN FORMULARIO ACTUALIZADA -->
     <section class="seccion-formulario">
       <h2>Registrar Calificación</h2>
       <form id="formulario-alumno">
@@ -270,10 +270,18 @@ button[type="submit"]:hover {
           <label for="nota">Nota Final (0 - 10):</label>
           <input type="number" id="nota" min="0" max="10" step="0.1" placeholder="Ej. 8.5" required>
         </div>
+
+        <!-- Nuevo campo de asistencia -->
+        <div class="grupo-input grupo-asistencia">
+          <label for="asistencia">
+            <input type="checkbox" id="asistencia" checked> ¿Asistió a clase?
+          </label>
+        </div>
         
         <button type="submit" id="btn-agregar">Agregar Alumno</button>
       </form>
     </section>
+
 
     <!-- Sección 2: Estadísticas rápidas -->
     <section class="seccion-estadisticas">
@@ -290,23 +298,24 @@ button[type="submit"]:hover {
       </div>
     </section>
 
-    <!-- Sección 3: Listado de alumnos -->
+    <!-- SECCIÓN BUSCADOR Y DESCARGA CORREGIDA -->
     <section class="seccion-lista">
       <h2>Listado de Calificaciones</h2>
-      <div class="tabla-contenedor">
-        
-        <!-- Barra de búsqueda agregada -->
-<div class="grupo-input contenedor-buscador">
-  <label for="buscador">🔍 Buscar Alumno:</label>
-  <input type="text" id="buscador" placeholder="Escribe un nombre para filtrar...">
-  <button id="btn-exportar" type="button">📥 Descargar Reporte (Excel/CSV)</button>
-</div>
+      
+      <div class="contenedor-buscador">
+        <div class="grupo-input">
+          <label for="buscador">🔍 Buscar Alumno:</label>
+          <input type="text" id="buscador" placeholder="Escribe un nombre para filtrar...">
+        </div>
+        <!-- Botón corregido con clase específica para forzar el estilo -->
+        <button id="btn-exportar" class="btn-verde" type="button">📥 Descargar Reporte (Excel/CSV)</button>
+      </div>
 
-        <ul id="lista" class="lista-estudiantes">
-          <!-- Las tarjetas de alumnos se inyectarán aquí dinámicamente desde script.js -->
-        </ul>
+      <div class="tabla-contenedor">
+        <ul id="lista" class="lista-estudiantes"></ul>
       </div>
     </section>
+
 
   </main>
 
