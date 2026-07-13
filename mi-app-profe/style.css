@@ -1,21 +1,24 @@
-/* Corrección del botón de descarga mediante clase directa */
-.btn-verde {
-    margin-top: 12px;
-    width: 100%;
-    background-color: var(--color-exito) !important;
-    color: var(--color-blanco) !important;
-    border: none;
-    padding: 12px;
-    font-size: 1rem;
-    font-weight: bold;
-    border-radius: var(--borde-radio);
-    cursor: pointer;
-    transition: background-color 0.2s;
-    display: block;
+/* Corrección con selectores específicos de alta prioridad */
+button#btn-exportar, 
+.contenedor-buscador button#btn-exportar {
+    background-color: #16a34a !important;
+    color: #ffffff !important;
+    border: 1px solid #15803d !important;
+    padding: 10px 15px !important;
+    font-size: 0.95rem !important;
+    font-weight: bold !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    display: block !important;
+    width: 100% !important;
+    margin-top: 12px !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
 }
 
-.btn-verde:hover {
+button#btn-exportar:hover,
+.contenedor-buscador button#btn-exportar:hover {
     background-color: #15803d !important;
+    border-color: #166534 !important;
 }
 
 /* Estilos para el campo de asistencia del formulario */
