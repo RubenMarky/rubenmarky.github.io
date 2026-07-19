@@ -6,12 +6,11 @@
   var TARGET_TIME = new Date(2026, 6, 19, 16, 0, 0, 0).getTime();
 
   var state = {
-    votes: { A: 152, D: 58, B: 141 },
-    myVote: null,
     tab: "A",
     golesA: 0,
     golesB: 0,
     matchEnded: false,
+    matchStarted: false,
     photoIndex: 0,
   };
 
@@ -46,6 +45,11 @@
     document.getElementById("countdownView").classList.toggle("hidden", started);
     document.getElementById("scoreView").classList.toggle("hidden", !started);
 
+    if (started && !state.matchStarted) {
+      state.matchStarted = true;
+      activarFestejoFinal();
+    }
+
     if (!started) {
       document.getElementById("dd").textContent = pad(Math.floor(diff / 86400));
       document.getElementById("hh").textContent = pad(Math.floor((diff % 86400) / 3600));
@@ -57,34 +61,6 @@
       document.getElementById("golesB").textContent = state.golesB;
       document.getElementById("matchMinute").textContent = state.matchEnded ? "FINAL" : minutesElapsed + "'";
     }
-  }
-
-  // ---------- Votación ----------
-  function renderVotes() {
-    var v = state.votes;
-    var total = v.A + v.D + v.B;
-    var pctA = Math.round((v.A / total) * 100);
-    var pctD = Math.round((v.D / total) * 100);
-    var pctB = 100 - pctA - pctD;
-
-    document.getElementById("totalVotos").textContent = total + " votos";
-    document.getElementById("pctA").textContent = pctA + "%";
-    document.getElementById("pctD").textContent = pctD + "%";
-    document.getElementById("pctB").textContent = pctB + "%";
-    document.getElementById("barA").style.width = pctA + "%";
-    document.getElementById("barD").style.width = pctD + "%";
-    document.getElementById("barB").style.width = pctB + "%";
-
-    document.getElementById("voteA").classList.toggle("selected-arg", state.myVote === "A");
-    document.getElementById("voteDraw").classList.toggle("selected-draw", state.myVote === "D");
-    document.getElementById("voteB").classList.toggle("selected-esp", state.myVote === "B");
-  }
-
-  function vote(key) {
-    if (state.myVote) state.votes[state.myVote] -= 1;
-    state.votes[key] += 1;
-    state.myVote = key;
-    renderVotes();
   }
 
   // ---------- Planteles (tabs) ----------
@@ -159,6 +135,45 @@
   function toggleDark() {
     var isLight = document.body.classList.toggle("light");
     document.getElementById("darkToggle").textContent = isLight ? "🌙" : "☀️";
+  }
+
+  // ---------- Confetti de festejo (lluvia continua e infinita al iniciar) ----------
+  function activarFestejoFinal() {
+      const countdownView = document.getElementById("countdownView");
+      const scoreView = document.getElementById("scoreView");
+
+      if (countdownView) countdownView.classList.add("hidden");
+      if (scoreView) scoreView.classList.remove("hidden");
+
+      const wrappersBanderas = document.querySelectorAll(".flag-custom-wrapper");
+      wrappersBanderas.forEach(wrapper => {
+          wrapper.classList.add("pulse-glow");
+      });
+
+      const duracionFestejo = Infinity;
+      const finAnimacion = Date.now() + duracionFestejo;
+
+      const intervaloPapelitos = setInterval(() => {
+          if (Date.now() > finAnimacion) {
+              return clearInterval(intervaloPapelitos);
+          }
+
+          confetti({
+              particleCount: 4,
+              angle: 60,
+              spread: 55,
+              origin: { x: 0, y: 0.8 },
+              colors: ['#00a8e8', '#ffffff', '#ff0055', '#ffdca0']
+          });
+
+          confetti({
+              particleCount: 4,
+              angle: 120,
+              spread: 55,
+              origin: { x: 1, y: 0.8 },
+              colors: ['#00a8e8', '#ffffff', '#ff0055', '#ffdca0']
+          });
+      }, 150);
   }
 
   // ---------- Sonidos de gol (corneta + rugido de tribuna + aplausos) ----------
@@ -265,11 +280,29 @@
     } catch (e) { /* audio no disponible */ }
   }
 
-  // Expuesto por si se quiere disparar un gol manualmente desde consola/futura UI:
-  // window.registrarGol("A") o window.registrarGol("B")
+  // Registra un gol en vivo: suma al marcador, agrega el minuto a la cronología y dispara el sonido de festejo.
   window.registrarGol = function (equipo) {
-    if (equipo === "A") state.golesA += 1; else state.golesB += 1;
+    var golEl;
+    if (equipo === "A") { state.golesA += 1; golEl = "golesA"; } else { state.golesB += 1; golEl = "golesB"; }
     renderCountdown();
+
+    var el = document.getElementById(golEl);
+    el.classList.remove("goal-pop");
+    void el.offsetWidth;
+    el.classList.add("goal-pop");
+
+    var minutesElapsed = Math.min(99, Math.floor((Date.now() - TARGET_TIME) / 60000) + 1);
+    var list = document.querySelector(".timeline");
+    if (list) {
+      var li = document.createElement("li");
+      li.className = "timeline-item";
+      li.innerHTML = '<span class="timeline-dot" style="background:' + (equipo === "A" ? "#00a8e8" : "#ff0055") + '"></span>' +
+        '<span class="timeline-minute">' + minutesElapsed + "'</span>" +
+        '<span class="timeline-icon">⚽</span>' +
+        '<span class="timeline-text">¡GOOOOOL de ' + (equipo === "A" ? "Argentina" : "España") + '! El marcador queda ' + state.golesA + '-' + state.golesB + '.</span>';
+      list.appendChild(li);
+    }
+
     playGoalSound();
     playCrowdCheer();
     playApplause();
@@ -279,20 +312,103 @@
   document.addEventListener("DOMContentLoaded", function () {
     trackVisit();
     renderCountdown();
-    renderVotes();
     renderViewer();
     renderGalleryGrid();
     setInterval(renderCountdown, 1000);
 
     document.getElementById("darkToggle").addEventListener("click", toggleDark);
-    document.getElementById("voteA").addEventListener("click", function () { vote("A"); });
-    document.getElementById("voteDraw").addEventListener("click", function () { vote("D"); });
-    document.getElementById("voteB").addEventListener("click", function () { vote("B"); });
     document.getElementById("tabArgBtn").addEventListener("click", function () { setTab("A"); });
     document.getElementById("tabEspBtn").addEventListener("click", function () { setTab("B"); });
     document.getElementById("prevPhoto").addEventListener("click", prevPhoto);
     document.getElementById("nextPhoto").addEventListener("click", nextPhoto);
     document.getElementById("lightbox").addEventListener("click", closeLightbox);
     document.getElementById("lightboxImg").addEventListener("click", function (e) { e.stopPropagation(); });
+    document.getElementById("golBtnA").addEventListener("click", function () { window.registrarGol("A"); });
+    document.getElementById("golBtnB").addEventListener("click", function () { window.registrarGol("B"); });
   });
 })();
+
+// ---------- Votación persistente (simula base de datos + localStorage por usuario) ----------
+document.addEventListener("DOMContentLoaded", () => {
+    const totalVotosEl = document.getElementById("totalVotos");
+    const btnA = document.getElementById("voteA");
+    const btnDraw = document.getElementById("voteDraw");
+    const btnB = document.getElementById("voteB");
+
+    const pctAEl = document.getElementById("pctA");
+    const pctDEl = document.getElementById("pctD");
+    const pctBEl = document.getElementById("pctB");
+
+    const barA = document.getElementById("barA");
+    const barD = document.getElementById("barD");
+    const barB = document.getElementById("barB");
+
+    if (!localStorage.getItem("votos_ARG")) {
+        localStorage.setItem("votos_ARG", Math.floor(Math.random() * 500) + 1500);
+        localStorage.setItem("votos_EMP", Math.floor(Math.random() * 200) + 500);
+        localStorage.setItem("votos_ESP", Math.floor(Math.random() * 500) + 1400);
+    }
+
+    function actualizarGraficos() {
+        const vA = parseInt(localStorage.getItem("votos_ARG"));
+        const vD = parseInt(localStorage.getItem("votos_EMP"));
+        const vB = parseInt(localStorage.getItem("votos_ESP"));
+        const total = vA + vD + vB;
+
+        totalVotosEl.textContent = `${total.toLocaleString()} votos`;
+
+        const pA = Math.round((vA / total) * 100);
+        const pD = Math.round((vD / total) * 100);
+        const pB = 100 - (pA + pD);
+
+        pctAEl.textContent = `${pA}%`;
+        pctDEl.textContent = `${pD}%`;
+        pctBEl.textContent = `${pB}%`;
+
+        barA.style.width = `${pA}%`;
+        barD.style.width = `${pD}%`;
+        barB.style.width = `${pB}%`;
+    }
+
+    const votoEfectuado = localStorage.getItem("usuario_voto_final");
+    if (votoEfectuado) {
+        desactivarBotones(votoEfectuado);
+    }
+
+    function desactivarBotones(votoGanador) {
+        [btnA, btnDraw, btnB].forEach(btn => {
+            btn.disabled = true;
+            btn.style.cursor = "default";
+            btn.style.opacity = "0.8";
+            if (btn.getAttribute("data-key") === votoGanador) {
+                btn.style.borderColor = "#00a8e8";
+                btn.style.boxShadow = "0 0 10px rgba(0, 168, 232, 0.2)";
+            }
+        });
+    }
+
+    function procesarVoto(e) {
+        if (localStorage.getItem("usuario_voto_final")) return;
+
+        const boton = e.currentTarget;
+        const seleccion = boton.getAttribute("data-key");
+
+        if (seleccion === "A") {
+            localStorage.setItem("votos_ARG", parseInt(localStorage.getItem("votos_ARG")) + 1);
+        } else if (seleccion === "D") {
+            localStorage.setItem("votos_EMP", parseInt(localStorage.getItem("votos_EMP")) + 1);
+        } else if (seleccion === "B") {
+            localStorage.setItem("votos_ESP", parseInt(localStorage.getItem("votos_ESP")) + 1);
+        }
+
+        localStorage.setItem("usuario_voto_final", seleccion);
+        actualizarGraficos();
+        desactivarBotones(seleccion);
+    }
+
+    btnA.addEventListener("click", procesarVoto);
+    btnDraw.addEventListener("click", procesarVoto);
+    btnB.addEventListener("click", procesarVoto);
+
+    actualizarGraficos();
+});
