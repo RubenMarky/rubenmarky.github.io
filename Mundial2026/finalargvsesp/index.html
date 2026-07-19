@@ -14,6 +14,18 @@
 <div class="scanlines" aria-hidden="true"></div>
 <div class="vignette" aria-hidden="true"></div>
 
+<!-- BARRA DE NAVEGACIÓN INTERACTIVA -->
+<nav class="nav-fast">
+  <div class="nav-fast-container">
+    <a href="#hero" class="nav-link-fast">INICIO</a>
+    <a href="#camino" class="nav-link-fast">CAMINO</a>
+    <a href="#plantillas" class="nav-link-fast">ALINEACIONES</a>
+    <a href="#estadio" class="nav-link-fast">ESTADIO</a>
+    <a href="#estadisticas" class="nav-link-fast">ESTADÍSTICAS</a>
+    <a href="#galeria" class="nav-link-fast nav-link-important">ANÁLISIS VISUAL</a>
+  </div>
+</nav>
+
 <button id="darkToggle" class="dark-toggle" aria-label="Cambiar modo claro/oscuro">🌙</button>
 
 <!-- PANEL DE NOTIFICACIONES -->
@@ -40,12 +52,14 @@
 <main class="wrap">
 
   <!-- MARCADOR Y CUENTA REGRESIVA -->
-  <section class="card hero" aria-label="Marcador y cuenta regresiva">
+  <section id="hero" class="card hero" aria-label="Marcador y cuenta regresiva">
     <div class="hero-title">Copa Mundial de la FIFA 2026 · Final · Partido 104</div>
     <div class="hero-grid">
       <div class="team">
-        <div class="flag flag-arg"><span></span><span><i></i></span><span></span></div>
-        <div class="team-name">ARGENTINA</div>
+        <div class="flag-custom-wrapper">
+          <img src="img/argentina.png" alt="Bandera de Argentina" class="flag-custom-img">
+        </div>
+        <div class="team-name" style="margin-top: 15px;">ARGENTINA</div>
       </div>
 
       <div class="center-col">
@@ -56,6 +70,10 @@
             <span id="golesB" class="score-num score-magenta">0</span>
           </div>
           <div id="matchMinute" class="minute-pill">0'</div>
+          <div class="goal-btns">
+            <button id="golBtnA" class="goal-btn goal-btn-arg" title="Registrar gol de Argentina">⚽ ARG</button>
+            <button id="golBtnB" class="goal-btn goal-btn-esp" title="Registrar gol de España">⚽ ESP</button>
+          </div>
         </div>
         <div id="countdownView" class="countdown-view">
           <div class="countdown-label">Comienza en</div>
@@ -70,34 +88,85 @@
       </div>
 
       <div class="team">
-        <div class="flag flag-esp"><span></span><span></span><span></span></div>
-        <div class="team-name">ESPAÑA</div>
+        <div class="flag-custom-wrapper">
+          <img src="img/espana.png" alt="Bandera de España" class="flag-custom-img">
+        </div>
+        <div class="team-name" style="margin-top: 15px;">ESPAÑA</div>
       </div>
     </div>
   </section>
 
   <!-- CRONOLOGÍA -->
-  <section class="card" aria-label="Cronología del partido">
+  <section id="camino" class="card" aria-label="Cronología del partido">
     <h2 class="section-title neon-cyan">Cronología del Partido</h2>
     <p class="section-sub">Incidencias simuladas — se completa en vivo</p>
     <ol class="timeline">
+      <!-- CRONOLOGÍA DEL PARTIDO (SIMULACIÓN DE LA FINAL) -->
       <li class="timeline-item">
         <span class="timeline-dot" style="background:#7d8cab"></span>
         <span class="timeline-minute">PREVIA</span>
         <span class="timeline-icon">📋</span>
-        <span class="timeline-text">Ambos técnicos confirman su once inicial una hora antes</span>
+        <span class="timeline-text">Alineaciones confirmadas por Scaloni y De la Fuente. El MetLife explota de emoción.</span>
+      </li>
+      <li class="timeline-item">
+        <span class="timeline-dot" style="background:#ffdca0"></span>
+        <span class="timeline-minute">ACTOS</span>
+        <span class="timeline-icon">🎵</span>
+        <span class="timeline-text">María Becerra interpreta el Himno Nacional Argentino ante un estadio colmado.</span>
       </li>
       <li class="timeline-item">
         <span class="timeline-dot" style="background:#3aa65a"></span>
         <span class="timeline-minute">1'</span>
-        <span class="timeline-icon">⚽️</span>
-        <span class="timeline-text">Rueda el balón en el saque inicial de la Final</span>
+        <span class="timeline-icon">⚽</span>
+        <span class="timeline-text">¡Pitazo inicial de Slavko Vinčić! Rueda el balón en Nueva York/Nueva Jersey.</span>
+      </li>
+      <li class="timeline-item">
+        <span class="timeline-dot" style="background:#ffcc00"></span>
+        <span class="timeline-minute">18'</span>
+        <span class="timeline-icon">⚠️</span>
+        <span class="timeline-text">Aviso de España. Lamine Yamal encara por derecha y su remate se va besando el poste.</span>
+      </li>
+      <li class="timeline-item">
+        <span class="timeline-dot" style="background:#00a8e8"></span>
+        <span class="timeline-minute">34'</span>
+        <span class="timeline-icon">🔥</span>
+        <span class="timeline-text">¡Milagro en el área española! Gran pase de Messi para Julián Álvarez que despeja Laporte en la línea.</span>
+      </li>
+      <li class="timeline-item">
+        <span class="timeline-dot" style="background:#7d8cab"></span>
+        <span class="timeline-minute">45'</span>
+        <span class="timeline-icon">⏳</span>
+        <span class="timeline-text">Final del primer tiempo. Duelo táctico impecable, trabado y con alta intensidad. (0-0)</span>
+      </li>
+      <li class="timeline-item">
+        <span class="timeline-dot" style="background:#ff0055"></span>
+        <span class="timeline-minute">55'</span>
+        <span class="timeline-icon">🔴</span>
+        <span class="timeline-text">Gol de España. Dani Olmo define cruzado tras una asistencia al espacio de Rodri. (0-1)</span>
+      </li>
+      <li class="timeline-item">
+        <span class="timeline-dot" style="background:#00a8e8"></span>
+        <span class="timeline-minute">78'</span>
+        <span class="timeline-icon">🩵</span>
+        <span class="timeline-text">¡GOOOOOOL DE ARGENTINA! Combinación magistral en el mediocampo y Alexis Mac Allister rompe el arco. (1-1)</span>
+      </li>
+      <li class="timeline-item">
+        <span class="timeline-dot" style="background:#e63946"></span>
+        <span class="timeline-minute">88'</span>
+        <span class="timeline-icon">🧤</span>
+        <span class="timeline-text">¡Impresionante el Dibu Martínez! Salva un mano a mano agónico frente a Oyarzabal.</span>
+      </li>
+      <li class="timeline-item">
+        <span class="timeline-dot" style="background:#7d8cab"></span>
+        <span class="timeline-minute">90'</span>
+        <span class="timeline-icon">🏁</span>
+        <span class="timeline-text">¡Pitazo final de los 90 minutos! Hay paridad absoluta en el marcador y nos vamos al tiempo extra.</span>
       </li>
     </ol>
   </section>
 
   <!-- DETALLES DEL PARTIDO -->
-  <section class="details-grid" aria-label="Detalles del partido">
+  <section id="estadio" class="details-grid" aria-label="Detalles del partido">
     <div class="card detail-card"><div class="detail-label">Estadio</div><div class="detail-value">Estadio de Nueva York/Nueva Jersey (MetLife Stadium)</div></div>
     <div class="card detail-card"><div class="detail-label">Árbitro</div><div class="detail-value">Slavko Vinčić (Eslovenia)</div></div>
     <div class="card detail-card"><div class="detail-label">Fecha</div><div class="detail-value">Domingo 19 de julio de 2026 · 16:00 hs</div></div>
@@ -105,7 +174,7 @@
   </section>
 
   <!-- VOTACIÓN -->
-  <section class="card" aria-label="Votación del partido">
+  <section id="votacion" class="card" aria-label="Votación del partido">
     <div class="row-between">
       <h2 class="section-title neon-cyan">¿Quién Gana?</h2>
       <span id="totalVotos" class="muted-text">351 votos</span>
@@ -127,7 +196,7 @@
   </section>
 
   <!-- NOTICIAS -->
-  <section aria-label="Noticias clave">
+  <section id="noticias" aria-label="Noticias clave">
     <h2 class="section-title neon-cyan" style="margin-bottom:14px">Noticias Clave</h2>
     <div class="news-grid">
       <article class="card news-card">
@@ -158,7 +227,7 @@
   </section>
 
   <!-- ALINEACIONES -->
-  <section class="card" aria-label="Alineaciones en la cancha">
+  <section id="plantillas" class="card" aria-label="Alineaciones en la cancha">
     <div class="row-between" style="margin-bottom:14px">
       <h2 class="section-title neon-cyan">Alineaciones</h2>
       <span class="muted-text">Esquemas probables</span>
@@ -202,7 +271,7 @@
   </section>
 
   <!-- PLANTELES -->
-  <section class="card" aria-label="Plantel de selecciones">
+  <section id="planteles" class="card" aria-label="Plantel de selecciones">
     <h2 class="section-title neon-cyan" style="margin-bottom:14px">Plantel de Selecciones</h2>
     <div class="tabs">
       <button id="tabArgBtn" class="tab-btn tab-arg active" data-tab="A">🇦🇷 ARGENTINA</button>
@@ -238,7 +307,7 @@
   </section>
 
   <!-- HISTORIAL -->
-  <section class="card" aria-label="Historial Argentina vs España">
+  <section id="estadisticas" class="card" aria-label="Historial Argentina vs España">
     <h2 class="section-title neon-cyan">Historial Argentina–España</h2>
     <p class="section-sub">14 cruces históricos (1952–2018) · 1 solo antecedente mundialista, en 1966</p>
     <div class="h2h-stats">
@@ -265,7 +334,7 @@
   </section>
 
   <!-- GALERÍA -->
-  <section class="card" aria-label="Galería de imágenes">
+  <section id="galeria" class="card" aria-label="Galería de imágenes">
     <div class="gallery-head">
       <h2 class="section-title neon-cyan" style="font-size:19px">Galería de la Final · Carrusel de Postales</h2>
       <p class="section-sub">Imágenes de la Previa · Final Mundial 2026</p>
@@ -299,6 +368,8 @@
   <p class="footnote">Datos e imágenes ilustrativos — se actualizan al confirmarse oficialmente.</p>
 </main>
 
+<!-- Librería externa para la animación de papelitos de festejo -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
