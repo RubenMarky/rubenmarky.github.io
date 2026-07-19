@@ -151,15 +151,15 @@ body.light .hero { background: var(--hero-bg-light); }
 .team-name { font-size: 20px; font-weight: 900; letter-spacing: 0.5px; }
 
 /* ESTILOS PARA LAS BANDERAS ASIMÉTRICAS DEL MARCADOR */
+/* CORRECCIÓN DE SILUETA PARA LAS BANDERAS ASIMÉTRICAS ORIGINALES */
 .flag-custom-wrapper {
     width: 140px;
     height: 85px;
-    border-radius: 25px 4px 25px 4px;
+    border-radius: 4px 28px 4px 28px;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.08);
     background: transparent;
     transition: all 0.3s ease;
 }
@@ -187,14 +187,13 @@ body.light .hero { background: var(--hero-bg-light); }
 
 .pulse-glow {
     animation: neonPulse 2s infinite ease-in-out;
-    border: 2px solid rgba(255, 255, 255, 1) !important;
 }
 
 @media (max-width: 768px) {
     .flag-custom-wrapper {
         width: 90px;
         height: 55px;
-        border-radius: 15px 3px 15px 3px;
+        border-radius: 3px 18px 3px 18px;
     }
 }
 
