@@ -8,9 +8,9 @@
   var state = {
     tab: "A",
     golesA: 0,
-    golesB: 0,
-    matchEnded: false,
-    matchStarted: false,
+    golesB: 1,
+    matchEnded: true,
+    matchStarted: true,
     photoIndex: 0,
   };
 
@@ -38,29 +38,11 @@
 
   // ---------- Cuenta regresiva / marcador ----------
   function renderCountdown() {
-    var now = Date.now();
-    var diff = Math.max(0, Math.floor((TARGET_TIME - now) / 1000));
-    var started = diff <= 0;
-
-    document.getElementById("countdownView").classList.toggle("hidden", started);
-    document.getElementById("scoreView").classList.toggle("hidden", !started);
-
-    if (started && !state.matchStarted) {
-      state.matchStarted = true;
-      activarFestejoFinal();
-    }
-
-    if (!started) {
-      document.getElementById("dd").textContent = pad(Math.floor(diff / 86400));
-      document.getElementById("hh").textContent = pad(Math.floor((diff % 86400) / 3600));
-      document.getElementById("mm").textContent = pad(Math.floor((diff % 3600) / 60));
-      document.getElementById("ss").textContent = pad(diff % 60);
-    } else {
-      var minutesElapsed = Math.min(99, Math.floor((now - TARGET_TIME) / 60000) + 1);
-      document.getElementById("golesA").textContent = state.golesA;
-      document.getElementById("golesB").textContent = state.golesB;
-      document.getElementById("matchMinute").textContent = state.matchEnded ? "FINAL" : minutesElapsed + "'";
-    }
+    document.getElementById("countdownView").classList.add("hidden");
+    document.getElementById("scoreView").classList.remove("hidden");
+    document.getElementById("golesA").textContent = state.golesA;
+    document.getElementById("golesB").textContent = state.golesB;
+    document.getElementById("matchMinute").textContent = "FINAL";
   }
 
   // ---------- Planteles (tabs) ----------
@@ -280,33 +262,7 @@
     } catch (e) { /* audio no disponible */ }
   }
 
-  // Registra un gol en vivo: suma al marcador, agrega el minuto a la cronología y dispara el sonido de festejo.
-  window.registrarGol = function (equipo) {
-    var golEl;
-    if (equipo === "A") { state.golesA += 1; golEl = "golesA"; } else { state.golesB += 1; golEl = "golesB"; }
-    renderCountdown();
 
-    var el = document.getElementById(golEl);
-    el.classList.remove("goal-pop");
-    void el.offsetWidth;
-    el.classList.add("goal-pop");
-
-    var minutesElapsed = Math.min(99, Math.floor((Date.now() - TARGET_TIME) / 60000) + 1);
-    var list = document.querySelector(".timeline");
-    if (list) {
-      var li = document.createElement("li");
-      li.className = "timeline-item";
-      li.innerHTML = '<span class="timeline-dot" style="background:' + (equipo === "A" ? "#00a8e8" : "#ff0055") + '"></span>' +
-        '<span class="timeline-minute">' + minutesElapsed + "'</span>" +
-        '<span class="timeline-icon">⚽</span>' +
-        '<span class="timeline-text">¡GOOOOOL de ' + (equipo === "A" ? "Argentina" : "España") + '! El marcador queda ' + state.golesA + '-' + state.golesB + '.</span>';
-      list.appendChild(li);
-    }
-
-    playGoalSound();
-    playCrowdCheer();
-    playApplause();
-  };
 
   // ---------- Init ----------
   document.addEventListener("DOMContentLoaded", function () {
@@ -314,7 +270,6 @@
     renderCountdown();
     renderViewer();
     renderGalleryGrid();
-    setInterval(renderCountdown, 1000);
 
     document.getElementById("darkToggle").addEventListener("click", toggleDark);
     document.getElementById("tabArgBtn").addEventListener("click", function () { setTab("A"); });
@@ -323,8 +278,6 @@
     document.getElementById("nextPhoto").addEventListener("click", nextPhoto);
     document.getElementById("lightbox").addEventListener("click", closeLightbox);
     document.getElementById("lightboxImg").addEventListener("click", function (e) { e.stopPropagation(); });
-    document.getElementById("golBtnA").addEventListener("click", function () { window.registrarGol("A"); });
-    document.getElementById("golBtnB").addEventListener("click", function () { window.registrarGol("B"); });
   });
 })();
 
