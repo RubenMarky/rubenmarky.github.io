@@ -23,6 +23,71 @@ body.light {
   --pitch-border-col: rgba(20,26,38,0.35);
 }
 
+/* ESTILOS DE LA BARRA DE NAVEGACIÓN DE NEÓN */
+.nav-fast {
+    position: sticky;
+    top: 0;
+    background: rgba(5, 7, 12, 0.85) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 1000;
+    border-bottom: 1px solid #14213d;
+    transition: all 0.3s ease;
+}
+
+.nav-fast-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 12px 15px;
+    scrollbar-width: none;
+}
+
+.nav-fast-container::-webkit-scrollbar {
+    display: none;
+}
+
+.nav-link-fast {
+    color: #7d8cab;
+    font-family: 'Orbitron', sans-serif;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 6px 14px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-link-fast:hover {
+    color: #00a8e8;
+    background: rgba(0, 168, 232, 0.05);
+    border-color: rgba(0, 168, 232, 0.3);
+    text-shadow: 0 0 8px rgba(0, 168, 232, 0.6);
+    box-shadow: 0 0 12px rgba(0, 168, 232, 0.1);
+}
+
+.nav-link-important {
+    color: #ff0055;
+}
+.nav-link-important:hover {
+    color: #ff0055;
+    background: rgba(255, 0, 85, 0.05);
+    border-color: rgba(255, 0, 85, 0.3);
+    text-shadow: 0 0 8px rgba(255, 0, 85, 0.6);
+    box-shadow: 0 0 12px rgba(255, 0, 85, 0.1);
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 70px;
+}
+
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 body {
@@ -85,6 +150,54 @@ body.light .hero { background: var(--hero-bg-light); }
 .flag-esp span:nth-child(2) { flex: 2; background: #ffc400; }
 .team-name { font-size: 20px; font-weight: 900; letter-spacing: 0.5px; }
 
+/* ESTILOS PARA LAS BANDERAS ASIMÉTRICAS DEL MARCADOR */
+.flag-custom-wrapper {
+    width: 140px;
+    height: 85px;
+    border-radius: 25px 4px 25px 4px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.08);
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.flag-custom-img {
+    width: 101%;
+    height: 101%;
+    object-fit: fill;
+}
+
+@keyframes neonPulse {
+    0% {
+        box-shadow: 0 0 15px rgba(0, 168, 232, 0.4), 0 0 30px rgba(255, 0, 85, 0.2);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 25px rgba(0, 168, 232, 0.8), 0 0 45px rgba(255, 0, 85, 0.6);
+        transform: scale(1.03);
+    }
+    100% {
+        box-shadow: 0 0 15px rgba(0, 168, 232, 0.4), 0 0 30px rgba(255, 0, 85, 0.2);
+        transform: scale(1);
+    }
+}
+
+.pulse-glow {
+    animation: neonPulse 2s infinite ease-in-out;
+    border: 2px solid rgba(255, 255, 255, 1) !important;
+}
+
+@media (max-width: 768px) {
+    .flag-custom-wrapper {
+        width: 90px;
+        height: 55px;
+        border-radius: 15px 3px 15px 3px;
+    }
+}
+
 .center-col { display: flex; flex-direction: column; align-items: center; gap: 10px; min-width: 190px; }
 .score-row { display: flex; align-items: center; gap: 14px; }
 .score-num { font-size: 52px; font-weight: 900; }
@@ -92,6 +205,14 @@ body.light .hero { background: var(--hero-bg-light); }
 .score-magenta { color: #ff4dd8; text-shadow: 0 0 6px rgba(255,77,216,0.75), 0 0 18px rgba(255,77,216,0.35); }
 .score-sep { font-size: 24px; font-weight: 700; color: #4a5678; }
 .minute-pill { background: rgba(231,74,74,0.15); border: 1px solid rgba(231,74,74,0.4); border-radius: 999px; padding: 4px 14px; font-size: 12px; font-weight: 800; letter-spacing: 1px; color: #ff8080; margin-top: 10px; }
+.goal-btns { display: flex; gap: 8px; margin-top: 12px; }
+.goal-btn { cursor: pointer; border-radius: 999px; padding: 6px 14px; font-size: 11px; font-weight: 800; letter-spacing: 0.5px; font-family: 'Archivo', sans-serif; }
+.goal-btn-arg { border: 1px solid #6cace4; background: rgba(108,172,228,0.1); color: #a8cdf0; }
+.goal-btn-arg:hover { box-shadow: 0 0 12px rgba(108,172,228,0.4); }
+.goal-btn-esp { border: 1px solid #c60b1e; background: rgba(198,11,30,0.1); color: #ffb4b4; }
+.goal-btn-esp:hover { box-shadow: 0 0 12px rgba(198,11,30,0.4); }
+@keyframes goalPop { 0% { transform: scale(1); } 30% { transform: scale(1.35); } 100% { transform: scale(1); } }
+.goal-pop { animation: goalPop 0.5s ease; }
 .countdown-label { font-size: 11px; font-weight: 800; color: #ff4dd8; text-shadow: 0 0 8px rgba(255,77,216,0.5); font-family: 'Orbitron', sans-serif; letter-spacing: 2px; text-transform: uppercase; }
 .countdown-row { display: flex; gap: 8px; margin-top: 10px; }
 .count-box { width: 56px; aspect-ratio: 1/1; background: #0a0f18; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; animation: neonFlicker 5s ease-in-out infinite; }
