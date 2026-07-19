@@ -1,4 +1,3 @@
-
 (function () {
   "use strict";
 
@@ -21,9 +20,19 @@
     "img/imagen05.png", "img/imagen06.png", "img/imagen07.png", "img/imagen08.png",
     "img/imagen09.png", "img/imagen10.png", "img/imagen11.png", "img/imagen12.png"
   ];
-  var photoLabels = [
-    "Entrenamiento", "Concentración", "Estadio", "Hinchada", "Previa", "Selección",
-    "Entrenamiento", "Concentración", "Estadio", "Hinchada", "Previa", "Selección"
+  var photoCaptions = [
+    { title: "El Choque de Dos Mundos por la Gloria Eterna", desc: "Argentina y España se miden frente a frente en la final más esperada del planeta. Dos estilos, una sola copa." },
+    { title: "Los Elegidos para la Batalla", desc: "El listado completo y los dorsales oficiales de los futbolistas convocados para defender sus colores en el campo de juego." },
+    { title: "El Gran Teatro del Fútbol Mundial", desc: "Capacidad, tecnología e ingeniería de vanguardia. Conocemos a fondo el imponente estadio que albergará la batalla final." },
+    { title: "Artillería Pesada en Acción", desc: "Repasamos la tabla de los máximos artilleros de la Albiceleste. Los nombres que mantienen viva la ilusión del título." },
+    { title: "La Final en Números", desc: "Datos, asistencias y minutos jugados. La estadística individual bajo la lupa para entender las claves tácticas del encuentro." },
+    { title: "Orgullo, Pasión y Fútbol", desc: "La identidad que trasciende la cancha. Un homenaje gráfico a los valores y la cultura que definen nuestra esencia futbolera." },
+    { title: "El Pueblo del Fútbol", desc: "Una marea que no para de alentar. El color y el grito sagrado de las gradas que empujan al equipo hacia la victoria." },
+    { title: "Unidos por un Mismo Objetivo", desc: "El enfoque, el compañerismo y la determinación de la delegación en la antesala del pitazo inicial." },
+    { title: "Tensión Máxima sobre el Césped", desc: "El marcador no da tregua en un duelo táctico al límite. Cada jugada puede cambiar el destino del campeonato mundial." },
+    { title: "El Galardón Más Codiciado del Planeta", desc: "Conoce la historia y el deseo de levantar el tesoro más importante del deporte rey, directo hacia la cuarta estrella." },
+    { title: "Vive la Experiencia Multivía", desc: "Estadísticas en vivo, eSports y transmisiones en directo. Todo el análisis interactivo de la final a un solo clic de distancia." },
+    { title: "La Firma del Campeón", desc: "Cerramos nuestra cobertura especial con el sello inconfundible de una pasión que no conoce fronteras." }
   ];
 
   function pad(n) { return String(n).padStart(2, "0"); }
@@ -111,8 +120,11 @@
   function renderViewer() {
     var i = state.photoIndex;
     var src = photoFiles[i];
+    var caption = photoCaptions[i % photoCaptions.length];
     document.getElementById("viewerImg").src = src;
-    document.getElementById("viewerLabel").textContent = "Imagen " + pad(i + 1) + " · " + photoLabels[i % photoLabels.length];
+    document.getElementById("viewerTitle").textContent = caption.title;
+    document.getElementById("viewerDesc").textContent = caption.desc;
+    document.getElementById("viewerLabel").textContent = "Imagen " + pad(i + 1);
     document.getElementById("lightboxImg").src = src;
   }
 
