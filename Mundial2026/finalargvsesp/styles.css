@@ -58,7 +58,7 @@ body.light {
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 1px;
-    padding: 6px 14px;
+    padding: 10px 14px;
     border-radius: 4px;
     border: 1px solid transparent;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -110,17 +110,17 @@ a:hover { color: #a8cdf0; }
 @keyframes tickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes glowPulse { 0%,100% { box-shadow: 0 0 0 rgba(108,172,228,0); } 50% { box-shadow: 0 0 24px rgba(108,172,228,0.35); } }
-@keyframes scanlineMove { 0% { background-position: 0 0; } 100% { background-position: 0 40px; } }
+@keyframes scanlineMove { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(0,40px,0); } }
 @keyframes neonFlicker { 0%,100% { opacity: 1; } 8% { opacity: 0.75; } 10% { opacity: 1; } 92% { opacity: 1; } 94% { opacity: 0.6; } 96% { opacity: 1; } }
 @keyframes borderChase { 0% { background-position: 0% 0%; } 100% { background-position: 200% 0%; } }
 
 .gm-title, .section-title, .hero-title, .tab-btn, .count-num, .score-num, .nav-btn, .minute-pill { font-family: 'Orbitron', sans-serif; letter-spacing: 2px; text-transform: uppercase; }
 .neon-cyan { color: #4dfcff; text-shadow: 0 0 6px rgba(77,252,255,0.75), 0 0 18px rgba(77,252,255,0.35); }
 
-.card { position: relative; background: var(--card-bg); border: 1px solid var(--border-col); border-radius: 10px; padding: 22px; }
-.card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; background: linear-gradient(120deg, #4dfcff, #ff4dd8, #4dfcff); background-size: 200% 100%; -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0.55; animation: borderChase 6s linear infinite; pointer-events: none; }
+.card { position: relative; background: var(--card-bg); border: 1px solid var(--border-col); border-radius: 10px; padding: 22px; content-visibility: auto; contain-intrinsic-size: 400px; }
+.card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; background: linear-gradient(120deg, #4dfcff, #ff4dd8, #4dfcff); background-size: 200% 100%; -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0.55; animation: borderChase 6s linear infinite; will-change: background-position; pointer-events: none; }
 
-.scanlines { position: fixed; inset: 0; z-index: 200; pointer-events: none; background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.035) 0px, rgba(255,255,255,0.035) 1px, transparent 1px, transparent 3px); animation: scanlineMove 1s linear infinite; mix-blend-mode: overlay; }
+.scanlines { position: fixed; inset: 0; z-index: 200; pointer-events: none; background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.035) 0px, rgba(255,255,255,0.035) 1px, transparent 1px, transparent 3px); background-size: 100% 80px; animation: scanlineMove 1s linear infinite; will-change: transform; mix-blend-mode: overlay; }
 .vignette { position: fixed; inset: 0; z-index: 199; pointer-events: none; box-shadow: inset 0 0 140px rgba(0,0,0,0.65); }
 
 .dark-toggle { position: absolute; top: 14px; right: 16px; z-index: 60; background: rgba(255,255,255,0.08); border: 1px solid #263352; border-radius: 999px; width: 40px; height: 40px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #e8edf5; }
@@ -283,7 +283,16 @@ body.light .hero { background: var(--hero-bg-light); }
 .pnum { font-size: 12px; font-weight: 900; min-width: 20px; }
 .pname-full { font-size: 13px; font-weight: 800; color: var(--text-main); }
 .ppos { font-size: 10.5px; font-weight: 700; color: var(--text-muted); }
+.squad-sub-label { grid-column: 1 / -1; font-family: 'Orbitron', sans-serif; font-size: 10px; font-weight: 800; letter-spacing: 1px; color: var(--text-muted); margin: 8px 0 -2px 4px; }
+.player-row-sub { opacity: 0.9; border: 1px dashed var(--border-col); }
 .fine-print { font-size: 11px; font-weight: 600; color: var(--text-muted); margin: 12px 0 0 0; }
+
+.awards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.award-card { background: var(--surface-bg); border: 1px solid var(--border-col); border-radius: 12px; padding: 18px 14px; text-align: center; }
+.award-icon { font-size: 26px; margin-bottom: 8px; }
+.award-tag { font-family: 'Orbitron', sans-serif; font-size: 10px; font-weight: 800; letter-spacing: 1px; color: #4dfcff; margin-bottom: 6px; }
+.award-name { font-size: 14px; font-weight: 800; color: var(--text-main); }
+.award-team { font-size: 12px; font-weight: 700; color: var(--text-muted); margin-top: 2px; }
 
 .h2h-stats { display: flex; flex-direction: column; gap: 14px; }
 .h2h-row { display: flex; justify-content: space-between; font-size: 13px; font-weight: 800; color: var(--text-main); margin-bottom: 6px; }
@@ -323,8 +332,45 @@ body.light .hero { background: var(--hero-bg-light); }
 
 .footnote { text-align: center; margin-top: 8px; font-size: 11px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.5px; }
 
+.tactic-list { display: flex; flex-direction: column; gap: 26px; }
+.tactic-point { display: grid; grid-template-columns: 40px 1fr; gap: 14px; }
+.tactic-num { font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 900; color: #4dfcff; text-shadow: 0 0 10px rgba(77,252,255,0.4); }
+.tactic-title { font-size: 16px; font-weight: 800; color: var(--text-main); margin: 0 0 8px 0; line-height: 1.3; }
+.tactic-sub { font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; color: #ff4dd8; margin: 14px 0 6px 0; }
+.tactic-text { font-size: 13.5px; font-weight: 500; color: var(--text-faint); line-height: 1.6; margin: 0; }
+
 @media (max-width: 640px) {
+  .wrap { padding: 16px 12px 0 12px; gap: 16px; }
+  .hero { padding: 20px 14px; }
   .hero-grid { grid-template-columns: 1fr; gap: 18px; }
+  .flag-custom-wrapper { width: 100px; height: 62px; }
+  .score-num { font-size: 40px; }
   .count-box { width: 48px; }
-  .pitch { height: 380px; }
+  .countdown-row { gap: 6px; }
+  .pitch { height: 340px; }
+  .player .pname { font-size: 8.5px; max-width: 56px; }
+  .dot { width: 24px; height: 24px; font-size: 9.5px; }
+  .details-grid { grid-template-columns: 1fr 1fr; }
+  .news-grid { grid-template-columns: 1fr; }
+  .awards-grid { grid-template-columns: 1fr 1fr; }
+  .gallery-grid { grid-template-columns: repeat(3, 1fr); }
+  .tactic-point { grid-template-columns: 28px 1fr; gap: 10px; }
+  .tactic-num { font-size: 16px; }
+  .tactic-title { font-size: 14.5px; }
+  .tactic-text { font-size: 13px; }
+  .card { padding: 16px; }
+  .section-title { font-size: 14px; }
+  .vote-btn { padding: 10px 12px; }
+  .viewer-title { font-size: 15px; }
+  .viewer-desc { font-size: 11.5px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card::before, .scanlines, .hero, .count-box, .pulse-glow, .live-dot, .ticker-track { animation: none !important; }
+}
+
+@media (max-width: 400px) {
+  .details-grid { grid-template-columns: 1fr; }
+  .awards-grid { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
 }
