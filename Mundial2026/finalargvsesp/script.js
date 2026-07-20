@@ -61,7 +61,7 @@
       var label = "Imagen " + pad(i + 1);
       var selected = i === state.photoIndex ? " selected" : "";
       return '<div class="gallery-thumb' + selected + '" data-index="' + i + '">' +
-        '<img src="' + src + '" alt="' + label + '">' +
+        '<img src="' + src + '" alt="' + label + '" loading="lazy" decoding="async" width="200" height="200">' +
         '<div class="gallery-thumb-label">' + label + '</div></div>';
     }).join("");
 
