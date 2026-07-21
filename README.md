@@ -62,6 +62,9 @@ Portal único que aloja el material de cátedra, proyectos propios de gestión y
 |---|---|---|
 | IAs | [→ ver sitio](https://rubenmarky.github.io/IAs/ComparativasIAs.html) | Manual rápido de IA para clases 2026: comparativa Google, Claude, DeepSeek y ChatGPT para uso educativo |
 | Mundial 2026 | [→ ver sitio](https://rubenmarky.github.io/Mundial2026/ArgentinavsSuiza.html) | Recurso interactivo sobre el Mundial 2026 (Argentina vs. Suiza) para análisis de datos/estadísticas en clase |
+| Mundial 2026 | [→ ver sitio](https://rubenmarky.github.io/Mundial2026/argvsing/index.html) | Recurso interactivo sobre el Mundial 2026 (Argentina vs. Inglaterra) para análisis de datos/estadísticas en clase |
+| Mundial 2026 | [→ ver sitio](https://rubenmarky.github.io/Mundial2026/finalargvsesp/index.html) | Recurso interactivo sobre el Mundial 2026 (Argentina vs. España) para análisis de datos/estadísticas en clase |
+| Juego Tatetí | [→ ver sitio](https://rubenmarky.github.io/juegos/TaTeTi/tateti.html) | Un videojuego moderno, elegante y minimalista de Tatetí (Tres en Raya) diseñado bajo la estética **Neumórfica (Neumorphism)** en modo oscuro permanente, enriquecido con efectos de luz neón, sonido sintetizado en tiempo real e inteligencia artificial avanzada. |
 
 ## 📄 Evaluaciones y actividades (PDF)
 
