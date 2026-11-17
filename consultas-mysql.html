@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Consultas MySQL 5° B</title>
+<meta name="description" content="35 ejercicios resueltos de consultas MySQL (Empleados y Departamentos) con cada sentencia explicada. Base de Datos II, 5° B, E.P.E.T. N°7 Jardín América.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Plan: cabecera azul noche sólida, contenido en una columna ancha con tarjetas;
+   cada familia de sentencias tiene un color fijo que se repite en chips y en el código. */
+:root{
+  --bg:#f3f5fd; --surface:#ffffff; --surface-2:#e9edfb; --ink:#171a3a; --muted:#555a85; --line:#d5dbf2;
+  --hero:#161a3f; --hero-ink:#f2f4ff; --hero-muted:#b4badf;
+  --accent:#ff5a3c; --accent-ink:#ffffff;
+  --code-bg:#12152f; --code-ink:#e6e9ff; --code-muted:#8188b8;
+  --sel:#2456e6; --from:#07877a; --where:#d4411f; --order:#7a36d9; --group:#a06a00; --fn:#c2217a;
+  --c-sel:#7aa7ff; --c-from:#4fd8c4; --c-where:#ff8f73; --c-order:#c39bff; --c-group:#ffcc4d; --c-fn:#ff7fc0; --c-str:#a6e58a; --c-num:#ffb86b;
+  --ok:#168a4a; --warn:#b05a00; --warn-bg:#fff3dc;
+  --display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0c0f26; --surface:#161a3c; --surface-2:#1f2450; --ink:#eceefc; --muted:#a4a9d2; --line:#2c3266;
+    --hero:#1b2052; --code-bg:#080a1c;
+    --sel:#7aa7ff; --from:#4fd8c4; --where:#ff8f73; --order:#c39bff; --group:#ffcc4d; --fn:#ff7fc0;
+    --ok:#5fd699; --warn:#ffc46b; --warn-bg:#3a2a0c;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0c0f26; --surface:#161a3c; --surface-2:#1f2450; --ink:#eceefc; --muted:#a4a9d2; --line:#2c3266;
+  --hero:#1b2052; --code-bg:#080a1c;
+  --sel:#7aa7ff; --from:#4fd8c4; --where:#ff8f73; --order:#c39bff; --group:#ffcc4d; --fn:#ff7fc0;
+  --ok:#5fd699; --warn:#ffc46b; --warn-bg:#3a2a0c;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;line-height:1.1;margin:0}
+a{color:var(--sel)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+code,pre{font-family:var(--mono)}
+code.i{background:var(--surface-2);padding:.1em .4em;border-radius:6px;font-size:.88em;white-space:nowrap}
+
+/* cabecera */
+header.hero{background:var(--hero);color:var(--hero-ink);padding:36px 0 30px}
+.eyebrow{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--c-group);font-weight:700}
+.hero h1{font-size:clamp(2rem,5.2vw,3.4rem);font-weight:800;margin:10px 0 12px}
+.hero h1 span{color:var(--c-from)}
+.hero p{max-width:62ch;color:var(--hero-muted);margin:0 0 20px}
+.stripe{display:flex;gap:8px;flex-wrap:wrap}
+.stripe b{font-family:var(--mono);font-size:.8rem;padding:5px 10px;border-radius:999px;border:1.5px solid currentColor;font-weight:600}
+nav.top{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+nav.top .wrap{display:flex;gap:4px;overflow-x:auto;padding-top:8px;padding-bottom:8px}
+nav.top a{flex:none;text-decoration:none;color:var(--ink);font-weight:600;font-size:.92rem;padding:7px 12px;border-radius:999px}
+nav.top a:hover{background:var(--surface-2)}
+nav.top a.cta{background:var(--accent);color:var(--accent-ink);margin-left:auto}
+
+section{padding:44px 0 8px}
+section>h2,.wrap>h2{font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:800;margin-bottom:6px}
+.lead{color:var(--muted);max-width:68ch;margin:0 0 22px}
+
+/* esquema */
+.schema{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.tbl{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.tbl h3{font-family:var(--mono);font-size:1rem;padding:12px 16px;color:#fff}
+.tbl.e h3{background:#2456e6}.tbl.d h3{background:#07877a}
+.tbl ul{list-style:none;margin:0;padding:6px 0}
+.tbl li{display:flex;gap:10px;align-items:baseline;padding:6px 16px;font-size:.9rem;flex-wrap:wrap}
+.tbl li+li{border-top:1px dashed var(--line)}
+.tbl li code{font-weight:600}
+.tbl li small{color:var(--muted);font-family:var(--mono);font-size:.76rem}
+.tbl li span{color:var(--muted);flex:1 1 140px}
+.key{font-family:var(--mono);font-size:.68rem;font-weight:600;padding:1px 6px;border-radius:5px;color:#fff}
+.key.pk{background:#c98a00}.key.fk{background:#c2217a}
+.rels{margin:18px 0 0;padding:14px 18px;background:var(--surface-2);border-radius:var(--r);font-size:.94rem}
+.rels p{margin:4px 0}
+
+/* orden de ejecución */
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 26px;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.flow strong{flex:1 1 100%;font-family:var(--display);font-size:1.05rem}
+.flow span.s{font-family:var(--mono);font-size:.8rem;font-weight:600;padding:6px 10px;border-radius:8px;color:#fff}
+.flow i{color:var(--muted);font-style:normal}
+.flow small{flex:1 1 100%;color:var(--muted)}
+
+/* tarjetas de sentencias */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--fam);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.card h3{font-family:var(--mono);font-size:1.02rem;color:var(--fam)}
+.card p{margin:0;font-size:.93rem}
+.card .syn{font-family:var(--mono);font-size:.78rem;color:var(--muted);background:var(--surface-2);padding:6px 9px;border-radius:8px;overflow-x:auto;white-space:nowrap}
+.f-sel{--fam:var(--sel)}.f-from{--fam:var(--from)}.f-where{--fam:var(--where)}.f-order{--fam:var(--order)}.f-group{--fam:var(--group)}.f-fn{--fam:var(--fn)}
+
+/* código */
+pre.sql{margin:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;border-radius:10px;overflow-x:auto;font-size:.86rem;line-height:1.6;tab-size:2}
+.k-sel{color:var(--c-sel);font-weight:600}.k-from{color:var(--c-from);font-weight:600}.k-where{color:var(--c-where);font-weight:600}
+.k-order{color:var(--c-order);font-weight:600}.k-group{color:var(--c-group);font-weight:600}.k-fn{color:var(--c-fn)}
+.k-str{color:var(--c-str)}.k-num{color:var(--c-num)}.k-com{color:var(--code-muted);font-style:italic}
+.codebox{position:relative}
+.copy{position:absolute;top:8px;right:8px;font:600 .72rem var(--body);color:var(--code-ink);background:#ffffff1c;border:1px solid #ffffff33;border-radius:7px;padding:4px 9px;cursor:pointer}
+.copy:hover{background:#ffffff33}
+
+/* ejercicios */
+.tools{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:12px}
+.tools input[type=search]{flex:1 1 240px;font:inherit;padding:10px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink)}
+.btn{font:600 .9rem var(--body);padding:9px 16px;border-radius:999px;border:1.5px solid var(--ink);background:var(--surface);color:var(--ink);cursor:pointer}
+.btn[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.chip{font:600 .76rem var(--mono);padding:5px 10px;border-radius:999px;border:1.5px solid var(--fam,var(--muted));color:var(--fam,var(--muted));background:transparent;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--fam,var(--ink));color:var(--surface)}
+span.chip{cursor:default;font-size:.7rem;padding:3px 8px}
+.progress{display:flex;gap:12px;align-items:center;margin-bottom:20px;font-size:.9rem;color:var(--muted)}
+.bar{flex:1;height:10px;background:var(--surface-2);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--from),var(--sel));border-radius:999px;transition:width .3s}
+.ex{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px;display:grid;gap:12px;min-width:0}
+.ex.done{border-color:var(--ok)}
+.ex-head{display:flex;gap:14px;align-items:flex-start}
+.num{flex:none;width:44px;height:44px;border-radius:12px;background:var(--hero);color:var(--c-group);font:800 1.15rem var(--display);display:grid;place-items:center}
+.ex-head h3{font:600 1.04rem/1.35 var(--body);flex:1}
+.ex .tags{display:flex;flex-wrap:wrap;gap:6px}
+.why{margin:0;font-size:.94rem}
+.why b{color:var(--ink)}
+.note{background:var(--warn-bg);border-left:5px solid var(--warn);border-radius:10px;padding:12px 14px;font-size:.92rem;display:grid;gap:10px}
+.note strong{color:var(--warn)}
+.note p{margin:0}
+.ex-foot{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.ex-foot label{display:flex;gap:7px;align-items:center;font-size:.9rem;font-weight:600;cursor:pointer}
+.ex-foot input{width:18px;height:18px;accent-color:var(--ok)}
+.sol{display:grid;gap:12px}
+.reveal{display:none}
+section{scroll-margin-top:56px}
+body.reto .ex:not(.open) .sol{display:none}
+body.reto .ex:not(.open) .reveal{display:inline-block}
+.empty{padding:26px;text-align:center;color:var(--muted);border:2px dashed var(--line);border-radius:var(--r)}
+
+/* diccionario */
+dl.dic{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin:0}
+dl.dic div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px 15px}
+dl.dic dt{font:700 1rem var(--display);color:var(--order)}
+dl.dic dd{margin:4px 0 0;font-size:.92rem}
+
+/* enlaces y encuesta */
+.links{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.links a{display:block;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.links a:hover{border-color:var(--sel)}
+.links b{display:block;font-family:var(--display);font-size:1.02rem;color:var(--sel)}
+.links span{font-size:.88rem;color:var(--muted)}
+.survey{margin:44px 0 0;background:var(--hero);color:var(--hero-ink);border-radius:20px;padding:28px;display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between}
+.survey h2{font-size:1.6rem;font-weight:800}
+.survey p{margin:6px 0 0;color:var(--hero-muted);max-width:52ch}
+.survey a{flex:none;background:var(--accent);color:var(--accent-ink);font-weight:700;text-decoration:none;padding:13px 24px;border-radius:999px}
+footer{padding:30px 0 40px;color:var(--muted);font-size:.86rem;text-align:center}
+@media (max-width:520px){.ex{padding:14px}.num{width:38px;height:38px;font-size:1rem}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">E.P.E.T. N°7 · Jardín América · Base de Datos II · 5° B Informática</div>
+    <h1>Consultas MySQL: <span>Empleados y Departamentos</span></h1>
+    <p>35 ejercicios resueltos, con cada sentencia explicada. Intentá resolverlos por tu cuenta antes de mirar la solución. La tuya no tiene que ser idéntica: importa que devuelva lo que pide el enunciado.</p>
+    <div class="stripe" aria-label="Código de colores de las sentencias">
+      <b style="color:var(--c-sel)">SELECT</b><b style="color:var(--c-from)">FROM · JOIN</b><b style="color:var(--c-where)">WHERE</b><b style="color:var(--c-group)">GROUP BY · HAVING</b><b style="color:var(--c-order)">ORDER BY · LIMIT</b><b style="color:var(--c-fn)">funciones</b>
+    </div>
+  </div>
+</header>
+
+<nav class="top" aria-label="Secciones">
+  <div class="wrap">
+    <a href="#esquema">La base de datos</a>
+    <a href="#sentencias">Sentencias</a>
+    <a href="#ejercicios">Ejercicios</a>
+    <a href="#diccionario">Diccionario</a>
+    <a href="#enlaces">Más material</a>
+    <a class="cta" href="https://docs.google.com/forms/d/e/1FAIpQLSfz1JhZfScA2JLxYd1hIb5Y7rdXS6WJRU-bi9A1s053MBbG7Q/viewform?usp=header" target="_blank" rel="noopener">Encuesta</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="esquema">
+  <h2>La base de datos</h2>
+  <p class="lead">Todo el práctico trabaja sobre dos tablas. Tené este esquema a mano: los nombres de las columnas son los que vas a escribir en cada consulta.</p>
+  <div class="schema">
+    <div class="tbl e">
+      <h3>empleados</h3>
+      <ul>
+        <li><span class="key pk">PK</span><code>nDIEmp</code><small>VARCHAR(12)</small><span>Documento de identidad</span></li>
+        <li><code>nomEmp</code><small>VARCHAR(30)</small><span>Nombre</span></li>
+        <li><code>sexEmp</code><small>CHAR(1)</small><span>Sexo (F / M)</span></li>
+        <li><code>fecNac</code><small>DATE</small><span>Fecha de nacimiento</span></li>
+        <li><code>fecIncorporacion</code><small>DATE</small><span>Fecha de ingreso</span></li>
+        <li><code>salEmp</code><small>FLOAT</small><span>Salario</span></li>
+        <li><code>comisionE</code><small>FLOAT</small><span>Comisión</span></li>
+        <li><code>cargoE</code><small>VARCHAR(15)</small><span>Cargo</span></li>
+        <li><span class="key fk">FK</span><code>jefeID</code><small>VARCHAR(12)</small><span>Documento de su jefe</span></li>
+        <li><span class="key fk">FK</span><code>codDepto</code><small>VARCHAR(4)</small><span>Departamento donde trabaja</span></li>
+      </ul>
+    </div>
+    <div class="tbl d">
+      <h3>departamentos</h3>
+      <ul>
+        <li><span class="key pk">PK</span><code>codDepto</code><small>VARCHAR(4)</small><span>Código del departamento</span></li>
+        <li><code>nombreDpto</code><small>VARCHAR(20)</small><span>Nombre</span></li>
+        <li><code>ciudad</code><small>VARCHAR(15)</small><span>Ciudad</span></li>
+        <li><span class="key fk">FK</span><code>codDirector</code><small>VARCHAR(12)</small><span>Documento del director</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="rels">
+    <p><b>departamentos 1 : N empleados.</b> Un departamento tiene muchos empleados; cada empleado pertenece a uno solo. Se unen con <code class="i">empleados.codDepto = departamentos.codDepto</code>.</p>
+    <p><b>empleados 1 : N empleados (reflexiva).</b> Un jefe también es un empleado. <code class="i">jefeID</code> apunta al <code class="i">nDIEmp</code> de otra fila de la misma tabla.</p>
+  </div>
+</section>
+
+<section id="sentencias">
+  <h2>Sentencias que vas a usar</h2>
+  <p class="lead">Cada color identifica una familia de sentencias y se repite en el código de los ejercicios. MySQL no distingue mayúsculas en las palabras reservadas; acá van en mayúsculas para separarlas de los nombres de tablas y columnas.</p>
+  <div class="flow">
+    <strong>Se escribe en un orden, se ejecuta en otro</strong>
+    <span class="s" style="background:#07877a">1 FROM</span><i>→</i>
+    <span class="s" style="background:#d4411f">2 WHERE</span><i>→</i>
+    <span class="s" style="background:#a06a00">3 GROUP BY</span><i>→</i>
+    <span class="s" style="background:#a06a00">4 HAVING</span><i>→</i>
+    <span class="s" style="background:#2456e6">5 SELECT</span><i>→</i>
+    <span class="s" style="background:#7a36d9">6 ORDER BY</span><i>→</i>
+    <span class="s" style="background:#7a36d9">7 LIMIT</span>
+    <small>Por eso WHERE no puede usar COUNT() ni SUM(): cuando se evalúa, los grupos todavía no existen. Para filtrar grupos está HAVING.</small>
+  </div>
+  <div class="grid" id="ref"></div>
+</section>
+
+<section id="ejercicios">
+  <h2>Los 35 ejercicios</h2>
+  <p class="lead">Filtrá por sentencia para practicar un tema puntual. Las notas amarillas marcan soluciones del material original que no cumplen del todo con el enunciado, con la versión corregida.</p>
+  <div class="tools">
+    <input type="search" id="q" placeholder="Buscar en enunciados y código (ej.: comisión, like, avg)" aria-label="Buscar ejercicios">
+    <button class="btn" id="reto" aria-pressed="false">Modo desafío: ocultar soluciones</button>
+  </div>
+  <div class="chips" id="filters" role="group" aria-label="Filtrar por sentencia"></div>
+  <div class="progress"><span id="ptxt">0 de 35 resueltos</span><div class="bar"><i id="pbar"></i></div></div>
+  <div id="list"></div>
+</section>
+
+<section id="diccionario">
+  <h2>Diccionario</h2>
+  <p class="lead">Los términos que aparecen en clase y en este práctico, en orden alfabético.</p>
+  <div class="tools"><input type="search" id="dq" placeholder="Buscar un término" aria-label="Buscar en el diccionario"></div>
+  <dl class="dic" id="dic"></dl>
+</section>
+
+<section id="enlaces">
+  <h2>Más material</h2>
+  <p class="lead">Recursos del Portal Educativo relacionados con este práctico.</p>
+  <div class="links">
+    <a href="https://rubenmarky.github.io/index-bd.html" target="_blank" rel="noopener"><b>Portal Educativo</b><span>Índice de materias y trabajos prácticos del Prof. Markwart.</span></a>
+    <a href="https://rubenmarky.github.io/EPET7_Bases_Datos_II.html" target="_blank" rel="noopener"><b>Base de Datos II</b><span>Consultas avanzadas, optimización y administración. 5° Año B.</span></a>
+    <a href="https://rubenmarky.github.io/mysql_workbench.html" target="_blank" rel="noopener"><b>MySQL Workbench</b><span>Cuadernillo de consultas SQL.</span></a>
+    <a href="https://rubenmarky.github.io/modelado_eer.html" target="_blank" rel="noopener"><b>Modelado EER</b><span>Relaciones 1:1, 1:N y N:M en MySQL Workbench.</span></a>
+    <a href="https://rubenmarky.github.io/instalar_mysql.html" target="_blank" rel="noopener"><b>Instalar MySQL</b><span>Descarga, instalación y desinstalación.</span></a>
+    <a href="https://rubenmarky.github.io/supabase_tutorial.html" target="_blank" rel="noopener"><b>Supabase y PostgreSQL</b><span>Tutorial paso a paso de backend en la nube.</span></a>
+  </div>
+
+  <div class="survey">
+    <div>
+      <h2>Contanos cómo te fue</h2>
+      <p>Cuando termines el práctico, completá la encuesta. Lleva pocos minutos y ayuda a mejorar el material.</p>
+    </div>
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSfz1JhZfScA2JLxYd1hIb5Y7rdXS6WJRU-bi9A1s053MBbG7Q/viewform?usp=header" target="_blank" rel="noopener">Responder la encuesta</a>
+  </div>
+</section>
+
+</main>
+
+<footer class="wrap">Prof. Rubén Markwart · Base de Datos II · 5° B Informática · E.P.E.T. N°7, Jardín América, Misiones · 2026</footer>
+
+<script>
+/* ---------- resaltado de SQL ---------- */
+const KW={SELECT:'sel',DISTINCT:'sel',AS:'sel',FROM:'from',JOIN:'from',INNER:'from',LEFT:'from',ON:'from',
+  WHERE:'where',AND:'where',OR:'where',NOT:'where',LIKE:'where',IN:'where',BETWEEN:'where',IS:'where',NULL:'where',
+  ORDER:'order',ASC:'order',DESC:'order',LIMIT:'order',GROUP:'group',HAVING:'group'};
+const FN=['LOWER','UPPER','CHAR_LENGTH','MAX','MIN','AVG','SUM','COUNT','LEFT'];
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function hl(sql){
+  let last='';
+  return sql.replace(/(--[^\n]*)|('(?:[^'\\]|\\.)*')|(\b\d+(?:\.\d+)?\b)|([A-Za-z_][A-Za-z_0-9]*)(\s*\()?|([<>&])/g,
+    (m,com,str,num,word,par,sym)=>{
+      if(com) return '<span class="k-com">'+esc(com)+'</span>';
+      if(str) return '<span class="k-str">'+esc(str)+'</span>';
+      if(num) return '<span class="k-num">'+num+'</span>';
+      if(sym) return esc(sym);
+      const u=word.toUpperCase(), p=par||'';
+      if(p && FN.includes(u)) return '<span class="k-fn">'+word+'</span>'+p;
+      if(u==='BY'){return '<span class="k-'+(last==='GROUP'?'group':'order')+'">'+word+'</span>'+p;}
+      if(KW[u] && word===u){last=u;return '<span class="k-'+KW[u]+'">'+word+'</span>'+p;}
+      return word+p;
+    });
+}
+const codeBox=sql=>'<div class="codebox"><pre class="sql"><code>'+hl(sql)+'</code></pre><button class="copy" type="button" data-sql="'+esc(sql).replace(/"/g,'&quot;')+'">Copiar</button></div>';
+
+/* ---------- referencia de sentencias ---------- */
+const REF=[
+ ['SELECT','sel','SELECT columna1, columna2 | *','Elige qué columnas se muestran en el resultado. El asterisco * significa todas las columnas de la tabla.',"SELECT nomEmp, salEmp\nFROM empleados;"],
+ ['FROM','from','FROM tabla [alias]','Indica de qué tabla salen los datos. Se le puede dar un alias corto a la tabla (e, d) para no repetir el nombre completo.',"SELECT *\nFROM departamentos;"],
+ ['WHERE','where','WHERE condición','Filtra filas: solo pasan las que cumplen la condición. Operadores de comparación: =, <>, >, <, >=, <=.',"SELECT *\nFROM empleados\nWHERE salEmp > 1000000;"],
+ ['AND · OR · NOT','where','cond1 AND cond2 | cond1 OR cond2 | NOT cond','Combinan condiciones. AND exige que se cumplan todas; OR, al menos una; NOT invierte. AND se evalúa antes que OR: usá paréntesis cuando los mezcles.',"SELECT nomEmp\nFROM empleados\nWHERE codDepto = '2000'\n  AND (salEmp > 800000 OR comisionE > 0);"],
+ ['ORDER BY','order','ORDER BY columna [ASC | DESC]','Ordena el resultado. ASC (ascendente) es el valor por defecto; DESC ordena de mayor a menor.',"SELECT nomEmp, salEmp\nFROM empleados\nORDER BY salEmp DESC;"],
+ ['DISTINCT','sel','SELECT DISTINCT columna','Elimina filas repetidas del resultado. Sirve para ver qué valores distintos existen en una columna.',"SELECT DISTINCT cargoE\nFROM empleados;"],
+ ['AS (alias)','sel',"expresión AS 'Título'",'Renombra una columna o un cálculo en el resultado. No modifica la tabla, solo el encabezado que se muestra.',"SELECT nomEmp AS 'Nombre',\n       (salEmp + comisionE) AS 'Salario total'\nFROM empleados;"],
+ ['Cálculos','sel','columna + valor, columna * 0.3 ...','Se pueden hacer operaciones (+, -, *, /) con columnas numéricas, tanto en SELECT como en WHERE.',"SELECT nomEmp, salEmp * 1.10 AS 'Con aumento'\nFROM empleados;"],
+ ['LIKE','where',"columna [NOT] LIKE 'patrón'",'Busca texto por patrón. % reemplaza cualquier cantidad de caracteres; _ reemplaza exactamente uno.',"SELECT nomEmp\nFROM empleados\nWHERE nomEmp LIKE 'M%';   -- empieza con M"],
+ ['IN','where','columna [NOT] IN (v1, v2, v3)','Compara contra una lista de valores. Equivale a varios OR encadenados, pero más corto y legible.',"SELECT nomEmp\nFROM empleados\nWHERE cargoE IN ('Secretaria', 'Vendedor');"],
+ ['BETWEEN','where','columna BETWEEN mínimo AND máximo','Filtra por rango e incluye los dos extremos. Equivale a columna >= mínimo AND columna <= máximo.',"SELECT nomEmp, salEmp\nFROM empleados\nWHERE salEmp BETWEEN 500000 AND 1000000;"],
+ ['LOWER · CHAR_LENGTH','fn','LOWER(texto) · CHAR_LENGTH(texto)','Funciones de texto: se aplican fila por fila. LOWER pasa a minúsculas; CHAR_LENGTH devuelve la cantidad de caracteres.',"SELECT nomEmp, CHAR_LENGTH(nomEmp)\nFROM empleados\nWHERE LOWER(cargoE) = 'vendedor';"],
+ ['COUNT · SUM · AVG · MAX · MIN','fn','FUNCIÓN(columna)','Funciones de agregación: toman muchas filas y devuelven un solo valor. COUNT cuenta, SUM suma, AVG promedia, MAX y MIN dan el mayor y el menor.',"SELECT COUNT(*), AVG(salEmp), MAX(salEmp)\nFROM empleados;"],
+ ['GROUP BY','group','GROUP BY columna','Arma grupos de filas con el mismo valor y aplica la función de agregación a cada grupo. Toda columna del SELECT que no esté dentro de una función debe figurar en el GROUP BY.',"SELECT codDepto, AVG(salEmp)\nFROM empleados\nGROUP BY codDepto;"],
+ ['HAVING','group','HAVING condición sobre el grupo','Filtra grupos después de armarlos. Es el WHERE de los grupos y sí puede usar funciones de agregación.',"SELECT codDepto, COUNT(*)\nFROM empleados\nGROUP BY codDepto\nHAVING COUNT(*) > 3;"],
+ ['JOIN (unir tablas)','from','FROM a, b WHERE a.clave = b.clave\nFROM a INNER JOIN b ON a.clave = b.clave','Combina filas de dos tablas relacionadas. El material usa la forma implícita (coma + WHERE); INNER JOIN ... ON es la forma moderna y da el mismo resultado.',"SELECT e.nomEmp, d.nombreDpto\nFROM empleados e\nINNER JOIN departamentos d ON e.codDepto = d.codDepto;"],
+ ['Subconsulta','sel','WHERE columna operador (SELECT ...)','Una consulta dentro de otra, entre paréntesis. Se resuelve primero la interna y su resultado se usa en la externa.',"SELECT nomEmp\nFROM empleados\nWHERE salEmp >= (SELECT AVG(salEmp) FROM empleados);"],
+ ['LIMIT','order','LIMIT cantidad','Corta el resultado a las primeras N filas. Combinado con ORDER BY sirve para obtener el mayor o el menor.',"SELECT nomEmp, salEmp\nFROM empleados\nORDER BY salEmp DESC\nLIMIT 1;"]
+];
+document.getElementById('ref').innerHTML=REF.map(r=>
+  '<article class="card f-'+r[1]+'"><h3>'+r[0]+'</h3><div class="syn">'+esc(r[2]).replace(/\n/g,'<br>')+'</div><p>'+r[3]+'</p>'+codeBox(r[4])+'</article>').join('');
+
+/* ---------- ejercicios ---------- */
+const TAGS={'SELECT *':'sel','Columnas':'sel','DISTINCT':'sel','Alias':'sel','Cálculos':'sel','WHERE':'where','AND / OR':'where','LIKE':'where','IN':'where','BETWEEN':'where',
+  'ORDER BY':'order','LIMIT':'order','Texto':'fn','Agregación':'fn','GROUP BY':'group','HAVING':'group','JOIN':'from','Subconsulta':'sel'};
+const EX=[
+{e:"Obtener los datos completos de los empleados.",
+ s:"SELECT *\nFROM empleados;",
+ w:"<b>SELECT *</b> pide todas las columnas y <b>FROM</b> indica la tabla. Sin WHERE, devuelve todas las filas.",t:['SELECT *']},
+{e:"Obtener los datos completos de los departamentos.",
+ s:"SELECT *\nFROM departamentos;",
+ w:"La misma estructura que el ejercicio 1; solo cambia la tabla de origen.",t:['SELECT *']},
+{e:"Obtener los datos de los empleados con cargo 'Secretaria'.",
+ s:"SELECT *\nFROM empleados\nWHERE LOWER(cargoE) = 'secretaria';",
+ w:"<b>WHERE</b> deja pasar solo las filas cuyo cargo coincide. <b>LOWER()</b> convierte el cargo a minúsculas antes de comparar, así coincide aunque esté cargado como SECRETARIA o Secretaria. Los textos van siempre entre comillas simples.",t:['SELECT *','WHERE','Texto']},
+{e:"Obtener el nombre y salario de los empleados.",
+ s:"SELECT nomEmp, salEmp\nFROM empleados;",
+ w:"En lugar de *, se listan las columnas que interesan, separadas por coma. El resultado las muestra en ese orden.",t:['Columnas']},
+{e:"Obtener los datos de los empleados vendedores, ordenado por nombre.",
+ s:"SELECT *\nFROM empleados\nWHERE LOWER(cargoE) = 'vendedor'\nORDER BY nomEmp ASC;",
+ w:"Primero <b>WHERE</b> filtra a los vendedores y después <b>ORDER BY</b> ordena el resultado por nombre. <b>ASC</b> es ascendente (A a Z); se puede omitir porque es el valor por defecto.",t:['SELECT *','WHERE','Texto','ORDER BY']},
+{e:"Listar el nombre de los departamentos.",
+ s:"SELECT DISTINCT nombreDpto\nFROM departamentos;",
+ w:"<b>DISTINCT</b> quita los repetidos: si hay dos departamentos con el mismo nombre en ciudades distintas, el nombre aparece una sola vez.",t:['DISTINCT']},
+{e:"Obtener el nombre y cargo de todos los empleados, ordenado por salario.",
+ s:"SELECT nomEmp, cargoE, salEmp\nFROM empleados\nORDER BY salEmp;",
+ w:"Se agrega salEmp al SELECT para poder verificar el orden. Sin ASC ni DESC, <b>ORDER BY</b> ordena de menor a mayor.",t:['Columnas','ORDER BY']},
+{e:"Listar los salarios y comisiones de los empleados del departamento 2000, ordenado por comisión.",
+ s:"SELECT salEmp, comisionE\nFROM empleados\nORDER BY comisionE;",
+ w:"Muestra salario y comisión ordenados por comisión.",t:['Columnas','WHERE','ORDER BY'],
+ n:"A la solución original le falta el filtro del departamento 2000: así lista a los empleados de toda la empresa.",
+ f:"SELECT salEmp, comisionE\nFROM empleados\nWHERE codDepto = '2000'\nORDER BY comisionE;"},
+{e:"Listar todas las comisiones.",
+ s:"SELECT DISTINCT comisionE\nFROM empleados;",
+ w:"<b>DISTINCT</b> muestra cada valor de comisión una sola vez, aunque lo cobren varios empleados.",t:['DISTINCT']},
+{e:"Obtener el valor total a pagar que resulta de sumar a los empleados del departamento 3000 una bonificación de 500.000, en orden alfabético del empleado.",
+ s:"SELECT nomEmp, salEmp, (salEmp + 500000) AS 'pago estimado'\nFROM empleados\nWHERE codDepto = '3000'\nORDER BY nomEmp;",
+ w:"<b>(salEmp + 500000)</b> es una columna calculada: no existe en la tabla, se arma en el momento. <b>AS</b> le pone un título. codDepto se compara entre comillas porque es VARCHAR.",t:['Cálculos','Alias','WHERE','ORDER BY']},
+{e:"Obtener la lista de los empleados que ganan una comisión superior a su sueldo.",
+ s:"SELECT nomEmp, salEmp, comisionE\nFROM empleados\nWHERE comisionE > salEmp;",
+ w:"En el <b>WHERE</b> se pueden comparar dos columnas de la misma fila: para cada empleado se evalúa su comisión contra su propio salario.",t:['Columnas','WHERE']},
+{e:"Listar los empleados cuya comisión es menor o igual que el 30% de su sueldo.",
+ s:"SELECT nomEmp, salEmp, comisionE\nFROM empleados\nWHERE comisionE <= (salEmp * 0.3);",
+ w:"El 30% se calcula multiplicando por 0.3. El operador <b>&lt;=</b> incluye el caso en que la comisión es exactamente el 30%.",t:['Cálculos','WHERE']},
+{e:"Elabore un listado donde, para cada fila, figure 'Nombre' y 'Cargo' antes del valor respectivo para cada empleado.",
+ s:"SELECT nomEmp AS 'Nombre', cargoE AS 'Cargo'\nFROM empleados;",
+ w:"<b>AS</b> cambia el encabezado de cada columna en el resultado. La tabla sigue teniendo nomEmp y cargoE.",t:['Alias']},
+{e:"Hallar el salario y la comisión de aquellos empleados cuyo número de documento de identidad es superior al '19.709.802'.",
+ s:"SELECT nDIEmp, salEmp, comisionE\nFROM empleados\nWHERE nDIEmp > '19.709.802';",
+ w:"nDIEmp es VARCHAR, así que la comparación es de texto: carácter por carácter, como en un diccionario. Funciona bien mientras todos los documentos tengan el mismo formato y la misma cantidad de dígitos.",t:['Columnas','WHERE']},
+{e:"Mostrar los empleados cuyo nombre empiece entre las letras J y Z (rango). Listar estos empleados y su cargo por orden alfabético.",
+ s:"SELECT nomEmp, cargoE\nFROM empleados\nWHERE LOWER(nomEmp) > 'j' AND LOWER(nomEmp) < 'z'\nORDER BY nomEmp;",
+ w:"Dos condiciones unidas con <b>AND</b> forman un rango sobre texto. 'juan' es mayor que 'j' porque tiene más caracteres después de la j.",t:['WHERE','AND / OR','Texto','ORDER BY'],
+ n:"Con &lt; 'z' quedan afuera los nombres que empiezan con Z ('zulema' es mayor que 'z'). Para incluir los dos extremos, compará solo la primera letra.",
+ f:"SELECT nomEmp, cargoE\nFROM empleados\nWHERE LOWER(LEFT(nomEmp, 1)) BETWEEN 'j' AND 'z'\nORDER BY nomEmp;"},
+{e:"Listar el salario, la comisión, el salario total (salario + comisión), documento de identidad del empleado y nombre, de aquellos empleados que tienen comisión superior a 1.000.000. Ordenar el informe por el número del documento de identidad.",
+ s:"SELECT salEmp,\n       comisionE,\n       (salEmp + comisionE) AS 'Salario total',\n       nDIEmp\nFROM empleados\nWHERE comisionE > 1000000\nORDER BY nDIEmp;",
+ w:"Combina columna calculada, alias, filtro y orden. Los números se escriben sin puntos de miles: 1000000.",t:['Cálculos','Alias','WHERE','ORDER BY'],
+ n:"El enunciado también pide el nombre: falta agregar nomEmp a la lista del SELECT.",
+ f:"SELECT salEmp,\n       comisionE,\n       (salEmp + comisionE) AS 'Salario total',\n       nDIEmp,\n       nomEmp\nFROM empleados\nWHERE comisionE > 1000000\nORDER BY nDIEmp;"},
+{e:"Obtener un listado similar al anterior, pero de aquellos empleados que NO tienen comisión.",
+ s:"SELECT salEmp,\n       comisionE,\n       (salEmp + comisionE) AS 'Salario total',\n       nDIEmp\nFROM empleados\nWHERE comisionE = 0\nORDER BY nDIEmp;",
+ w:"En esta base, no tener comisión se guarda como 0. Si la columna tuviera valores vacíos (NULL), la condición sería <code class='i'>comisionE IS NULL</code>, porque NULL no se puede comparar con =.",t:['Cálculos','Alias','WHERE','ORDER BY']},
+{e:"Hallar los empleados cuyo nombre no contiene la cadena \"MA\".",
+ s:"SELECT nomEmp\nFROM empleados\nWHERE LOWER(nomEmp) NOT LIKE '%ma%';",
+ w:"<b>'%ma%'</b> significa: cualquier cosa, luego ma, luego cualquier cosa; es decir, contiene ma en cualquier posición. <b>NOT LIKE</b> se queda con los que no cumplen el patrón.",t:['WHERE','LIKE','Texto']},
+{e:"Obtener los nombres de los departamentos que no sean \"Ventas\" ni \"Investigación\" ni \"Mantenimiento\".",
+ s:"SELECT nombreDpto\nFROM departamentos\nWHERE LOWER(nombreDpto) NOT IN ('ventas', 'investigación', 'mantenimiento');",
+ w:"<b>NOT IN</b> descarta las filas cuyo valor esté en la lista. Reemplaza a tres condiciones &lt;&gt; unidas con AND.",t:['WHERE','IN','Texto']},
+{e:"Obtener el nombre y el departamento de los empleados con cargo 'Secretaria' o 'Vendedor', que no trabajan en el departamento de \"PRODUCCIÓN\", cuyo salario es superior a $1.000.000, ordenados por fecha de incorporación.",
+ s:"SELECT e.nomEmp, d.nombreDpto\nFROM empleados e, departamentos d\nWHERE e.codDepto = d.codDepto\n  AND LOWER(e.cargoE) = 'secretaria' AND LOWER(e.cargoE) = 'vendedor'\n  AND LOWER(d.nombreDpto) <> 'produccción'\n  AND e.salEmp > 1000000\nORDER BY e.fecIncorporacion;",
+ w:"Primera consulta con dos tablas. <b>e</b> y <b>d</b> son alias de tabla. La condición <code class='i'>e.codDepto = d.codDepto</code> une cada empleado con su departamento; sin ella se obtendría el producto cartesiano (todos contra todos).",t:['JOIN','WHERE','AND / OR','Texto','ORDER BY'],
+ n:"La solución original no devuelve filas: un cargo no puede ser 'secretaria' <b>y</b> 'vendedor' a la vez; corresponde OR (o IN). Además 'produccción' tiene una c de más.",
+ f:"SELECT e.nomEmp, d.nombreDpto\nFROM empleados e, departamentos d\nWHERE e.codDepto = d.codDepto\n  AND LOWER(e.cargoE) IN ('secretaria', 'vendedor')\n  AND LOWER(d.nombreDpto) <> 'producción'\n  AND e.salEmp > 1000000\nORDER BY e.fecIncorporacion;"},
+{e:"Obtener información de los empleados cuyo nombre tiene exactamente 11 caracteres.",
+ s:"SELECT *\nFROM empleados\nWHERE CHAR_LENGTH(nomEmp) = 11;",
+ w:"<b>CHAR_LENGTH()</b> devuelve la cantidad de caracteres del texto, contando los espacios. Se calcula para cada fila y se compara con 11.",t:['SELECT *','WHERE','Texto']},
+{e:"Obtener información de los empleados cuyo nombre tiene al menos 11 caracteres.",
+ s:"SELECT *\nFROM empleados\nWHERE CHAR_LENGTH(nomEmp) < 11;",
+ w:"Igual que el anterior, cambiando el operador de comparación.",t:['SELECT *','WHERE','Texto'],
+ n:"\"Al menos 11\" significa 11 o más. El operador &lt; devuelve justo lo contrario (menos de 11).",
+ f:"SELECT *\nFROM empleados\nWHERE CHAR_LENGTH(nomEmp) >= 11;"},
+{e:"Listar los datos de los empleados cuyo nombre inicia por la letra 'M', su salario es mayor a $800.000 o reciben comisión, y trabajan para el departamento de 'VENTAS'.",
+ s:"SELECT e.nomEmp, d.nombreDpto, e.salEmp\nFROM empleados e, departamentos d\nWHERE e.codDepto = d.codDepto\n  AND LOWER(e.nomEmp) LIKE 'm%'\n  AND (e.salEmp > 800000 OR e.comisionE > 0)\n  AND LOWER(d.nombreDpto) <> 'ventas';",
+ w:"<b>'m%'</b> es empieza con m. Los paréntesis alrededor del <b>OR</b> son obligatorios: sin ellos, AND se evalúa primero y la lógica cambia.",t:['JOIN','WHERE','AND / OR','LIKE','Texto'],
+ n:"El enunciado pide los que <b>sí</b> trabajan en Ventas; con &lt;&gt; se obtienen los de todos los demás departamentos. Va el signo =.",
+ f:"SELECT e.nomEmp, d.nombreDpto, e.salEmp\nFROM empleados e, departamentos d\nWHERE e.codDepto = d.codDepto\n  AND LOWER(e.nomEmp) LIKE 'm%'\n  AND (e.salEmp > 800000 OR e.comisionE > 0)\n  AND LOWER(d.nombreDpto) = 'ventas';"},
+{e:"Obtener los nombres, salarios y comisiones de los empleados que reciben un salario situado entre la mitad de la comisión y la propia comisión.",
+ s:"SELECT nomEmp, salEmp, comisionE\nFROM empleados\nWHERE salEmp BETWEEN (comisionE / 2) AND comisionE;",
+ w:"Los extremos de <b>BETWEEN</b> pueden ser cálculos. Va primero el menor (la mitad de la comisión) y después el mayor; ambos quedan incluidos.",t:['WHERE','BETWEEN','Cálculos']},
+{e:"Mostrar el salario más alto de la empresa.",
+ s:"SELECT nomEmp,\n       MAX(salEmp) AS 'Salario mayor'\nFROM empleados;",
+ w:"<b>MAX()</b> recorre toda la columna y devuelve un único valor: el mayor.",t:['Agregación','Alias','Subconsulta'],
+ n:"No se puede mezclar una columna común (nomEmp) con una función de agregación sin GROUP BY: MySQL da error con ONLY_FULL_GROUP_BY activo, o muestra un nombre cualquiera. Para el salario alcanza con la primera consulta; para saber además quién lo cobra, la segunda.",
+ f:"SELECT MAX(salEmp) AS 'Salario mayor'\nFROM empleados;\n\n-- con el nombre de quien lo cobra\nSELECT nomEmp, salEmp\nFROM empleados\nWHERE salEmp = (SELECT MAX(salEmp) FROM empleados);"},
+{e:"Mostrar cada una de las comisiones y el número de empleados que las reciben. Solo si tiene comisión.",
+ s:"SELECT comisionE,\n       COUNT(*) AS 'Num empleados'\nFROM empleados\nGROUP BY comisionE\nHAVING comisionE > 0;",
+ w:"<b>GROUP BY</b> arma un grupo por cada valor distinto de comisión y <b>COUNT(*)</b> cuenta las filas de cada grupo. <b>HAVING</b> descarta el grupo de comisión 0. También sirve <code class='i'>WHERE comisionE &gt; 0</code> antes del GROUP BY, que filtra las filas antes de agrupar.",t:['Agregación','Alias','GROUP BY','HAVING']},
+{e:"Mostrar el nombre del último empleado de la lista por orden alfabético.",
+ s:"SELECT MAX(nomEmp) AS 'Mayor alfabeticamente'\nFROM empleados;",
+ w:"<b>MAX()</b> también funciona con texto: devuelve el valor que quedaría último en orden alfabético.",t:['Agregación','Alias']},
+{e:"Hallar el salario más alto, el más bajo y la diferencia entre ellos.",
+ s:"SELECT MAX(salEmp) AS 'Salario mayor',\n       MIN(salEmp) AS 'Salario menor',\n       MAX(salEmp) - MIN(salEmp) AS 'Diferencia'\nFROM empleados;",
+ w:"Varias funciones de agregación pueden ir en el mismo SELECT, y se puede operar con sus resultados. La consulta devuelve una sola fila con tres columnas.",t:['Agregación','Alias','Cálculos']},
+{e:"Mostrar el número de empleados de sexo femenino y de sexo masculino, por departamento.",
+ s:"SELECT codDepto, sexEmp, COUNT(*)\nFROM empleados\nGROUP BY codDepto, sexEmp;",
+ w:"Al agrupar por dos columnas se forma un grupo por cada combinación departamento + sexo. <b>COUNT(*)</b> cuenta cuántos empleados hay en cada una.",t:['Agregación','GROUP BY']},
+{e:"Hallar el salario promedio por departamento.",
+ s:"SELECT codDepto, AVG(salEmp)\nFROM empleados\nGROUP BY codDepto;",
+ w:"<b>AVG()</b> calcula el promedio. Con <b>GROUP BY codDepto</b> el promedio se calcula por separado para cada departamento.",t:['Agregación','GROUP BY']},
+{e:"Mostrar la lista de los empleados cuyo salario es mayor o igual que el promedio de la empresa. Ordenarlo por departamento.",
+ s:"SELECT nDIEmp, salEmp\nFROM empleados\nWHERE salEmp >= (SELECT AVG(salEmp) FROM empleados);",
+ w:"La <b>subconsulta</b> entre paréntesis se ejecuta primero y devuelve un único número (el promedio). La consulta externa compara cada salario contra ese número. Hace falta porque WHERE no admite AVG() directamente.",t:['Subconsulta','Agregación','WHERE','ORDER BY'],
+ n:"Falta el orden por departamento que pide el enunciado. Conviene mostrar también codDepto para verlo.",
+ f:"SELECT nDIEmp, nomEmp, salEmp, codDepto\nFROM empleados\nWHERE salEmp >= (SELECT AVG(salEmp) FROM empleados)\nORDER BY codDepto;"},
+{e:"Hallar los departamentos que tienen más de tres empleados. Mostrar el número de empleados de esos departamentos.",
+ s:"SELECT d.codDepto, d.nombreDpto, COUNT(*) AS 'Num empleados'\nFROM departamentos d, empleados e\nWHERE d.codDepto = e.codDepto\nGROUP BY d.codDepto\nHAVING COUNT(*) >= 3;",
+ w:"Se unen las dos tablas, se agrupa por departamento y <b>HAVING</b> filtra los grupos según la cantidad de filas. Acá HAVING es obligatorio: la condición usa COUNT().",t:['JOIN','Agregación','Alias','GROUP BY','HAVING'],
+ n:"\"Más de tres\" es &gt; 3. Con &gt;= 3 también aparecen los departamentos que tienen exactamente tres.",
+ f:"SELECT d.codDepto, d.nombreDpto, COUNT(*) AS 'Num empleados'\nFROM departamentos d, empleados e\nWHERE d.codDepto = e.codDepto\nGROUP BY d.codDepto, d.nombreDpto\nHAVING COUNT(*) > 3;"},
+{e:"Mostrar el código y nombre de cada jefe, junto al número de empleados que dirige. Solo los que tengan dos empleados o más.",
+ s:"SELECT j.nDIEmp, j.nomEmp, COUNT(*) AS 'Num Empleados'\nFROM empleados e, empleados j\nWHERE e.jefeID = j.nDIEmp\nGROUP BY j.nomEmp\nHAVING COUNT(*) >= 2\nORDER BY COUNT(*) DESC;",
+ w:"<b>Autounión</b>: la tabla empleados se usa dos veces con alias distintos, <b>e</b> como empleado y <b>j</b> como jefe. La condición une a cada empleado con la fila de su jefe. Después se agrupa por jefe y se cuenta.",t:['JOIN','Agregación','Alias','GROUP BY','HAVING','ORDER BY'],
+ n:"Conviene agrupar por la clave del jefe y no solo por el nombre: dos jefes con el mismo nombre se mezclarían en un grupo, y con ONLY_FULL_GROUP_BY activo la consulta original da error.",
+ f:"SELECT j.nDIEmp, j.nomEmp, COUNT(*) AS 'Num Empleados'\nFROM empleados e, empleados j\nWHERE e.jefeID = j.nDIEmp\nGROUP BY j.nDIEmp, j.nomEmp\nHAVING COUNT(*) >= 2\nORDER BY COUNT(*) DESC;"},
+{e:"Hallar los departamentos que no tienen empleados.",
+ s:"SELECT d.codDepto, d.nombreDpto\nFROM departamentos d, empleados e\nWHERE d.codDepto = e.codDepto\nGROUP BY d.codDepto\nHAVING COUNT(*) = 0;",
+ w:"La idea es contar los empleados de cada departamento y quedarse con los que dan cero.",t:['JOIN','Agregación','GROUP BY','HAVING','Subconsulta'],
+ n:"Esta consulta nunca devuelve filas: la unión con WHERE solo conserva departamentos que tienen al menos un empleado, así que ningún grupo puede contar 0. Hay que usar LEFT JOIN (conserva todos los departamentos) o una subconsulta con NOT IN.",
+ f:"SELECT d.codDepto, d.nombreDpto\nFROM departamentos d\nLEFT JOIN empleados e ON d.codDepto = e.codDepto\nWHERE e.nDIEmp IS NULL;\n\n-- alternativa con subconsulta\nSELECT codDepto, nombreDpto\nFROM departamentos\nWHERE codDepto NOT IN (SELECT codDepto FROM empleados);"},
+{e:"Mostrar el nombre del departamento cuya suma de salarios sea la más alta, indicando el valor de la suma.",
+ s:"SELECT d.nombreDpto, SUM(e.salEmp)\nFROM departamentos d, empleados e\nWHERE d.codDepto = e.codDepto\nGROUP BY d.nombreDpto\nORDER BY SUM(e.salEmp) DESC\nLIMIT 1;",
+ w:"<b>SUM()</b> suma los salarios de cada departamento. <b>ORDER BY ... DESC</b> pone primero la suma más alta y <b>LIMIT 1</b> se queda solo con esa fila. Es la receta clásica para obtener el mayor de un grupo.",t:['JOIN','Agregación','GROUP BY','ORDER BY','LIMIT']}
+];
+
+const chipHTML=(t,btn)=>btn
+  ?'<button type="button" class="chip f-'+TAGS[t]+'" aria-pressed="false" data-tag="'+t+'">'+t+'</button>'
+  :'<span class="chip f-'+TAGS[t]+'">'+t+'</span>';
+document.getElementById('filters').innerHTML=Object.keys(TAGS).map(t=>chipHTML(t,true)).join('');
+
+const KEY='consultas-mysql-5b';
+let done={};
+try{done=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+const list=document.getElementById('list');
+list.innerHTML=EX.map((x,i)=>{
+  const n=i+1;
+  return '<article class="ex'+(done[n]?' done':'')+'" data-n="'+n+'" data-tags="'+x.t.join('|')+'" data-text="'+esc((x.e+' '+x.s+' '+(x.f||'')).toLowerCase()).replace(/"/g,'&quot;')+'">'
+   +'<div class="ex-head"><div class="num">'+n+'</div><h3>'+esc(x.e)+'</h3></div>'
+   +'<div class="tags">'+x.t.map(t=>chipHTML(t,false)).join('')+'</div>'
+   +'<div class="sol">'+codeBox(x.s)+'<p class="why">'+x.w+'</p>'
+   +(x.n?'<div class="note"><p><strong>Revisá esto.</strong> '+x.n+'</p>'+(x.f?codeBox(x.f):'')+'</div>':'')+'</div>'
+   +'<div class="ex-foot"><button type="button" class="btn reveal">Ver solución</button>'
+   +'<label for="d'+n+'"><input type="checkbox" id="d'+n+'"'+(done[n]?' checked':'')+'> Lo resolví</label></div></article>';
+}).join('')+'<p class="empty" id="empty" hidden>Ningún ejercicio coincide con la búsqueda. Probá con otra palabra o quitá los filtros.</p>';
+
+function progress(){
+  const c=Object.values(done).filter(Boolean).length;
+  document.getElementById('ptxt').textContent=c+' de '+EX.length+' resueltos';
+  document.getElementById('pbar').style.width=(c/EX.length*100)+'%';
+}
+progress();
+
+const active=new Set();
+function applyFilter(){
+  const q=document.getElementById('q').value.trim().toLowerCase();
+  let shown=0;
+  list.querySelectorAll('.ex').forEach(el=>{
+    const tags=el.dataset.tags.split('|');
+    const ok=[...active].every(t=>tags.includes(t)) && (!q||el.dataset.text.includes(q));
+    el.hidden=!ok; if(ok) shown++;
+  });
+  document.getElementById('empty').hidden=shown>0;
+}
+document.getElementById('filters').addEventListener('click',e=>{
+  const b=e.target.closest('.chip'); if(!b) return;
+  const t=b.dataset.tag, on=!active.has(t);
+  on?active.add(t):active.delete(t);
+  b.setAttribute('aria-pressed',on); applyFilter();
+});
+document.getElementById('q').addEventListener('input',applyFilter);
+
+const reto=document.getElementById('reto');
+reto.addEventListener('click',()=>{
+  const on=!document.body.classList.contains('reto');
+  document.body.classList.toggle('reto',on);
+  reto.setAttribute('aria-pressed',on);
+  reto.textContent=on?'Modo desafío activo: mostrar todas':'Modo desafío: ocultar soluciones';
+  list.querySelectorAll('.ex.open').forEach(el=>el.classList.remove('open'));
+});
+list.addEventListener('click',e=>{
+  if(e.target.classList.contains('reveal')) e.target.closest('.ex').classList.add('open');
+});
+list.addEventListener('change',e=>{
+  if(e.target.type!=='checkbox') return;
+  const el=e.target.closest('.ex');
+  done[el.dataset.n]=e.target.checked;
+  el.classList.toggle('done',e.target.checked);
+  try{localStorage.setItem(KEY,JSON.stringify(done))}catch(err){}
+  progress();
+});
+document.addEventListener('click',e=>{
+  const b=e.target.closest('.copy'); if(!b) return;
+  const fin=t=>{b.textContent=t;setTimeout(()=>b.textContent='Copiar',1500)};
+  try{navigator.clipboard.writeText(b.dataset.sql).then(()=>fin('Copiado'),()=>fin('Seleccioná y copiá'))}
+  catch(err){fin('Seleccioná y copiá')}
+});
+
+/* ---------- diccionario ---------- */
+const DIC=[
+['Alias','Nombre temporal que se le da a una columna o a una tabla dentro de una consulta, con AS. No cambia nada en la base.'],
+['Autounión (self join)','Unión de una tabla consigo misma usando dos alias. Se usa en relaciones reflexivas, como empleado y jefe.'],
+['Base de datos','Conjunto organizado de datos relacionados entre sí, guardados para poder consultarlos y actualizarlos.'],
+['Campo (columna)','Cada dato que se guarda de una entidad: nombre, salario, cargo. Todas las filas tienen las mismas columnas.'],
+['CHAR','Tipo de dato de texto de longitud fija. CHAR(1) guarda siempre un carácter, como el sexo (F / M).'],
+['Clave foránea (FK)','Columna que apunta a la clave primaria de otra tabla y crea la relación. Ejemplo: empleados.codDepto.'],
+['Clave primaria (PK)','Columna que identifica a cada fila sin repetirse ni quedar vacía. Ejemplo: nDIEmp en empleados.'],
+['Cláusula','Cada parte de una sentencia SQL: SELECT, FROM, WHERE, GROUP BY, HAVING, ORDER BY, LIMIT.'],
+['Collation (cotejamiento)','Regla que define cómo se comparan y ordenan los textos. Con las collations terminadas en _ci, MySQL no distingue mayúsculas de minúsculas.'],
+['Comodín','Símbolo que reemplaza caracteres en un patrón LIKE: % es cualquier cantidad, _ es exactamente uno.'],
+['Condición','Expresión que da verdadero o falso para cada fila. Se usa en WHERE y en HAVING.'],
+['Consulta (query)','Pedido de información a la base de datos, escrito en SQL. Empieza con SELECT.'],
+['DATE','Tipo de dato para fechas, con formato AAAA-MM-DD. Ejemplo: fecIncorporacion.'],
+['DDL','Data Definition Language. Sentencias que definen la estructura: CREATE, ALTER, DROP.'],
+['DML','Data Manipulation Language. Sentencias que trabajan con los datos: SELECT, INSERT, UPDATE, DELETE.'],
+['Expresión','Cálculo que combina columnas, valores y operadores, como salEmp + comisionE o salEmp * 0.3.'],
+['FLOAT','Tipo de dato numérico con decimales. Ejemplo: salEmp y comisionE.'],
+['Función de agregación','Función que resume muchas filas en un solo valor: COUNT, SUM, AVG, MAX, MIN.'],
+['Función escalar','Función que se aplica a cada fila por separado y devuelve un valor por fila: LOWER, UPPER, CHAR_LENGTH, LEFT.'],
+['Grupo','Conjunto de filas que comparten el mismo valor en las columnas del GROUP BY.'],
+['INNER JOIN','Unión que devuelve solo las filas que tienen coincidencia en las dos tablas.'],
+['LEFT JOIN','Unión que conserva todas las filas de la tabla izquierda, tengan o no coincidencia. Donde no hay, completa con NULL.'],
+['Modelo Entidad-Relación','Diagrama que muestra las tablas (entidades), sus columnas y cómo se relacionan.'],
+['MySQL','Sistema gestor de bases de datos relacionales, de código abierto, muy usado en aplicaciones web.'],
+['MySQL Workbench','Programa gráfico para diseñar el modelo, escribir consultas y administrar un servidor MySQL.'],
+['NULL','Ausencia de valor. No es cero ni texto vacío. Se consulta con IS NULL o IS NOT NULL, nunca con =.'],
+['ONLY_FULL_GROUP_BY','Modo de MySQL, activo por defecto desde la versión 5.7, que da error si el SELECT incluye columnas que no están en el GROUP BY ni dentro de una función de agregación.'],
+['Operador','Símbolo o palabra que compara o combina valores: =, <>, >, <, >=, <=, AND, OR, NOT, +, -, *, /.'],
+['Palabra reservada','Palabra con significado propio en SQL (SELECT, FROM, WHERE). No conviene usarla como nombre de tabla o columna.'],
+['Producto cartesiano','Resultado de combinar dos tablas sin condición de unión: cada fila de una con todas las de la otra. Casi siempre es un error.'],
+['Registro (fila)','Cada elemento guardado en una tabla: un empleado, un departamento.'],
+['Relación 1:N','Uno a muchos. Un departamento tiene muchos empleados; cada empleado pertenece a un solo departamento.'],
+['Relación reflexiva','Relación de una tabla consigo misma. En empleados, jefeID apunta a otro empleado.'],
+['Resultado (result set)','Tabla temporal que devuelve una consulta. No se guarda en la base.'],
+['SGBD','Sistema Gestor de Bases de Datos. El software que almacena los datos y ejecuta las consultas: MySQL, PostgreSQL, SQL Server.'],
+['SQL','Structured Query Language. Lenguaje estándar para definir, consultar y modificar bases de datos relacionales.'],
+['Subconsulta','Consulta escrita dentro de otra, entre paréntesis. Su resultado se usa como valor o como lista en la consulta externa.'],
+['Tabla','Estructura de filas y columnas donde se guardan los datos de una entidad.'],
+['Tipo de dato','Clase de valor que admite una columna: texto, número, fecha.'],
+['VARCHAR','Tipo de dato de texto de longitud variable, con un máximo. VARCHAR(30) admite hasta 30 caracteres.']
+];
+const dic=document.getElementById('dic');
+function renderDic(q){
+  const r=DIC.filter(d=>!q||(d[0]+' '+d[1]).toLowerCase().includes(q));
+  dic.innerHTML=r.length?r.map(d=>'<div><dt>'+esc(d[0])+'</dt><dd>'+esc(d[1])+'</dd></div>').join('')
+    :'<p class="empty" style="grid-column:1/-1">Ese término no está en el diccionario.</p>';
+}
+renderDic('');
+document.getElementById('dq').addEventListener('input',e=>renderDic(e.target.value.trim().toLowerCase()));
+
+/* navegación interna */
+document.querySelectorAll('nav.top a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
+  const el=document.getElementById(a.getAttribute('href').slice(1));
+  if(el){e.preventDefault();el.scrollIntoView();}
+}));
+</script>
+</body>
+</html>
